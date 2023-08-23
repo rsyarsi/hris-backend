@@ -2,8 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\API\V1\{AuthController, DepartmentController};
 
 /*
 |--------------------------------------------------------------------------
@@ -19,24 +18,37 @@ use App\Http\Controllers\DepartmentController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
- 
-    
-Route::group([ 'middleware' => 'api', 'prefix' => 'auth' ], function () {
+
+
+Route::middleware('api')->prefix('auth/v1')->group(function () {
+    // route for authentication
+    // Route::prefix('auth')->group(function () {
+    // });
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);    
+    Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
 
-
-    Route::group(['prefix' => 'masterdata/'], function () {
-        Route::group(['prefix' => 'department/'], function () {
-            Route::post('/insert', [DepartmentController::class, 'store']);
-            Route::post('/update/{id}', [DepartmentController::class, 'update']);
-            Route::get('/data/{id}', [DepartmentController::class, 'show']);
-            Route::get('/data/all', [DepartmentController::class, 'create']);
-        });
-        
+    Route::prefix('masterdata')->group(function () {
+        // route for users
+        Route::resource('users', UserController::class);
+        // route for departments
+        Route::resource('departments', DepartmentController::class);
+        // route for educations
+        Route::resource('educations', EducationController::class);
+        // route for position
+        Route::resource('positions', PositionController::class);
+        // route for religions
+        Route::resource('religions', ReligionController::class);
+        // route for sexs
+        Route::resource('sexs', SexController::class);
+        // route for status-employements
+        Route::resource('status-employements', StatusEmployementController::class);
+        // route for taxs
+        Route::resource('taxs', TaxController::class);
+        // route for units
+        Route::resource('units', UnitController::class);
     });
 });

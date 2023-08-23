@@ -2,10 +2,10 @@
 namespace App\Repositories\Interfaces;
 
 Interface DepartmentRepositoryInterface{
-    
-    public function allDepartments();
-    public function storeDepartment($data);
-    public function findDepartment($id);
-    public function updateDepartment($data, $id); 
-    
+
+    public function index();
+    public function store(array $data);
+    public function show($id);
+    public function update($id, array $data);
+    public function destroy($id);
 }

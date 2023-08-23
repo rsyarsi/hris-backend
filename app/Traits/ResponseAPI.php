@@ -6,20 +6,16 @@ trait ResponseAPI
 {
     /**
      * Core of response
-     * 
+     *
      * @param   string          $message
      * @param   array|object    $data
-     * @param   integer         $statusCode  
+     * @param   integer         $statusCode
      * @param   boolean         $isSuccess
      */
     public function coreResponse($message, $data = null, $statusCode, $isSuccess = true)
     {
         // Check the params
         if(!$message) return response()->json(['message' => 'Message is required'], 500);
-
-
-
-       
         // Send the response
         if($isSuccess) {
             $response = [
@@ -42,7 +38,7 @@ trait ResponseAPI
 
     /**
      * Send any success response
-     * 
+     *
      * @param   string          $message
      * @param   array|object    $data
      * @param   integer         $statusCode
@@ -54,9 +50,9 @@ trait ResponseAPI
 
     /**
      * Send any error response
-     * 
+     *
      * @param   string          $message
-     * @param   integer         $statusCode    
+     * @param   integer         $statusCode
      */
     public function error($message, $statusCode = 500)
     {
