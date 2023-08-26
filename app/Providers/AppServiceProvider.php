@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Repositories\DepartmentRepository;
-use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+use App\Services\Education\{EducationService, EducationServiceInterface};
+use App\Services\Department\{DepartmentService, DepartmentServiceInterface};
+use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
+use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,18 +17,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-         // Register Interface and Repository in here
-        // You must place Interface in first place
-        // If you dont, the Repository will not get readed.
-        $this->app->bind(
-            DepartmentRepositoryInterface::class,
-            DepartmentRepository::class
-        );
+        // Department
+        $this->app->bind(DepartmentRepositoryInterface::class, DepartmentRepository::class);
+        $this->app->bind(DepartmentServiceInterface::class, DepartmentService::class);
 
-        // Register another new interface and repository
-
-
+        // Education
+        $this->app->bind(EducationRepositoryInterface::class, EducationRepository::class);
+        $this->app->bind(EducationServiceInterface::class, EducationService::class);
     }
 
     /**

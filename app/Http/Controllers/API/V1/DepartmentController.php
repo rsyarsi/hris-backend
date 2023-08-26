@@ -5,23 +5,24 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DepartmentRequest;
-use App\Repositories\Interfaces\DepartmentRepositoryInterface;
+use App\Services\Department\DepartmentServiceInterface;
 
 class DepartmentController extends Controller
 {
     use ResponseAPI;
 
-    private $departmentRepository;
+    private $departmentService;
 
-    public function __construct(DepartmentRepositoryInterface $departmentRepository)
+    public function __construct(DepartmentServiceInterface $departmentService)
     {
-        $this->departmentRepository = $departmentRepository;
+        $this->middleware('auth:api');
+        $this->departmentService = $departmentService;
     }
 
     public function index()
     {
         try {
-            $departments = $this->departmentRepository->index();
+            $departments = $this->departmentService->index();
             return $this->success('Departments retrieved successfully', $departments);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -32,7 +33,7 @@ class DepartmentController extends Controller
     {
         try {
             $data = $request->validated();
-            $department = $this->departmentRepository->store($data);
+            $department = $this->departmentService->store($data);
             return $this->success('Department created successfully', $department, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -42,7 +43,7 @@ class DepartmentController extends Controller
     public function show($id)
     {
         try {
-            $department = $this->departmentRepository->show($id);
+            $department = $this->departmentService->show($id);
             if (!$department) {
                 return $this->error('Department not found', 404);
             }
@@ -56,11 +57,11 @@ class DepartmentController extends Controller
     {
         try {
             $data = $request->validated();
-            $department = $this->departmentRepository->update($id, $data);
+            $department = $this->departmentService->update($id, $data);
             if (!$department) {
                 return $this->error('Department not found', 404);
             }
-            return $this->success('Department updated successfully', $department);
+            return $this->success('Department updated successfully', $department, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -69,11 +70,11 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         try {
-            $result = $this->departmentRepository->destroy($id);
-            if (!$result) {
+            $department = $this->departmentService->destroy($id);
+            if (!$department) {
                 return $this->error('Department not found', 404);
             }
-            return $this->success('Department deleted successfully', null, 204);
+            return $this->success('Department deleted successfully, id : '.$department->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

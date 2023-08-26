@@ -1,7 +1,7 @@
 <?php
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Department;
 
-Interface DepartmentRepositoryInterface{
+Interface DepartmentRepositoryInterface {
 
     public function index();
     public function store(array $data);

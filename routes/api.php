@@ -20,16 +20,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware('api')->prefix('auth/v1')->group(function () {
-    // route for authentication
-    // Route::prefix('auth')->group(function () {
-    // });
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-
+Route::middleware('api')->prefix('v1/auth')->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('/login', 'login');
+        Route::post('/register', 'register');
+        Route::post('/refresh', 'refresh');
+        Route::get('/user-profile', 'userProfile');
+        Route::post('/logout', 'logout');
+    });
 
     Route::prefix('masterdata')->group(function () {
         // route for users
@@ -52,3 +50,4 @@ Route::middleware('api')->prefix('auth/v1')->group(function () {
         Route::resource('units', UnitController::class);
     });
 });
+

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Department;
 
 use App\Models\Department;
-use App\Repositories\Interfaces\DepartmentRepositoryInterface;
+use App\Repositories\Department\DepartmentRepositoryInterface;
 
 
 class DepartmentRepository implements DepartmentRepositoryInterface
@@ -18,7 +18,7 @@ class DepartmentRepository implements DepartmentRepositoryInterface
 
     public function index()
     {
-        return $this->model->orderBy('name', 'ASC')->get($this->field);
+        return $this->model->get($this->field);
     }
 
     public function store(array $data)
@@ -28,7 +28,7 @@ class DepartmentRepository implements DepartmentRepositoryInterface
 
     public function show($id)
     {
-        $department = $this->model->where('id', $id)->firstOrFail($this->field);
+        $department = $this->model->where('id', $id)->first($this->field);
         return $department ? $department : $department = null;
     }
 
@@ -47,9 +47,8 @@ class DepartmentRepository implements DepartmentRepositoryInterface
         $department = $this->model->find($id);
         if ($department) {
             $department->delete();
-        } else {
-            $product = null;
+            return $department;
         }
-        return $product;
+        return null;
     }
 }

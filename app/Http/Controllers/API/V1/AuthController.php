@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Traits\ResponseAPI;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    use ResponseAPI;
     /**
      * Create a new AuthController instance.
      *
@@ -48,16 +50,14 @@ class AuthController extends Controller
             'password' => 'required|string|confirmed|min:6',
         ]);
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            // return response()->json($validator->errors());
+            return $this->error($validator->errors(), 422);
         }
         $user = User::create(array_merge(
                     $validator->validated(),
                     ['password' => bcrypt($request->password)]
                 ));
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+        return $this->success('User Successfully Registered', $user);
     }
 
     /**
@@ -67,7 +67,7 @@ class AuthController extends Controller
      */
     public function logout() {
         auth()->logout();
-        return response()->json(['message' => 'User successfully signed out']);
+        return $this->success('User Successfully Signed Out, Token Revoked!', []);
     }
     /**
      * Refresh a token.
@@ -83,7 +83,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
-        return response()->json(auth()->user());
+        return $this->success('User Profile Successfully Retrived', auth()->user());
     }
     /**
      * Get the token array structure.
