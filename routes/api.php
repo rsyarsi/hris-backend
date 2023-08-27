@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\V1\{AuthController, DepartmentController, EducationController, PositionController, ReligionController, SexController};
+use App\Http\Controllers\API\V1\{AuthController, DepartmentController, EducationController, PositionController, ReligionController, SexController, TaxController};
 
 /*
 |--------------------------------------------------------------------------
@@ -42,12 +42,12 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::resource('religions', ReligionController::class);
         // route for sexs
         Route::resource('sexs', SexController::class);
-        // route for status-employements
-        Route::resource('status-employements', StatusEmployementController::class);
         // route for taxs
         Route::resource('taxs', TaxController::class);
         // route for units
         Route::resource('units', UnitController::class);
+        // route for status-employements
+        Route::resource('status-employements', StatusEmployementController::class);
     });
 });
 
