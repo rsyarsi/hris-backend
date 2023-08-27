@@ -32,7 +32,7 @@ class EducationService implements EducationServiceInterface
 
     public function update($id, $data)
     {
-        $data['name'] = Str::upper($data['name']);
+        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->update($id, $data);
     }
 

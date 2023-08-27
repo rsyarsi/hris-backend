@@ -1,15 +1,15 @@
 <?php
-namespace App\Services\Department;
+namespace App\Services\Position;
 
 use Illuminate\Support\Str;
-use App\Services\Department\DepartmentServiceInterface;
-use App\Repositories\Department\DepartmentRepositoryInterface;
+use App\Services\Position\PositionServiceInterface;
+use App\Repositories\Position\PositionRepositoryInterface;
 
-class DepartmentService implements DepartmentServiceInterface
+class PositionService implements PositionServiceInterface
 {
     private $repository;
 
-    public function __construct(DepartmentRepositoryInterface $repository)
+    public function __construct(PositionRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }

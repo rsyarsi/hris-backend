@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\V1\{AuthController, DepartmentController, EducationController};
+use App\Http\Controllers\API\V1\{AuthController, DepartmentController, EducationController, PositionController};
 
 /*
 |--------------------------------------------------------------------------

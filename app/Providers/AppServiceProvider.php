@@ -5,8 +5,10 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Education\{EducationService, EducationServiceInterface};
 use App\Services\Department\{DepartmentService, DepartmentServiceInterface};
+use App\Services\Position\{PositionService, PositionServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
+use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
         // Education
         $this->app->bind(EducationRepositoryInterface::class, EducationRepository::class);
         $this->app->bind(EducationServiceInterface::class, EducationService::class);
+
+        // Position
+        $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);
+        $this->app->bind(PositionServiceInterface::class, PositionService::class);
     }
 
     /**
