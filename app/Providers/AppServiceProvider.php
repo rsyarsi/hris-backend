@@ -6,9 +6,11 @@ use Illuminate\Support\ServiceProvider;
 use App\Services\Education\{EducationService, EducationServiceInterface};
 use App\Services\Department\{DepartmentService, DepartmentServiceInterface};
 use App\Services\Position\{PositionService, PositionServiceInterface};
+use App\Services\Religion\{ReligionService, ReligionServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
+use App\Repositories\Religion\{ReligionRepository, ReligionRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
         // Position
         $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);
         $this->app->bind(PositionServiceInterface::class, PositionService::class);
+
+        // Religion
+        $this->app->bind(ReligionRepositoryInterface::class, ReligionRepository::class);
+        $this->app->bind(ReligionServiceInterface::class, ReligionService::class);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PositionRequest extends FormRequest
+class ReligionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,7 +30,7 @@ class PositionRequest extends FormRequest
 
         if ($this->isMethod('patch')) {
             // If it's an update request, exclude the name from being unique to the current department
-            $rules['name'] = 'required|string|max:255|unique:mpositions,name,' . $this->route('positions');
+            $rules['name'] = 'required|string|max:255|unique:mreligions,name,' . $this->route('religions');
         }
 
         return $rules;
