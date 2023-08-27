@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\V1\{AuthController, DepartmentController, EducationController, PositionController, ReligionController, SexController, TaxController, UnitController};
+use App\Http\Controllers\API\V1\{AuthController, DepartmentController, EducationController, PositionController,
+                                ReligionController, SexController, TaxController, UnitController, StatusEmploymentController};
 
 /*
 |--------------------------------------------------------------------------
@@ -46,8 +47,8 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::resource('taxs', TaxController::class);
         // route for units
         Route::resource('units', UnitController::class);
-        // route for status-employements
-        Route::resource('status-employements', StatusEmployementController::class);
+        // route for status-employments
+        Route::resource('status-employments', StatusEmploymentController::class);
     });
 });
 
