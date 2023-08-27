@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReligionRequest extends FormRequest
+class SexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +25,10 @@ class ReligionRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:150',
-            'active' => 'required|integer',
         ];
 
         if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:mreligions,name,' . $this->route('religions');
+            $rules['name'] = 'required|string|max:150|unique:msexs,name,' . $this->route('sexs');
         }
 
         return $rules;

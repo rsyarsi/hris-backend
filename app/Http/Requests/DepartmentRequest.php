@@ -24,13 +24,12 @@ class DepartmentRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:150',
             'active' => 'required|integer',
         ];
 
         if ($this->isMethod('patch')) {
-            // If it's an update request, exclude the name from being unique to the current department
-            $rules['name'] = 'required|string|max:255|unique:mdepartments,name,' . $this->route('department');
+            $rules['name'] = 'required|string|max:150|unique:mdepartments,name,' . $this->route('department');
         }
 
         return $rules;

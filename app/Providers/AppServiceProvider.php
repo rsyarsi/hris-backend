@@ -7,10 +7,12 @@ use App\Services\Education\{EducationService, EducationServiceInterface};
 use App\Services\Department\{DepartmentService, DepartmentServiceInterface};
 use App\Services\Position\{PositionService, PositionServiceInterface};
 use App\Services\Religion\{ReligionService, ReligionServiceInterface};
+use App\Services\Sex\{SexService, SexServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
 use App\Repositories\Religion\{ReligionRepository, ReligionRepositoryInterface};
+use App\Repositories\Sex\{SexRepository, SexRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
         // Religion
         $this->app->bind(ReligionRepositoryInterface::class, ReligionRepository::class);
         $this->app->bind(ReligionServiceInterface::class, ReligionService::class);
+
+        // Sex
+        $this->app->bind(SexRepositoryInterface::class, SexRepository::class);
+        $this->app->bind(SexServiceInterface::class, SexService::class);
     }
 
     /**
