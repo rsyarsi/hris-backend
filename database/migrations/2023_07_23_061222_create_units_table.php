@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('munits', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name',150);
-            $table->integer('active')->default('1');
+            $table->tinyInteger('active')->default('1');
             $table->timestamps();
         });
     }

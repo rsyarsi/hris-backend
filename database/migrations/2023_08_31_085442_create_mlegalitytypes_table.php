@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mreligions', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('mlegalitytypes', function (Blueprint $table) {
+            $table->id();
             $table->string('name',150);
             $table->tinyInteger('active')->default('1');
+            $table->boolean('extended');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('religions');
+        Schema::dropIfExists('mlegalitytypes');
     }
 };

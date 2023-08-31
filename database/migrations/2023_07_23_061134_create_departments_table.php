@@ -11,7 +11,6 @@ return new class extends Migration
      *
      * @var string
      */
-    protected $connection = 'pgsql';
 
     /**
      * Run the migrations.
@@ -23,7 +22,7 @@ return new class extends Migration
         Schema::create('mdepartments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name',150);
-            $table->integer('active')->default('1');
+            $table->tinyInteger('active')->default('1');
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('mdepartments');
     }
 };

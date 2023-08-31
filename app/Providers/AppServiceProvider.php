@@ -12,6 +12,9 @@ use App\Services\Tax\{TaxService, TaxServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
 use App\Services\Job\{JobService, JobServiceInterface};
+use App\Services\IdentityType\{IdentityTypeService, IdentityTypeServiceInterface};
+use App\Services\MaritalStatus\{MaritalStatusService, MaritalStatusServiceInterface};
+use App\Services\LegalityType\{LegalityTypeService, LegalityTypeServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -21,6 +24,9 @@ use App\Repositories\Tax\{TaxRepository, TaxRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
+use App\Repositories\IdentityType\{IdentityTypeRepository, IdentityTypeRepositoryInterface};
+use App\Repositories\MaritalStatus\{MaritalStatusRepository, MaritalStatusRepositoryInterface};
+use App\Repositories\LegalityType\{LegalityTypeRepository, LegalityTypeRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -66,6 +72,18 @@ class AppServiceProvider extends ServiceProvider
         // Job
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
         $this->app->bind(JobServiceInterface::class, JobService::class);
+        
+        // Identity Type
+        $this->app->bind(IdentityTypeRepositoryInterface::class, IdentityTypeRepository::class);
+        $this->app->bind(IdentityTypeServiceInterface::class, IdentityTypeService::class);
+        
+        // Marital Status
+        $this->app->bind(MaritalStatusRepositoryInterface::class, MaritalStatusRepository::class);
+        $this->app->bind(MaritalStatusServiceInterface::class, MaritalStatusService::class);
+        
+        // Legality Status
+        $this->app->bind(LegalityTypeRepositoryInterface::class, LegalityTypeRepository::class);
+        $this->app->bind(LegalityTypeServiceInterface::class, LegalityTypeService::class);
     }
 
     /**
