@@ -11,6 +11,7 @@ use App\Services\Sex\{SexService, SexServiceInterface};
 use App\Services\Tax\{TaxService, TaxServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
+use App\Services\Job\{JobService, JobServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -19,6 +20,7 @@ use App\Repositories\Sex\{SexRepository, SexRepositoryInterface};
 use App\Repositories\Tax\{TaxRepository, TaxRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
+use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -60,6 +62,10 @@ class AppServiceProvider extends ServiceProvider
         // Status Employment
         $this->app->bind(StatusEmploymentRepositoryInterface::class, StatusEmploymentRepository::class);
         $this->app->bind(StatusEmploymentServiceInterface::class, StatusEmploymentService::class);
+        
+        // Job
+        $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
+        $this->app->bind(JobServiceInterface::class, JobService::class);
     }
 
     /**
