@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\{
     AuthController, DepartmentController, EducationController, PositionController,
     ReligionController, SexController, TaxController, UnitController, StatusEmploymentController,
-    JobController, IdentityTypeController, MaritalStatusController, LegalityTypeController
+    JobController, IdentityTypeController, MaritalStatusController, LegalityTypeController,
+    ProvinceController, CityController, DistrictController, VillageController
 };
 
 /*
@@ -60,6 +61,14 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::resource('marital-statuses', MaritalStatusController::class);
         // route for legality-types
         Route::resource('legality-types', LegalityTypeController::class);
+        // route for provinces
+        Route::resource('provinces', ProvinceController::class);
+        // route for cities
+        Route::resource('cities', CityController::class);
+        // route for districts
+        Route::resource('districts', DistrictController::class);
+        // route for villages
+        Route::resource('villages', VillageController::class);
     });
 });
 

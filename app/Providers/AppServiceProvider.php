@@ -15,6 +15,10 @@ use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\IdentityType\{IdentityTypeService, IdentityTypeServiceInterface};
 use App\Services\MaritalStatus\{MaritalStatusService, MaritalStatusServiceInterface};
 use App\Services\LegalityType\{LegalityTypeService, LegalityTypeServiceInterface};
+use App\Services\Province\{ProvinceService, ProvinceServiceInterface};
+use App\Services\City\{CityService, CityServiceInterface};
+use App\Services\District\{DistrictService, DistrictServiceInterface};
+use App\Services\Village\{VillageService, VillageServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -27,6 +31,10 @@ use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\IdentityType\{IdentityTypeRepository, IdentityTypeRepositoryInterface};
 use App\Repositories\MaritalStatus\{MaritalStatusRepository, MaritalStatusRepositoryInterface};
 use App\Repositories\LegalityType\{LegalityTypeRepository, LegalityTypeRepositoryInterface};
+use App\Repositories\Province\{ProvinceRepository, ProvinceRepositoryInterface};
+use App\Repositories\City\{CityRepository, CityRepositoryInterface};
+use App\Repositories\District\{DistrictRepository, DistrictRepositoryInterface};
+use App\Repositories\Village\{VillageRepository, VillageRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -68,22 +76,38 @@ class AppServiceProvider extends ServiceProvider
         // Status Employment
         $this->app->bind(StatusEmploymentRepositoryInterface::class, StatusEmploymentRepository::class);
         $this->app->bind(StatusEmploymentServiceInterface::class, StatusEmploymentService::class);
-        
+
         // Job
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
         $this->app->bind(JobServiceInterface::class, JobService::class);
-        
+
         // Identity Type
         $this->app->bind(IdentityTypeRepositoryInterface::class, IdentityTypeRepository::class);
         $this->app->bind(IdentityTypeServiceInterface::class, IdentityTypeService::class);
-        
+
         // Marital Status
         $this->app->bind(MaritalStatusRepositoryInterface::class, MaritalStatusRepository::class);
         $this->app->bind(MaritalStatusServiceInterface::class, MaritalStatusService::class);
-        
+
         // Legality Status
         $this->app->bind(LegalityTypeRepositoryInterface::class, LegalityTypeRepository::class);
         $this->app->bind(LegalityTypeServiceInterface::class, LegalityTypeService::class);
+
+        // Province
+        $this->app->bind(ProvinceRepositoryInterface::class, ProvinceRepository::class);
+        $this->app->bind(ProvinceServiceInterface::class, ProvinceService::class);
+
+        // City
+        $this->app->bind(CityRepositoryInterface::class, CityRepository::class);
+        $this->app->bind(CityServiceInterface::class, CityService::class);
+
+        // District
+        $this->app->bind(DistrictRepositoryInterface::class, DistrictRepository::class);
+        $this->app->bind(DistrictServiceInterface::class, DistrictService::class);
+
+        // Village
+        $this->app->bind(VillageRepositoryInterface::class, VillageRepository::class);
+        $this->app->bind(VillageServiceInterface::class, VillageService::class);
     }
 
     /**

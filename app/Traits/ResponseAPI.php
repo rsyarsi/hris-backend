@@ -26,7 +26,7 @@ trait ResponseAPI
             if (!empty($data)) {
                 $response['data'] = $data;
             }
-            return response()->json( $response, $statusCode);
+            return response()->json($response, $statusCode);
         } else {
             return response()->json([
                 'message' => $message,
