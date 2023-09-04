@@ -6,7 +6,8 @@ use App\Http\Controllers\API\V1\{
     AuthController, DepartmentController, EducationController, PositionController,
     ReligionController, SexController, TaxController, UnitController, StatusEmploymentController,
     JobController, IdentityTypeController, MaritalStatusController, LegalityTypeController,
-    ProvinceController, CityController, DistrictController, VillageController
+    ProvinceController, CityController, DistrictController, VillageController,
+    EmployeeController
 };
 
 /*
@@ -69,6 +70,8 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::resource('districts', DistrictController::class);
         // route for villages
         Route::resource('villages', VillageController::class);
+        // route for employees
+        Route::resource('employees', EmployeeController::class);
     });
 });
 

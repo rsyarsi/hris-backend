@@ -19,6 +19,7 @@ use App\Services\Province\{ProvinceService, ProvinceServiceInterface};
 use App\Services\City\{CityService, CityServiceInterface};
 use App\Services\District\{DistrictService, DistrictServiceInterface};
 use App\Services\Village\{VillageService, VillageServiceInterface};
+use App\Services\Employee\{EmployeeService, EmployeeServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -35,6 +36,7 @@ use App\Repositories\Province\{ProvinceRepository, ProvinceRepositoryInterface};
 use App\Repositories\City\{CityRepository, CityRepositoryInterface};
 use App\Repositories\District\{DistrictRepository, DistrictRepositoryInterface};
 use App\Repositories\Village\{VillageRepository, VillageRepositoryInterface};
+use App\Repositories\Employee\{EmployeeRepository, EmployeeRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -108,6 +110,10 @@ class AppServiceProvider extends ServiceProvider
         // Village
         $this->app->bind(VillageRepositoryInterface::class, VillageRepository::class);
         $this->app->bind(VillageServiceInterface::class, VillageService::class);
+
+        // Employee
+        $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
+        $this->app->bind(EmployeeServiceInterface::class, EmployeeService::class);
     }
 
     /**
