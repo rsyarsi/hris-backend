@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MaritalStatusRequest;
 use App\Services\MaritalStatus\MaritalStatusServiceInterface;
@@ -19,10 +20,12 @@ class MaritalStatusController extends Controller
         $this->maritalstatusService = $maritalstatusService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $maritalstatuss = $this->maritalstatusService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $maritalstatuss = $this->maritalstatusService->index($perPage, $search);
             return $this->success('Marital Status retrieved successfully', $maritalstatuss);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

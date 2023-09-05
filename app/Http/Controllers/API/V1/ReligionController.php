@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReligionRequest;
 use App\Services\Religion\ReligionServiceInterface;
@@ -19,10 +20,12 @@ class ReligionController extends Controller
         $this->religionService = $religionService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $religions = $this->religionService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $religions = $this->religionService->index($perPage, $search);
             return $this->success('Religions retrieved successfully', $religions);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

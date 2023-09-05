@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EducationRequest;
 use App\Services\Education\EducationServiceInterface;
@@ -19,10 +20,12 @@ class EducationController extends Controller
         $this->educationService = $educationService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $educations = $this->educationService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $educations = $this->educationService->index($perPage, $search);
             return $this->success('Educations retrieved successfully', $educations);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StatusEmploymentRequest;
 use App\Services\StatusEmployment\StatusEmploymentServiceInterface;
@@ -19,10 +20,12 @@ class StatusEmploymentController extends Controller
         $this->statusemploymentService = $statusemploymentService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $statusemployments = $this->statusemploymentService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $statusemployments = $this->statusemploymentService->index($perPage, $search);
             return $this->success('Status Employments retrieved successfully', $statusemployments);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

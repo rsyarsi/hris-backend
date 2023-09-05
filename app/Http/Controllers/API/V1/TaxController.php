@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Requests\TaxRequest;
 use App\Http\Controllers\Controller;
 use App\Services\Tax\TaxServiceInterface;
@@ -19,10 +20,12 @@ class TaxController extends Controller
         $this->taxService = $taxService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $taxs = $this->taxService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $taxs = $this->taxService->index($perPage, $search);
             return $this->success('Taxs retrieved successfully', $taxs);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

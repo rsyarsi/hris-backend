@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Requests\SexRequest;
 use App\Http\Controllers\Controller;
 use App\Services\Sex\SexServiceInterface;
@@ -19,10 +20,12 @@ class SexController extends Controller
         $this->sexService = $sexService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $sexs = $this->sexService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $sexs = $this->sexService->index($perPage, $search);;
             return $this->success('Sexs retrieved successfully', $sexs);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

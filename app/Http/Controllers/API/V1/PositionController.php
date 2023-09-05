@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PositionRequest;
 use App\Services\Position\PositionServiceInterface;
@@ -19,10 +20,12 @@ class PositionController extends Controller
         $this->positionService = $positionService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $positions = $this->positionService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $positions = $this->positionService->index($perPage, $search);
             return $this->success('Positions retrieved successfully', $positions);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

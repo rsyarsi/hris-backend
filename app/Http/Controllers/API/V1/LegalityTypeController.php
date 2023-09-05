@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LegalityTypeRequest;
 use App\Services\LegalityType\LegalityTypeServiceInterface;
@@ -19,10 +20,12 @@ class LegalityTypeController extends Controller
         $this->legalitytypeService = $legalitytypeService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $legalitytypes = $this->legalitytypeService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $legalitytypes = $this->legalitytypeService->index($perPage, $search);
             return $this->success('Legality Types retrieved successfully', $legalitytypes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

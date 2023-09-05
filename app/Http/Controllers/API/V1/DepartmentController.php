@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DepartmentRequest;
 use App\Services\Department\DepartmentServiceInterface;
@@ -19,10 +20,12 @@ class DepartmentController extends Controller
         $this->departmentService = $departmentService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $departments = $this->departmentService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $departments = $this->departmentService->index($perPage, $search);
             return $this->success('Departments retrieved successfully', $departments);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

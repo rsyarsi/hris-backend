@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IdentityTypeRequest;
 use App\Services\IdentityType\IdentityTypeServiceInterface;
@@ -19,10 +20,12 @@ class IdentityTypeController extends Controller
         $this->identitytypeService = $identitytypeService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $identitytypes = $this->identitytypeService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $identitytypes = $this->identitytypeService->index($perPage, $search);
             return $this->success('Identity Type retrieved successfully', $identitytypes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

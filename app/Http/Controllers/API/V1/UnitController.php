@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Requests\UnitRequest;
 use App\Http\Controllers\Controller;
 use App\Services\Unit\UnitServiceInterface;
@@ -19,10 +20,12 @@ class UnitController extends Controller
         $this->unitService = $unitService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $units = $this->unitService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $units = $this->unitService->index($perPage, $search);
             return $this->success('Units retrieved successfully', $units);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

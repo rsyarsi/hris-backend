@@ -25,7 +25,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
 Route::middleware('api')->prefix('v1/auth')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('/login', 'login');
@@ -34,7 +33,9 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::get('/user-profile', 'userProfile');
         Route::post('/logout', 'logout');
     });
-
+    
+});
+Route::middleware('api')->prefix('v1/')->group(function () {
     Route::prefix('masterdata')->group(function () {
         // route for users
         Route::resource('users', UserController::class);

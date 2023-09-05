@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Requests\JobRequest;
 use App\Http\Controllers\Controller;
 use App\Services\Job\JobServiceInterface;
@@ -19,10 +20,12 @@ class JobController extends Controller
         $this->jobService = $jobService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $jobs = $this->jobService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $jobs = $this->jobService->index($perPage, $search);
             return $this->success('Jobs retrieved successfully', $jobs);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

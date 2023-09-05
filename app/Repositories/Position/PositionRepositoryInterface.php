@@ -3,7 +3,7 @@ namespace App\Repositories\Position;
 
 Interface PositionRepositoryInterface{
 
-    public function index();
+    public function index($perPage, $search);
     public function store(array $data);
     public function show($id);
     public function update($id, array $data);

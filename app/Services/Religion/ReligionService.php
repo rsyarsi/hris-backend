@@ -14,9 +14,9 @@ class ReligionService implements ReligionServiceInterface
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index($perPage, $search)
     {
-        return $this->repository->index();
+        return $this->repository->index($perPage, $search);
     }
 
     public function store(array $data)
@@ -43,7 +43,7 @@ class ReligionService implements ReligionServiceInterface
 
     public function formatTextTitle($data)
     {
-        return Str::title($data);
+        return Str::upper($data);
     }
 
 }

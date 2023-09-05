@@ -16,9 +16,13 @@ class DepartmentRepository implements DepartmentRepositoryInterface
         $this->model = $model;
     }
 
-    public function index()
+    public function index($perPage, $search = null)
     {
-        return $this->model->get($this->field);
+        $query = $this->model->select($this->field);
+        if ($search !== null) {
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+        }
+        return $query->paginate($perPage);
     }
 
     public function store(array $data)
