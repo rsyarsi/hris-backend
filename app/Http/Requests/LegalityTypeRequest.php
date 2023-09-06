@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LegalityTypeRequest extends FormRequest
@@ -24,15 +25,15 @@ class LegalityTypeRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('mlegalitytypes')->ignore($this->route('legality-types')),
+            ],
             'active' => 'required|integer',
             'extended' => 'required|boolean',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:mlegalitytypes,name,' . $this->route('legality-types');
-        }
-
         return $rules;
     }
 }

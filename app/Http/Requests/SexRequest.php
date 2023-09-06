@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SexRequest extends FormRequest
@@ -24,13 +25,13 @@ class SexRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('msexs')->ignore($this->route('sexs')),
+            ],
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:msexs,name,' . $this->route('sexs');
-        }
-
         return $rules;
     }
 }

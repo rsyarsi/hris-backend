@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VillageRequest;
 use App\Services\Village\VillageServiceInterface;
@@ -19,10 +20,12 @@ class VillageController extends Controller
         $this->villageService = $villageService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $villages = $this->villageService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $villages = $this->villageService->index($perPage, $search);
             return $this->success('Villages retrieved successfully', $villages);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

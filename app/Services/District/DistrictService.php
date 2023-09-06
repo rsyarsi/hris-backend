@@ -14,9 +14,9 @@ class DistrictService implements DistrictServiceInterface
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index($perPage, $search)
     {
-        return $this->repository->index();
+        return $this->repository->index($perPage, $search);
     }
 
     public function store(array $data)

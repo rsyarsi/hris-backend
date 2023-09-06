@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CityRequest extends FormRequest
@@ -24,17 +25,21 @@ class CityRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'code' => 'required|max:4',
+            'code' => [
+                'required',
+                'max:4',
+                'string',
+                Rule::unique('indonesia_cities')->ignore($this->route('cities')),
+            ],
+            'name' => [
+                'required',
+                'max:255',
+                'string',
+                Rule::unique('indonesia_cities')->ignore($this->route('cities')),
+            ],
             'province_code' => 'required|exists:indonesia_provinces,code',
-            'name' => 'required|string|max:255',
             'meta' => 'required',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['code'] = 'required|max:4|unique:indonesia_cities,code,' . $this->route('cities');
-            $rules['name'] = 'required|string|max:255|unique:indonesia_cities,name,' . $this->route('cities');
-        }
-
         return $rules;
     }
 }

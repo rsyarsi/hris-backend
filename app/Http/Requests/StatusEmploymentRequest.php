@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StatusEmploymentRequest extends FormRequest
@@ -24,14 +25,14 @@ class StatusEmploymentRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('mstatusemployments')->ignore($this->route('status-employments')),
+            ],
             'active' => 'required|integer',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:mstatusemployments,name,' . $this->route('status-employments');
-        }
-
         return $rules;
     }
 }

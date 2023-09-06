@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UnitRequest extends FormRequest
@@ -24,14 +25,14 @@ class UnitRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('munits')->ignore($this->route('units')),
+            ],
             'active' => 'required|integer',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:munits,name,' . $this->route('units');
-        }
-
         return $rules;
     }
 }

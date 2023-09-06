@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TaxRequest extends FormRequest
@@ -24,14 +25,14 @@ class TaxRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('mtaxs')->ignore($this->route('taxs')),
+            ],
             'active' => 'required|integer',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:mtaxs,name,' . $this->route('taxs');
-        }
-
         return $rules;
     }
 }

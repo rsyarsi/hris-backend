@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class VillageRequest extends FormRequest
@@ -24,17 +25,21 @@ class VillageRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'code' => 'required|max:10',
+            'code' => [
+                'required',
+                'max:10',
+                'string',
+                Rule::unique('indonesia_villages')->ignore($this->route('villages')),
+            ],
+            'name' => [
+                'required',
+                'max:255',
+                'string',
+                Rule::unique('indonesia_villages')->ignore($this->route('villages')),
+            ],
             'district_code' => 'required|exists:indonesia_districts,code',
-            'name' => 'required|string|max:255',
             'meta' => 'required',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['code'] = 'required|max:10|unique:indonesia_villages,code,' . $this->route('villages');
-            $rules['name'] = 'required|string|max:255|unique:indonesia_villages,name,' . $this->route('villages');
-        }
-
         return $rules;
     }
 }

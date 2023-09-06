@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DistrictRequest;
 use App\Services\District\DistrictServiceInterface;
@@ -19,10 +20,12 @@ class DistrictController extends Controller
         $this->districtService = $districtService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $districts = $this->districtService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $districts = $this->districtService->index($perPage, $search);
             return $this->success('Districts retrieved successfully', $districts);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

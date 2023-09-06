@@ -19,7 +19,7 @@ class Employee extends Model
     protected $fillable =
     [
         'name',
-        'legal_indentity_type_id',
+        'legal_identity_type_id',
         'legal_identity_number',
         'family_card_number',
         'sex_id',
@@ -60,7 +60,7 @@ class Employee extends Model
 
     public function identityType()
     {
-        return $this->belongsTo(IdentityType::class, 'legal_indentity_type_id', 'id');
+        return $this->belongsTo(IdentityType::class, 'legal_identity_type_id', 'id');
     }
 
     public function sex()

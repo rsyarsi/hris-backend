@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Requests\CityRequest;
 use App\Http\Controllers\Controller;
 use App\Services\City\CityServiceInterface;
@@ -19,10 +20,12 @@ class CityController extends Controller
         $this->cityService = $cityService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $citys = $this->cityService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $citys = $this->cityService->index($perPage, $search);
             return $this->success('Citys retrieved successfully', $citys);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EducationRequest extends FormRequest
@@ -24,14 +25,14 @@ class EducationRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('meducations')->ignore($this->route('educations')),
+            ],
             'active' => 'required|integer',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:meducations,name,' . $this->route('educations');
-        }
-
         return $rules;
     }
 }

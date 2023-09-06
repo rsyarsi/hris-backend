@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProvinceRequest;
 use App\Services\Province\ProvinceServiceInterface;
@@ -19,10 +20,12 @@ class ProvinceController extends Controller
         $this->provinceService = $provinceService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $provinces = $this->provinceService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $provinces = $this->provinceService->index($perPage, $search);
             return $this->success('Provinces retrieved successfully', $provinces);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

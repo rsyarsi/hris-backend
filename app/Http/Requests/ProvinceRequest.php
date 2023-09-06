@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProvinceRequest extends FormRequest
@@ -24,16 +25,20 @@ class ProvinceRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'code' => 'required|max:2',
-            'name' => 'required|string|max:255',
+            'code' => [
+                'required',
+                'max:2',
+                'string',
+                Rule::unique('indonesia_provinces')->ignore($this->route('provinces')),
+            ],
+            'name' => [
+                'required',
+                'max:255',
+                'string',
+                Rule::unique('indonesia_provinces')->ignore($this->route('provinces')),
+            ],
             'meta' => 'required',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['code'] = 'required|max:2|unique:indonesia_provinces,code,' . $this->route('provinces');
-            $rules['name'] = 'required|string|max:255|unique:indonesia_provinces,name,' . $this->route('provinces');
-        }
-
         return $rules;
     }
 }

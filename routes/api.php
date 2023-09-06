@@ -37,8 +37,6 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
 });
 Route::middleware('api')->prefix('v1/')->group(function () {
     Route::prefix('masterdata')->group(function () {
-        // route for users
-        Route::resource('users', UserController::class);
         // route for departments
         Route::resource('departments', DepartmentController::class);
         // route for educations

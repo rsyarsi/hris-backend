@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
 use App\Services\Employee\EmployeeServiceInterface;
@@ -19,10 +20,12 @@ class EmployeeController extends Controller
         $this->employeeService = $employeeService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $employees = $this->employeeService->index();
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $employees = $this->employeeService->index($perPage, $search);
             return $this->success('Employees retrieved successfully', $employees);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

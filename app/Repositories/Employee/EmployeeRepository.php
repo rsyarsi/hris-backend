@@ -11,7 +11,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
     private $model;
     private $field =
     [
-        'id', 'name', 'legal_indentity_type_id', 'legal_identity_number', 'family_card_number',
+        'id', 'name', 'legal_identity_type_id', 'legal_identity_number', 'family_card_number',
         'sex_id','birth_place', 'birth_date', 'marital_status_id', 'religion_id', 'blood_type',
         'tax_identify_number', 'email', 'phone_number', 'phone_number_country', 'legal_address',
         'legal_postal_code', 'legal_province_id', 'legal_city_id', 'legal_district_id', 'legal_village_id',
@@ -27,9 +27,13 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $this->model = $model;
     }
 
-    public function index()
+    public function index($perPage, $search = null)
     {
-        return $this->model->orderBy('id', 'ASC')->get($this->field);
+        $query = $this->model->select($this->field);
+        if ($search !== null) {
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+        }
+        return $query->paginate($perPage);
     }
 
     public function store(array $data)
@@ -42,13 +46,43 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model
                         ->with([
                             'identityType' => function ($query) {
-                                $query->select('name');
+                                $query->select('id', 'name');
                             },
                             'sex' => function ($query) {
-                                $query->select('name');
+                                $query->select('id', 'name');
                             },
                             'maritalStatus' => function ($query) {
-                                $query->select('name');
+                                $query->select('id', 'name');
+                            },
+                            'religion' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'province' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'city' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'district' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'village' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'statusEmployment' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'position' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'unit' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'user' => function ($query) {
+                                $query->select('id', 'name');
                             },
                         ])
                         ->where('id', $id)

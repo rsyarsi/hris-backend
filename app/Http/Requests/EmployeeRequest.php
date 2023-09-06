@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeRequest extends FormRequest
@@ -25,7 +26,7 @@ class EmployeeRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:150',
-            'legal_indentity_type_id',
+            'legal_identity_type_id' => 'required|exists:midentitytypes,id',
             'legal_identity_number' => 'required|string|max:150',
             'family_card_number' => 'required|string|max:150',
             'sex_id' => 'required|exists:msexs,id',
@@ -35,7 +36,12 @@ class EmployeeRequest extends FormRequest
             'religion_id' => 'required|exists:mreligions,id',
             'blood_type' => 'required|string|max:15',
             'tax_identify_number' => 'required|string|max:150',
-            'email' => 'required|email|unique:employees,email|max:150',
+            'email' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('employees')->ignore($this->route('employee')),
+            ],
             'phone_number' => 'required|max:20',
             'phone_number_country' => 'required|max:5',
             'legal_address' => 'required|string|max:255',
@@ -63,11 +69,6 @@ class EmployeeRequest extends FormRequest
             'resigned_at' => 'nullable|date',
             'user_id' => 'required|exists:users,id'
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['email'] = 'required|string|max:150|unique:employees,email,' . $this->route('employees');
-        }
-
         return $rules;
     }
 }

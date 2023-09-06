@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MaritalStatusRequest extends FormRequest
@@ -24,14 +25,14 @@ class MaritalStatusRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('mmaritalstatuses')->ignore($this->route('marital-statuses')),
+            ],
             'active' => 'required|integer',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:mmaritalstatuses,name,' . $this->route('marital-statuses');
-        }
-
         return $rules;
     }
 }

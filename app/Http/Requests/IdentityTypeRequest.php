@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IdentityTypeRequest extends FormRequest
@@ -24,14 +25,14 @@ class IdentityTypeRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|max:150',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('midentitytypes')->ignore($this->route('identity-types')),
+            ],
             'active' => 'required|integer',
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['name'] = 'required|string|max:150|unique:midentitytypes,name,' . $this->route('identity-types');
-        }
-
         return $rules;
     }
 }
