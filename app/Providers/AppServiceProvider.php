@@ -20,6 +20,7 @@ use App\Services\City\{CityService, CityServiceInterface};
 use App\Services\District\{DistrictService, DistrictServiceInterface};
 use App\Services\Village\{VillageService, VillageServiceInterface};
 use App\Services\Employee\{EmployeeService, EmployeeServiceInterface};
+use App\Services\EmployeeOrganization\{EmployeeOrganizationService, EmployeeOrganizationServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -37,6 +38,7 @@ use App\Repositories\City\{CityRepository, CityRepositoryInterface};
 use App\Repositories\District\{DistrictRepository, DistrictRepositoryInterface};
 use App\Repositories\Village\{VillageRepository, VillageRepositoryInterface};
 use App\Repositories\Employee\{EmployeeRepository, EmployeeRepositoryInterface};
+use App\Repositories\EmployeeOrganization\{EmployeeOrganizationRepository, EmployeeOrganizationRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -114,6 +116,10 @@ class AppServiceProvider extends ServiceProvider
         // Employee
         $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
         $this->app->bind(EmployeeServiceInterface::class, EmployeeService::class);
+
+        // Employee Organization
+        $this->app->bind(EmployeeOrganizationRepositoryInterface::class, EmployeeOrganizationRepository::class);
+        $this->app->bind(EmployeeOrganizationServiceInterface::class, EmployeeOrganizationService::class);
     }
 
     /**

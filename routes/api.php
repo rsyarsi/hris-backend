@@ -7,7 +7,7 @@ use App\Http\Controllers\API\V1\{
     ReligionController, SexController, TaxController, UnitController, StatusEmploymentController,
     JobController, IdentityTypeController, MaritalStatusController, LegalityTypeController,
     ProvinceController, CityController, DistrictController, VillageController,
-    EmployeeController
+    EmployeeController, EmployeeOrganizationController
 };
 
 /*
@@ -33,7 +33,7 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::get('/user-profile', 'userProfile');
         Route::post('/logout', 'logout');
     });
-    
+
 });
 Route::middleware('api')->prefix('v1/')->group(function () {
     Route::prefix('masterdata')->group(function () {
@@ -49,7 +49,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('sexs', SexController::class);
         // route for taxs
         Route::resource('taxs', TaxController::class);
-        // route for units
+        // route for uniEMPLOYEEts
         Route::resource('units', UnitController::class);
         // route for status-employments
         Route::resource('status-employments', StatusEmploymentController::class);
@@ -71,6 +71,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('villages', VillageController::class);
         // route for employees
         Route::resource('employees', EmployeeController::class);
+        // route for employee-organizations
+        Route::resource('employee-organizations', EmployeeOrganizationController::class);
     });
 });
 
