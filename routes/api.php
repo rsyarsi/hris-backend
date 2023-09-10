@@ -5,9 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\{
     AuthController, DepartmentController, EducationController, PositionController,
     ReligionController, SexController, TaxController, UnitController, StatusEmploymentController,
-    JobController, IdentityTypeController, MaritalStatusController, LegalityTypeController,
-    ProvinceController, CityController, DistrictController, VillageController,
-    EmployeeController, EmployeeOrganizationController
+    JobController, RelationshipController, IdentityTypeController, MaritalStatusController,
+    LegalityTypeController, ProvinceController, CityController, DistrictController, VillageController,
+    EmployeeController, EmployeeOrganizationController, EmployeeExperienceController,
+    EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
+    EmployeeFamilyController
 };
 
 /*
@@ -55,6 +57,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('status-employments', StatusEmploymentController::class);
         // route for jobs
         Route::resource('jobs', JobController::class);
+        // route for relationships
+        Route::resource('relationships', RelationshipController::class);
         // route for identity-types
         Route::resource('identity-types', IdentityTypeController::class);
         // route for marital-statuses
@@ -73,6 +77,16 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employees', EmployeeController::class);
         // route for employee-organizations
         Route::resource('employee-organizations', EmployeeOrganizationController::class);
+        // route for employee-experiences
+        Route::resource('employee-experiences', EmployeeExperienceController::class);
+        // route for employee-educations
+        Route::resource('employee-educations', EmployeeEducationController::class);
+        // route for employee-position-histories
+        Route::resource('employee-position-histories', EmployeePositionHistoryController::class);
+        // route for employee-legalities
+        Route::resource('employee-legalities', EmployeeLegalityController::class);
+        // route for employee-families
+        Route::resource('employee-families', EmployeeFamilyController::class);
     });
 });
 

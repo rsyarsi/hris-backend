@@ -13,8 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('employees', function (Blueprint $table) {
-            $table->renameColumn('legal_indentity_type_id', 'legal_identity_type_id');
+        Schema::create('mrelationships', function (Blueprint $table) {
+            $table->id();
+            $table->string('name',150);
+            $table->tinyInteger('active')->default('1');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('employees', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('mrelationships');
     }
 };

@@ -84,6 +84,57 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             'user' => function ($query) {
                                 $query->select('id', 'name');
                             },
+                            'employeeOrganization' => function ($query) {
+                                $query->select('id', 'employee_id', 'institution_name', 'position');
+                            },
+                            'employeeExperience' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'company_name',
+                                    'company_field',
+                                    'responsibility',
+                                    'started_at',
+                                    'ended_at',
+                                    'start_position',
+                                    'end_position',
+                                    'stop_reason',
+                                    'latest_salary'
+                                );
+                            },
+                            'employeeEducation' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'education_id',
+                                    'institution_name',
+                                    'major',
+                                    'started_year',
+                                    'ended_year',
+                                    'is_passed',
+                                );
+                            },
+                            'employeeFamily' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'name',
+                                    'relationship_id',
+                                    'as_emergency',
+                                    'id_dead',
+                                    'birth_date',
+                                    'phone',
+                                    'phone_country',
+                                    'employer_familiescol',
+                                    'address',
+                                    'postal_code',
+                                    'province_id',
+                                    'city_id',
+                                    'district_id',
+                                    'village_id',
+                                    'job_id'
+                                );
+                            },
                         ])
                         ->where('id', $id)
                         ->first($this->field);

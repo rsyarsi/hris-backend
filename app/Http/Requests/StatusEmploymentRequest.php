@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +25,7 @@ class StatusEmploymentRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             'name' => [
                 'required',
                 'max:150',
@@ -33,6 +34,12 @@ class StatusEmploymentRequest extends FormRequest
             ],
             'active' => 'required|integer',
         ];
-        return $rules;
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => Str::upper($this->input('name')),
+        ]);
     }
 }

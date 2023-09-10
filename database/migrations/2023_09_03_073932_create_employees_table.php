@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->ulid('id');
+            $table->ulid('id')->primary();
             $table->string('name',150)->nullable();
-            $table->foreignId('legal_indentity_type_id')->nullable()->constrained('midentitytypes')->nullOnDelete();
+            $table->foreignId('legal_identity_type_id')->nullable()->constrained('midentitytypes')->nullOnDelete();
             $table->string('legal_identity_number',150)->nullable();
             $table->string('family_card_number',150)->nullable();
             $table->foreignId('sex_id')->nullable()->constrained('msexs')->nullOnDelete();

@@ -24,7 +24,7 @@ class EmployeeRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             'name' => 'required|string|max:150',
             'legal_identity_type_id' => 'required|exists:midentitytypes,id',
             'legal_identity_number' => 'required|string|max:150',
@@ -69,6 +69,5 @@ class EmployeeRequest extends FormRequest
             'resigned_at' => 'nullable|date',
             'user_id' => 'required|exists:users,id'
         ];
-        return $rules;
     }
 }

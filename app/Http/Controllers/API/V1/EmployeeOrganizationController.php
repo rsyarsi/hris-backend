@@ -12,12 +12,12 @@ class EmployeeOrganizationController extends Controller
 {
     use ResponseAPI;
 
-    private $employeeorganizationService;
+    private $employeeOrganizationService;
 
-    public function __construct(EmployeeOrganizationServiceInterface $employeeorganizationService)
+    public function __construct(EmployeeOrganizationServiceInterface $employeeOrganizationService)
     {
         $this->middleware('auth:api');
-        $this->employeeorganizationService = $employeeorganizationService;
+        $this->employeeOrganizationService = $employeeOrganizationService;
     }
 
     public function index(Request $request)
@@ -25,7 +25,7 @@ class EmployeeOrganizationController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $employeeorganizations = $this->employeeorganizationService->index($perPage, $search);
+            $employeeorganizations = $this->employeeOrganizationService->index($perPage, $search);
             return $this->success('Employee Organizations retrieved successfully', $employeeorganizations);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -36,7 +36,7 @@ class EmployeeOrganizationController extends Controller
     {
         try {
             $data = $request->validated();
-            $employeeorganization = $this->employeeorganizationService->store($data);
+            $employeeorganization = $this->employeeOrganizationService->store($data);
             return $this->success('Employee Organization created successfully', $employeeorganization, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -46,7 +46,7 @@ class EmployeeOrganizationController extends Controller
     public function show($id)
     {
         try {
-            $employeeorganization = $this->employeeorganizationService->show($id);
+            $employeeorganization = $this->employeeOrganizationService->show($id);
             if (!$employeeorganization) {
                 return $this->error('Employee Organization not found', 404);
             }
@@ -60,7 +60,7 @@ class EmployeeOrganizationController extends Controller
     {
         try {
             $data = $request->validated();
-            $employeeorganization = $this->employeeorganizationService->update($id, $data);
+            $employeeorganization = $this->employeeOrganizationService->update($id, $data);
             if (!$employeeorganization) {
                 return $this->error('Employee Organization not found', 404);
             }
@@ -73,7 +73,7 @@ class EmployeeOrganizationController extends Controller
     public function destroy($id)
     {
         try {
-            $employeeorganization = $this->employeeorganizationService->destroy($id);
+            $employeeorganization = $this->employeeOrganizationService->destroy($id);
             if (!$employeeorganization) {
                 return $this->error('Employee Organization not found', 404);
             }

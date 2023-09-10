@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +25,7 @@ class ProvinceRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             'code' => [
                 'required',
                 'max:2',
@@ -39,6 +40,13 @@ class ProvinceRequest extends FormRequest
             ],
             'meta' => 'required',
         ];
-        return $rules;
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'code' => Str::upper($this->input('code')),
+            'name' => Str::upper($this->input('name')),
+        ]);
     }
 }

@@ -12,6 +12,7 @@ use App\Services\Tax\{TaxService, TaxServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
 use App\Services\Job\{JobService, JobServiceInterface};
+use App\Services\Relationship\{RelationshipService, RelationshipServiceInterface};
 use App\Services\IdentityType\{IdentityTypeService, IdentityTypeServiceInterface};
 use App\Services\MaritalStatus\{MaritalStatusService, MaritalStatusServiceInterface};
 use App\Services\LegalityType\{LegalityTypeService, LegalityTypeServiceInterface};
@@ -21,6 +22,11 @@ use App\Services\District\{DistrictService, DistrictServiceInterface};
 use App\Services\Village\{VillageService, VillageServiceInterface};
 use App\Services\Employee\{EmployeeService, EmployeeServiceInterface};
 use App\Services\EmployeeOrganization\{EmployeeOrganizationService, EmployeeOrganizationServiceInterface};
+use App\Services\EmployeeExperience\{EmployeeExperienceService, EmployeeExperienceServiceInterface};
+use App\Services\EmployeeEducation\{EmployeeEducationService, EmployeeEducationServiceInterface};
+use App\Services\EmployeePositionHistory\{EmployeePositionHistoryService, EmployeePositionHistoryServiceInterface};
+use App\Services\EmployeeLegality\{EmployeeLegalityService, EmployeeLegalityServiceInterface};
+use App\Services\EmployeeFamily\{EmployeeFamilyService, EmployeeFamilyServiceInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -30,6 +36,7 @@ use App\Repositories\Tax\{TaxRepository, TaxRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
+use App\Repositories\Relationship\{RelationshipRepository, RelationshipRepositoryInterface};
 use App\Repositories\IdentityType\{IdentityTypeRepository, IdentityTypeRepositoryInterface};
 use App\Repositories\MaritalStatus\{MaritalStatusRepository, MaritalStatusRepositoryInterface};
 use App\Repositories\LegalityType\{LegalityTypeRepository, LegalityTypeRepositoryInterface};
@@ -39,6 +46,11 @@ use App\Repositories\District\{DistrictRepository, DistrictRepositoryInterface};
 use App\Repositories\Village\{VillageRepository, VillageRepositoryInterface};
 use App\Repositories\Employee\{EmployeeRepository, EmployeeRepositoryInterface};
 use App\Repositories\EmployeeOrganization\{EmployeeOrganizationRepository, EmployeeOrganizationRepositoryInterface};
+use App\Repositories\EmployeeExperience\{EmployeeExperienceRepository, EmployeeExperienceRepositoryInterface};
+use App\Repositories\EmployeeEducation\{EmployeeEducationRepository, EmployeeEducationRepositoryInterface};
+use App\Repositories\EmployeePositionHistory\{EmployeePositionHistoryRepository, EmployeePositionHistoryRepositoryInterface};
+use App\Repositories\EmployeeLegality\{EmployeeLegalityRepository, EmployeeLegalityRepositoryInterface};
+use App\Repositories\EmployeeFamily\{EmployeeFamilyRepository, EmployeeFamilyRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -85,6 +97,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
         $this->app->bind(JobServiceInterface::class, JobService::class);
 
+        // Relationship
+        $this->app->bind(RelationshipRepositoryInterface::class, RelationshipRepository::class);
+        $this->app->bind(RelationshipServiceInterface::class, RelationshipService::class);
+
         // Identity Type
         $this->app->bind(IdentityTypeRepositoryInterface::class, IdentityTypeRepository::class);
         $this->app->bind(IdentityTypeServiceInterface::class, IdentityTypeService::class);
@@ -120,6 +136,27 @@ class AppServiceProvider extends ServiceProvider
         // Employee Organization
         $this->app->bind(EmployeeOrganizationRepositoryInterface::class, EmployeeOrganizationRepository::class);
         $this->app->bind(EmployeeOrganizationServiceInterface::class, EmployeeOrganizationService::class);
+
+        // Employee Experience
+        $this->app->bind(EmployeeExperienceRepositoryInterface::class, EmployeeExperienceRepository::class);
+        $this->app->bind(EmployeeExperienceServiceInterface::class, EmployeeExperienceService::class);
+
+        // Employee Education
+        $this->app->bind(EmployeeEducationRepositoryInterface::class, EmployeeEducationRepository::class);
+        $this->app->bind(EmployeeEducationServiceInterface::class, EmployeeEducationService::class);
+
+        // Employee Position History
+        $this->app->bind(EmployeePositionHistoryRepositoryInterface::class, EmployeePositionHistoryRepository::class);
+        $this->app->bind(EmployeePositionHistoryServiceInterface::class, EmployeePositionHistoryService::class);
+
+        // Employee Legality
+        $this->app->bind(EmployeeLegalityRepositoryInterface::class, EmployeeLegalityRepository::class);
+        $this->app->bind(EmployeeLegalityServiceInterface::class, EmployeeLegalityService::class);
+
+        // Employee Family
+        $this->app->bind(EmployeeFamilyRepositoryInterface::class, EmployeeFamilyRepository::class);
+        $this->app->bind(EmployeeFamilyServiceInterface::class, EmployeeFamilyService::class);
+
     }
 
     /**

@@ -32,7 +32,14 @@ class EmployeeOrganizationRepository implements EmployeeOrganizationRepositoryIn
 
     public function show($id)
     {
-        $employeeorganization = $this->model->where('id', $id)->first($this->field);
+        $employeeorganization = $this->model
+                                    ->with([
+                                        'employee' => function ($query) {
+                                            $query->select('id', 'name');
+                                        },
+                                    ])
+                                    ->where('id', $id)
+                                    ->first($this->field);
         return $employeeorganization ? $employeeorganization : $employeeorganization = null;
     }
 

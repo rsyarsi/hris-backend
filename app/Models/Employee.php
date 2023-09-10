@@ -127,4 +127,19 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeOrganization::class, 'employee_id');
     }
+
+    public function employeeExperience()
+    {
+        return $this->hasMany(EmployeeExperience::class, 'employee_id');
+    }
+
+    public function employeeEducation()
+    {
+        return $this->hasMany(EmployeeEducation::class, 'employee_id');
+    }
+
+    public function employeeFamily()
+    {
+        return $this->hasMany(EmployeeFamily::class, 'employee_id');
+    }
 }
