@@ -142,4 +142,14 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeFamily::class, 'employee_id');
     }
+
+    public function employeeCertificate()
+    {
+        return $this->hasMany(EmployeeCertificate::class, 'employee_id');
+    }
+
+    public function employeeSkill()
+    {
+        return $this->hasMany(EmployeeSkill::class, 'employee_id');
+    }
 }

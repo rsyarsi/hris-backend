@@ -34,7 +34,6 @@ class EmployeeLegalityController extends Controller
 
     public function store(EmployeeLegalityRequest $request)
     {
-        // return $request->all();
         try {
             $data = $request->validated();
             $employeelegality = $this->employeeLegalityService->store($data);

@@ -135,6 +135,32 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'job_id'
                                 );
                             },
+                            'employeeCertificate' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'name',
+                                    'institution_name',
+                                    'started_at',
+                                    'ended_at',
+                                    'file_url',
+                                    'file_path',
+                                    'file_disk',
+                                    'verified_at',
+                                    'verified_user_Id',
+                                    'is_extended'
+                                );
+                            },
+                            'employeeSkill' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'skill_type_id',
+                                    'employee_certificate_id',
+                                    'description',
+                                    'level',
+                                );
+                            },
                         ])
                         ->where('id', $id)
                         ->first($this->field);

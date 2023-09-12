@@ -12,6 +12,7 @@ use App\Services\Tax\{TaxService, TaxServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
 use App\Services\Job\{JobService, JobServiceInterface};
+use App\Services\SkillType\{SkillTypeService, SkillTypeServiceInterface};
 use App\Services\Relationship\{RelationshipService, RelationshipServiceInterface};
 use App\Services\IdentityType\{IdentityTypeService, IdentityTypeServiceInterface};
 use App\Services\MaritalStatus\{MaritalStatusService, MaritalStatusServiceInterface};
@@ -27,6 +28,14 @@ use App\Services\EmployeeEducation\{EmployeeEducationService, EmployeeEducationS
 use App\Services\EmployeePositionHistory\{EmployeePositionHistoryService, EmployeePositionHistoryServiceInterface};
 use App\Services\EmployeeLegality\{EmployeeLegalityService, EmployeeLegalityServiceInterface};
 use App\Services\EmployeeFamily\{EmployeeFamilyService, EmployeeFamilyServiceInterface};
+use App\Services\EmployeeCertificate\{EmployeeCertificateService, EmployeeCertificateServiceInterface};
+use App\Services\EmployeeSkill\{EmployeeSkillService, EmployeeSkillServiceInterface};
+use App\Services\LeaveType\{LeaveTypeService, LeaveTypeServiceInterface};
+use App\Services\LeaveStatus\{LeaveStatusService, LeaveStatusServiceInterface};
+use App\Services\Leave\{LeaveService, LeaveServiceInterface};
+use App\Services\LeaveHistory\{LeaveHistoryService, LeaveHistoryServiceInterface};
+use App\Services\LeaveApproval\{LeaveApprovalService, LeaveApprovalServiceInterface};
+
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -36,6 +45,7 @@ use App\Repositories\Tax\{TaxRepository, TaxRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
+use App\Repositories\SkillType\{SkillTypeRepository, SkillTypeRepositoryInterface};
 use App\Repositories\Relationship\{RelationshipRepository, RelationshipRepositoryInterface};
 use App\Repositories\IdentityType\{IdentityTypeRepository, IdentityTypeRepositoryInterface};
 use App\Repositories\MaritalStatus\{MaritalStatusRepository, MaritalStatusRepositoryInterface};
@@ -51,6 +61,13 @@ use App\Repositories\EmployeeEducation\{EmployeeEducationRepository, EmployeeEdu
 use App\Repositories\EmployeePositionHistory\{EmployeePositionHistoryRepository, EmployeePositionHistoryRepositoryInterface};
 use App\Repositories\EmployeeLegality\{EmployeeLegalityRepository, EmployeeLegalityRepositoryInterface};
 use App\Repositories\EmployeeFamily\{EmployeeFamilyRepository, EmployeeFamilyRepositoryInterface};
+use App\Repositories\EmployeeCertificate\{EmployeeCertificateRepository, EmployeeCertificateRepositoryInterface};
+use App\Repositories\EmployeeSkill\{EmployeeSkillRepository, EmployeeSkillRepositoryInterface};
+use App\Repositories\LeaveType\{LeaveTypeRepository, LeaveTypeRepositoryInterface};
+use App\Repositories\LeaveStatus\{LeaveStatusRepository, LeaveStatusRepositoryInterface};
+use App\Repositories\Leave\{LeaveRepository, LeaveRepositoryInterface};
+use App\Repositories\LeaveHistory\{LeaveHistoryRepository, LeaveHistoryRepositoryInterface};
+use App\Repositories\LeaveApproval\{LeaveApprovalRepository, LeaveApprovalRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -96,6 +113,10 @@ class AppServiceProvider extends ServiceProvider
         // Job
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
         $this->app->bind(JobServiceInterface::class, JobService::class);
+
+        // Skill Type
+        $this->app->bind(SkillTypeRepositoryInterface::class, SkillTypeRepository::class);
+        $this->app->bind(SkillTypeServiceInterface::class, SkillTypeService::class);
 
         // Relationship
         $this->app->bind(RelationshipRepositoryInterface::class, RelationshipRepository::class);
@@ -156,6 +177,34 @@ class AppServiceProvider extends ServiceProvider
         // Employee Family
         $this->app->bind(EmployeeFamilyRepositoryInterface::class, EmployeeFamilyRepository::class);
         $this->app->bind(EmployeeFamilyServiceInterface::class, EmployeeFamilyService::class);
+
+        // Employee Certificate
+        $this->app->bind(EmployeeCertificateRepositoryInterface::class, EmployeeCertificateRepository::class);
+        $this->app->bind(EmployeeCertificateServiceInterface::class, EmployeeCertificateService::class);
+
+        // Employee Skill
+        $this->app->bind(EmployeeSkillRepositoryInterface::class, EmployeeSkillRepository::class);
+        $this->app->bind(EmployeeSkillServiceInterface::class, EmployeeSkillService::class);
+
+        // Leave Type
+        $this->app->bind(LeaveTypeRepositoryInterface::class, LeaveTypeRepository::class);
+        $this->app->bind(LeaveTypeServiceInterface::class, LeaveTypeService::class);
+
+        // Leave Status
+        $this->app->bind(LeaveStatusRepositoryInterface::class, LeaveStatusRepository::class);
+        $this->app->bind(LeaveStatusServiceInterface::class, LeaveStatusService::class);
+
+        // Leave
+        $this->app->bind(LeaveRepositoryInterface::class, LeaveRepository::class);
+        $this->app->bind(LeaveServiceInterface::class, LeaveService::class);
+
+        // Leave History
+        $this->app->bind(LeaveHistoryRepositoryInterface::class, LeaveHistoryRepository::class);
+        $this->app->bind(LeaveHistoryServiceInterface::class, LeaveHistoryService::class);
+
+        // Leave Approval
+        $this->app->bind(LeaveApprovalRepositoryInterface::class, LeaveApprovalRepository::class);
+        $this->app->bind(LeaveApprovalServiceInterface::class, LeaveApprovalService::class);
 
     }
 

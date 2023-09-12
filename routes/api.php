@@ -9,7 +9,8 @@ use App\Http\Controllers\API\V1\{
     LegalityTypeController, ProvinceController, CityController, DistrictController, VillageController,
     EmployeeController, EmployeeOrganizationController, EmployeeExperienceController,
     EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
-    EmployeeFamilyController
+    EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
+    LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController
 };
 
 /*
@@ -65,6 +66,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('marital-statuses', MaritalStatusController::class);
         // route for legality-types
         Route::resource('legality-types', LegalityTypeController::class);
+        // route for skill-types
+        Route::resource('skill-types', SkillTypeController::class);
         // route for provinces
         Route::resource('provinces', ProvinceController::class);
         // route for cities
@@ -87,6 +90,21 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employee-legalities', EmployeeLegalityController::class);
         // route for employee-families
         Route::resource('employee-families', EmployeeFamilyController::class);
+        // route for employee-certificates
+        Route::resource('employee-certificates', EmployeeCertificateController::class);
+        // route for employee-skills
+        Route::resource('employee-skills', EmployeeSkillController::class);
+        // route for leave-types
+        Route::resource('leave-types', LeaveTypeController::class);
+        // route for leave-statuses
+        Route::resource('leave-statuses', LeaveStatusController::class);
+        // route for leave-leaves
+        Route::resource('leave-statuses', LeaveStatusController::class);
+        // route for leaves
+        Route::resource('leaves', LeaveController::class);
+        // route for leave-approvals
+        Route::resource('leave-approvals', LeaveApprovalController::class);
+        // route for leave-histories
+        Route::resource('leave-histories', LeaveHistoryController::class);
     });
 });
-
