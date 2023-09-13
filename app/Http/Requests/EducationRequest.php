@@ -30,7 +30,7 @@ class EducationRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('meducations')->ignore($this->route('educations')),
+                Rule::unique('meducations')->ignore($this->route('education')),
             ],
             'active' => 'required|integer',
         ];

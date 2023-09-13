@@ -30,7 +30,7 @@ class JobRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mjobs')->ignore($this->route('jobs')),
+                Rule::unique('mjobs')->ignore($this->route('job')),
             ],
             'active' => 'required|integer',
         ];

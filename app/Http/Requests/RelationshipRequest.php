@@ -30,7 +30,7 @@ class RelationshipRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mrelationships')->ignore($this->route('relationships')),
+                Rule::unique('mrelationships')->ignore($this->route('relationship')),
             ],
             'active' => 'required|integer',
         ];

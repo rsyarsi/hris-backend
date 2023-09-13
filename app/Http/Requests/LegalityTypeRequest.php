@@ -30,7 +30,7 @@ class LegalityTypeRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mlegalitytypes')->ignore($this->route('legality-types')),
+                Rule::unique('mlegalitytypes')->ignore($this->route('legality_type')),
             ],
             'active' => 'required|integer',
             'extended' => 'required|boolean',

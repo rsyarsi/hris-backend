@@ -30,13 +30,13 @@ class ProvinceRequest extends FormRequest
                 'required',
                 'max:2',
                 'string',
-                Rule::unique('indonesia_provinces')->ignore($this->route('provinces')),
+                Rule::unique('indonesia_provinces')->ignore($this->route('province')),
             ],
             'name' => [
                 'required',
                 'max:255',
                 'string',
-                Rule::unique('indonesia_provinces')->ignore($this->route('provinces')),
+                Rule::unique('indonesia_provinces')->ignore($this->route('province')),
             ],
             'meta' => 'required',
         ];

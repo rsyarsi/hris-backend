@@ -30,7 +30,7 @@ class DepartmentRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mdepartments')->ignore($this->route('departments')),
+                Rule::unique('mdepartments')->ignore($this->route('department')),
             ],
             'active' => 'required|integer',
         ];

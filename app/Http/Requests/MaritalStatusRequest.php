@@ -30,7 +30,7 @@ class MaritalStatusRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mmaritalstatuses')->ignore($this->route('marital-statuses')),
+                Rule::unique('mmaritalstatuses')->ignore($this->route('marital_status')),
             ],
             'active' => 'required|integer',
         ];

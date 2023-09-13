@@ -41,43 +41,43 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
 Route::middleware('api')->prefix('v1/')->group(function () {
     Route::prefix('masterdata')->group(function () {
         // route for departments
-        Route::resource('departments', DepartmentController::class);
+        Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'department']);
         // route for educations
-        Route::resource('educations', EducationController::class);
+        Route::resource('educations', EducationController::class)->parameters(['educations' => 'education']);
         // route for position
-        Route::resource('positions', PositionController::class);
+        Route::resource('positions', PositionController::class)->parameters(['positions' => 'position']);
         // route for religions
-        Route::resource('religions', ReligionController::class);
+        Route::resource('religions', ReligionController::class)->parameters(['religions' => 'religion']);
         // route for sexs
-        Route::resource('sexs', SexController::class);
+        Route::resource('sexs', SexController::class)->parameters(['sexs' => 'sex']);
         // route for taxs
-        Route::resource('taxs', TaxController::class);
-        // route for uniEMPLOYEEts
-        Route::resource('units', UnitController::class);
+        Route::resource('taxs', TaxController::class)->parameters(['taxs' => 'tax']);
+        // route for units
+        Route::resource('units', UnitController::class)->parameters(['units' => 'unit']);
         // route for status-employments
-        Route::resource('status-employments', StatusEmploymentController::class);
+        Route::resource('status-employments', StatusEmploymentController::class)->parameters(['status-employments' => 'status_employment']);
         // route for jobs
-        Route::resource('jobs', JobController::class);
+        Route::resource('jobs', JobController::class)->parameters(['jobs' => 'job']);
         // route for relationships
-        Route::resource('relationships', RelationshipController::class);
+        Route::resource('relationships', RelationshipController::class)->parameters(['relationships' => 'relationship']);
         // route for identity-types
-        Route::resource('identity-types', IdentityTypeController::class);
+        Route::resource('identity-types', IdentityTypeController::class)->parameters(['identity-types' => 'identity_type']);
         // route for marital-statuses
-        Route::resource('marital-statuses', MaritalStatusController::class);
+        Route::resource('marital-statuses', MaritalStatusController::class)->parameters(['marital-statuses' => 'marital_status']);
         // route for legality-types
-        Route::resource('legality-types', LegalityTypeController::class);
+        Route::resource('legality-types', LegalityTypeController::class)->parameters(['legality-types' => 'legality_type']);
         // route for skill-types
-        Route::resource('skill-types', SkillTypeController::class);
+        Route::resource('skill-types', SkillTypeController::class)->parameters(['skill-types' => 'skill_type']);
         // route for provinces
-        Route::resource('provinces', ProvinceController::class);
+        Route::resource('provinces', ProvinceController::class)->parameters(['provinces' => 'province']);
         // route for cities
-        Route::resource('cities', CityController::class);
+        Route::resource('cities', CityController::class)->parameters(['cities' => 'city']);
         // route for districts
-        Route::resource('districts', DistrictController::class);
+        Route::resource('districts', DistrictController::class)->parameters(['districts' => 'district']);
         // route for villages
-        Route::resource('villages', VillageController::class);
+        Route::resource('villages', VillageController::class)->parameters(['villages' => 'village']);
         // route for employees
-        Route::resource('employees', EmployeeController::class);
+        Route::resource('employees', EmployeeController::class)->parameters(['employees' => 'employee']);
         // route for employee-organizations
         Route::resource('employee-organizations', EmployeeOrganizationController::class);
         // route for employee-experiences
@@ -95,9 +95,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for employee-skills
         Route::resource('employee-skills', EmployeeSkillController::class);
         // route for leave-types
-        Route::resource('leave-types', LeaveTypeController::class);
+        Route::resource('leave-types', LeaveTypeController::class)->parameters(['leave-types' => 'leave_type']);
         // route for leave-statuses
-        Route::resource('leave-statuses', LeaveStatusController::class);
+        Route::resource('leave-statuses', LeaveStatusController::class)->parameters(['leave-statuses' => 'leave_status']);
         // route for leave-leaves
         Route::resource('leave-statuses', LeaveStatusController::class);
         // route for leaves

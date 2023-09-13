@@ -30,7 +30,7 @@ class SexRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('msexs')->ignore($this->route('sexs')),
+                Rule::unique('msexs')->ignore($this->route('sex')),
             ],
         ];
     }

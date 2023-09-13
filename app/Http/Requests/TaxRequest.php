@@ -30,7 +30,7 @@ class TaxRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mtaxs')->ignore($this->route('taxs')),
+                Rule::unique('mtaxs')->ignore($this->route('tax')),
             ],
             'active' => 'required|integer',
         ];

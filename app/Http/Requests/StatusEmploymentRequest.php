@@ -30,7 +30,7 @@ class StatusEmploymentRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mstatusemployments')->ignore($this->route('status-employments')),
+                Rule::unique('mstatusemployments')->ignore($this->route('status_employment')),
             ],
             'active' => 'required|integer',
         ];

@@ -30,7 +30,7 @@ class SkillTypeRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mreligions')->ignore($this->route('religions')),
+                Rule::unique('mskilltypes')->ignore($this->route('skill_type')),
             ],
             'active' => 'required|integer',
         ];

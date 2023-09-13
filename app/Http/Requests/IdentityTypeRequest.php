@@ -30,7 +30,7 @@ class IdentityTypeRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('midentitytypes')->ignore($this->route('identity-types')),
+                Rule::unique('midentitytypes')->ignore($this->route('identity_type')),
             ],
             'active' => 'required|integer',
         ];

@@ -30,7 +30,7 @@ class UnitRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('munits')->ignore($this->route('units')),
+                Rule::unique('munits')->ignore($this->route('unit')),
             ],
             'active' => 'required|integer',
         ];

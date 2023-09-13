@@ -30,7 +30,7 @@ class PositionRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mpositions')->ignore($this->route('positions')),
+                Rule::unique('mpositions')->ignore($this->route('position')),
             ],
             'active' => 'required|integer',
         ];

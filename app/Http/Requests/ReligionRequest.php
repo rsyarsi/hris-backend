@@ -30,7 +30,7 @@ class ReligionRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mreligions')->ignore($this->route('religions')),
+                Rule::unique('mreligions')->ignore($this->route('religion')),
             ],
             'active' => 'required|integer',
         ];

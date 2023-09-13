@@ -30,7 +30,7 @@ class LeaveStatusRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('leave_statuses')->ignore($this->route('leave-statuses')),
+                Rule::unique('leave_statuses')->ignore($this->route('leave_status')),
             ]
         ];
     }
