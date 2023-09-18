@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\{
     AuthController, DepartmentController, EducationController, PositionController,
-    ReligionController, SexController, TaxController, UnitController, StatusEmploymentController,
+    ReligionController, SexController, TaxController, UserController, UnitController, StatusEmploymentController,
     JobController, RelationshipController, IdentityTypeController, MaritalStatusController,
     LegalityTypeController, ProvinceController, CityController, DistrictController, VillageController,
     EmployeeController, EmployeeOrganizationController, EmployeeExperienceController,
@@ -52,6 +52,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('sexs', SexController::class)->parameters(['sexs' => 'sex']);
         // route for taxs
         Route::resource('taxs', TaxController::class)->parameters(['taxs' => 'tax']);
+        // route for users
+        Route::resource('users', UserController::class)->parameters(['users' => 'user']);
         // route for units
         Route::resource('units', UnitController::class)->parameters(['units' => 'unit']);
         // route for status-employments

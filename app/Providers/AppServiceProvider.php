@@ -9,6 +9,7 @@ use App\Services\Position\{PositionService, PositionServiceInterface};
 use App\Services\Religion\{ReligionService, ReligionServiceInterface};
 use App\Services\Sex\{SexService, SexServiceInterface};
 use App\Services\Tax\{TaxService, TaxServiceInterface};
+use App\Services\User\{UserService, UserServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
 use App\Services\Job\{JobService, JobServiceInterface};
@@ -42,6 +43,7 @@ use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
 use App\Repositories\Religion\{ReligionRepository, ReligionRepositoryInterface};
 use App\Repositories\Sex\{SexRepository, SexRepositoryInterface};
 use App\Repositories\Tax\{TaxRepository, TaxRepositoryInterface};
+use App\Repositories\User\{UserRepository, UserRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
@@ -101,6 +103,10 @@ class AppServiceProvider extends ServiceProvider
         // Tax
         $this->app->bind(TaxRepositoryInterface::class, TaxRepository::class);
         $this->app->bind(TaxServiceInterface::class, TaxService::class);
+
+        // User
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(UserServiceInterface::class, UserService::class);
 
         // Unit
         $this->app->bind(UnitRepositoryInterface::class, UnitRepository::class);
