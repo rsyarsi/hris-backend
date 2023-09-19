@@ -36,11 +36,14 @@ class ShiftRepository implements ShiftRepositoryInterface
     {
         $query = $this->model
                     ->with([
+                        'shiftGroup' => function ($query) {
+                            $query->select('id', 'name', 'hour', 'day', 'type');
+                        },
                         'userCreated' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'email');
                         },
                         'userUpdated' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'email');
                         },
                     ])
                     ->select($this->field);
@@ -59,11 +62,14 @@ class ShiftRepository implements ShiftRepositoryInterface
     {
         $shift = $this->model
                         ->with([
+                            'shiftGroup' => function ($query) {
+                                $query->select('id', 'name', 'hour', 'day', 'type');
+                            },
                             'userCreated' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name', 'email');
                             },
                             'userUpdated' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name', 'email');
                             },
                         ])
                         ->where('id', $id)

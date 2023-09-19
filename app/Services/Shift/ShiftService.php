@@ -24,6 +24,7 @@ class ShiftService implements ShiftServiceInterface
         $data['name'] = $this->formatTextTitle($data['name']);
         $data['code'] = $this->formatTextTitle($data['code']);
         $data['user_created_id'] = auth()->id();
+        $data['user_updated_id'] = auth()->id();
         return $this->repository->store($data);
     }
 

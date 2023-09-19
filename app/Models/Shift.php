@@ -33,13 +33,18 @@ class Shift extends Model
         'user_updated_id',
     ];
 
+    public function shiftGroup()
+    {
+        return $this->belongsTo(ShiftGroup::class, 'shift_group_id', 'id');
+    }
+
     public function userCreated()
     {
-        return $this->belongsTo(Employee::class, 'user_created_id', 'id');
+        return $this->belongsTo(User::class, 'user_created_id', 'id');
     }
 
     public function userUpdated()
     {
-        return $this->belongsTo(Employee::class, 'user_updated_id', 'id');
+        return $this->belongsTo(User::class, 'user_updated_id', 'id');
     }
 }

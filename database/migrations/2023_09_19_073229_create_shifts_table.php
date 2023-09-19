@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('shifts', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->foreign('shift_group_id')->references('id')->on('shift_groups')->onDelete('set null');
             $table->string('shift_group_id',26)->nullable();
             $table->string('code',45)->nullable();
@@ -27,10 +27,8 @@ return new class extends Migration
             $table->integer('finger_out_more')->nullable();
             $table->tinyInteger('night_shift')->nullable();
             $table->tinyInteger('active')->nullable();
-            $table->foreign('user_created_id')->references('id')->on('employees')->onDelete('set null');
-            $table->string('user_created_id',26)->nullable();
-            $table->foreign('user_updated_id')->references('id')->on('employees')->onDelete('set null');
-            $table->string('user_updated_id',26)->nullable();
+            $table->foreignId('user_created_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('user_updated_id')->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

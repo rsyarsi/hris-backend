@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -46,8 +47,14 @@ class ShiftRequest extends FormRequest
             'finger_out_more' => 'required|integer|digits_between:1,11',
             'night_shift' => 'required|integer',
             'active' => 'required|integer',
-            // 'user_created_id' => 'required|exists:employees,id',
-            // 'user_updated_id' => 'required|exists:employees,id',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => Str::upper($this->input('name')),
+            'code' => Str::upper($this->input('code')),
+        ]);
     }
 }
