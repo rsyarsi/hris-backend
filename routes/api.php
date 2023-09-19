@@ -10,7 +10,8 @@ use App\Http\Controllers\API\V1\{
     EmployeeController, EmployeeOrganizationController, EmployeeExperienceController,
     EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
-    LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController
+    LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
+    ShiftGroupController, ShiftController
 };
 
 /*
@@ -108,5 +109,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('leave-approvals', LeaveApprovalController::class);
         // route for leave-histories
         Route::resource('leave-histories', LeaveHistoryController::class);
+        // route for shift-groups
+        Route::resource('shift-groups', ShiftGroupController::class)->parameters(['shift-groups' => 'shift_group']);
+        // route for shifts
+        Route::resource('shifts', ShiftController::class)->parameters(['shifts' => 'shift']);
     });
 });

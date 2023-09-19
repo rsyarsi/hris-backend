@@ -36,6 +36,8 @@ use App\Services\LeaveStatus\{LeaveStatusService, LeaveStatusServiceInterface};
 use App\Services\Leave\{LeaveService, LeaveServiceInterface};
 use App\Services\LeaveHistory\{LeaveHistoryService, LeaveHistoryServiceInterface};
 use App\Services\LeaveApproval\{LeaveApprovalService, LeaveApprovalServiceInterface};
+use App\Services\ShiftGroup\{ShiftGroupService, ShiftGroupServiceInterface};
+use App\Services\Shift\{ShiftService, ShiftServiceInterface};
 
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
@@ -70,6 +72,8 @@ use App\Repositories\LeaveStatus\{LeaveStatusRepository, LeaveStatusRepositoryIn
 use App\Repositories\Leave\{LeaveRepository, LeaveRepositoryInterface};
 use App\Repositories\LeaveHistory\{LeaveHistoryRepository, LeaveHistoryRepositoryInterface};
 use App\Repositories\LeaveApproval\{LeaveApprovalRepository, LeaveApprovalRepositoryInterface};
+use App\Repositories\ShiftGroup\{ShiftGroupRepository, ShiftGroupRepositoryInterface};
+use App\Repositories\Shift\{ShiftRepository, ShiftRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -211,6 +215,14 @@ class AppServiceProvider extends ServiceProvider
         // Leave Approval
         $this->app->bind(LeaveApprovalRepositoryInterface::class, LeaveApprovalRepository::class);
         $this->app->bind(LeaveApprovalServiceInterface::class, LeaveApprovalService::class);
+        
+        // Leave Shift Group
+        $this->app->bind(ShiftGroupRepositoryInterface::class, ShiftGroupRepository::class);
+        $this->app->bind(ShiftGroupServiceInterface::class, ShiftGroupService::class);
+
+        // Leave Shift
+        $this->app->bind(ShiftRepositoryInterface::class, ShiftRepository::class);
+        $this->app->bind(ShiftServiceInterface::class, ShiftService::class);
 
     }
 

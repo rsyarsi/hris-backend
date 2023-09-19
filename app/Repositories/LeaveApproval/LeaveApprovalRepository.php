@@ -57,28 +57,28 @@ class LeaveApprovalRepository implements LeaveApprovalRepositoryInterface
     public function show($id)
     {
         $leaveapproval = $this->model
-                                    ->with([
-                                        'leave' => function ($query) {
-                                            $query->select(
-                                                'id',
-                                                'employee_id',
-                                                'leave_type_id',
-                                                'from_date',
-                                                'to_date',
-                                                'duration',
-                                                'note',
-                                                'leave_status_id'
-                                            );
-                                        },
-                                        'manager' => function ($query) {
-                                            $query->select(
-                                                'id',
-                                                'name',
-                                            );
-                                        },
-                                    ])
-                                    ->where('id', $id)
-                                    ->first($this->field);
+                                ->with([
+                                    'leave' => function ($query) {
+                                        $query->select(
+                                            'id',
+                                            'employee_id',
+                                            'leave_type_id',
+                                            'from_date',
+                                            'to_date',
+                                            'duration',
+                                            'note',
+                                            'leave_status_id'
+                                        );
+                                    },
+                                    'manager' => function ($query) {
+                                        $query->select(
+                                            'id',
+                                            'name',
+                                        );
+                                    },
+                                ])
+                                ->where('id', $id)
+                                ->first($this->field);
         return $leaveapproval ? $leaveapproval : $leaveapproval = null;
     }
 
