@@ -11,7 +11,7 @@ use App\Http\Controllers\API\V1\{
     EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
-    ShiftGroupController, ShiftController
+    ShiftGroupController, ShiftController, LogFingerController
 };
 
 /*
@@ -113,5 +113,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('shift-groups', ShiftGroupController::class)->parameters(['shift-groups' => 'shift_group']);
         // route for shifts
         Route::resource('shifts', ShiftController::class)->parameters(['shifts' => 'shift']);
+        // route for log-fingers
+        Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
     });
 });
