@@ -26,4 +26,14 @@ class LogFinger extends Model
         'input_manual_at',
         'code_pin'
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_manual_id', 'id');
+    }
 }

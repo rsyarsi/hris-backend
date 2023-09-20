@@ -21,7 +21,6 @@ class LogFingerService implements LogFingerServiceInterface
 
     public function store(array $data)
     {
-        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->store($data);
     }
 
@@ -32,7 +31,6 @@ class LogFingerService implements LogFingerServiceInterface
 
     public function update($id, $data)
     {
-        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->update($id, $data);
     }
 
@@ -40,10 +38,4 @@ class LogFingerService implements LogFingerServiceInterface
     {
         return $this->repository->destroy($id);
     }
-
-    public function formatTextTitle($data)
-    {
-        return Str::upper($data);
-    }
-
 }
