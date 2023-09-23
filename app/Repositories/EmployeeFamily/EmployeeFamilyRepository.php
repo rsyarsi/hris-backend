@@ -11,11 +11,21 @@ class EmployeeFamilyRepository implements EmployeeFamilyRepositoryInterface
     private $model;
     private $field =
     [
-        'id', 'employee_id', 'name', 'relationship_id',
-        'as_emergency', 'id_dead','birth_date', 'phone',
-        'phone_country', 'employer_familiescol', 'address',
-        'postal_code', 'province_id', 'city_id',
-        'district_id', 'village_id', 'job_id',
+        'employee_id',
+        'name',
+        'relationship_id',
+        'as_emergency',
+        'is_dead',
+        'birth_date',
+        'phone',
+        'phone_country',
+        'address',
+        'postal_code',
+        'province_id',
+        'city_id',
+        'district_id',
+        'village_id',
+        'job_id',
     ];
 
     public function __construct(EmployeeFamily $model)

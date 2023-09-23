@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Leave;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Services\Leave\LeaveServiceInterface;
 use App\Repositories\Leave\LeaveRepositoryInterface;
@@ -21,6 +22,17 @@ class LeaveService implements LeaveServiceInterface
 
     public function store(array $data)
     {
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+
+        // Check if from_date and to_date are the same
+        if ($fromDate->eq($toDate)) {
+            $data['duration'] = 1;
+        } else {
+            $duration = $fromDate->diffInDays($toDate);
+            $data['duration'] = $duration;
+        }
+
         return $this->repository->store($data);
     }
 
@@ -31,6 +43,19 @@ class LeaveService implements LeaveServiceInterface
 
     public function update($id, $data)
     {
+        if (isset($data['from_date']) || isset($data['to_date'])) {
+            $fromDate = Carbon::parse($data['from_date'] ?? $this->repository->show($id)->from_date);
+            $toDate = Carbon::parse($data['to_date'] ?? $this->repository->show($id)->to_date);
+
+            // Check if from_date and to_date are the same
+            if ($fromDate->eq($toDate)) {
+                $data['duration'] = 1;
+            } else {
+                $duration = $fromDate->diffInDays($toDate);
+                $data['duration'] = $duration;
+            }
+        }
+
         return $this->repository->update($id, $data);
     }
 
@@ -38,10 +63,4 @@ class LeaveService implements LeaveServiceInterface
     {
         return $this->repository->destroy($id);
     }
-
-    public function formatTextTitle($data)
-    {
-        return Str::upper($data);
-    }
-
 }

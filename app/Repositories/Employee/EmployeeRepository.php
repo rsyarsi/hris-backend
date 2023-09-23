@@ -29,7 +29,49 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field);
+        $query = $this->model
+                        ->with([
+                            'identityType' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'sex' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'maritalStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'religion' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'province' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'city' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'district' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'village' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'statusEmployment' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'position' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'unit' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'user' => function ($query) {
+                                $query->select('id', 'name');
+                            }
+                        ])
+                        ->select($this->field);
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
@@ -112,28 +154,33 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'started_year',
                                     'ended_year',
                                     'is_passed',
-                                );
+                                )->with('education:id,name');
                             },
                             'employeeFamily' => function ($query) {
                                 $query->select(
-                                    'id',
                                     'employee_id',
                                     'name',
                                     'relationship_id',
                                     'as_emergency',
-                                    'id_dead',
+                                    'is_dead',
                                     'birth_date',
                                     'phone',
                                     'phone_country',
-                                    'employer_familiescol',
                                     'address',
                                     'postal_code',
                                     'province_id',
                                     'city_id',
                                     'district_id',
                                     'village_id',
-                                    'job_id'
-                                );
+                                    'job_id',
+                                )->with([
+                                    'relationship:id,name',
+                                    'job:id,name',
+                                    'province:id,code,name',
+                                    'city:id,code,province_code,name',
+                                    'district:id,code,city_code,name',
+                                    'village:id,code,district_code,name',
+                                ]);
                             },
                             'employeeCertificate' => function ($query) {
                                 $query->select(
@@ -159,7 +206,41 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'employee_certificate_id',
                                     'description',
                                     'level',
-                                );
+                                )->with([
+                                    'skillType:id,name',
+                                    'employeeCertificate:id,name,institution_name,started_at,ended_at,file_url,file_path,file_disk,verified_at,verified_user_Id,is_extended',
+                                ]);
+                            },
+                            'leave' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'leave_type_id',
+                                    'from_date',
+                                    'to_date',
+                                    'duration',
+                                    'note',
+                                    'leave_status_id',
+                                )->with([
+                                    'leaveType:id,name,is_salary_deduction',
+                                    'leaveStatus:id,name',
+                                ]);
+                            },
+                            'overtime' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'task',
+                                    'note',
+                                    'overtime_status_id',
+                                    'from_date',
+                                    'amount',
+                                    'type',
+                                    'to_date',
+                                    'duration',
+                                )->with([
+                                    'overtimeStatus:id,name',
+                                ]);
                             },
                         ])
                         ->where('id', $id)

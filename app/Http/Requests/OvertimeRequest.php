@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\DateSmallerThan;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LeaveRequest extends FormRequest
+class OvertimeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +25,13 @@ class LeaveRequest extends FormRequest
     {
         return [
             'employee_id' => 'required|exists:employees,id',
-            'leave_type_id' => 'required|exists:leave_types,id',
-            'leave_status_id' => 'required|exists:leave_statuses,id',
-            'from_date' => ['required', 'date', new DateSmallerThan('to_date')],
+            'task' => 'required|max:255',
+            'note' => 'required|max:255',
+            'overtime_status_id' => 'required|exists:overtime_statuses,id',
+            'amount' => 'required|max:18',
+            'type' => 'required|in:HARI-KERJA,HARI-LIBUR',
+            'from_date' => 'required|date',
             'to_date' => 'required|date',
-            'note' => 'required',
         ];
     }
 }

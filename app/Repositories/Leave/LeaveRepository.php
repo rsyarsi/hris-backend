@@ -63,7 +63,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         // if ($search !== null) {
         //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         // }
-        return $query->paginate($perPage);
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)

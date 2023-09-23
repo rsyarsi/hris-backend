@@ -11,7 +11,7 @@ use App\Http\Controllers\API\V1\{
     EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
-    ShiftGroupController, ShiftController, LogFingerController
+    ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController
 };
 
 /*
@@ -101,8 +101,6 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('leave-types', LeaveTypeController::class)->parameters(['leave-types' => 'leave_type']);
         // route for leave-statuses
         Route::resource('leave-statuses', LeaveStatusController::class)->parameters(['leave-statuses' => 'leave_status']);
-        // route for leave-leaves
-        Route::resource('leave-statuses', LeaveStatusController::class);
         // route for leaves
         Route::resource('leaves', LeaveController::class);
         // route for leave-approvals
@@ -115,5 +113,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('shifts', ShiftController::class)->parameters(['shifts' => 'shift']);
         // route for log-fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
+        // route for overtime-statuses
+        Route::resource('overtime-statuses', OvertimeStatusController::class)->parameters(['overtime-statuses' => 'overtime_status']);
+        // route for overtimes
+        Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
     });
 });

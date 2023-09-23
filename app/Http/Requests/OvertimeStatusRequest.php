@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\DateSmallerThan;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LeaveRequest extends FormRequest
+class OvertimeStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +26,19 @@ class LeaveRequest extends FormRequest
     public function rules()
     {
         return [
-            'employee_id' => 'required|exists:employees,id',
-            'leave_type_id' => 'required|exists:leave_types,id',
-            'leave_status_id' => 'required|exists:leave_statuses,id',
-            'from_date' => ['required', 'date', new DateSmallerThan('to_date')],
-            'to_date' => 'required|date',
-            'note' => 'required',
+            'name' => [
+                'required',
+                'max:150',
+                'string',
+                Rule::unique('overtime_statuses')->ignore($this->route('overtime_status')),
+            ]
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => Str::upper($this->input('name')),
+        ]);
     }
 }

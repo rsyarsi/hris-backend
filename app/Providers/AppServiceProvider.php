@@ -39,6 +39,8 @@ use App\Services\LeaveApproval\{LeaveApprovalService, LeaveApprovalServiceInterf
 use App\Services\ShiftGroup\{ShiftGroupService, ShiftGroupServiceInterface};
 use App\Services\Shift\{ShiftService, ShiftServiceInterface};
 use App\Services\LogFinger\{LogFingerService, LogFingerServiceInterface};
+use App\Services\OvertimeStatus\{OvertimeStatusService, OvertimeStatusServiceInterface};
+use App\Services\Overtime\{OvertimeService, OvertimeServiceInterface};
 
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
@@ -76,6 +78,8 @@ use App\Repositories\LeaveApproval\{LeaveApprovalRepository, LeaveApprovalReposi
 use App\Repositories\ShiftGroup\{ShiftGroupRepository, ShiftGroupRepositoryInterface};
 use App\Repositories\Shift\{ShiftRepository, ShiftRepositoryInterface};
 use App\Repositories\LogFinger\{LogFingerRepository, LogFingerRepositoryInterface};
+use App\Repositories\OvertimeStatus\{OvertimeStatusRepository, OvertimeStatusRepositoryInterface};
+use App\Repositories\Overtime\{OvertimeRepository, OvertimeRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -229,6 +233,14 @@ class AppServiceProvider extends ServiceProvider
         // Log Finger
         $this->app->bind(LogFingerRepositoryInterface::class, LogFingerRepository::class);
         $this->app->bind(LogFingerServiceInterface::class, LogFingerService::class);
+
+        // Overtime Status
+        $this->app->bind(OvertimeStatusRepositoryInterface::class, OvertimeStatusRepository::class);
+        $this->app->bind(OvertimeStatusServiceInterface::class, OvertimeStatusService::class);
+
+        // Overtime
+        $this->app->bind(OvertimeRepositoryInterface::class, OvertimeRepository::class);
+        $this->app->bind(OvertimeServiceInterface::class, OvertimeService::class);
     }
 
     /**
