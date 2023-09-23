@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('code_sn_finger',45)->nullable();
             $table->timestamp('datetime')->nullable();
             $table->tinyInteger('manual')->nullable();
-            $table->integer('user_manual_id')->nullable();
+            $table->foreignId('user_manual_id')->constrained('users')->nullOnDelete();
             $table->timestamp('input_manual_at')->nullable();
             $table->string('code_pin',45)->nullable();
             $table->timestamps();

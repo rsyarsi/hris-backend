@@ -9,7 +9,18 @@ use App\Repositories\LogFinger\LogFingerRepositoryInterface;
 class LogFingerRepository implements LogFingerRepositoryInterface
 {
     private $model;
-    private $field = ['id', 'name', 'active'];
+    private $field = [
+        'id',
+        'log_at',
+        'employee_id',
+        'in_out',
+        'code_sn_finger',
+        'datetime',
+        'manual',
+        'user_manual_id',
+        'input_manual_at',
+        'code_pin'
+    ];
 
     public function __construct(LogFinger $model)
     {
@@ -19,9 +30,9 @@ class LogFingerRepository implements LogFingerRepositoryInterface
     public function index($perPage, $search = null)
     {
         $query = $this->model->select($this->field);
-        if ($search !== null) {
-            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        }
+        // if ($search !== null) {
+        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+        // }
         return $query->paginate($perPage);
     }
 
