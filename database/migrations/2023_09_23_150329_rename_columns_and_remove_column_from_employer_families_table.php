@@ -14,11 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::table('employer_families', function (Blueprint $table) {
-            // Rename the 'id_dead' column to 'is_dead'
             $table->renameColumn('id_dead', 'is_dead');
-
-            // Remove the 'employer_familiescol' column
+            $table->date('birth_date')->nullable()->change();
             $table->dropColumn('employer_familiescol');
+            $table->dropColumn('province_id');
+            $table->dropColumn('village_id');
+            $table->dropColumn('district_id');
+            $table->dropColumn('city_id');
         });
     }
 
@@ -29,10 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('employer_families', function (Blueprint $table) {
-            // Reverse the operations if needed
-            $table->renameColumn('is_dead', 'id_dead');
-            $table->string('employer_familiescol', 45)->nullable();
-        });
+        //
     }
 };
