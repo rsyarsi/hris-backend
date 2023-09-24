@@ -210,38 +210,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'skillType:id,name',
                                     'employeeCertificate:id,name,institution_name,started_at,ended_at,file_url,file_path,file_disk,verified_at,verified_user_Id,is_extended',
                                 ]);
-                            },
-                            'leave' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'employee_id',
-                                    'leave_type_id',
-                                    'from_date',
-                                    'to_date',
-                                    'duration',
-                                    'note',
-                                    'leave_status_id',
-                                )->with([
-                                    'leaveType:id,name,is_salary_deduction',
-                                    'leaveStatus:id,name',
-                                ]);
-                            },
-                            'overtime' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'employee_id',
-                                    'task',
-                                    'note',
-                                    'overtime_status_id',
-                                    'from_date',
-                                    'amount',
-                                    'type',
-                                    'to_date',
-                                    'duration',
-                                )->with([
-                                    'overtimeStatus:id,name',
-                                ]);
-                            },
+                            }
                         ])
                         ->where('id', $id)
                         ->first($this->field);

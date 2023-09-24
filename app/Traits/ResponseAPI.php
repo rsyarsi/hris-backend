@@ -56,6 +56,8 @@ trait ResponseAPI
      */
     public function error($message, $statusCode = 500)
     {
-        return $this->coreResponse($message, null, $statusCode, false);
+        $code = $statusCode > 599 ? 500 : $statusCode;
+
+        return $this->coreResponse($message, null, $code, false);
     }
 }
