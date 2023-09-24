@@ -34,7 +34,7 @@ class DistrictRepository implements DistrictRepositoryInterface
     {
         $district = $this->model
                     ->with(['villages' => function ($query) {
-                        $query->select('district_code', 'code', 'name', 'meta');
+                        $query->select('id', 'district_code', 'code', 'name', 'meta');
                     }])
                     ->where('id', $id)
                     ->first($this->field);

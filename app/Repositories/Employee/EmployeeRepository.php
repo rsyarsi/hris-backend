@@ -158,6 +158,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             },
                             'employeeFamily' => function ($query) {
                                 $query->select(
+                                    'id',
                                     'employee_id',
                                     'name',
                                     'relationship_id',

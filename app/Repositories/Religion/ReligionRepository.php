@@ -22,7 +22,7 @@ class ReligionRepository implements ReligionRepositoryInterface
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('id', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)

@@ -34,7 +34,7 @@ class CityRepository implements CityRepositoryInterface
     {
         $city = $this->model
                     ->with(['districs' => function ($query) {
-                        $query->select('city_code', 'code', 'name', 'meta');
+                        $query->select('id', 'city_code', 'code', 'name', 'meta');
                     }])
                     ->where('id', $id)
                     ->first($this->field);

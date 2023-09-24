@@ -34,7 +34,7 @@ class ProvinceRepository implements ProvinceRepositoryInterface
     {
         $province = $this->model
                         ->with(['cities' => function ($query) {
-                            $query->select('province_code', 'code', 'name', 'meta');
+                            $query->select('id', 'province_code', 'code', 'name', 'meta');
                         }])
                         ->where('id', $id)
                         ->first($this->field);
