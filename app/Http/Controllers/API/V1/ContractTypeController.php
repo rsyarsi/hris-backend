@@ -26,7 +26,7 @@ class ContractTypeController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $contracttypes = $this->contracttypeService->index($perPage, $search);
-            return $this->success('Status Employments retrieved successfully', $contracttypes);
+            return $this->success('Contract Types retrieved successfully', $contracttypes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -37,7 +37,7 @@ class ContractTypeController extends Controller
         try {
             $data = $request->validated();
             $contracttype = $this->contracttypeService->store($data);
-            return $this->success('Status Employment created successfully', $contracttype, 201);
+            return $this->success('Contract Type created successfully', $contracttype, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -48,9 +48,9 @@ class ContractTypeController extends Controller
         try {
             $contracttype = $this->contracttypeService->show($id);
             if (!$contracttype) {
-                return $this->error('Status Employment not found', 404);
+                return $this->error('Contract Type not found', 404);
             }
-            return $this->success('Status Employment retrieved successfully', $contracttype);
+            return $this->success('Contract Type retrieved successfully', $contracttype);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -62,9 +62,9 @@ class ContractTypeController extends Controller
             $data = $request->validated();
             $contracttype = $this->contracttypeService->update($id, $data);
             if (!$contracttype) {
-                return $this->error('Status Employment not found', 404);
+                return $this->error('Contract Type not found', 404);
             }
-            return $this->success('Status Employment updated successfully', $contracttype, 201);
+            return $this->success('Contract Type updated successfully', $contracttype, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -75,9 +75,9 @@ class ContractTypeController extends Controller
         try {
             $contracttype = $this->contracttypeService->destroy($id);
             if (!$contracttype) {
-                return $this->error('Status Employment not found', 404);
+                return $this->error('Contract Type not found', 404);
             }
-            return $this->success('Status Employment deleted successfully, id : '.$contracttype->id, []);
+            return $this->success('Contract Type deleted successfully, id : '.$contracttype->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

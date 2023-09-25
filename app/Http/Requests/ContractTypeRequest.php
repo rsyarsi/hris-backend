@@ -30,7 +30,7 @@ class ContractTypeRequest extends FormRequest
                 'required',
                 'max:150',
                 'string',
-                Rule::unique('mstatusemployments')->ignore($this->route('mcontracttypes')),
+                Rule::unique('mcontracttypes')->ignore($this->route('contract_type')),
             ],
             'active' => 'required|integer',
         ];
