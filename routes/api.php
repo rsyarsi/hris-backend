@@ -74,6 +74,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('legality-types', LegalityTypeController::class)->parameters(['legality-types' => 'legality_type']);
         // route for skill-types
         Route::resource('skill-types', SkillTypeController::class)->parameters(['skill-types' => 'skill_type']);
+        // route for payroll-components
+        Route::resource('payroll-components', PayrollComponentController::class)->parameters(['payroll-components' => 'payroll_component']);
         // route for provinces
         Route::resource('provinces', ProvinceController::class)->parameters(['provinces' => 'province']);
         // route for cities
@@ -120,7 +122,5 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('overtime-statuses', OvertimeStatusController::class)->parameters(['overtime-statuses' => 'overtime_status']);
         // route for overtimes
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
-        // route for payroll-components
-        Route::resource('payroll-components', PayrollComponentController::class)->parameters(['payroll-components' => 'payroll_component']);
     });
 });

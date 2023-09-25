@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Http\Controllers\Controller;
+use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PayrollComponentRequest;
+use App\Services\PayrollComponent\PayrollComponentServiceInterface;
 
 class PayrollComponentController extends Controller
 {
@@ -23,7 +26,7 @@ class PayrollComponentController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $payrollcomponents = $this->payrollcomponentService->index($perPage, $search);
-            return $this->success('Contract Types retrieved successfully', $payrollcomponents);
+            return $this->success('Payroll Components retrieved successfully', $payrollcomponents);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -34,7 +37,7 @@ class PayrollComponentController extends Controller
         try {
             $data = $request->validated();
             $payrollcomponent = $this->payrollcomponentService->store($data);
-            return $this->success('Contract Type created successfully', $payrollcomponent, 201);
+            return $this->success('Payroll Component created successfully', $payrollcomponent, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -45,9 +48,9 @@ class PayrollComponentController extends Controller
         try {
             $payrollcomponent = $this->payrollcomponentService->show($id);
             if (!$payrollcomponent) {
-                return $this->error('Contract Type not found', 404);
+                return $this->error('Payroll Component not found', 404);
             }
-            return $this->success('Contract Type retrieved successfully', $payrollcomponent);
+            return $this->success('Payroll Component retrieved successfully', $payrollcomponent);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -59,9 +62,9 @@ class PayrollComponentController extends Controller
             $data = $request->validated();
             $payrollcomponent = $this->payrollcomponentService->update($id, $data);
             if (!$payrollcomponent) {
-                return $this->error('Contract Type not found', 404);
+                return $this->error('Payroll Component not found', 404);
             }
-            return $this->success('Contract Type updated successfully', $payrollcomponent, 201);
+            return $this->success('Payroll Component updated successfully', $payrollcomponent, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -72,9 +75,9 @@ class PayrollComponentController extends Controller
         try {
             $payrollcomponent = $this->payrollcomponentService->destroy($id);
             if (!$payrollcomponent) {
-                return $this->error('Contract Type not found', 404);
+                return $this->error('Payroll Component not found', 404);
             }
-            return $this->success('Contract Type deleted successfully, id : '.$payrollcomponent->id, []);
+            return $this->success('Payroll Component deleted successfully, id : '.$payrollcomponent->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
