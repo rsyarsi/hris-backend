@@ -13,6 +13,7 @@ use App\Services\User\{UserService, UserServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
 use App\Services\ContractType\{ContractTypeService, ContractTypeServiceInterface};
+use App\Services\PayrollComponent\{PayrollComponentService, PayrollComponentServiceInterface};
 use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\SkillType\{SkillTypeService, SkillTypeServiceInterface};
 use App\Services\Relationship\{RelationshipService, RelationshipServiceInterface};
@@ -53,6 +54,7 @@ use App\Repositories\User\{UserRepository, UserRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
 use App\Repositories\ContractType\{ContractTypeRepository, ContractTypeRepositoryInterface};
+use App\Repositories\PayrollComponent\{PayrollComponentRepository, PayrollComponentRepositoryInterface};
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\SkillType\{SkillTypeRepository, SkillTypeRepositoryInterface};
 use App\Repositories\Relationship\{RelationshipRepository, RelationshipRepositoryInterface};
@@ -131,6 +133,10 @@ class AppServiceProvider extends ServiceProvider
         // Contract Type
         $this->app->bind(ContractTypeRepositoryInterface::class, ContractTypeRepository::class);
         $this->app->bind(ContractTypeServiceInterface::class, ContractTypeService::class);
+        
+        // Payroll Component
+        $this->app->bind(PayrollComponentRepositoryInterface::class, PayrollComponentRepository::class);
+        $this->app->bind(PayrollComponentServiceInterface::class, PayrollComponentService::class);
 
         // Job
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);

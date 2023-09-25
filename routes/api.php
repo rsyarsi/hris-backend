@@ -12,7 +12,7 @@ use App\Http\Controllers\API\V1\{
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
-    ContractTypeController
+    ContractTypeController, PayrollComponentController
 };
 
 /*
@@ -120,5 +120,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('overtime-statuses', OvertimeStatusController::class)->parameters(['overtime-statuses' => 'overtime_status']);
         // route for overtimes
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
+        // route for payroll-components
+        Route::resource('payroll-components', PayrollComponentController::class)->parameters(['payroll-components' => 'payroll_component']);
     });
 });
