@@ -12,6 +12,7 @@ use App\Services\Tax\{TaxService, TaxServiceInterface};
 use App\Services\User\{UserService, UserServiceInterface};
 use App\Services\Unit\{UnitService, UnitServiceInterface};
 use App\Services\StatusEmployment\{StatusEmploymentService, StatusEmploymentServiceInterface};
+use App\Services\ContractType\{ContractTypeService, ContractTypeServiceInterface};
 use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\SkillType\{SkillTypeService, SkillTypeServiceInterface};
 use App\Services\Relationship\{RelationshipService, RelationshipServiceInterface};
@@ -51,6 +52,7 @@ use App\Repositories\Tax\{TaxRepository, TaxRepositoryInterface};
 use App\Repositories\User\{UserRepository, UserRepositoryInterface};
 use App\Repositories\Unit\{UnitRepository, UnitRepositoryInterface};
 use App\Repositories\StatusEmployment\{StatusEmploymentRepository, StatusEmploymentRepositoryInterface};
+use App\Repositories\ContractType\{ContractTypeRepository, ContractTypeRepositoryInterface};
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\SkillType\{SkillTypeRepository, SkillTypeRepositoryInterface};
 use App\Repositories\Relationship\{RelationshipRepository, RelationshipRepositoryInterface};
@@ -125,6 +127,10 @@ class AppServiceProvider extends ServiceProvider
         // Status Employment
         $this->app->bind(StatusEmploymentRepositoryInterface::class, StatusEmploymentRepository::class);
         $this->app->bind(StatusEmploymentServiceInterface::class, StatusEmploymentService::class);
+
+        // Contract Type
+        $this->app->bind(ContractTypeRepositoryInterface::class, ContractTypeRepository::class);
+        $this->app->bind(ContractTypeServiceInterface::class, ContractTypeService::class);
 
         // Job
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);

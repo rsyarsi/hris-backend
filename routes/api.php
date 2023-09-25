@@ -11,7 +11,8 @@ use App\Http\Controllers\API\V1\{
     EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
-    ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController
+    ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
+    ContractTypeController
 };
 
 /*
@@ -59,6 +60,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('units', UnitController::class)->parameters(['units' => 'unit']);
         // route for status-employments
         Route::resource('status-employments', StatusEmploymentController::class)->parameters(['status-employments' => 'status_employment']);
+        // route for contract-types
+        Route::resource('contract-types', ContractTypeController::class)->parameters(['contract-types' => 'contract_type']);
         // route for jobs
         Route::resource('jobs', JobController::class)->parameters(['jobs' => 'job']);
         // route for relationships
