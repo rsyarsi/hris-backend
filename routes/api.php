@@ -86,6 +86,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('villages', VillageController::class)->parameters(['villages' => 'village']);
         // route for employees
         Route::resource('employees', EmployeeController::class)->parameters(['employees' => 'employee']);
+        // route for employee-number-null
+        Route::get('employee-number-null', [EmployeeController::class, 'employeeNumberNull'])->name('employee-number-null');
         // route for employee-organizations
         Route::resource('employee-organizations', EmployeeOrganizationController::class);
         // route for employee-experiences

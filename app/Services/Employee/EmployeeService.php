@@ -41,9 +41,13 @@ class EmployeeService implements EmployeeServiceInterface
         return $this->repository->destroy($id);
     }
 
+    public function employeeNumberNull($perPage, $search)
+    {
+        return $this->repository->employeeNumberNull($perPage, $search);
+    }
+
     public function formatTextTitle($data)
     {
         return Str::title($data);
     }
-
 }

@@ -55,7 +55,9 @@ class Employee extends Model
         'started_at',
         'employment_number',
         'resigned_at',
-        'user_id'
+        'user_id',
+        'supervisor_id',
+        'manager_id',
     ];
 
     public function identityType()

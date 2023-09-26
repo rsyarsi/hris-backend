@@ -65,9 +65,16 @@ class EmployeeRequest extends FormRequest
             'unit_id' => 'nullable|exists:munits,id',
             'department_id' => 'nullable|exists:mdepartments,id',
             'started_at' => 'nullable|date',
-            'employment_number' => 'nullable|max:36',
+            'employment_number' => [
+                'nullable',
+                'max:36',
+                'string',
+                Rule::unique('employees')->ignore($this->route('employee')),
+            ],
             'resigned_at' => 'nullable|date',
-            'user_id' => 'nullable|exists:users,id'
+            'user_id' => 'nullable|exists:users,id',
+            'supervisor_id' => 'nullable|exists:users,supervisor_id',
+            'manager_id' => 'nullable|exists:users,manager_id'
         ];
     }
 }

@@ -8,4 +8,5 @@ interface EmployeeServiceInterface
     public function show($id);
     public function update($id, array $data);
     public function destroy($id);
+    public function employeeNumberNull($perPage, $search);
 }
