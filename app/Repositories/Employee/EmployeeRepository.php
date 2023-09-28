@@ -211,6 +211,39 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'skillType:id,name',
                                     'employeeCertificate:id,name,institution_name,started_at,ended_at,file_url,file_path,file_disk,verified_at,verified_user_Id,is_extended',
                                 ]);
+                            },
+                            'contract' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'transaction_number',
+                                    'start_at',
+                                    'end_at',
+                                    'sk_number',
+                                    'shift_group_id',
+                                    'umk',
+                                    'contract_type_id',
+                                    'day',
+                                    'hour',
+                                    'hour_per_day',
+                                    'istirahat_overtime',
+                                    'vot1',
+                                    'vot2',
+                                    'vot3',
+                                    'vot4',
+                                    'unit_id',
+                                    'position_id',
+                                    'manager_id',
+                                )->with([
+                                    'employee:id,name',
+                                    'shiftGroup:id,name,hour,day,type',
+                                    'contractType:id,name,active',
+                                    'unit:id,name,active',
+                                    'position:id,name,active',
+                                    'manager:id,name',
+                                    'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active',
+                                    'employeeContractDetail.payrollComponent:id,name,active',
+                                ]);
                             }
                         ])
                         ->where('id', $id)
@@ -289,5 +322,72 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         return $query
         ->whereNull('employment_number')
         ->paginate($perPage);
+    }
+
+    public function employeeEndContract($perPage, $search = null)
+    {
+        $today = now()->toDateString();
+        $twoWeeksAgo = now()->subWeeks(2)->toDateString();
+
+        $query = $this->model
+            ->with([
+                'contract' => function ($query) use ($today, $twoWeeksAgo) {
+                    $query->select(
+                        'id',
+                        'employee_id',
+                        'transaction_number',
+                        'start_at',
+                        'end_at',
+                        'sk_number',
+                        'shift_group_id',
+                        'umk',
+                        'contract_type_id',
+                        'day',
+                        'hour',
+                        'hour_per_day',
+                        'istirahat_overtime',
+                        'vot1',
+                        'vot2',
+                        'vot3',
+                        'vot4',
+                        'unit_id',
+                        'position_id',
+                        'manager_id',
+                    )->with([
+                        'employee:id,name',
+                        'shiftGroup:id,name,hour,day,type',
+                        'contractType:id,name,active',
+                        'unit:id,name,active',
+                        'position:id,name,active',
+                        'manager:id,name',
+                        'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active',
+                        'employeeContractDetail.payrollComponent:id,name,active',
+                    ])->whereBetween('end_at', [$twoWeeksAgo, $today]);
+                }
+            ])
+            ->select($this->field);
+
+        if ($search !== null) {
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+        }
+
+        return $query->paginate($perPage);
+    }
+
+
+    public function updateEmployeeContract($id, $data)
+    {
+        $employee = $this->model->find($id);
+        if ($employee) {
+            $employee->update([
+                'employment_number' => $data['employment_number'],
+                'unit_id' => $data['unit_id'],
+                'position_id' => $data['position_id'],
+                'manager_id' => $data['manager_id'],
+                'started_at' => $data['started_at'],
+            ]);
+            return $employee;
+        }
+        return null;
     }
 }

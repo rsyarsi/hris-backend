@@ -73,8 +73,8 @@ class EmployeeRequest extends FormRequest
             ],
             'resigned_at' => 'nullable|date',
             'user_id' => 'nullable|exists:users,id',
-            'supervisor_id' => 'nullable|exists:users,supervisor_id',
-            'manager_id' => 'nullable|exists:users,manager_id'
+            'supervisor_id' => 'nullable|exists:employees,id',
+            'manager_id' => 'nullable|exists:employees,id'
         ];
     }
 }

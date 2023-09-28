@@ -89,7 +89,19 @@ class EmployeeController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $employees = $this->employeeService->employeeNumberNull($perPage, $search);
-            return $this->success('Employees retrieved successfully', $employees);
+            return $this->success('Employees not have contract retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function employeeEndContract(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $employees = $this->employeeService->employeeEndContract($perPage, $search);
+            return $this->success('Employees end contract retrieved successfully', $employees);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

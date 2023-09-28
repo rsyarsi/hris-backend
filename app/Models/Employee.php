@@ -164,4 +164,9 @@ class Employee extends Model
     {
         return $this->hasMany(Overtime::class, 'employee_id');
     }
+
+    public function contract()
+    {
+        return $this->hasMany(EmployeeContract::class, 'employee_id');
+    }
 }

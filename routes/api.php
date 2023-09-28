@@ -12,7 +12,7 @@ use App\Http\Controllers\API\V1\{
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
-    ContractTypeController, PayrollComponentController
+    ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController
 };
 
 /*
@@ -88,6 +88,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employees', EmployeeController::class)->parameters(['employees' => 'employee']);
         // route for employee-number-null
         Route::get('employee-number-null', [EmployeeController::class, 'employeeNumberNull'])->name('employee-number-null');
+        // route for employee-end-contracts
+        Route::get('employee-end-contracts', [EmployeeController::class, 'employeeEndContract'])->name('employee-end-contracts');
         // route for employee-organizations
         Route::resource('employee-organizations', EmployeeOrganizationController::class);
         // route for employee-experiences
@@ -124,5 +126,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('overtime-statuses', OvertimeStatusController::class)->parameters(['overtime-statuses' => 'overtime_status']);
         // route for overtimes
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
+        // route for employee-contracts
+        Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
+        // route for employee-contract-details
+        Route::resource('employee-contract-details', EmployeeContractDetailController::class)->parameters(['employee-contract-details' => 'employee_contract_detail']);
     });
 });

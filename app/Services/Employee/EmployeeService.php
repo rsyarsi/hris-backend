@@ -46,6 +46,16 @@ class EmployeeService implements EmployeeServiceInterface
         return $this->repository->employeeNumberNull($perPage, $search);
     }
 
+    public function employeeEndContract($perPage, $search)
+    {
+        return $this->repository->employeeEndContract($perPage, $search);
+    }
+
+    public function updateEmployeeContract($id, $data)
+    {
+        return $this->repository->updateEmployeeContract($id, $data);
+    }
+
     public function formatTextTitle($data)
     {
         return Str::title($data);

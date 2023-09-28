@@ -9,4 +9,6 @@ interface EmployeeServiceInterface
     public function update($id, array $data);
     public function destroy($id);
     public function employeeNumberNull($perPage, $search);
+    public function employeeEndContract($perPage, $search);
+    public function updateEmployeeContract($id, array $data);
 }

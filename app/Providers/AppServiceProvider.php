@@ -43,6 +43,9 @@ use App\Services\Shift\{ShiftService, ShiftServiceInterface};
 use App\Services\LogFinger\{LogFingerService, LogFingerServiceInterface};
 use App\Services\OvertimeStatus\{OvertimeStatusService, OvertimeStatusServiceInterface};
 use App\Services\Overtime\{OvertimeService, OvertimeServiceInterface};
+use App\Services\EmployeeContract\{EmployeeContractService, EmployeeContractServiceInterface};
+use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, EmployeeContractDetailServiceInterface};
+use App\Services\Helper\{HelperService, HelperServiceInterface};
 
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
@@ -84,6 +87,9 @@ use App\Repositories\Shift\{ShiftRepository, ShiftRepositoryInterface};
 use App\Repositories\LogFinger\{LogFingerRepository, LogFingerRepositoryInterface};
 use App\Repositories\OvertimeStatus\{OvertimeStatusRepository, OvertimeStatusRepositoryInterface};
 use App\Repositories\Overtime\{OvertimeRepository, OvertimeRepositoryInterface};
+use App\Repositories\EmployeeContract\{EmployeeContractRepository, EmployeeContractRepositoryInterface};
+use App\Repositories\EmployeeContractDetail\{EmployeeContractDetailRepository, EmployeeContractDetailRepositoryInterface};
+use App\Repositories\Helper\{HelperRepository, HelperRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -133,7 +139,7 @@ class AppServiceProvider extends ServiceProvider
         // Contract Type
         $this->app->bind(ContractTypeRepositoryInterface::class, ContractTypeRepository::class);
         $this->app->bind(ContractTypeServiceInterface::class, ContractTypeService::class);
-        
+
         // Payroll Component
         $this->app->bind(PayrollComponentRepositoryInterface::class, PayrollComponentRepository::class);
         $this->app->bind(PayrollComponentServiceInterface::class, PayrollComponentService::class);
@@ -253,6 +259,18 @@ class AppServiceProvider extends ServiceProvider
         // Overtime
         $this->app->bind(OvertimeRepositoryInterface::class, OvertimeRepository::class);
         $this->app->bind(OvertimeServiceInterface::class, OvertimeService::class);
+
+        // Employee Contract
+        $this->app->bind(EmployeeContractRepositoryInterface::class, EmployeeContractRepository::class);
+        $this->app->bind(EmployeeContractServiceInterface::class, EmployeeContractService::class);
+
+        // Employee Contract Detail
+        $this->app->bind(EmployeeContractDetailRepositoryInterface::class, EmployeeContractDetailRepository::class);
+        $this->app->bind(EmployeeContractDetailServiceInterface::class, EmployeeContractDetailService::class);
+
+        // Helper
+        $this->app->bind(HelperRepositoryInterface::class, HelperRepository::class);
+        $this->app->bind(HelperServiceInterface::class, HelperService::class);
     }
 
     /**

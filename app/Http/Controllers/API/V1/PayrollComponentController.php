@@ -12,12 +12,12 @@ class PayrollComponentController extends Controller
 {
     use ResponseAPI;
 
-    private $payrollcomponentService;
+    private $payrollComponentService;
 
-    public function __construct(PayrollComponentServiceInterface $payrollcomponentService)
+    public function __construct(PayrollComponentServiceInterface $payrollComponentService)
     {
         $this->middleware('auth:api');
-        $this->payrollcomponentService = $payrollcomponentService;
+        $this->payrollComponentService = $payrollComponentService;
     }
 
     public function index(Request $request)
@@ -25,7 +25,7 @@ class PayrollComponentController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $payrollcomponents = $this->payrollcomponentService->index($perPage, $search);
+            $payrollcomponents = $this->payrollComponentService->index($perPage, $search);
             return $this->success('Payroll Components retrieved successfully', $payrollcomponents);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -36,7 +36,7 @@ class PayrollComponentController extends Controller
     {
         try {
             $data = $request->validated();
-            $payrollcomponent = $this->payrollcomponentService->store($data);
+            $payrollcomponent = $this->payrollComponentService->store($data);
             return $this->success('Payroll Component created successfully', $payrollcomponent, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -46,7 +46,7 @@ class PayrollComponentController extends Controller
     public function show($id)
     {
         try {
-            $payrollcomponent = $this->payrollcomponentService->show($id);
+            $payrollcomponent = $this->payrollComponentService->show($id);
             if (!$payrollcomponent) {
                 return $this->error('Payroll Component not found', 404);
             }
@@ -60,7 +60,7 @@ class PayrollComponentController extends Controller
     {
         try {
             $data = $request->validated();
-            $payrollcomponent = $this->payrollcomponentService->update($id, $data);
+            $payrollcomponent = $this->payrollComponentService->update($id, $data);
             if (!$payrollcomponent) {
                 return $this->error('Payroll Component not found', 404);
             }
@@ -73,7 +73,7 @@ class PayrollComponentController extends Controller
     public function destroy($id)
     {
         try {
-            $payrollcomponent = $this->payrollcomponentService->destroy($id);
+            $payrollcomponent = $this->payrollComponentService->destroy($id);
             if (!$payrollcomponent) {
                 return $this->error('Payroll Component not found', 404);
             }
