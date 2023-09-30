@@ -129,6 +129,18 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             'employeeOrganization' => function ($query) {
                                 $query->select('id', 'employee_id', 'institution_name', 'position');
                             },
+                            'employeeLegality' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'legality_type_id',
+                                    'started_at',
+                                    'ended_at',
+                                    'file_url',
+                                    'file_path',
+                                    'file_disk',
+                                )->with('legalityType:id,name');
+                            },
                             'employeeExperience' => function ($query) {
                                 $query->select(
                                     'id',

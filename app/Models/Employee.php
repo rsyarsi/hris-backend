@@ -155,6 +155,11 @@ class Employee extends Model
         return $this->hasMany(EmployeeSkill::class, 'employee_id');
     }
 
+    public function employeeLegality()
+    {
+        return $this->hasMany(EmployeeLegality::class, 'employee_id');
+    }
+
     public function leave()
     {
         return $this->hasMany(Leave::class, 'employee_id');
