@@ -26,9 +26,9 @@ class EmployeeContractDetailRequest extends FormRequest
     public function rules()
     {
         return [
-            'employee_contract_id' => 'nullable|exists:employee_contracts,id',
+            'employee_contract_id' => 'required|exists:employee_contracts,id',
             'payroll_component_id' => [
-                'nullable',
+                'required',
                 'exists:mpayrollcomponents,id',
                 Rule::unique('employee_contract_details')
                 ->where(function ($query) {
@@ -36,8 +36,8 @@ class EmployeeContractDetailRequest extends FormRequest
                         ->where('payroll_component_id', request()->input('payroll_component_id'));
                 }),
             ],
-            'nominal' => 'nullable|max:18',
-            'active' => 'nullable|integer',
+            'nominal' => 'required|max:18',
+            'active' => 'required|integer',
         ];
     }
 }
