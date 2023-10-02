@@ -3,12 +3,15 @@
 namespace App\Repositories\Leave;
 
 use App\Models\Leave;
+use App\Services\LeaveHistory\LeaveHistoryService;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 
 
 class LeaveRepository implements LeaveRepositoryInterface
 {
     private $model;
+    private $leaveHistory;
+
     private $field = [
         'id',
         'employee_id',
@@ -20,9 +23,10 @@ class LeaveRepository implements LeaveRepositoryInterface
         'leave_status_id',
     ];
 
-    public function __construct(Leave $model)
+    public function __construct(Leave $model, LeaveHistoryService $leaveHistory)
     {
         $this->model = $model;
+        $this->leaveHistory = $leaveHistory;
     }
 
     public function index($perPage, $search = null)
@@ -48,27 +52,25 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 'user_agent',
                                 'comment',
                             );
-                        },
-                        'leaveApproval' => function ($query) {
-                            $query->select(
-                                'id',
-                                'leave_id',
-                                'manager_id',
-                                'action',
-                                'action_at',
-                            );
-                        },
+                        }
                     ])
                     ->select($this->field);
-        // if ($search !== null) {
-        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        // }
         return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
     {
-        return $this->model->create($data);
+        $leave = $this->model->create($data);
+        $historyData = [
+            'leave_id' => $leave->id,
+            'user_id' => auth()->id(),
+            'description' => 'Leave Created',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'comment' => $data['note'],
+        ];
+        $this->leaveHistory->store($historyData);
+        return $leave;
     }
 
     public function show($id)
@@ -95,15 +97,6 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     'comment',
                                 );
                             },
-                            'leaveApproval' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'leave_id',
-                                    'manager_id',
-                                    'action',
-                                    'action_at',
-                                );
-                            },
                         ])
                         ->where('id', $id)
                         ->first($this->field);
@@ -112,7 +105,16 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function update($id, $data)
     {
-        $leave = $this->model->find($id);
+        $leave = $this->model->with('leaveStatus')->find($id);
+        $historyData = [
+            'leave_id' => $leave->id,
+            'user_id' => auth()->id(),
+            'description' => $leave->leaveStatus->name,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'comment' => $data['note'],
+        ];
+        $this->leaveHistory->store($historyData);
         if ($leave) {
             $leave->update($data);
             return $leave;

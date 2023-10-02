@@ -386,7 +386,6 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         return $query->paginate($perPage);
     }
 
-
     public function updateEmployeeContract($id, $data)
     {
         $employee = $this->model->find($id);

@@ -40,6 +40,7 @@ use App\Services\LeaveHistory\{LeaveHistoryService, LeaveHistoryServiceInterface
 use App\Services\LeaveApproval\{LeaveApprovalService, LeaveApprovalServiceInterface};
 use App\Services\ShiftGroup\{ShiftGroupService, ShiftGroupServiceInterface};
 use App\Services\Shift\{ShiftService, ShiftServiceInterface};
+use App\Services\ShiftSchedule\{ShiftScheduleService, ShiftScheduleServiceInterface};
 use App\Services\LogFinger\{LogFingerService, LogFingerServiceInterface};
 use App\Services\OvertimeStatus\{OvertimeStatusService, OvertimeStatusServiceInterface};
 use App\Services\Overtime\{OvertimeService, OvertimeServiceInterface};
@@ -84,6 +85,7 @@ use App\Repositories\LeaveHistory\{LeaveHistoryRepository, LeaveHistoryRepositor
 use App\Repositories\LeaveApproval\{LeaveApprovalRepository, LeaveApprovalRepositoryInterface};
 use App\Repositories\ShiftGroup\{ShiftGroupRepository, ShiftGroupRepositoryInterface};
 use App\Repositories\Shift\{ShiftRepository, ShiftRepositoryInterface};
+use App\Repositories\ShiftSchedule\{ShiftScheduleRepository, ShiftScheduleRepositoryInterface};
 use App\Repositories\LogFinger\{LogFingerRepository, LogFingerRepositoryInterface};
 use App\Repositories\OvertimeStatus\{OvertimeStatusRepository, OvertimeStatusRepositoryInterface};
 use App\Repositories\Overtime\{OvertimeRepository, OvertimeRepositoryInterface};
@@ -247,6 +249,10 @@ class AppServiceProvider extends ServiceProvider
         // Shift
         $this->app->bind(ShiftRepositoryInterface::class, ShiftRepository::class);
         $this->app->bind(ShiftServiceInterface::class, ShiftService::class);
+
+        // Shift Schedule
+        $this->app->bind(ShiftScheduleRepositoryInterface::class, ShiftScheduleRepository::class);
+        $this->app->bind(ShiftScheduleServiceInterface::class, ShiftScheduleService::class);
 
         // Log Finger
         $this->app->bind(LogFingerRepositoryInterface::class, LogFingerRepository::class);
