@@ -26,9 +26,9 @@ class EmployeeSkillRequest extends FormRequest
         return [
             'employee_id' => 'required|exists:employees,id',
             'skill_type_id' => 'required|exists:mskilltypes,id',
-            'employee_certificate_id' => 'required|exists:employee_certificates,id',
-            'description' => 'required|max:255',
-            'level' => 'required|max:255',
+            'employee_certificate_id' => 'nullable|exists:employee_certificates,id',
+            'description' => 'nullable|max:255',
+            'level' => 'nullable|max:255',
         ];
     }
 }
