@@ -47,8 +47,8 @@ class Leave extends Model
         return $this->hasMany(LeaveHistory::class, 'leave_id');
     }
 
-    public function leaveApproval()
-    {
-        return $this->hasMany(LeaveApproval::class, 'leave_id');
-    }
+    // public function leaveApproval()
+    // {
+    //     return $this->hasMany(LeaveApproval::class, 'leave_id');
+    // }
 }

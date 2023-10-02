@@ -12,7 +12,8 @@ use App\Http\Controllers\API\V1\{
     EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
-    ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController
+    ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
+    ShiftScheduleController
 };
 
 /*
@@ -86,10 +87,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('villages', VillageController::class)->parameters(['villages' => 'village']);
         // route for employees
         Route::resource('employees', EmployeeController::class)->parameters(['employees' => 'employee']);
-        // route for employee-number-null
-        Route::get('employee-number-null', [EmployeeController::class, 'employeeNumberNull'])->name('employee-number-null');
-        // route for employee-end-contracts
-        Route::get('employee-end-contracts', [EmployeeController::class, 'employeeEndContract'])->name('employee-end-contracts');
+        Route::controller(EmployeeController::class)->group(function () {
+            // route for employee-number-null
+            Route::get('employee-number-null', 'employeeNumberNull')->name('employee-number-null');
+            // route for employee-end-contracts
+            Route::get('employee-end-contracts', 'employeeEndContract')->name('employee-end-contracts');
+        });
         // route for employee-organizations
         Route::resource('employee-organizations', EmployeeOrganizationController::class);
         // route for employee-experiences
@@ -120,6 +123,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('shift-groups', ShiftGroupController::class)->parameters(['shift-groups' => 'shift_group']);
         // route for shifts
         Route::resource('shifts', ShiftController::class)->parameters(['shifts' => 'shift']);
+        // route for shift-schedules
+        Route::resource('shift-schedules', ShiftScheduleController::class)->parameters(['shift-schedules' => 'shift_schedules']);
         // route for log-fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
         // route for overtime-statuses

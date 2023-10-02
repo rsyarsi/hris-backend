@@ -45,9 +45,6 @@ class LeaveHistoryRepository implements LeaveHistoryRepositoryInterface
                             },
                         ])
                         ->select($this->field);
-        // if ($search !== null) {
-        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        // }
         return $query->paginate($perPage);
     }
 
