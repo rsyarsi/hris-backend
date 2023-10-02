@@ -34,7 +34,6 @@ class EmployeeEducationController extends Controller
 
     public function store(EmployeeEducationRequest $request)
     {
-        return $request->all();
         try {
             $data = $request->validated();
             $employeeeducation = $this->employeeEducationService->store($data);
