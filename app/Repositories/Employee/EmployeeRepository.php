@@ -127,7 +127,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'employeeOrganization' => function ($query) {
-                                $query->select('id', 'employee_id', 'institution_name', 'position');
+                                $query->select('id', 'employee_id', 'institution_name', 'position', 'started_year', 'ended_year');
                             },
                             'employeeLegality' => function ($query) {
                                 $query->select(
