@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             TaxSeeder::class,
             UnitSeeder::class,
             EmployeeSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

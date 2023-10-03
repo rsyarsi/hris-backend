@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Services\Education\{EducationService, EducationServiceInterface};
+use App\Services\Role\{RoleService, RoleServiceInterface};
+use App\Services\Permission\{PermissionService, PermissionServiceInterface};
 use App\Services\Department\{DepartmentService, DepartmentServiceInterface};
+use App\Services\Education\{EducationService, EducationServiceInterface};
 use App\Services\Position\{PositionService, PositionServiceInterface};
 use App\Services\Religion\{ReligionService, ReligionServiceInterface};
 use App\Services\Sex\{SexService, SexServiceInterface};
@@ -48,6 +50,8 @@ use App\Services\EmployeeContract\{EmployeeContractService, EmployeeContractServ
 use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, EmployeeContractDetailServiceInterface};
 use App\Services\Helper\{HelperService, HelperServiceInterface};
 
+use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
+use App\Repositories\Permission\{PermissionRepository, PermissionRepositoryInterface};
 use App\Repositories\Department\{DepartmentRepository, DepartmentRepositoryInterface};
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\Position\{PositionRepository, PositionRepositoryInterface};
@@ -102,6 +106,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Role
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(RoleServiceInterface::class, RoleService::class);
+
+        // Permission
+        $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
+        $this->app->bind(PermissionServiceInterface::class, PermissionService::class);
+
         // Department
         $this->app->bind(DepartmentRepositoryInterface::class, DepartmentRepository::class);
         $this->app->bind(DepartmentServiceInterface::class, DepartmentService::class);

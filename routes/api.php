@@ -13,7 +13,7 @@ use App\Http\Controllers\API\V1\{
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
-    ShiftScheduleController
+    ShiftScheduleController, RoleController, PermissionController
 };
 
 /*
@@ -43,6 +43,10 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
 });
 Route::middleware('api')->prefix('v1/')->group(function () {
     Route::prefix('masterdata')->group(function () {
+        // route for roles
+        Route::resource('roles', RoleController::class)->parameters(['roles' => 'role']);
+        // route for permissions
+        Route::resource('permissions', PermissionController::class)->parameters(['permissions' => 'permission']);
         // route for departments
         Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'department']);
         // route for educations
