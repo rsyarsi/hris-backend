@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Department;
+use App\Models\Unit;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class DepartmentSeeder extends Seeder
+class UnitSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,9 @@ class DepartmentSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 5; $i++) {
-            Department::create([
-                'name' => 'Department ' . $i,
+        for ($i = 1; $i <= 3; $i++) {
+            Unit::create([
+                'name' => 'Unit ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

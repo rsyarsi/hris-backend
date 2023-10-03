@@ -20,7 +20,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('mdepartments', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('name',150);
             $table->tinyInteger('active')->default('1');
             $table->timestamps();

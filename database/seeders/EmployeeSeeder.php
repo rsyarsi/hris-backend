@@ -16,7 +16,7 @@ class EmployeeSeeder extends Seeder
      */
     public function run()
     {
-        foreach (range(1, 10) as $index) {
+        foreach (range(1, 5) as $index) {
             Employee::create([
                 'name' => Str::random(10),
             ]);

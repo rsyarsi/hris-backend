@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Department;
-use Illuminate\Database\Seeder;
+use App\Models\IdentityType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
-class DepartmentSeeder extends Seeder
+class IdentityTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,9 @@ class DepartmentSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 5; $i++) {
-            Department::create([
-                'name' => 'Department ' . $i,
+        for ($i = 1; $i <= 3; $i++) {
+            IdentityType::create([
+                'name' => 'Identity Type ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

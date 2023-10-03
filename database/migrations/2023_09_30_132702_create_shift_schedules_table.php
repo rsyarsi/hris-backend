@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('shift_schedules', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id',26)->nullable();
             $table->foreign('shift_id')->references('id')->on('shifts')->onDelete('set null');
