@@ -18,7 +18,13 @@ class PermissionRepository implements PermissionRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field);
+        $query = $this->model
+                        ->with([
+                            'roles' => function ($query) {
+                                $query->select('id', 'name', 'guard_name');
+                            },
+                        ])
+                        ->select($this->field);
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }

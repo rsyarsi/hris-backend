@@ -45,8 +45,20 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     Route::prefix('masterdata')->group(function () {
         // route for roles
         Route::resource('roles', RoleController::class)->parameters(['roles' => 'role']);
+        Route::controller(RoleController::class)->group(function () {
+            // route for give permission to roles
+            Route::post('/roles/{role}/permission', 'givePermission')->name('roles.permissions');
+            // route for revoke permission from roles
+            Route::delete('/roles/{role}/permissions/{permissions}', 'revokePermission')->name('roles.permissions.revoke');
+        });
         // route for permissions
         Route::resource('permissions', PermissionController::class)->parameters(['permissions' => 'permission']);
+        Route::controller(PermissionController::class)->group(function () {
+            // route for asign role to permission
+            Route::post('/permissions/{permission}/roles', 'assignRole')->name('permissions.roles');
+            // route for remove role from permission
+            Route::delete('/permissions/{permission}/roles/{role}', 'removeRole')->name('permissions.roles.remove');
+        });
         // route for departments
         Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'department']);
         // route for educations
