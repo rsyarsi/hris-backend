@@ -47,9 +47,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('roles', RoleController::class)->parameters(['roles' => 'role']);
         Route::controller(RoleController::class)->group(function () {
             // route for give permission to roles
-            Route::post('/roles/{role}/permission', 'givePermission')->name('roles.permissions');
+            Route::post('/roles/{role}/permissions', 'givePermission')->name('roles.permissions');
             // route for revoke permission from roles
-            Route::delete('/roles/{role}/permissions/{permissions}', 'revokePermission')->name('roles.permissions.revoke');
+            Route::delete('/roles/{role}/permissions/{permission}', 'revokePermission')->name('roles.permissions.revoke');
         });
         // route for permissions
         Route::resource('permissions', PermissionController::class)->parameters(['permissions' => 'permission']);
@@ -73,6 +73,16 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('taxs', TaxController::class)->parameters(['taxs' => 'tax']);
         // route for users
         Route::resource('users', UserController::class)->parameters(['users' => 'user']);
+        Route::controller(UserController::class)->group(function () {
+            // route for asign role to user
+            Route::post('/users/{user}/roles', 'assignRole')->name('users.roles');
+            // route for remove role from user
+            Route::delete('/users/{user}/roles/{role}', 'removeRole')->name('users.roles.remove');
+            // route for give permission to user
+            Route::post('/users/{user}/permissions', 'givePermission')->name('users.permissions');
+            // route for revoke permission from user
+            Route::delete('/users/{user}/permissions/{permission}', 'revokePermission')->name('users.permissions.revoke');
+        });
         // route for units
         Route::resource('units', UnitController::class)->parameters(['units' => 'unit']);
         // route for status-employments

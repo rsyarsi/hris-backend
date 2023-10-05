@@ -4,20 +4,26 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
-use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
+use App\Services\Role\RoleServiceInterface;
 use App\Services\User\UserServiceInterface;
+use App\Services\Permission\PermissionServiceInterface;
+use App\Http\Requests\{UserRequest, GivePermissionRequest, AssignRoleRequest};
 
 class UserController extends Controller
 {
     use ResponseAPI;
 
     private $userService;
+    private $roleService;
+    private $permissionService;
 
-    public function __construct(UserServiceInterface $userService)
+    public function __construct(UserServiceInterface $userService, RoleServiceInterface $roleService, PermissionServiceInterface $permissionService)
     {
         $this->middleware('auth:api');
         $this->userService = $userService;
+        $this->roleService = $roleService;
+        $this->permissionService = $permissionService;
     }
 
     public function index(Request $request)
@@ -78,6 +84,99 @@ class UserController extends Controller
                 return $this->error('User not found', 404);
             }
             return $this->success('User deleted successfully, id : '.$user->id, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function assignRole(AssignRoleRequest $request, $id)
+    {
+        try {
+            $roles = $request->input('role');
+            $user = $this->userService->show($id);
+            if (!$user) {
+                return $this->error('User not exists', 404);
+            }
+            foreach ($roles as $role) {
+                if (!$user->hasRole($role)) {
+                    $user->assignRole($role);
+                    $user->syncRoles($role);
+                } else {
+                    return $this->error('Role Exists', 404);
+                }
+            }
+            return $this->success('Role assigned in user '.$user->name, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function removeRole($id, $role)
+    {
+        try {
+            // Check if the user exists
+            $user = $this->userService->show($id);
+            if (!$user) {
+                return $this->error('User not exists', 404);
+            }
+
+            // Check if the role exists
+            $role = $this->roleService->show($role);
+            if (!$role) {
+                return $this->error('Role not exists', 404);
+            }
+
+            if ($user->hasRole($role)) {
+                $user->removeRole($role);
+                return $this->success('Role Removed', []);
+            }
+            return $this->error('Role not exists', 404);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function givePermission(GivePermissionRequest $request, $id)
+    {
+        try {
+            $permissions = $request->input('permission');
+            $user = $this->userService->show($id);
+            if (!$user) {
+                return $this->error('user not exists', 404);
+            }
+            foreach ($permissions as $permission) {
+                if (!$user->hasPermissionTo($permission)) {
+                    $user->givePermissionTo($permission);
+                } else {
+                    return $this->error('Permission Exists', 404);
+                }
+            }
+            return $this->success('Permission added in user '.$user->name, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function revokePermission($id, $permission)
+    {
+        try {
+            // Check if the User exists
+            $user = $this->userService->show($id);
+            if (!$user) {
+                return $this->error('User not exists', 404);
+            }
+
+            // Check if the permission exists
+            $permission = $this->permissionService->show($permission);
+            if (!$permission) {
+                return $this->error('Permission not exists', 404);
+            }
+
+            if ($user->hasPermissionTo($permission)) {
+                $user->revokePermissionTo($permission);
+                return $this->success('Permission revoke from user '.$user->name, []);
+            }
+            return $this->error('Permission not exists', 404);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
