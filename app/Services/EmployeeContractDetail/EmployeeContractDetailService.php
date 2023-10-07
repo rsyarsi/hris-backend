@@ -38,4 +38,9 @@ class EmployeeContractDetailService implements EmployeeContractDetailServiceInte
     {
         return $this->repository->destroy($id);
     }
+
+    public function deleteByEmployeeContractId($id)
+    {
+        return $this->repository->deleteByEmployeeContractId($id);
+    }
 }

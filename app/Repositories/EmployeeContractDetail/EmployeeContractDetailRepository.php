@@ -133,4 +133,9 @@ class EmployeeContractDetailRepository implements EmployeeContractDetailReposito
         }
         return null;
     }
+
+    public function deleteByEmployeeContractId($employeeContractId)
+    {
+        return $this->model->where('employee_contract_id', $employeeContractId)->delete();
+    }
 }

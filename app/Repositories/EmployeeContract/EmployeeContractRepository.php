@@ -4,8 +4,9 @@ namespace App\Repositories\EmployeeContract;
 
 use Carbon\Carbon;
 use App\Models\EmployeeContract;
-use App\Services\Helper\HelperService;
-use App\Services\Employee\EmployeeService;
+use App\Services\Helper\HelperServiceInterface;
+use App\Services\Employee\EmployeeServiceInterface;
+use App\Services\EmployeeContractDetail\EmployeeContractDetailServiceInterface;
 use App\Repositories\EmployeeContract\EmployeeContractRepositoryInterface;
 
 class EmployeeContractRepository implements EmployeeContractRepositoryInterface
@@ -13,6 +14,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
     private $model;
     private $employeeService;
     private $helperService;
+    private $contractDetailService;
 
     private $field = [
         'id',
@@ -37,11 +39,17 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
         'manager_id',
     ];
 
-    public function __construct(EmployeeContract $model, EmployeeService $employeeService, HelperService $helperService)
+    public function __construct(
+        EmployeeContract $model,
+        EmployeeServiceInterface $employeeService,
+        HelperServiceInterface $helperService,
+        EmployeeContractDetailServiceInterface $contractDetailService,
+    )
     {
         $this->model = $model;
         $this->employeeService = $employeeService;
         $this->helperService = $helperService;
+        $this->contractDetailService = $contractDetailService;
     }
 
     public function index($perPage, $search = null)
@@ -165,6 +173,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
     {
         $employeeContract = $this->model->find($id);
         if ($employeeContract) {
+            $this->contractDetailService->deleteByEmployeeContractId($id);
             $employeeContract->delete();
             return $employeeContract;
         }
