@@ -26,15 +26,15 @@ class ShiftScheduleRequest extends FormRequest
         return [
             'employee_id' => 'required|exists:employees,id',
             'shift_id' => 'required|exists:shifts,id',
-            'date' => 'required|date',
-            'time_in' => 'required|max:45',
-            'time_out' => 'required|max:45',
-            'shift_exchange_id' => 'required|exists:shifts,id',
-            'period' => 'required|max:32',
-            'leave_note' => 'required|max:32',
-            'holiday' => 'required|integer',
-            'night' => 'required|integer',
-            'national_holiday' => 'required|integer',
+            'date' => 'nullable|date',
+            'time_in' => 'nullable|max:45',
+            'time_out' => 'nullable|max:45',
+            'shift_exchange_id' => 'nullable|exists:shifts,id',
+            'period' => 'nullable|max:32',
+            'leave_note' => 'nullable|max:32',
+            'holiday' => 'nullable|integer',
+            'night' => 'nullable|integer',
+            'national_holiday' => 'nullable|integer',
         ];
     }
 }

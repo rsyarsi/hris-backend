@@ -98,37 +98,53 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
     public function show($id)
     {
         $shiftschedule = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'shiftscheduleType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'shiftscheduleStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'shiftscheduleHistory' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'shiftschedule_id',
-                                    'description',
-                                    'ip_address',
-                                    'user_id',
-                                    'user_agent',
-                                    'comment',
-                                );
-                            },
-                            'shiftscheduleApproval' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'shiftschedule_id',
-                                    'manager_id',
-                                    'action',
-                                    'action_at',
-                                );
-                            },
-                        ])
+                            ->with([
+                                'employee' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'shift' => function ($query) {
+                                    $query->select(
+                                        'id',
+                                        'shift_group_id',
+                                        'code',
+                                        'name',
+                                        'in_time',
+                                        'out_time',
+                                        'finger_in_less',
+                                        'finger_in_more',
+                                        'finger_out_less',
+                                        'finger_out_more',
+                                        'night_shift',
+                                        'active',
+                                        'user_created_id',
+                                        'user_updated_id',
+                                    );
+                                },
+                                'shiftExcange' => function ($query) {
+                                    $query->select(
+                                        'id',
+                                        'employee_id',
+                                        'leave_type_id',
+                                        'from_date',
+                                        'to_date',
+                                        'duration',
+                                        'note',
+                                        'leave_status_id',
+                                    );
+                                },
+                                'userExchange' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userCreate' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userUpdate' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userSetup' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                            ])
                         ->where('id', $id)
                         ->first($this->field);
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;
