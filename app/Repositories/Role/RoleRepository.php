@@ -38,7 +38,14 @@ class RoleRepository implements RoleRepositoryInterface
 
     public function show($id)
     {
-        $role = $this->model->where('id', $id)->first($this->field);
+        $role = $this->model
+                    ->with([
+                        'permissions' => function ($query) {
+                            $query->select('id', 'name', 'guard_name');
+                        },
+                    ])
+                    ->where('id', $id)
+                    ->first($this->field);
         return $role ? $role : $role = null;
     }
 

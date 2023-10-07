@@ -38,7 +38,14 @@ class PermissionRepository implements PermissionRepositoryInterface
 
     public function show($id)
     {
-        $permission = $this->model->where('id', $id)->first($this->field);
+        $permission = $this->model
+                            ->with([
+                                'roles' => function ($query) {
+                                    $query->select('id', 'name', 'guard_name');
+                                },
+                            ])
+                            ->where('id', $id)
+                            ->first($this->field);
         return $permission ? $permission : $permission = null;
     }
 
