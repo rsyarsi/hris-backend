@@ -100,7 +100,6 @@ class UserController extends Controller
             foreach ($roles as $role) {
                 if (!$user->hasRole($role)) {
                     $user->assignRole($role);
-                    $user->syncRoles($role);
                 } else {
                     return $this->error('Role Exists', 404);
                 }
@@ -173,7 +172,7 @@ class UserController extends Controller
             }
 
             if ($user->hasPermissionTo($permission)) {
-                $user->revokePermissionTo($permission);
+                $user->revokePermissionTo($permission->name);
                 return $this->success('Permission revoke from user '.$user->name, []);
             }
             return $this->error('Permission not exists', 404);
