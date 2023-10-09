@@ -53,4 +53,15 @@ class OvertimeService implements OvertimeServiceInterface
     {
         return $this->repository->destroy($id);
     }
+
+    public function overtimeStatus($perPage, $search, $overtimeStatus)
+    {
+        $search = Str::upper($search);
+        return $this->repository->overtimeStatus($perPage, $search, $overtimeStatus);
+    }
+
+    public function updateStatus($id, $data)
+    {
+        return $this->repository->updateStatus($id, $data);
+    }
 }

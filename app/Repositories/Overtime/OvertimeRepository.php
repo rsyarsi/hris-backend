@@ -39,9 +39,14 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         },
                     ])
                     ->select($this->field);
-        // if ($search !== null) {
-        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        // }
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                            });
+            });
+        }
         return $query->paginate($perPage);
     }
 
@@ -81,6 +86,43 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $overtime = $this->model->find($id);
         if ($overtime) {
             $overtime->delete();
+            return $overtime;
+        }
+        return null;
+    }
+
+    public function overtimeStatus($perPage, $search = null, $overtimeStatus = null)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'overtimeStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                    ])
+                    ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+
+        if ($overtimeStatus) {
+            $query->where('overtime_status_id', $overtimeStatus);
+        }
+        return $query->paginate($perPage);
+    }
+
+    public function updateStatus($id, $data)
+    {
+        $overtime = $this->model->find($id);
+        if ($overtime) {
+            $overtime->update(['overtime_status_id' => $data['overtime_status_id']]);
             return $overtime;
         }
         return null;

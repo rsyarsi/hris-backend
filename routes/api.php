@@ -157,6 +157,11 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('overtime-statuses', OvertimeStatusController::class)->parameters(['overtime-statuses' => 'overtime_status']);
         // route for overtimes
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
+        Route::controller(OvertimeController::class)->group(function () {
+            // route for employee-number-null
+            Route::get('overtime-status', 'overtimeStatus')->name('overtime-status');
+            Route::post('overtime-update-status/{id}', 'updateStatus')->name('overtime-update-status');
+        });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
         // route for employee-contract-details

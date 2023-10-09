@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\OvertimeRequest;
+use App\Http\Requests\{OvertimeRequest, OvertimeNewStatusRequest};
 use App\Services\Overtime\OvertimeServiceInterface;
 
 class OvertimeController extends Controller
@@ -78,6 +78,33 @@ class OvertimeController extends Controller
                 return $this->error('Overtime not found', 404);
             }
             return $this->success('Overtime deleted successfully, id : '.$overtime->id, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function overtimeStatus(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $overtimeStatus = $request->input('overtime_status');
+            $overtimes = $this->overtimeService->overtimeStatus($perPage, $search, $overtimeStatus);
+            return $this->success('Overtime where status retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updateStatus(OvertimeNewStatusRequest $request, $id)
+    {
+        try {
+            $data = $request->validated();
+            $overtime = $this->overtimeService->updateStatus($id, $data);
+            if (!$overtime) {
+                return $this->error('Overtime not found', 404);
+            }
+            return $this->success('Overtime status updated successfully', $overtime, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -15,10 +15,13 @@ class LeaveStatusSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            LeaveStatus::create([
-                'name' => 'Leave Status ' . $i,
-            ]);
-        }
+        LeaveStatus::create(['name' => 'PENDING']);
+        LeaveStatus::create(['name' => 'APPROVAL SUPERVISOR']);
+        LeaveStatus::create(['name' => 'APPROVAL MANAGER']);
+        LeaveStatus::create(['name' => 'APPROVAL HRD']);
+        LeaveStatus::create(['name' => 'REJECTED SUPERVISOR']);
+        LeaveStatus::create(['name' => 'REJECTED MANAGER']);
+        LeaveStatus::create(['name' => 'REJECTED HRD']);
+        LeaveStatus::create(['name' => 'CANCEL']);
     }
 }
