@@ -3,14 +3,15 @@
 namespace App\Repositories\Leave;
 
 use App\Models\Leave;
-use App\Services\LeaveHistory\LeaveHistoryService;
 use App\Repositories\Leave\LeaveRepositoryInterface;
-
+use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
+use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 
 class LeaveRepository implements LeaveRepositoryInterface
 {
     private $model;
     private $leaveHistory;
+    private $leaveStatus;
 
     private $field = [
         'id',
@@ -23,10 +24,11 @@ class LeaveRepository implements LeaveRepositoryInterface
         'leave_status_id',
     ];
 
-    public function __construct(Leave $model, LeaveHistoryService $leaveHistory)
+    public function __construct(Leave $model, LeaveHistoryServiceInterface $leaveHistory, LeaveStatusServiceInterface $leaveStatus)
     {
         $this->model = $model;
         $this->leaveHistory = $leaveHistory;
+        $this->leaveStatus = $leaveStatus;
     }
 
     public function index($perPage, $search = null)
@@ -61,10 +63,11 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function store(array $data)
     {
         $leave = $this->model->create($data);
+        $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         $historyData = [
             'leave_id' => $leave->id,
             'user_id' => auth()->id(),
-            'description' => 'Leave Created',
+            'description' => 'LEAVE STATUS '. $leaveStatus->name,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'comment' => $data['note'],
@@ -126,7 +129,69 @@ class LeaveRepository implements LeaveRepositoryInterface
     {
         $leave = $this->model->find($id);
         if ($leave) {
+            $this->leaveHistory->deleteByLeaveId($id);
             $leave->delete();
+            return $leave;
+        }
+        return null;
+    }
+
+    public function leaveStatus($perPage, $search = null, $leaveStatus = null)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'leaveType' => function ($query) {
+                            $query->select('id', 'name', 'is_salary_deduction', 'active');
+                        },
+                        'leaveStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'leaveHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'leave_id',
+                                'description',
+                                'ip_address',
+                                'user_id',
+                                'user_agent',
+                                'comment',
+                            );
+                        }
+                    ])
+                    ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+
+        if ($leaveStatus) {
+            $query->where('leave_status_id', $leaveStatus);
+        }
+        return $query->paginate($perPage);
+    }
+
+    public function updateStatus($id, $data)
+    {
+        $leave = $this->model->find($id);
+        if ($leave) {
+            $leave->update(['leave_status_id' => $data['leave_status_id']]);
+            $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+            $historyData = [
+                'leave_id' => $leave->id,
+                'user_id' => auth()->id(),
+                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $leave->note,
+            ];
+            $this->leaveHistory->store($historyData);
             return $leave;
         }
         return null;

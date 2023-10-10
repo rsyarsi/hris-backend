@@ -63,4 +63,15 @@ class LeaveService implements LeaveServiceInterface
     {
         return $this->repository->destroy($id);
     }
+
+    public function leaveStatus($perPage, $search, $leaveStatus)
+    {
+        $search = Str::upper($search);
+        return $this->repository->leaveStatus($perPage, $search, $leaveStatus);
+    }
+
+    public function updateStatus($id, $data)
+    {
+        return $this->repository->updateStatus($id, $data);
+    }
 }

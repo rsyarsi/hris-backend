@@ -2,8 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\DateSmallerThan;
-use Illuminate\Validation\Rule;
+use App\Rules\{DateSmallerThan, NotOverlappingPermissions};
 use Illuminate\Foundation\Http\FormRequest;
 
 class LeaveRequest extends FormRequest
@@ -29,7 +28,15 @@ class LeaveRequest extends FormRequest
             'employee_id' => 'required|exists:employees,id',
             'leave_type_id' => 'required|exists:leave_types,id',
             'leave_status_id' => 'required|exists:leave_statuses,id',
-            'from_date' => ['required', 'date', new DateSmallerThan('to_date')],
+            'from_date' => ['required',
+                            'date',
+                            new NotOverlappingPermissions(
+                                $this->input('employee_id'),
+                                $this->input('from_date'),
+                                $this->input('to_date')
+                            ),
+                            new DateSmallerThan('to_date'),
+                        ],
             'to_date' => 'required|date',
             'note' => 'required',
         ];

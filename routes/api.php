@@ -141,10 +141,15 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('leave-statuses', LeaveStatusController::class)->parameters(['leave-statuses' => 'leave_status']);
         // route for leaves
         Route::resource('leaves', LeaveController::class);
-        // route for leave-approvals
-        Route::resource('leave-approvals', LeaveApprovalController::class);
+        Route::controller(LeaveController::class)->group(function () {
+            // route for leave where status
+            Route::get('leave-statuses', 'leaveStatus')->name('leave-statuses');
+            Route::post('leave-update-statuses/{id}', 'updateStatus')->name('leave-update-statuses');
+        });
         // route for leave-histories
         Route::resource('leave-histories', LeaveHistoryController::class);
+        // route for leave-approvals
+        Route::resource('leave-approvals', LeaveApprovalController::class);
         // route for shift-groups
         Route::resource('shift-groups', ShiftGroupController::class)->parameters(['shift-groups' => 'shift_group']);
         // route for shifts
@@ -158,9 +163,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for overtimes
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
         Route::controller(OvertimeController::class)->group(function () {
-            // route for employee-number-null
-            Route::get('overtime-status', 'overtimeStatus')->name('overtime-status');
-            Route::post('overtime-update-status/{id}', 'updateStatus')->name('overtime-update-status');
+            // route for overtime where status
+            Route::get('overtime-statuses', 'overtimeStatus')->name('overtime-statuses');
+            Route::post('overtime-update-statuses/{id}', 'updateStatus')->name('overtime-update-statuses');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);

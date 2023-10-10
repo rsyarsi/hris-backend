@@ -43,4 +43,9 @@ class LeaveHistoryService implements LeaveHistoryServiceInterface
     {
         return Str::upper($data);
     }
+
+    public function deleteByLeaveId($id)
+    {
+        return $this->repository->deleteByLeaveId($id);
+    }
 }

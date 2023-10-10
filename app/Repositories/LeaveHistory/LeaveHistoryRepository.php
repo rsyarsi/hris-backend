@@ -97,4 +97,9 @@ class LeaveHistoryRepository implements LeaveHistoryRepositoryInterface
         }
         return null;
     }
+
+    public function deleteByLeaveId($leaveId)
+    {
+        return $this->model->where('leave_id', $$leaveId)->delete();
+    }
 }

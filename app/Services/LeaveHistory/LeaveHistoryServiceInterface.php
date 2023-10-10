@@ -8,4 +8,5 @@ interface LeaveHistoryServiceInterface
     public function show($id);
     public function update($id, array $data);
     public function destroy($id);
+    public function deleteByLeaveId($id);
 }
