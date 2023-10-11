@@ -100,6 +100,6 @@ class LeaveHistoryRepository implements LeaveHistoryRepositoryInterface
 
     public function deleteByLeaveId($leaveId)
     {
-        return $this->model->where('leave_id', $$leaveId)->delete();
+        return $this->model->where('leave_id', $leaveId)->delete();
     }
 }

@@ -143,7 +143,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('leaves', LeaveController::class);
         Route::controller(LeaveController::class)->group(function () {
             // route for leave where status
-            Route::get('leave-statuses', 'leaveStatus')->name('leave-statuses');
+            Route::get('leave-where-statuses', 'leaveStatus')->name('leave-where-statuses');
             Route::post('leave-update-statuses/{id}', 'updateStatus')->name('leave-update-statuses');
         });
         // route for leave-histories
@@ -164,7 +164,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
         Route::controller(OvertimeController::class)->group(function () {
             // route for overtime where status
-            Route::get('overtime-statuses', 'overtimeStatus')->name('overtime-statuses');
+            Route::get('overtime-where-statuses', 'overtimeStatus')->name('overtime-where-statuses');
             Route::post('overtime-update-statuses/{id}', 'updateStatus')->name('overtime-update-statuses');
         });
         // route for employee-contracts
