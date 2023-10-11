@@ -82,4 +82,15 @@ class ShiftScheduleController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function storeMultiple(ShiftScheduleRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
+            return $this->success('Shift schedule created successfully', $shiftSchedule, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

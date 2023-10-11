@@ -61,18 +61,18 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 'user_updated_id',
                             );
                         },
-                        'shiftExcange' => function ($query) {
-                            $query->select(
-                                'id',
-                                'employee_id',
-                                'leave_type_id',
-                                'from_date',
-                                'to_date',
-                                'duration',
-                                'note',
-                                'leave_status_id',
-                            );
-                        },
+                        // 'shiftExcange' => function ($query) {
+                        //     $query->select(
+                        //         'id',
+                        //         'employee_id',
+                        //         'leave_type_id',
+                        //         'from_date',
+                        //         'to_date',
+                        //         'duration',
+                        //         'note',
+                        //         'leave_status_id',
+                        //     );
+                        // },
                         'userExchange' => function ($query) {
                             $query->select('id', 'name');
                         },
@@ -120,18 +120,18 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                         'user_updated_id',
                                     );
                                 },
-                                'shiftExcange' => function ($query) {
-                                    $query->select(
-                                        'id',
-                                        'employee_id',
-                                        'leave_type_id',
-                                        'from_date',
-                                        'to_date',
-                                        'duration',
-                                        'note',
-                                        'leave_status_id',
-                                    );
-                                },
+                                // 'shiftExcange' => function ($query) {
+                                //     $query->select(
+                                //         'id',
+                                //         'employee_id',
+                                //         'leave_type_id',
+                                //         'from_date',
+                                //         'to_date',
+                                //         'duration',
+                                //         'note',
+                                //         'leave_status_id',
+                                //     );
+                                // },
                                 'userExchange' => function ($query) {
                                     $query->select('id', 'name');
                                 },
@@ -168,5 +168,10 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             return $shiftschedule;
         }
         return null;
+    }
+
+    public function storeMultiple(array $data)
+    {
+        return $this->model->insert($data);
     }
 }

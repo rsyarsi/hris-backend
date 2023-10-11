@@ -156,6 +156,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('shifts', ShiftController::class)->parameters(['shifts' => 'shift']);
         // route for shift-schedules
         Route::resource('shift-schedules', ShiftScheduleController::class)->parameters(['shift-schedules' => 'shift_schedules']);
+        Route::controller(ShiftScheduleController::class)->group(function () {
+            // route for multiple-shift-schedule
+            Route::post('multiple-shift-schedules', 'storeMultiple')->name('multiple-shift-schedules');
+        });
         // route for log-fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
         // route for overtime-statuses

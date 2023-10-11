@@ -23,7 +23,7 @@ return new class extends Migration
             $table->dateTime('time_in')->nullable();
             $table->dateTime('time_out')->nullable();
             $table->string('late_note', 150)->nullable();
-            $table->foreign('shift_exchange_id')->references('id')->on('leaves')->onDelete('set null');
+            $table->foreign('shift_exchange_id')->nullable()->references('id')->on('leaves')->onDelete('set null');
             $table->string('shift_exchange_id',26)->nullable();
             $table->foreignId('user_exchange_id')->nullable()->constrained('users')->nullOnDelete();
             $table->dateTime('user_exchange_at')->nullable();
