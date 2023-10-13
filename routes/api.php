@@ -167,6 +167,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for overtimes
         Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
         Route::controller(OvertimeController::class)->group(function () {
+            // route for overtime overtime where employee login
+            Route::get('overtime-where-employee', 'overtimeEmployee')->name('overtime-where-employee');
             // route for overtime where status
             Route::get('overtime-where-statuses', 'overtimeStatus')->name('overtime-where-statuses');
             Route::post('overtime-update-statuses/{id}', 'updateStatus')->name('overtime-update-statuses');

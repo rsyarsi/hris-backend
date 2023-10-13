@@ -83,6 +83,18 @@ class OvertimeController extends Controller
         }
     }
 
+    public function overtimeEmployee(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $overtimeStatus = $request->input('overtime_status');
+            $overtimes = $this->overtimeService->overtimeEmployee($perPage, $overtimeStatus);
+            return $this->success('Overtime where status retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function overtimeStatus(Request $request)
     {
         try {

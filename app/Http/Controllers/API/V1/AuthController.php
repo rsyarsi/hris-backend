@@ -86,7 +86,10 @@ class AuthController extends Controller
      */
     public function userProfile() {
         $user = auth()->user();
-    
+        if (!$user->employee) {
+            // Handle the case where the user does not have an associated Employee record
+            return $this->success('The user dont have relation with employee', $user);
+        }
         $user->load([
             'employee' => function ($query) {
                 $query->select(
