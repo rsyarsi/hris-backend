@@ -8,6 +8,7 @@ Interface LeaveRepositoryInterface{
     public function show($id);
     public function update($id, array $data);
     public function destroy($id);
+    public function leaveEmployee($perPage, $leaveStatus);
     public function leaveStatus($perPage, $search, $overtimeStatus);
     public function updateStatus($id, array $data);
 }

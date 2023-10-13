@@ -94,10 +94,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
     public function overtimeEmployee($perPage, $overtimeStatus = null)
     {
         $user = auth()->user();
-        // return $user;
         if (!$user->employee) {
-            // Handle the case where the user does not have an associated Employee record
-            return []; // You can return an empty result or handle the error as needed
+            return [];
         }
         $query = $this->model
                     ->with([

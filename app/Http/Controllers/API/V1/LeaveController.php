@@ -87,6 +87,18 @@ class LeaveController extends Controller
         }
     }
 
+    public function leaveEmployee(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $leaveStatus = $request->input('leave_status');
+            $leaves = $this->leaveService->leaveEmployee($perPage, $leaveStatus);
+            return $this->success('Leave where status retrieved successfully', $leaves);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function leaveStatus(Request $request)
     {
         try {

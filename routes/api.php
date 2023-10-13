@@ -142,6 +142,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for leaves
         Route::resource('leaves', LeaveController::class);
         Route::controller(LeaveController::class)->group(function () {
+            // route for overtime overtime where employee login
+            Route::get('leave-where-employee', 'leaveEmployee')->name('leave-where-employee');
             // route for leave where status
             Route::get('leave-where-statuses', 'leaveStatus')->name('leave-where-statuses');
             Route::post('leave-update-statuses/{id}', 'updateStatus')->name('leave-update-statuses');

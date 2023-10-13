@@ -64,6 +64,11 @@ class LeaveService implements LeaveServiceInterface
         return $this->repository->destroy($id);
     }
 
+    public function leaveEmployee($perPage, $overtimeStatus)
+    {
+        return $this->repository->leaveEmployee($perPage, $overtimeStatus);
+    }
+
     public function leaveStatus($perPage, $search, $leaveStatus)
     {
         $search = Str::upper($search);

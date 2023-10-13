@@ -136,6 +136,43 @@ class LeaveRepository implements LeaveRepositoryInterface
         return null;
     }
 
+    public function leaveEmployee($perPage, $search = null, $leaveStatus = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'leaveType' => function ($query) {
+                            $query->select('id', 'name', 'is_salary_deduction', 'active');
+                        },
+                        'leaveStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'leaveHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'leave_id',
+                                'description',
+                                'ip_address',
+                                'user_id',
+                                'user_agent',
+                                'comment',
+                            );
+                        }
+                    ])
+                    ->select($this->field);
+        $query->where('employee_id', $user->employee->id);
+        if ($leaveStatus) {
+            $query->where('leave_status_id', $leaveStatus);
+        }
+        return $query->paginate($perPage);
+    }
+    
     public function leaveStatus($perPage, $search = null, $leaveStatus = null)
     {
         $query = $this->model
