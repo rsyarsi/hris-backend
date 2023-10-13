@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     use ResponseAPI;
+
+    private $field = ['id', 'name', 'email'];
     /**
      * Create a new AuthController instance.
      *
@@ -26,7 +28,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request){
-    	$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string|min:6',
         ]);
@@ -83,8 +85,66 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
-        return $this->success('User Profile Successfully Retrived', auth()->user());
+        $user = auth()->user();
+    
+        $user->load([
+            'employee' => function ($query) {
+                $query->select(
+                    'id',
+                    'name',
+                    'legal_identity_type_id',
+                    'legal_identity_number',
+                    'family_card_number',
+                    'sex_id',
+                    'birth_place',
+                    'birth_date',
+                    'marital_status_id',
+                    'religion_id',
+                    'blood_type',
+                    'tax_identify_number',
+                    'email',
+                    'phone_number',
+                    'phone_number_country',
+                    'legal_address',
+                    'legal_postal_code',
+                    'legal_province_id',
+                    'legal_city_id',
+                    'legal_district_id',
+                    'legal_village_id',
+                    'legal_home_phone_number',
+                    'legal_home_phone_country',
+                    'current_address',
+                    'current_postal_code',
+                    'current_province_id',
+                    'current_city_id',
+                    'current_district_id',
+                    'current_village_id',
+                    'current_home_phone_number',
+                    'current_home_phone_country',
+                    'status_employment_id',
+                    'position_id',
+                    'unit_id',
+                    'department_id',
+                    'started_at',
+                    'employment_number',
+                    'resigned_at',
+                    'user_id',
+                    'supervisor_id',
+                    'manager_id'
+                )->with([
+                    'supervisor:id,name,email',
+                    'manager:id,name,email'
+                ]);
+            },
+            'roles' => function ($query) {
+                $query->select('id', 'name', 'guard_name')
+                    ->with('permissions:id,name,guard_name');
+            }
+        ]);
+    
+        return $this->success('User Profile Successfully Retrieved', $user);
     }
+
     /**
      * Get the token array structure.
      *

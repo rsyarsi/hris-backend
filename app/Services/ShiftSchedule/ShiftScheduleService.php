@@ -26,9 +26,6 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
     public function store(array $data)
     {
-        // $id = $data['shift_exchange_id'];
-        // $leave = $this->leaveService->show($id);
-        // $data['late_note'] = $leave->leaveType->name;
         $data['created_user_id'] = auth()->id();
         $data['setup_user_id'] = auth()->id();
         return $this->repository->store($data);

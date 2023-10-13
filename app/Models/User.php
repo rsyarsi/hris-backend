@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -44,10 +45,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function employee()
-    {
-        return $this->hasOne(Employee::class);
-    }
+    // public function employee()
+    // {
+    //     return $this->hasOne(Employee::class);
+    // }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -63,5 +64,10 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims() {
         return [];
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
     }
 }

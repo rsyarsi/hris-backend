@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\NotOverlappingShiftSchedules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ShiftScheduleRequest extends FormRequest
@@ -26,9 +27,17 @@ class ShiftScheduleRequest extends FormRequest
         return [
             'employee_id' => 'required|exists:employees,id',
             'shift_id' => 'required|exists:shifts,id',
-            'start_date' => 'nullable|date',
+            'date' => [
+                'nullable',
+                'date',
+                new NotOverlappingShiftSchedules,
+            ],
+            'start_date' => [
+                'nullable',
+                'date',
+                new NotOverlappingShiftSchedules,
+            ],
             'end_date' => 'nullable|date',
-            'date' => 'nullable|date',
             'time_in' => 'nullable|max:45',
             'time_out' => 'nullable|max:45',
             'shift_exchange_id' => 'nullable|exists:shifts,id',

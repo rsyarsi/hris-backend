@@ -125,6 +125,16 @@ class Employee extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function manager()
+    {
+        return $this->belongsTo(Employee::class, 'manager_id', 'id');
+    }
+
+    public function supervisor()
+    {
+        return $this->belongsTo(Employee::class, 'supervisor_id', 'id');
+    }
+
     public function employeeOrganization()
     {
         return $this->hasMany(EmployeeOrganization::class, 'employee_id');

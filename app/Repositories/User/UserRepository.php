@@ -60,15 +60,15 @@ class UserRepository implements UserRepositoryInterface
                                 'started_at',
                                 'employment_number',
                                 'resigned_at',
-                                'user_id'
+                                'user_id',
+                                'supervisor_id',
+                                'manager_id',
                             );
                         },
                         'roles' => function ($query) {
-                            $query->select('id', 'name', 'guard_name');
-                        },
-                        'permissions' => function ($query) {
-                            $query->select('id', 'name', 'guard_name');
-                        },
+                            $query->select('id', 'name', 'guard_name')
+                                    ->with('permissions:id,name,guard_name');
+                        }
                     ])
                     ->select($this->field);
         if ($search !== null) {
@@ -130,11 +130,9 @@ class UserRepository implements UserRepositoryInterface
                             );
                         },
                         'roles' => function ($query) {
-                            $query->select('id', 'name', 'guard_name');
-                        },
-                        'permissions' => function ($query) {
-                            $query->select('id', 'name', 'guard_name');
-                        },
+                            $query->select('id', 'name', 'guard_name')
+                                    ->with('permissions:id,name,guard_name');
+                        }
                     ])
                     ->where('id', $id)
                     ->first($this->field);
