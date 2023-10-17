@@ -8,20 +8,17 @@ use App\Http\Requests\LeaveRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeaveNewStatusRequest;
 use App\Services\Leave\LeaveServiceInterface;
-use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
 
 class LeaveController extends Controller
 {
     use ResponseAPI;
 
     private $leaveService;
-    private $leaveHistory;
 
-    public function __construct(LeaveServiceInterface $leaveService, LeaveHistoryServiceInterface $leaveHistory)
+    public function __construct(LeaveServiceInterface $leaveService)
     {
         $this->middleware('auth:api');
         $this->leaveService = $leaveService;
-        $this->leaveHistory = $leaveHistory;
     }
 
     public function index(Request $request)
@@ -92,7 +89,9 @@ class LeaveController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $leaveStatus = $request->input('leave_status');
-            $leaves = $this->leaveService->leaveEmployee($perPage, $leaveStatus);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $leaves = $this->leaveService->leaveEmployee($perPage, $leaveStatus, $startDate, $endDate);
             return $this->success('Leave where status retrieved successfully', $leaves);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

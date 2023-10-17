@@ -88,8 +88,10 @@ class OvertimeController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $overtimeStatus = $request->input('overtime_status');
-            $overtimes = $this->overtimeService->overtimeEmployee($perPage, $overtimeStatus);
-            return $this->success('Overtime where status retrieved successfully', $overtimes);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $overtimes = $this->overtimeService->overtimeEmployee($perPage, $overtimeStatus, $startDate, $endDate);
+            return $this->success('Overtime where employee retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

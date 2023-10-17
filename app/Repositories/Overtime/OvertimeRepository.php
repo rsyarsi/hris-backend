@@ -43,7 +43,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
                             });
             });
         }
@@ -91,7 +91,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return null;
     }
 
-    public function overtimeEmployee($perPage, $overtimeStatus = null)
+    public function overtimeEmployee($perPage, $overtimeStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -110,6 +110,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $query->where('employee_id', $user->employee->id);
         if ($overtimeStatus) {
             $query->where('overtime_status_id', $overtimeStatus);
+        }
+        if ($startDate) {
+            $query->whereDate('from_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('from_date', '<=', $endDate);
         }
         return $query->paginate($perPage);
     }

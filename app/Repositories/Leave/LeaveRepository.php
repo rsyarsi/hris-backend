@@ -2,16 +2,19 @@
 
 namespace App\Repositories\Leave;
 
+use Carbon\Carbon;
 use App\Models\Leave;
 use App\Repositories\Leave\LeaveRepositoryInterface;
-use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
+use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
+use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class LeaveRepository implements LeaveRepositoryInterface
 {
     private $model;
     private $leaveHistory;
     private $leaveStatus;
+    private $shiftSchedule;
 
     private $field = [
         'id',
@@ -24,11 +27,12 @@ class LeaveRepository implements LeaveRepositoryInterface
         'leave_status_id',
     ];
 
-    public function __construct(Leave $model, LeaveHistoryServiceInterface $leaveHistory, LeaveStatusServiceInterface $leaveStatus)
+    public function __construct(Leave $model, LeaveHistoryServiceInterface $leaveHistory, LeaveStatusServiceInterface $leaveStatus, ShiftScheduleServiceInterface $shiftSchedule)
     {
         $this->model = $model;
         $this->leaveHistory = $leaveHistory;
         $this->leaveStatus = $leaveStatus;
+        $this->shiftSchedule = $shiftSchedule;
     }
 
     public function index($perPage, $search = null)
@@ -54,7 +58,30 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 'user_agent',
                                 'comment',
                             );
-                        }
+                        },
+                        'shiftSchedule' => function ($query) {
+                            $query->select(
+                                'employee_id',
+                                'shift_id',
+                                'date',
+                                'time_in',
+                                'time_out',
+                                'late_note',
+                                'shift_exchange_id',
+                                'user_exchange_id',
+                                'user_exchange_at',
+                                'created_user_id',
+                                'updated_user_id',
+                                'setup_user_id',
+                                'setup_at',
+                                'period',
+                                'leave_note',
+                                'holiday',
+                                'night',
+                                'national_holiday',
+                                'leave_id'
+                            );
+                        },
                     ])
                     ->select($this->field);
         return $query->orderBy('from_date', 'DESC')->paginate($perPage);
@@ -73,6 +100,11 @@ class LeaveRepository implements LeaveRepositoryInterface
             'comment' => $data['note'],
         ];
         $this->leaveHistory->store($historyData);
+        // update shift schedule if exists in the table shift_schedules
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = auth()->user()->employee->id;
+        $this->shiftSchedule->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
         return $leave;
     }
 
@@ -130,13 +162,14 @@ class LeaveRepository implements LeaveRepositoryInterface
         $leave = $this->model->find($id);
         if ($leave) {
             $this->leaveHistory->deleteByLeaveId($id);
+            $this->shiftSchedule->deleteByLeaveId($leave->employee_id, $id);
             $leave->delete();
             return $leave;
         }
         return null;
     }
 
-    public function leaveEmployee($perPage, $search = null, $leaveStatus = null)
+    public function leaveEmployee($perPage, $leaveStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -170,9 +203,15 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($leaveStatus) {
             $query->where('leave_status_id', $leaveStatus);
         }
+        if ($startDate) {
+            $query->whereDate('from_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('from_date', '<=', $endDate);
+        }
         return $query->paginate($perPage);
     }
-    
+
     public function leaveStatus($perPage, $search = null, $leaveStatus = null)
     {
         $query = $this->model

@@ -47,6 +47,7 @@ class ShiftScheduleRequest extends FormRequest
             'holiday' => 'nullable|integer',
             'night' => 'nullable|integer',
             'national_holiday' => 'nullable|integer',
+            'leave_id' => 'nullable|exists:leaves,id',
         ];
     }
 }

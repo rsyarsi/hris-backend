@@ -36,6 +36,7 @@ class ShiftSchedule extends Model
         'holiday',
         'night',
         'national_holiday',
+        'leave_id'
     ];
 
     public function employee()
@@ -71,5 +72,10 @@ class ShiftSchedule extends Model
     public function userSetup()
     {
         return $this->belongsTo(User::class, 'setup_user_id', 'id');
+    }
+
+    public function leave()
+    {
+        return $this->belongsTo(Leave::class, 'leave_id', 'id');
     }
 }

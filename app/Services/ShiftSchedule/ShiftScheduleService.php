@@ -4,19 +4,16 @@ namespace App\Services\ShiftSchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Services\Leave\LeaveService;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 
 class ShiftScheduleService implements ShiftScheduleServiceInterface
 {
     private $repository;
-    private $leaveService;
 
-    public function __construct(ShiftScheduleRepositoryInterface $repository, LeaveService $leaveService)
+    public function __construct(ShiftScheduleRepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->leaveService = $leaveService;
     }
 
     public function index($perPage, $search)
@@ -44,6 +41,11 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     public function destroy($id)
     {
         return $this->repository->destroy($id);
+    }
+
+    public function shiftScheduleEmployee($perPage, $startDate, $endDate)
+    {
+        return $this->repository->shiftScheduleEmployee($perPage, $startDate, $endDate);
     }
 
     public function storeMultiple(array $data)
@@ -88,6 +90,16 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         // Insert the shift schedules into the database
         $this->repository->storeMultiple($shiftSchedules);
 
-        return $shiftSchedules; // Optionally, you can return the created records
+        return $shiftSchedules;
+    }
+
+    public function updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leaveId, $leaveNote)
+    {
+        $this->repository->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leaveId, $leaveNote);
+    }
+
+    public function deleteByLeaveId($employeeId, $leaveId)
+    {
+        $this->repository->deleteByLeaveId($employeeId, $leaveId);
     }
 }
