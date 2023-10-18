@@ -295,4 +295,13 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->where('leave_id', $leaveId)
                     ->update(['leave_id' => null]);
     }
+
+    public function shiftSchedulesExist($employeeId, $fromDate, $toDate)
+    {
+        return $this->model
+            ->where('employee_id', $employeeId)
+            ->where('date', '>=', $fromDate)
+            ->where('date', '<=', $toDate)
+            ->exists();
+    }
 }

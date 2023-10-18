@@ -102,4 +102,9 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         $this->repository->deleteByLeaveId($employeeId, $leaveId);
     }
+
+    public function shiftSchedulesExist($employeeId, $fromDate, $toDate)
+    {
+        $this->repository->shiftSchedulesExist($employeeId, $fromDate, $toDate);
+    }
 }

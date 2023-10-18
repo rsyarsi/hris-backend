@@ -12,4 +12,5 @@ Interface ShiftScheduleRepositoryInterface
     public function storeMultiple(array $data);
     public function updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leaveId, $leaveNote);
     public function deleteByLeaveId($employeeId, $leaveId);
+    public function shiftSchedulesExist($employeeId, $fromDate, $toDate);
 }

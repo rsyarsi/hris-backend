@@ -24,15 +24,8 @@ class LeaveService implements LeaveServiceInterface
     {
         $fromDate = Carbon::parse($data['from_date']);
         $toDate = Carbon::parse($data['to_date']);
-
-        // Check if from_date and to_date are the same
-        if ($fromDate->eq($toDate)) {
-            $data['duration'] = 1;
-        } else {
-            $duration = $fromDate->diffInDays($toDate);
-            $data['duration'] = $duration;
-        }
-
+        $durationInMinutes = $fromDate->diffInMinutes($toDate);
+        $data['duration'] = $durationInMinutes;
         return $this->repository->store($data);
     }
 
