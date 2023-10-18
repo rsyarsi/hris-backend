@@ -68,7 +68,10 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name')->with([
+                                    'roles:id,name',
+                                    'roles.permissions:id,name',
+                                ]);
                             }
                         ])
                         ->select($this->field);
@@ -124,7 +127,10 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name')->with([
+                                    'roles:id,name',
+                                    'roles.permissions:id,name',
+                                ]);
                             },
                             'employeeOrganization' => function ($query) {
                                 $query->select('id', 'employee_id', 'institution_name', 'position', 'started_year', 'ended_year');
@@ -324,7 +330,10 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name')->with([
+                                    'roles:id,name',
+                                    'roles.permissions:id,name',
+                                ]);
                             }
                         ])
                         ->select($this->field);
@@ -396,6 +405,18 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                 'position_id' => $data['position_id'],
                 'manager_id' => $data['manager_id'],
                 'started_at' => $data['started_at'],
+            ]);
+            return $employee;
+        }
+        return null;
+    }
+
+    public function updateUserId($id, $data)
+    {
+        $employee = $this->model->find($id);
+        if ($employee) {
+            $employee->update([
+                'user_id' => $data['user_id'],
             ]);
             return $employee;
         }

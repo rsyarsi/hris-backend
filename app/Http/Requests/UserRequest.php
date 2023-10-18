@@ -34,6 +34,8 @@ class UserRequest extends FormRequest
                 Rule::unique('users')->ignore($this->route('user')),
             ],
             'password' => 'required|string|max:255',
+            'role' => 'nullable|exists:roles,name',
+            'employee_id' => 'nullable|exists:employees,id',
         ];
     }
 

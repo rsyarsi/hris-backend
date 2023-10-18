@@ -56,6 +56,11 @@ class EmployeeService implements EmployeeServiceInterface
         return $this->repository->updateEmployeeContract($id, $data);
     }
 
+    public function updateUserId($id, $data)
+    {
+        return $this->repository->updateUserId($id, $data);
+    }
+
     public function formatTextTitle($data)
     {
         return Str::title($data);

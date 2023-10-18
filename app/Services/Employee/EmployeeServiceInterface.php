@@ -11,4 +11,5 @@ interface EmployeeServiceInterface
     public function employeeNumberNull($perPage, $search);
     public function employeeEndContract($perPage, $search);
     public function updateEmployeeContract($id, array $data);
+    public function updateUserId($id, array $data);
 }
