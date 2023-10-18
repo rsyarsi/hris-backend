@@ -37,6 +37,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
         'unit_id',
         'position_id',
         'manager_id',
+        'department_id',
     ];
 
     public function __construct(
@@ -69,6 +70,9 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                                 $query->select('id', 'name', 'active');
                             },
                             'position' => function ($query) {
+                                $query->select('id', 'name', 'active');
+                            },
+                            'department' => function ($query) {
                                 $query->select('id', 'name', 'active');
                             },
                             'manager' => function ($query) {
@@ -108,6 +112,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['started_at'] = $data['start_at'];
             $dataContract['unit_id'] = $data['unit_id'];
             $dataContract['position_id'] = $data['position_id'];
+            $dataContract['department_id'] = $data['department_id'];
             $dataContract['manager_id'] = $data['manager_id'];
             $this->employeeService->updateEmployeeContract($id, $dataContract);
         }
@@ -131,6 +136,9 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                                             $query->select('id', 'name', 'active');
                                         },
                                         'position' => function ($query) {
+                                            $query->select('id', 'name', 'active');
+                                        },
+                                        'department' => function ($query) {
                                             $query->select('id', 'name', 'active');
                                         },
                                         'manager' => function ($query) {
@@ -161,6 +169,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['started_at'] = $employee->started_at;
             $dataContract['unit_id'] = $data['unit_id'];
             $dataContract['position_id'] = $data['position_id'];
+            $dataContract['department_id'] = $data['department_id'];
             $dataContract['manager_id'] = $data['manager_id'];
             $this->employeeService->updateEmployeeContract($employeeId, $dataContract);
             $employeeContract->update($data);

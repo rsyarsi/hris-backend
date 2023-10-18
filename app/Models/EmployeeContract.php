@@ -37,6 +37,7 @@ class EmployeeContract extends Model
         'unit_id',
         'position_id',
         'manager_id',
+        'department_id',
     ];
 
     public function employee()
@@ -62,6 +63,11 @@ class EmployeeContract extends Model
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id', 'id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id', 'id');
     }
 
     public function manager()

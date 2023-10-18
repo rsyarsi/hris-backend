@@ -40,6 +40,7 @@ class EmployeeContractRequest extends FormRequest
             'vot3' => 'nullable|max:18',
             'vot4' => 'nullable|max:18',
             'unit_id' => 'nullable|exists:munits,id',
+            'department_id' => 'nullable|exists:mdepartments,id',
             'position_id' => 'nullable|exists:mpositions,id',
             'manager_id' => 'nullable|exists:employees,id',
         ];
