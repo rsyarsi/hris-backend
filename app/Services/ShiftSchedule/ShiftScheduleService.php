@@ -4,16 +4,19 @@ namespace App\Services\ShiftSchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
+use App\Repositories\Shift\ShiftRepositoryInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 
 class ShiftScheduleService implements ShiftScheduleServiceInterface
 {
     private $repository;
+    private $shiftService;
 
-    public function __construct(ShiftScheduleRepositoryInterface $repository)
+    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftRepositoryInterface $shiftService)
     {
         $this->repository = $repository;
+        $this->shiftService = $shiftService;
     }
 
     public function index($perPage, $search)
@@ -23,8 +26,13 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
     public function store(array $data)
     {
+        $shiftId = $data['shift_id'];
+        $shift = $this->shiftService->show($shiftId);
         $data['created_user_id'] = auth()->id();
         $data['setup_user_id'] = auth()->id();
+        $data['time_in'] = $data['date'] . ' ' . $shift->in_time;
+        $data['time_out'] = $data['date'] . ' ' . $shift->out_time;
+        $data['night'] = $shift->night_shift;
         return $this->repository->store($data);
     }
 
@@ -50,6 +58,9 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
     public function storeMultiple(array $data)
     {
+        $shiftId = $data['shift_id'];
+        $shift = $this->shiftService->show($shiftId);
+
         $createdUserId = auth()->id();
         $setupUserId = auth()->id();
 
@@ -65,10 +76,10 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
             $shiftScheduleData = [
                 'id' => Str::lower($ulid),
                 'employee_id' => $data['employee_id'],
-                'shift_id' => $data['shift_id'],
+                'shift_id' => $shiftId,
                 'date' => $date->format('Y-m-d'),
-                'time_in' => $date->format('Y-m-d') . ' ' . $data['time_in'],
-                'time_out' => $date->format('Y-m-d') . ' ' . $data['time_out'],
+                'time_in' => $date->format('Y-m-d') . ' ' . $shift->in_time,
+                'time_out' => $date->format('Y-m-d') . ' ' . $shift->out_time,
                 'late_note' => null,
                 'shift_exchange_id' => null,
                 'user_exchange_id' => null,
@@ -80,7 +91,7 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
                 'period' => $data['period'],
                 'leave_note' => null,
                 'holiday' => $data['holiday'],
-                'night' => $data['night'],
+                'night' => $shift->night_shift,
                 'national_holiday' => $data['national_holiday'],
             ];
 
