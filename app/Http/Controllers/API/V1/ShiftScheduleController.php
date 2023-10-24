@@ -6,6 +6,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShiftScheduleRequest;
+use App\Http\Requests\UploadShiftScheduleRequest;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class ShiftScheduleController extends Controller
@@ -97,6 +98,17 @@ class ShiftScheduleController extends Controller
     }
 
     public function storeMultiple(ShiftScheduleRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
+            return $this->success('Shift schedule created successfully', $shiftSchedule, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function uploadShiftSchedule(UploadShiftScheduleRequest $request)
     {
         try {
             $data = $request->validated();
