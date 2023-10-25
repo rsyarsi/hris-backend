@@ -103,7 +103,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         // update shift schedule if exists in the table shift_schedules
         $fromDate = Carbon::parse($data['from_date']);
         $toDate = Carbon::parse($data['to_date']);
-        $employeeId = auth()->user()->employee->id;
+        $employeeId = $leave->employee_id;
         $this->shiftSchedule->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
         return $leave;
     }
