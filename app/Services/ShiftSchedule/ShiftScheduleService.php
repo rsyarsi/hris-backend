@@ -4,16 +4,16 @@ namespace App\Services\ShiftSchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Repositories\Shift\ShiftRepositoryInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
+use App\Services\Shift\ShiftServiceInterface;
 
 class ShiftScheduleService implements ShiftScheduleServiceInterface
 {
     private $repository;
     private $shiftService;
 
-    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftRepositoryInterface $shiftService)
+    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftServiceInterface $shiftService)
     {
         $this->repository = $repository;
         $this->shiftService = $shiftService;
@@ -117,5 +117,10 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     public function shiftSchedulesExist($employeeId, $fromDate, $toDate)
     {
         $this->repository->shiftSchedulesExist($employeeId, $fromDate, $toDate);
+    }
+
+    public function uploadShiftSchedule($data)
+    {
+        $this->repository->uploadShiftSchedule($data);
     }
 }

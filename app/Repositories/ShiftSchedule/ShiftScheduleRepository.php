@@ -304,4 +304,23 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             ->where('date', '<=', $toDate)
             ->exists();
     }
+
+    public function uploadShiftSchedule(array $data)
+    {
+        $shiftschedule = new ShiftSchedule();
+        $shiftschedule->employee_id = $data['employee_id'];
+        $shiftschedule->shift_id = $data['shift_id'];
+        $shiftschedule->date = $data['date'];
+        $shiftschedule->time_in = $data['time_in'];
+        $shiftschedule->time_out = $data['time_out'];
+        $shiftschedule->late_note = $data['late_note'];
+        $shiftschedule->created_user_id = auth()->id();
+        $shiftschedule->updated_user_id = auth()->id();
+        $shiftschedule->setup_user_id = auth()->id();
+        $shiftschedule->setup_at = now();
+        $shiftschedule->period = $data['period'];
+        $shiftschedule->holiday = $data['holiday'];
+        $shiftschedule->night = $data['night'];
+        $shiftschedule->national_holiday = $data['national_holiday'];
+    }
 }
