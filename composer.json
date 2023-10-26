@@ -13,6 +13,8 @@
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",
         "laravolt/indonesia": "^0.34.0",
+        "maatwebsite/excel": "^3.1",
+        "psr/simple-cache": "^1.0",
         "spatie/laravel-permission": "^5.11",
         "tymon/jwt-auth": "^2.0"
     },

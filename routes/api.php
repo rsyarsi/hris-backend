@@ -153,8 +153,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('shift-schedules-where-employee', 'shiftScheduleEmployee')->name('shift-schedules-where-employee');
             // route for multiple shift schedule
             Route::post('multiple-shift-schedules', 'storeMultiple')->name('multiple-shift-schedules');
-            // route for upload shift schedule
-            Route::post('upload-shift-schedule', 'uploadShiftSchedule')->name('upload-shift-schedule');
+            // route for import shift schedule
+            Route::post('import-shift-schedule', 'importShiftSchedule')->name('import-shift-schedule');
         });
         // route for master log fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);

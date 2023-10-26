@@ -13,5 +13,5 @@ interface ShiftScheduleServiceInterface
     public function updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leaveId, $leaveNote);
     public function deleteByLeaveId($employeeId, $leaveId);
     public function shiftSchedulesExist($employeeId, $fromDate, $toDate);
-    public function uploadShiftSchedule(array $data);
+    public function importShiftSchedule(array $data);
 }

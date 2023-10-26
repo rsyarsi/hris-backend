@@ -305,7 +305,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             ->exists();
     }
 
-    public function uploadShiftSchedule(array $data)
+    public function importShiftSchedule(array $data)
     {
         $shiftschedule = new ShiftSchedule();
         $shiftschedule->employee_id = $data['employee_id'];
@@ -322,5 +322,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $shiftschedule->holiday = $data['holiday'];
         $shiftschedule->night = $data['night'];
         $shiftschedule->national_holiday = $data['national_holiday'];
+
+        return $this->model->insert($data);
     }
 }

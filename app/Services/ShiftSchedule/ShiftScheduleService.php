@@ -4,19 +4,22 @@ namespace App\Services\ShiftSchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
+use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
+use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Shift\ShiftServiceInterface;
 
 class ShiftScheduleService implements ShiftScheduleServiceInterface
 {
     private $repository;
     private $shiftService;
+    private $employeeService;
 
-    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftServiceInterface $shiftService)
+    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftServiceInterface $shiftService, EmployeeServiceInterface $employeeService)
     {
         $this->repository = $repository;
         $this->shiftService = $shiftService;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search)
@@ -97,10 +100,8 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
             $shiftSchedules[] = $shiftScheduleData;
         }
-
         // Insert the shift schedules into the database
         $this->repository->storeMultiple($shiftSchedules);
-
         return $shiftSchedules;
     }
 
@@ -119,8 +120,25 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         $this->repository->shiftSchedulesExist($employeeId, $fromDate, $toDate);
     }
 
-    public function uploadShiftSchedule($data)
+    public function importShiftSchedule($data)
     {
-        $this->repository->uploadShiftSchedule($data);
+        $createdUserId = auth()->id();
+        $setupUserId = auth()->id();
+
+        // $shiftId = // i need access the shift_code for search shift data;
+        // $shift = $this->shiftService->show($shiftId);
+
+        // $employmentNumber = $data['employment_number'];
+        // $employee = $this->employeeService->show($employmentNumber);
+
+        // $data['employee_id'] = $employee->id;
+        // $data['time_in'] = $data['date']->format('Y-m-d') . ' ' . $shift->in_time;
+        // $data['out_time'] = $data['date']->format('Y-m-d') . ' ' . $shift->out_time;
+        // $data['created_user_id'] = $createdUserId;
+        // $data['setup_user_id'] = $setupUserId;
+        // $data['night'] = $shift->night_shift;
+        // $data['setup_at'] = now();
+
+        $this->repository->importShiftSchedule($data);
     }
 }

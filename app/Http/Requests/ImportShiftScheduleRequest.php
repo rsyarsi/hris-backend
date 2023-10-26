@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UploadShiftScheduleRequest extends FormRequest
+class ImportShiftScheduleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,10 +29,6 @@ class UploadShiftScheduleRequest extends FormRequest
                 'file', // Ensure it's a file upload
                 'mimes:xlsx,csv,txt', // Allow only Excel files (xlsx)
                 'max:2048', // Limit the file size (2MB in this example, adjust as needed)
-                function ($attribute, $value, $fail) {
-                    // Perform additional custom validation here if needed
-                    // For example, you might check the structure of the Excel file
-                },
             ],
         ];
     }

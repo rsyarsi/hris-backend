@@ -6,7 +6,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShiftScheduleRequest;
-use App\Http\Requests\UploadShiftScheduleRequest;
+use App\Http\Requests\ImportShiftScheduleRequest;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class ShiftScheduleController extends Controller
@@ -108,12 +108,12 @@ class ShiftScheduleController extends Controller
         }
     }
 
-    public function uploadShiftSchedule(UploadShiftScheduleRequest $request)
+    public function importShiftSchedule(ImportShiftScheduleRequest $request)
     {
         try {
             $data = $request->validated();
-            $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
-            return $this->success('Shift schedule created successfully', $shiftSchedule, 201);
+            $shiftSchedule = $this->shiftScheduleService->importShiftSchedule($data);
+            return $this->success('Shift schedule uploaded successfully', $shiftSchedule, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
