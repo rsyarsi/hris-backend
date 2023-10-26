@@ -58,6 +58,10 @@ trait ResponseAPI
     {
         $code = $statusCode > 599 ? 500 : $statusCode;
 
+        if ($code === 0) {
+            $code = 500;
+        }
+
         return $this->coreResponse($message, null, $code, false);
     }
 }
