@@ -2,8 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Shift;
-use App\Models\Employee;
+use App\Models\{Shift, Employee};
 use Illuminate\Support\Str;
 use App\Models\ShiftSchedule;
 use Symfony\Component\Uid\Ulid;
@@ -11,6 +10,17 @@ use Maatwebsite\Excel\Concerns\ToModel;
 
 class ShiftScheduleImport implements ToModel
 {
+    private $rowCount = 0; // Initialize a counter
+
+    public function getRowCount()
+    {
+        return $this->rowCount;
+    }
+
+    public function startRow(): int
+    {
+        return 2; // Skip the header row
+    }
     /**
     * @param array $row
     *
@@ -20,16 +30,19 @@ class ShiftScheduleImport implements ToModel
     {
         $createdUserId = auth()->id();
         $setupUserId = auth()->id();
+        $date = $row[3];
 
         // Search shift
-        $shiftCode = $row['KD_SHIFT'];
-        $shift = Shift::where('code', $shiftCode)->first();
+        $shiftCode = $row[1];
+        $shift = Shift::where('code', $shiftCode)->get();
 
         // Search employee
-        $employeeNumber = $row['KD_PGW'];
-        $employee = Employee::where('employment_number', $employeeNumber)->first();
-
-        $date = $row['TGL_SHIFT'];
+        $employeeNumber = $row[0];
+        $employee = Employee::where('employment_number', $employeeNumber)->get();
+        // Check if the employee is found, otherwise skip this row
+        if (!$employee) {
+            return null; // Skip this row
+        }
 
         $ulid = Ulid::generate(); // Generate a ULID
         return new ShiftSchedule([
@@ -47,11 +60,12 @@ class ShiftScheduleImport implements ToModel
             'updated_user_id' => null, // You may need to set this as per your requirements
             'setup_user_id' => $setupUserId,
             'setup_at' => now(), // You can customize the setup_at value
-            'period' => $row['PERIODE'],
+            'period' => $row[2],
             'leave_note' => null,
-            'holiday' => $row['F_LIBUR'],
+            'holiday' => $row[4],
             'night' => $shift->night_shift,
-            'national_holiday' => $row['HARI_NASIONAL'],
+            'national_holiday' => $row[5],
         ]);
     }
+
 }
