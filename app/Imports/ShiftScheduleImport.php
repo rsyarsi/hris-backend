@@ -2,25 +2,13 @@
 
 namespace App\Imports;
 
-use App\Models\{Shift, Employee};
+use App\Models\{Shift, Employee, ShiftSchedule};
 use Illuminate\Support\Str;
-use App\Models\ShiftSchedule;
-use Symfony\Component\Uid\Ulid;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Symfony\Component\Uid\Ulid;
 
 class ShiftScheduleImport implements ToModel
 {
-    private $rowCount = 0; // Initialize a counter
-
-    public function getRowCount()
-    {
-        return $this->rowCount;
-    }
-
-    public function startRow(): int
-    {
-        return 2; // Skip the header row
-    }
     /**
     * @param array $row
     *
@@ -32,15 +20,25 @@ class ShiftScheduleImport implements ToModel
         $setupUserId = auth()->id();
         $date = $row[3];
 
-        // Search shift
         $shiftCode = $row[1];
-        $shift = Shift::where('code', $shiftCode)->get();
-
-        // Search employee
+        $shift = Shift::where('code', $shiftCode)->first();
+        
         $employeeNumber = $row[0];
-        $employee = Employee::where('employment_number', $employeeNumber)->get();
-        // Check if the employee is found, otherwise skip this row
-        if (!$employee) {
+        $employee = Employee::where('employment_number', $employeeNumber)->first();
+        
+        if (!$employee || !$shift) {
+            return null; // Skip this row
+        }
+
+        // Check if the entry already exists in the shift_schedules table
+        $existingEntry = ShiftSchedule::where([
+            'employee_id' => $employee->id,
+            'shift_id' => $shift->id,
+            'date' => $date,
+        ])->first();
+
+        // If the entry exists, skip it
+        if ($existingEntry) {
             return null; // Skip this row
         }
 
@@ -49,9 +47,9 @@ class ShiftScheduleImport implements ToModel
             'id' => Str::lower($ulid),
             'employee_id' => $employee->id,
             'shift_id' => $shift->id,
-            'date' => $date->format('Y-m-d'),
-            'time_in' => $date->format('Y-m-d') . ' ' . $shift->in_time,
-            'time_out' => $date->format('Y-m-d') . ' ' . $shift->out_time,
+            'date' => $date,
+            'time_in' => $date . ' ' . $shift->in_time,
+            'time_out' => $date . ' ' . $shift->out_time,
             'late_note' => null,
             'shift_exchange_id' => null,
             'user_exchange_id' => null,
@@ -67,5 +65,4 @@ class ShiftScheduleImport implements ToModel
             'national_holiday' => $row[5],
         ]);
     }
-
 }
