@@ -17,7 +17,7 @@ class LeaveTypeSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             LeaveType::create([
-                'name' => 'Leave Type ' . $i,
+                'name' => 'LEAVE TYPE ' . $i,
                 'is_salary_deduction' => rand(0, 1),
                 'active' => rand(0, 1),
             ]);

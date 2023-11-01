@@ -17,7 +17,7 @@ class IdentityTypeSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             IdentityType::create([
-                'name' => 'Identity Type ' . $i,
+                'name' => 'IDENTITY TYPE ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

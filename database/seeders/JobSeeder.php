@@ -17,7 +17,7 @@ class JobSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Job::create([
-                'name' => 'Job ' . $i,
+                'name' => 'JOB ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

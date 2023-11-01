@@ -17,7 +17,7 @@ class MaritalStatusSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             MaritalStatus::create([
-                'name' => 'Marital Status ' . $i,
+                'name' => 'MARITAL STATUS ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

@@ -17,7 +17,7 @@ class StatusEmploymentSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             StatusEmployment::create([
-                'name' => 'Status Employment ' . $i,
+                'name' => 'STATUS EMPLOYEMENT ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

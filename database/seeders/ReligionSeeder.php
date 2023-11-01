@@ -17,7 +17,7 @@ class ReligionSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Religion::create([
-                'name' => 'Religion ' . $i,
+                'name' => 'RELIGION ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

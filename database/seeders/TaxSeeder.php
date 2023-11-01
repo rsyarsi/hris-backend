@@ -17,7 +17,7 @@ class TaxSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Tax::create([
-                'name' => 'Tax ' . $i,
+                'name' => 'TAX ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

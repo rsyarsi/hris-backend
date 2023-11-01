@@ -17,7 +17,7 @@ class SkillTypeSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             SkillType::create([
-                'name' => 'Skill Type ' . $i,
+                'name' => 'SKILL TYPE ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

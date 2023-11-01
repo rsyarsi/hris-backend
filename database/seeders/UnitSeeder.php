@@ -17,7 +17,7 @@ class UnitSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Unit::create([
-                'name' => 'Unit ' . $i,
+                'name' => 'UNIT ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

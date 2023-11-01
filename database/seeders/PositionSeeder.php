@@ -17,7 +17,7 @@ class PositionSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Position::create([
-                'name' => 'Position ' . $i,
+                'name' => 'POSITION ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

@@ -17,7 +17,7 @@ class PayrollComponentSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             PayrollComponent::create([
-                'name' => 'Payroll Component ' . $i,
+                'name' => 'PAYROLL COMPONENT ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

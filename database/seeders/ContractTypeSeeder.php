@@ -17,7 +17,7 @@ class ContractTypeSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             ContractType::create([
-                'name' => 'Contract Type ' . $i,
+                'name' => 'CONTRACT TYPE ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

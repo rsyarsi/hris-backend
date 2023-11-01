@@ -17,10 +17,10 @@ class ShiftGroupSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             ShiftGroup::create([
-                'name' => 'Shift Group ' . $i,
+                'name' => 'SHIFT GROUP ' . $i,
                 'hour' => rand(0, 50),
                 'day' => 22,
-                'type' => 'Type ' . $i,
+                'type' => 'TYPE ' . $i,
             ]);
         }
     }

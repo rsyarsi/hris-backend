@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Employee;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class EmployeeSeeder extends Seeder
 {
@@ -18,7 +17,7 @@ class EmployeeSeeder extends Seeder
     {
         foreach (range(1, 5) as $index) {
             Employee::create([
-                'name' => Str::random(10),
+                'name' => Str::upper(Str::random(10)),
             ]);
         }
     }

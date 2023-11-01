@@ -17,7 +17,7 @@ class RelationshipSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Relationship::create([
-                'name' => 'Relationship ' . $i,
+                'name' => 'RELATIONSHIP ' . $i,
                 'active' => rand(0, 1),
             ]);
         }

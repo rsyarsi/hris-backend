@@ -17,7 +17,7 @@ class LegalityTypeSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             LegalityType::create([
-                'name' => 'Legality Type ' . $i,
+                'name' => 'LEGALITY TYPE ' . $i,
                 'active' => rand(0, 1),
                 'extended' => true,
             ]);

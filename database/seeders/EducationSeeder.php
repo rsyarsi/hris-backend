@@ -17,7 +17,7 @@ class EducationSeeder extends Seeder
     {
         for ($i = 1; $i <= 3; $i++) {
             Education::create([
-                'name' => 'Education ' . $i,
+                'name' => 'EDUCATION ' . $i,
                 'active' => rand(0, 1),
             ]);
         }
