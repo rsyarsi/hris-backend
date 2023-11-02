@@ -86,10 +86,6 @@ class AuthController extends Controller
      */
     public function userProfile() {
         $user = auth()->user();
-        if (!$user->employee) {
-            // Handle the case where the user does not have an associated Employee record
-            return $this->success('The user dont have relation with employee', $user);
-        }
         $user->load([
             'employee' => function ($query) {
                 $query->select(
@@ -136,7 +132,7 @@ class AuthController extends Controller
                     'manager_id'
                 )->with([
                     'supervisor:id,name,email',
-                    'manager:id,name,email'
+                    'manager:id,name,email',
                 ]);
             },
             'roles' => function ($query) {
@@ -144,7 +140,11 @@ class AuthController extends Controller
                     ->with('permissions:id,name,guard_name');
             }
         ]);
-    
+        
+        if (!$user->employee) {
+            // Handle the case where the user does not have an associated Employee record
+            return $this->success('User Profile Successfully Retrieved, The user dont have relation with employee', $user);
+        }
         return $this->success('User Profile Successfully Retrieved', $user);
     }
 
