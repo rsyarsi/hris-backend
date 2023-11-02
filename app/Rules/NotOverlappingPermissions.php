@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use Carbon\Carbon;
 use App\Models\Leave;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -32,11 +33,22 @@ class NotOverlappingPermissions implements Rule
      */
     public function passes($attribute, $value)
     {
-        // Query the database to check for overlapping permissions
+        $fromDate = Carbon::parse($this->fromDate);
+        $toDate = Carbon::parse($this->toDate);
+
+        if ($fromDate >= $toDate) {
+            return false; // Disallow when from_date is greater than or equal to to_date
+        }
+
+        // Allow a difference of one minute (60 seconds)
+        $minimumDifference = 60; // 60 seconds
+
         $overlappingPermissions = Leave::where('employee_id', $this->employeeId)
-            ->where(function ($query) {
-                $query->whereBetween('from_date', [$this->fromDate, $this->toDate])
-                    ->orWhereBetween('to_date', [$this->fromDate, $this->toDate]);
+            ->where(function ($query) use ($fromDate, $toDate, $minimumDifference) {
+                $query->where(function ($q) use ($fromDate, $toDate, $minimumDifference) {
+                    $q->where('from_date', '<', $toDate->subSeconds($minimumDifference))
+                    ->where('to_date', '>', $fromDate->addSeconds($minimumDifference));
+                });
             })
             ->count();
 

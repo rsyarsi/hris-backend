@@ -4,6 +4,7 @@ namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
 use App\Models\Leave;
+use App\Models\Employee;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
@@ -218,31 +219,40 @@ class LeaveRepository implements LeaveRepositoryInterface
         if (!$user->employee) {
             return [];
         }
+
+        // Get employees supervised or managed by the logged-in user
+        $subordinateIds = Employee::where('supervisor_id', $user->employee->id)
+                                    ->orWhere('manager_id', $user->employee->id)
+                                    ->pluck('id');
+
         $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'leaveStatus' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveHistory' => function ($query) {
-                            $query->select(
-                                'id',
-                                'leave_id',
-                                'description',
-                                'ip_address',
-                                'user_id',
-                                'user_agent',
-                                'comment',
-                            );
-                        }
-                    ])
-                    ->select($this->field);
-        $query->where('employee_id', $user->employee->id);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment'
+                    );
+                }
+            ])
+            ->select($this->field);
+
+        // Filter leave data for supervised or managed employees
+        $query->whereIn('employee_id', $subordinateIds);
+
         if ($leaveStatus) {
             $query->where('leave_status_id', $leaveStatus);
         }
@@ -252,6 +262,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($endDate) {
             $query->whereDate('from_date', '<=', $endDate);
         }
+
         return $query->paginate($perPage);
     }
 
