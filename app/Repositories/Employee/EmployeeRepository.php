@@ -67,8 +67,14 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             'department' => function ($query) {
                                 $query->select('id', 'name');
                             },
+                            'manager' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
                             'user' => function ($query) {
-                                $query->select('id', 'name')->with([
+                                $query->select('id', 'name', 'email')->with([
                                     'roles:id,name',
                                     'roles.permissions:id,name',
                                 ]);
