@@ -169,8 +169,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     // route for leaves
     Route::resource('leaves', LeaveController::class);
     Route::controller(LeaveController::class)->group(function () {
-        // route for overtime where employee login
+        // route for leave where employee login
         Route::get('leave-where-employee', 'leaveEmployee')->name('leave-where-employee');
+        // route for leave where supervisor or manager login
+        Route::get('leave-supervisor-manager', 'leaveSupervisorOrManager')->name('leave-supervisor-manager');
         // route for leave where status
         Route::get('leave-where-statuses', 'leaveStatus')->name('leave-where-statuses');
         // route for leave update status(approval/rejected)

@@ -98,6 +98,20 @@ class LeaveController extends Controller
         }
     }
 
+    public function leaveSupervisorOrManager(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $leaveStatus = $request->input('leave_status');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $leaves = $this->leaveService->leaveSupervisorOrManager($perPage, $leaveStatus, $startDate, $endDate);
+            return $this->success('Leave where status retrieved successfully', $leaves);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function leaveStatus(Request $request)
     {
         try {
