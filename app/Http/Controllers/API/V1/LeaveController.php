@@ -106,7 +106,7 @@ class LeaveController extends Controller
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $leaves = $this->leaveService->leaveSupervisorOrManager($perPage, $leaveStatus, $startDate, $endDate);
-            return $this->success('Leave where status retrieved successfully', $leaves);
+            return $this->success('Leave where manager/supervisor retrieved successfully', $leaves);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

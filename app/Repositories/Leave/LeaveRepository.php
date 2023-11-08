@@ -3,8 +3,7 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\Leave;
-use App\Models\Employee;
+use App\Models\{Employee, Leave};
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 use App\Services\LeaveHistory\LeaveHistoryServiceInterface;

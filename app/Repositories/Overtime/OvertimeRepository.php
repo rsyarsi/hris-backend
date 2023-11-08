@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Overtime;
 
-use App\Models\Overtime;
+use App\Models\{Employee, Overtime};
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
 
 
@@ -108,6 +108,43 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                     ])
                     ->select($this->field);
         $query->where('employee_id', $user->employee->id);
+        if ($overtimeStatus) {
+            $query->where('overtime_status_id', $overtimeStatus);
+        }
+        if ($startDate) {
+            $query->whereDate('from_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('from_date', '<=', $endDate);
+        }
+        return $query->paginate($perPage);
+    }
+
+    public function overtimeSupervisorOrManager($perPage, $overtimeStatus = null, $startDate = null, $endDate = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+
+        // Get employees supervised or managed by the logged-in user
+        $subordinateIds = Employee::where('supervisor_id', $user->employee->id)
+                                    ->orWhere('manager_id', $user->employee->id)
+                                    ->pluck('id');
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'overtimeStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                    ])
+                    ->select($this->field);
+
+        // Filter overtime data for supervised or managed employees
+        $query->whereIn('employee_id', $subordinateIds);
+
         if ($overtimeStatus) {
             $query->where('overtime_status_id', $overtimeStatus);
         }

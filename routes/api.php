@@ -187,6 +187,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     Route::controller(OvertimeController::class)->group(function () {
         // route for overtime overtime where employee login
         Route::get('overtime-where-employee', 'overtimeEmployee')->name('overtime-where-employee');
+        // route for Overtime where supervisor or manager login
+        Route::get('overtime-supervisor-manager', 'overtimeSupervisorOrManager')->name('overtime-supervisor-manager');
         // route for overtime where status
         Route::get('overtime-where-statuses', 'overtimeStatus')->name('overtime-where-statuses');
         // route for overtime update status(approval/rejected)

@@ -65,7 +65,16 @@ class LeaveService implements LeaveServiceInterface
     public function leaveSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate)
     {
         $user = auth()->user();
-        $allowedRoles = ['administrator', 'hrd', 'supervisor', 'manager'];
+        $allowedRoles = [
+            'administrator',
+            'hrd',
+            'supervisor',
+            'manager',
+            'ADMINISTRATOR',
+            'HRD',
+            'SUPERVISOR',
+            'MANAGER',
+        ];
 
         if ($user->hasAnyRole($allowedRoles)) {
             return $this->repository->leaveSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);

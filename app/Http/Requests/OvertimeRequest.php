@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\{DateSmallerThan, NotOverlappingPermissions};
 use Illuminate\Foundation\Http\FormRequest;
 
 class OvertimeRequest extends FormRequest
@@ -30,7 +31,15 @@ class OvertimeRequest extends FormRequest
             'overtime_status_id' => 'required|exists:overtime_statuses,id',
             'amount' => 'required|max:18',
             'type' => 'required|in:HARI-KERJA,HARI-LIBUR',
-            'from_date' => 'required|date',
+            'from_date' => ['required',
+                            'date',
+                            new NotOverlappingPermissions(
+                                $this->input('employee_id'),
+                                $this->input('from_date'),
+                                $this->input('to_date')
+                            ),
+                            new DateSmallerThan('to_date'),
+                        ],
             'to_date' => 'required|date',
         ];
     }

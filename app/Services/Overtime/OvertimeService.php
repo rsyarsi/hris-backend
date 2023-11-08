@@ -59,6 +59,26 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->overtimeEmployee($perPage, $overtimeStatus, $startDate, $endDate);
     }
 
+    public function overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate)
+    {
+        $user = auth()->user();
+        $allowedRoles = [
+                            'administrator',
+                            'hrd',
+                            'supervisor',
+                            'manager',
+                            'ADMINISTRATOR',
+                            'HRD',
+                            'SUPERVISOR',
+                            'MANAGER',
+                        ];
+
+        if ($user->hasAnyRole($allowedRoles)) {
+            return $this->repository->overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);
+        }
+        return null;
+    }
+
     public function overtimeStatus($perPage, $search, $overtimeStatus)
     {
         $search = Str::upper($search);

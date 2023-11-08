@@ -97,6 +97,20 @@ class OvertimeController extends Controller
         }
     }
 
+    public function overtimeSupervisorOrManager(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $overtimeStatus = $request->input('overtime_status');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $overtimes = $this->overtimeService->overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);
+            return $this->success('Overtime where manager/supervisor login retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function overtimeStatus(Request $request)
     {
         try {
