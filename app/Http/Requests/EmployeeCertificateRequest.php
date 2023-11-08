@@ -33,9 +33,6 @@ class EmployeeCertificateRequest extends FormRequest
             'verified_at' => 'nullable|date',
             'verified_user_Id' => 'nullable|integer',
             'is_extended' => 'nullable|integer',
-            // 'file_url' => 'nullable|string|max:255',
-            // 'file_path' => 'nullable|string|max:255',
-            // 'file_disk' => 'nullable|string|max:255',
         ];
     }
 }
