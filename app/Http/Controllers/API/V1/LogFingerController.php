@@ -4,9 +4,11 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Imports\LogFingerImport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LogFingerRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Services\LogFinger\LogFingerServiceInterface;
+use App\Http\Requests\{LogFingerRequest, ImportLogFingerRequest};
 
 class LogFingerController extends Controller
 {
@@ -78,6 +80,16 @@ class LogFingerController extends Controller
                 return $this->error('Log Finger not found', 404);
             }
             return $this->success('Log Finger deleted successfully, id : '.$logfinger->id, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function importLogFinger(ImportLogFingerRequest $request)
+    {
+        try {
+            Excel::import(new LogFingerImport, request()->file('file'));
+            return $this->success('Log Finger imported successfully', [], 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

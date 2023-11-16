@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\Employee;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Imports\ShiftScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\ShiftScheduleRequest;
-use App\Http\Requests\ImportShiftScheduleRequest;
+use App\Http\Requests\{ShiftScheduleRequest, ImportShiftScheduleRequest};
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class ShiftScheduleController extends Controller

@@ -22,10 +22,10 @@ class ShiftScheduleImport implements ToModel
 
         $shiftCode = $row[1];
         $shift = Shift::where('code', $shiftCode)->first();
-        
+
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
-        
+
         if (!$employee || !$shift) {
             return null; // Skip this row
         }

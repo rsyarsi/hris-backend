@@ -21,6 +21,8 @@ class LogFingerService implements LogFingerServiceInterface
 
     public function store(array $data)
     {
+        $data['user_manual_id'] = auth()->id();
+        $data['input_manual_at'] = now();
         return $this->repository->store($data);
     }
 

@@ -30,9 +30,6 @@ class LogFingerRepository implements LogFingerRepositoryInterface
     public function index($perPage, $search = null)
     {
         $query = $this->model->select($this->field);
-        // if ($search !== null) {
-        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        // }
         return $query->paginate($perPage);
     }
 

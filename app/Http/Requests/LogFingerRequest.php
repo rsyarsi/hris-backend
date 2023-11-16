@@ -30,8 +30,6 @@ class LogFingerRequest extends FormRequest
             'code_sn_finger' => 'required|string|max:45',
             'datetime' => 'required|date',
             'manual' => 'required|integer',
-            'user_manual_id' => 'required|exists:users,id',
-            'input_manual_at' => 'required|date',
             'code_pin' => 'required|string|max:45',
         ];
     }
