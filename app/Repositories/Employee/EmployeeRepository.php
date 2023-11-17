@@ -409,6 +409,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                 'employment_number' => $data['employment_number'],
                 'unit_id' => $data['unit_id'],
                 'position_id' => $data['position_id'],
+                'department_id' => $data['department_id'],
                 'manager_id' => $data['manager_id'],
                 'started_at' => $data['started_at'],
             ]);
