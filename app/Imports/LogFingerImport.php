@@ -2,10 +2,11 @@
 
 namespace App\Imports;
 
-use App\Models\{Employee, LogFinger};
+use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Symfony\Component\Uid\Ulid;
+use App\Models\{Employee, LogFinger};
+use Maatwebsite\Excel\Concerns\ToModel;
 
 class LogFingerImport implements ToModel
 {
@@ -16,8 +17,6 @@ class LogFingerImport implements ToModel
     */
     public function model(array $row)
     {
-        $date = $row[4];
-
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
 
@@ -41,7 +40,7 @@ class LogFingerImport implements ToModel
             'id' => Str::lower($ulid),
             'log_at' => $row[1],
             'employee_id' => $employee->id,
-            'in_out' => $row[1],
+            'in_out' => $row[2],
             'datetime' => $row[1],
             'manual' => $row[5],
             'code_pin' => $row[6],

@@ -1,7 +1,6 @@
 <?php
 namespace App\Services\LogFinger;
 
-use Illuminate\Support\Str;
 use App\Services\LogFinger\LogFingerServiceInterface;
 use App\Repositories\LogFinger\LogFingerRepositoryInterface;
 

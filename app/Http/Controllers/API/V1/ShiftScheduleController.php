@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Imports\ShiftScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\{ShiftScheduleRequest, ImportShiftScheduleRequest};
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
+use App\Http\Requests\{ShiftScheduleRequest, ImportShiftScheduleRequest};
 
 class ShiftScheduleController extends Controller
 {
