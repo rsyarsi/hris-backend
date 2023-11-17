@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 use App\Models\{Employee, LogFinger};
@@ -19,7 +18,6 @@ class LogFingerImport implements ToModel
     {
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
-
         if (!$employee) {
             return null; // Skip this row
         }
@@ -28,6 +26,8 @@ class LogFingerImport implements ToModel
         $existingEntry = LogFinger::where([
             'employee_id' => $employee->id,
             'log_at' => $row[1],
+            'in_out' => $row[2],
+            'datetime' => $row[4],
         ])->first();
 
         // If the entry exists, skip it
@@ -41,10 +41,12 @@ class LogFingerImport implements ToModel
             'log_at' => $row[1],
             'employee_id' => $employee->id,
             'in_out' => $row[2],
-            'datetime' => $row[1],
+            'code_sn_finger' => $row[3],
+            'datetime' => $row[4],
             'manual' => $row[5],
             'code_pin' => $row[6],
             'user_manual_id' => auth()->id(),
+            'input_manual_at' => now(),
         ]);
     }
 }
