@@ -104,11 +104,7 @@ class UserController extends Controller
             $roles = $request->input('role');
             if ($roles) {
                 foreach ($roles as $role) {
-                    if (!$user->hasRole($role)) {
-                        $user->assignRole($role);
-                    } else {
-                        return $this->error('Role Exists', 404);
-                    }
+                    $user->assignRole($role);
                 }
             }
 
