@@ -26,7 +26,7 @@ class ShiftScheduleRequest extends FormRequest
     {
         return [
             'employee_id' => 'required|exists:employees,id',
-            'shift_id' => 'required|exists:shifts,id',
+            'shift_id' => 'nullable|exists:shifts,id',
             'date' => [
                 'nullable',
                 'date',
