@@ -25,9 +25,10 @@ class LogFingerImport implements ToModel
         // Check if the entry already exists in the shift_schedules table
         $existingEntry = LogFinger::where([
             'employee_id' => $employee->id,
-            'log_at' => $row[1],
-            'in_out' => $row[2],
-            'datetime' => $row[4],
+            'datetime' => $row[2],
+            'time_in' => $row[5],
+            'time_out' => $row[6],
+            'tgl_log' => $row[7],
         ])->first();
 
         // If the entry exists, skip it
@@ -38,15 +39,17 @@ class LogFingerImport implements ToModel
         $ulid = Ulid::generate(); // Generate a ULID
         return new LogFinger([
             'id' => Str::lower($ulid),
-            'log_at' => $row[1],
             'employee_id' => $employee->id,
-            'in_out' => $row[2],
-            'code_sn_finger' => $row[3],
-            'datetime' => $row[4],
-            'manual' => $row[5],
-            'code_pin' => $row[6],
+            'code_sn_finger' => $row[1],
+            'datetime' => $row[2],
+            'manual' => $row[3],
+            'code_pin' => $row[4],
             'user_manual_id' => auth()->id(),
             'input_manual_at' => now(),
+            'time_in' => $row[5],
+            'time_out' => $row[6],
+            'tgl_log' => $row[7],
+            'absen_type' => $row[8],
         ]);
     }
 }

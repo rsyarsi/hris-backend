@@ -16,15 +16,17 @@ class LogFinger extends Model
 
     protected $fillable =
     [
-        'log_at',
         'employee_id',
-        'in_out',
         'code_sn_finger',
         'datetime',
         'manual',
         'user_manual_id',
         'input_manual_at',
-        'code_pin'
+        'code_pin',
+        'time_in',
+        'time_out',
+        'tgl_log',
+        'absen_type'
     ];
 
     public function employee()

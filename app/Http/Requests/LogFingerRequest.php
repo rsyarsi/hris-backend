@@ -24,13 +24,15 @@ class LogFingerRequest extends FormRequest
     public function rules()
     {
         return [
-            'log_at' => 'required|date',
             'employee_id' => 'required|exists:employees,id',
-            'in_out' => 'required|integer',
             'code_sn_finger' => 'required|string|max:45',
-            'datetime' => 'required|date',
+            'datetime' => 'nullable|date',
             'manual' => 'required|integer',
             'code_pin' => 'required|string|max:45',
+            'time_in' => 'required|string',
+            'time_out' => 'required|string',
+            'tgl_log' => 'required|date',
+            'absen_type' => 'required|string|max:15',
         ];
     }
 }
