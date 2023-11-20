@@ -13,7 +13,7 @@ use App\Http\Controllers\API\V1\{
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
-    ShiftScheduleController, RoleController, PermissionController
+    ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController
 };
 
 /*
@@ -166,6 +166,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
         // route for employee-contract-details
         Route::resource('employee-contract-details', EmployeeContractDetailController::class)->parameters(['employee-contract-details' => 'employee_contract_detail']);
+        // route for generate absen
+        Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate-absen']);
     });
 });
 

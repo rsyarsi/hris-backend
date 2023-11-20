@@ -38,7 +38,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->foreign('leave_id')->references('id')->on('leaves')->onDelete('set null');
             $table->string('leave_id', 26)->nullable();
-            $table->foreignId('leave_type_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('leave_type_id')->nullable()->constrained('leave_types')->nullOnDelete();
             $table->string('leave_time_at', 50)->nullable();
             $table->string('leave_out_at', 50)->nullable();
             $table->string('schedule_leave_time_at', 50)->nullable();

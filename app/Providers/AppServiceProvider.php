@@ -49,6 +49,7 @@ use App\Services\Overtime\{OvertimeService, OvertimeServiceInterface};
 use App\Services\EmployeeContract\{EmployeeContractService, EmployeeContractServiceInterface};
 use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, EmployeeContractDetailServiceInterface};
 use App\Services\Helper\{HelperService, HelperServiceInterface};
+use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
 use App\Repositories\Permission\{PermissionRepository, PermissionRepositoryInterface};
@@ -96,6 +97,7 @@ use App\Repositories\Overtime\{OvertimeRepository, OvertimeRepositoryInterface};
 use App\Repositories\EmployeeContract\{EmployeeContractRepository, EmployeeContractRepositoryInterface};
 use App\Repositories\EmployeeContractDetail\{EmployeeContractDetailRepository, EmployeeContractDetailRepositoryInterface};
 use App\Repositories\Helper\{HelperRepository, HelperRepositoryInterface};
+use App\Repositories\GenerateAbsen\{GenerateAbsenRepository, GenerateAbsenRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -289,6 +291,10 @@ class AppServiceProvider extends ServiceProvider
         // Helper
         $this->app->bind(HelperRepositoryInterface::class, HelperRepository::class);
         $this->app->bind(HelperServiceInterface::class, HelperService::class);
+
+        // Generate Absen
+        $this->app->bind(GenerateAbsenRepositoryInterface::class, GenerateAbsenRepository::class);
+        $this->app->bind(GenerateAbsenServiceInterface::class, GenerateAbsenService::class);
     }
 
     /**
