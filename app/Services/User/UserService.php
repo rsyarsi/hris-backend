@@ -34,7 +34,11 @@ class UserService implements UserServiceInterface
     public function update($id, $data)
     {
         $data['name'] = $this->formatTextTitle($data['name']);
-        $data['password'] = $this->encryptPassword($data['password']);
+
+        if(\array_key_exists('password', $data)) {
+            $data['password'] = $this->encryptPassword($data['password']);
+        }
+
         return $this->repository->update($id, $data);
     }
 

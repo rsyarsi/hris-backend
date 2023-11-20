@@ -33,7 +33,7 @@ class UserRequest extends FormRequest
                 'max:150',
                 Rule::unique('users')->ignore($this->route('user')),
             ],
-            'password' => 'required|string|max:255',
+            'password' => [Rule::requiredIf($this->isMethod('post')), 'string', 'max:255'],
             'role' => 'nullable|exists:roles,name',
             'employee_id' => 'nullable|exists:employees,id',
         ];
