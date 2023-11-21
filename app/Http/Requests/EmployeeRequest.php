@@ -74,7 +74,12 @@ class EmployeeRequest extends FormRequest
             'resigned_at' => 'nullable|date',
             'user_id' => 'nullable|exists:users,id',
             'supervisor_id' => 'nullable|exists:employees,id',
-            'manager_id' => 'nullable|exists:employees,id'
+            'manager_id' => 'nullable|exists:employees,id',
+            'pin' => [
+                'nullable',
+                'integer',
+                Rule::unique('employees')->ignore($this->route('employee')),
+            ],
         ];
     }
 }

@@ -19,7 +19,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         'current_province_id', 'current_city_id', 'current_district_id', 'current_village_id',
         'current_home_phone_number', 'current_home_phone_country', 'status_employment_id', 'position_id',
         'unit_id', 'department_id', 'started_at', 'employment_number', 'resigned_at', 'user_id', 'supervisor_id',
-        'manager_id',
+        'manager_id', 'pin'
     ];
 
     public function __construct(Employee $model)
