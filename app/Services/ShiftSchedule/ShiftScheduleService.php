@@ -26,7 +26,7 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
     public function store(array $data)
     {
-        $shiftId = $data['shift_id'];
+        $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
         $data['created_user_id'] = auth()->id();
         $data['setup_user_id'] = auth()->id();
@@ -58,7 +58,7 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
     public function storeMultiple(array $data)
     {
-        $shiftId = $data['shift_id'];
+        $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
 
         $createdUserId = auth()->id();
@@ -78,8 +78,8 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
                 'employee_id' => $data['employee_id'],
                 'shift_id' => $shiftId,
                 'date' => $date->format('Y-m-d'),
-                'time_in' => $date->format('Y-m-d') . ' ' . $shift->in_time,
-                'time_out' => $date->format('Y-m-d') . ' ' . $shift->out_time,
+                'time_in' => $shiftId ? $date->format('Y-m-d') . ' ' . $shift->in_time : null,
+                'time_out' => $shiftId ?  $date->format('Y-m-d') . ' ' . $shift->out_time : null,
                 'late_note' => null,
                 'shift_exchange_id' => null,
                 'user_exchange_id' => null,
@@ -91,7 +91,7 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
                 'period' => $data['period'],
                 'leave_note' => null,
                 'holiday' => $data['holiday'],
-                'night' => $shift->night_shift,
+                'night' => $shiftId ? $shift->night_shift : null,
                 'national_holiday' => $data['national_holiday'],
             ];
 
