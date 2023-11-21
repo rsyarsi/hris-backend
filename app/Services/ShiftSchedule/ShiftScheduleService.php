@@ -19,9 +19,9 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         $this->shiftService = $shiftService;
     }
 
-    public function index($perPage, $search)
+    public function index($perPage, $search, $startDate, $endDate)
     {
-        return $this->repository->index($perPage, $search);
+        return $this->repository->index($perPage, $search, $startDate, $endDate);
     }
 
     public function store(array $data)

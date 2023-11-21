@@ -27,7 +27,9 @@ class ShiftScheduleController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $shiftSchedules = $this->shiftScheduleService->index($perPage, $search);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $shiftSchedules = $this->shiftScheduleService->index($perPage, $search, $startDate, $endDate);
             return $this->success('Shift Schedule retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

@@ -37,7 +37,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $startDate = null, $endDate = null)
     {
         $query = $this->model
                     ->with([
@@ -106,6 +106,12 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                             $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
                                         });
                         });
+                    }
+                    if ($startDate) {
+                        $query->whereDate('date', '>=', $startDate);
+                    }
+                    if ($endDate) {
+                        $query->whereDate('date', '<=', $endDate);
                     }
         return $query->paginate($perPage);
     }
