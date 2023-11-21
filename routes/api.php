@@ -13,7 +13,7 @@ use App\Http\Controllers\API\V1\{
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
-    ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController
+    ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController
 };
 
 /*
@@ -162,6 +162,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for import log finger
             Route::post('import-log-finger', 'importLogFinger')->name('import-log-finger');
         });
+        Route::resource('log-fingers-temps', LogFingerTempController::class)->parameters(['log-fingers' => 'log_finger']);
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
         // route for employee-contract-details

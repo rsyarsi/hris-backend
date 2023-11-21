@@ -30,7 +30,7 @@ class ShiftScheduleRequest extends FormRequest
             'date' => [
                 'nullable',
                 'date',
-                new NotOverlappingShiftSchedules,
+                // new NotOverlappingShiftSchedules,
             ],
             'start_date' => [
                 'nullable',

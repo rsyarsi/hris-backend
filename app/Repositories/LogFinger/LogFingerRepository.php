@@ -31,7 +31,13 @@ class LogFingerRepository implements LogFingerRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field);
+        $query = $this->model
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                        ])
+                        ->select($this->field);
         return $query->paginate($perPage);
     }
 

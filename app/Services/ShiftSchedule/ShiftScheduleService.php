@@ -43,6 +43,11 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
 
     public function update($id, $data)
     {
+        $shiftSchedule = $this->repository->show($id);
+        $shiftId = $data['shift_id'] ?? null;
+        $shift = $this->shiftService->show($shiftId);
+        $data['time_in'] = $shift ? $shiftSchedule->date . ' ' . $shift->in_time : null;
+        $data['time_out'] = $shift ? $shiftSchedule->date . ' ' . $shift->out_time : null;
         return $this->repository->update($id, $data);
     }
 

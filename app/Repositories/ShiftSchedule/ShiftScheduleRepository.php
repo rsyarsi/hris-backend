@@ -113,7 +113,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     if ($endDate) {
                         $query->whereDate('date', '<=', $endDate);
                     }
-        return $query->paginate($perPage);
+        return $query->orderBy('date', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -274,7 +274,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         if ($endDate) {
             $query->whereDate('date', '<=', $endDate);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('date', 'ASC')->paginate($perPage);
     }
 
     public function storeMultiple(array $data)
