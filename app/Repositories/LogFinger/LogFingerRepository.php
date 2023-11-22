@@ -38,7 +38,7 @@ class LogFingerRepository implements LogFingerRepositoryInterface
                             },
                         ])
                         ->select($this->field);
-        return $query->paginate($perPage);
+        return $query->orderBy('datetime', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -70,5 +70,22 @@ class LogFingerRepository implements LogFingerRepositoryInterface
             return $logfinger;
         }
         return null;
+    }
+
+    public function logFingerUser($perPage, $search = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $query = $this->model
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                        ])
+                        ->select($this->field);
+        $query->where('employee_id', $user->employee->id);
+        return $query->orderBy('datetime', 'ASC')->paginate($perPage);
     }
 }

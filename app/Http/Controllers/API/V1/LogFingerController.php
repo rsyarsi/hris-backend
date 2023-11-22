@@ -94,4 +94,16 @@ class LogFingerController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function logFingerUser(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $logfingers = $this->logfingerService->logFingerUser($perPage, $search);
+            return $this->success('Log Fingers user retrieved successfully', $logfingers);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

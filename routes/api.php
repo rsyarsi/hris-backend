@@ -161,6 +161,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(LogFingerController::class)->group(function () {
             // route for import log finger
             Route::post('import-log-finger', 'importLogFinger')->name('import-log-finger');
+            // route log finger where user login -> employee_id
+            Route::get('log-finger-user', 'logFingerUser')->name('log-finger-user');
         });
         Route::resource('log-fingers-temps', LogFingerTempController::class)->parameters(['log-fingers' => 'log_finger']);
         // route for employee-contracts

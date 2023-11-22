@@ -39,4 +39,9 @@ class LogFingerService implements LogFingerServiceInterface
     {
         return $this->repository->destroy($id);
     }
+
+    public function logFingerUser($perPage, $search)
+    {
+        return $this->repository->logFingerUser($perPage, $search);
+    }
 }
