@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LogFinger extends Model
 {
-    use HasFactory, HasUlids;
+    use HasFactory, HasUuids;
 
     protected $table = 'log_fingers';
 
@@ -26,7 +26,8 @@ class LogFinger extends Model
         'time_in',
         'time_out',
         'tgl_log',
-        'absen_type'
+        'absen_type',
+        'function'
     ];
 
     public function employee()

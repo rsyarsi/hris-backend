@@ -36,9 +36,9 @@ class LogFingerImport implements ToModel
             return null; // Skip this row
         }
 
-        $ulid = Ulid::generate(); // Generate a ULID
+        $uuid = Str::uuid(); // Generate a UUID
         return new LogFinger([
-            'id' => Str::lower($ulid),
+            'id' => $uuid,
             'employee_id' => $employee->id,
             'code_sn_finger' => $row[1],
             'datetime' => $row[2],

@@ -21,7 +21,8 @@ class LogFingerRepository implements LogFingerRepositoryInterface
         'time_in',
         'time_out',
         'tgl_log',
-        'absen_type'
+        'absen_type',
+        'function'
     ];
 
     public function __construct(LogFinger $model)
