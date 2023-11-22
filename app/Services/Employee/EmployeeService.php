@@ -65,4 +65,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return Str::title($data);
     }
+
+    public function employeeWherePin($pin)
+    {
+        return $this->repository->employeeWherePin($pin);
+    }
 }

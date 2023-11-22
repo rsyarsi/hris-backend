@@ -44,6 +44,7 @@ use App\Services\ShiftGroup\{ShiftGroupService, ShiftGroupServiceInterface};
 use App\Services\Shift\{ShiftService, ShiftServiceInterface};
 use App\Services\ShiftSchedule\{ShiftScheduleService, ShiftScheduleServiceInterface};
 use App\Services\LogFinger\{LogFingerService, LogFingerServiceInterface};
+use App\Services\LogFingerTemp\{LogFingerTempService, LogFingerTempServiceInterface};
 use App\Services\OvertimeStatus\{OvertimeStatusService, OvertimeStatusServiceInterface};
 use App\Services\Overtime\{OvertimeService, OvertimeServiceInterface};
 use App\Services\EmployeeContract\{EmployeeContractService, EmployeeContractServiceInterface};
@@ -92,6 +93,7 @@ use App\Repositories\ShiftGroup\{ShiftGroupRepository, ShiftGroupRepositoryInter
 use App\Repositories\Shift\{ShiftRepository, ShiftRepositoryInterface};
 use App\Repositories\ShiftSchedule\{ShiftScheduleRepository, ShiftScheduleRepositoryInterface};
 use App\Repositories\LogFinger\{LogFingerRepository, LogFingerRepositoryInterface};
+use App\Repositories\LogFingerTemp\{LogFingerTempRepository, LogFingerTempRepositoryInterface};
 use App\Repositories\OvertimeStatus\{OvertimeStatusRepository, OvertimeStatusRepositoryInterface};
 use App\Repositories\Overtime\{OvertimeRepository, OvertimeRepositoryInterface};
 use App\Repositories\EmployeeContract\{EmployeeContractRepository, EmployeeContractRepositoryInterface};
@@ -271,6 +273,10 @@ class AppServiceProvider extends ServiceProvider
         // Log Finger
         $this->app->bind(LogFingerRepositoryInterface::class, LogFingerRepository::class);
         $this->app->bind(LogFingerServiceInterface::class, LogFingerService::class);
+
+        // Log Finger Temp
+        $this->app->bind(LogFingerTempRepositoryInterface::class, LogFingerTempRepository::class);
+        $this->app->bind(LogFingerTempServiceInterface::class, LogFingerTempService::class);
 
         // Overtime Status
         $this->app->bind(OvertimeStatusRepositoryInterface::class, OvertimeStatusRepository::class);

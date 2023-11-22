@@ -164,7 +164,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route log finger where user login -> employee_id
             Route::get('log-finger-user', 'logFingerUser')->name('log-finger-user');
         });
-        Route::resource('log-fingers-temps', LogFingerTempController::class)->parameters(['log-fingers' => 'log_finger']);
+        Route::resource('log-fingers-temps', LogFingerTempController::class)->parameters(['log-fingers-temps' => 'log_finger_temp']);
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
         // route for employee-contract-details

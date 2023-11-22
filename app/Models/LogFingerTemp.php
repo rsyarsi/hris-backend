@@ -11,7 +11,7 @@ class LogFingerTemp extends Model
 
     protected $table = 'log_finger_temps';
 
-    protected $primaryssssssKey = 'id';
+    protected $primaryKey = 'id';
 
     protected $fillable =
     [
@@ -28,10 +28,5 @@ class LogFingerTemp extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_manual', 'id');
     }
 }

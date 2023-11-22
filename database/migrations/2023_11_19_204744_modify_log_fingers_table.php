@@ -35,10 +35,11 @@ return new class extends Migration
     {
         Schema::table('log_fingers', function (Blueprint $table) {
             // Reverse the changes if needed
-            $table->dropColumn('id');
             $table->dropColumn(['time_in', 'time_out', 'tgl_log', 'absen_type', 'function']);
+            if (!Schema::hasColumn('log_fingers', 'id')) {
+                $table->ulid('id')->primary();
+            }
             // Recreate the old columns
-            $table->ulid('id')->primary();
             $table->timestamp('log_at')->nullable();
             $table->tinyInteger('in_out')->nullable();
         });

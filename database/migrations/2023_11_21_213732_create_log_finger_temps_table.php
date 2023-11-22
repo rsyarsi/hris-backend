@@ -21,8 +21,8 @@ return new class extends Migration
             $table->bigInteger('function');
             $table->bigInteger('snfinger');
             $table->integer('manual');
-            $table->timestamp('user_manual');
-            $table->timestamp('manual_date');
+            $table->string('user_manual', 150);
+            $table->date('manual_date');
             $table->bigInteger('pin');
             $table->timestamps();
         });

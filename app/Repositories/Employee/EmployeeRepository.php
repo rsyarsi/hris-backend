@@ -429,4 +429,12 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         }
         return null;
     }
+
+    public function employeeWherePin($pin)
+    {
+        $employee = $this->model
+                        ->where('pin', $pin)
+                        ->first('id');
+        return $employee ? $employee : $employee = null;
+    }
 }
