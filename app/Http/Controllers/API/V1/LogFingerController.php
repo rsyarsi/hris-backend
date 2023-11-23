@@ -27,7 +27,9 @@ class LogFingerController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $logfingers = $this->logfingerService->index($perPage, $search);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $logfingers = $this->logfingerService->index($perPage, $search, $startDate, $endDate);
             return $this->success('Log Fingers retrieved successfully', $logfingers);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -99,8 +101,9 @@ class LogFingerController extends Controller
     {
         try {
             $perPage = $request->input('per_page', 10);
-            $search = $request->input('search');
-            $logfingers = $this->logfingerService->logFingerUser($perPage, $search);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $logfingers = $this->logfingerService->logFingerUser($perPage, $startDate, $endDate);
             return $this->success('Log Fingers user retrieved successfully', $logfingers);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

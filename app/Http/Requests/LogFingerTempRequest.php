@@ -13,7 +13,7 @@ class LogFingerTempRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class LogFingerTempRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'nopin' => 'required|max:20',
+            'datetime' => 'required|date',
+            'function' => 'required|integer',
         ];
     }
 }

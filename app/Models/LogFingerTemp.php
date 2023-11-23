@@ -19,6 +19,7 @@ class LogFingerTemp extends Model
         'employee_id',
         'function',
         'snfinger',
+        'absen',
         'manual',
         'user_manual',
         'manual_date',

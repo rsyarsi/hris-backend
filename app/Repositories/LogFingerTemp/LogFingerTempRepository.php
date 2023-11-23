@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Repositories\LogFinger;
+namespace App\Repositories\LogFingerTemp;
 
-use App\Models\LogFinger;
-use App\Repositories\LogFinger\LogFingerTempRepositoryInterface;
+use App\Models\LogFingerTemp;
+use App\Repositories\LogFingerTemp\LogFingerTempRepositoryInterface;
 
 
-class LogFingerTempRepository implements LogFingerRepositoryInterface
+class LogFingerTempRepository implements LogFingerTempRepositoryInterface
 {
     private $model;
     private $field = [
@@ -15,18 +15,19 @@ class LogFingerTempRepository implements LogFingerRepositoryInterface
         'employee_id',
         'function',
         'snfinger',
+        'absen',
         'manual',
         'user_manual',
         'manual_date',
         'pin',
     ];
 
-    public function __construct(LogFinger $model)
+    public function __construct(LogFingerTemp $model)
     {
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $startDate = null, $endDate = null)
     {
         $query = $this->model
                         ->with([
@@ -35,7 +36,21 @@ class LogFingerTempRepository implements LogFingerRepositoryInterface
                             },
                         ])
                         ->select($this->field);
-        return $query->orderBy('datetime', 'ASC')->paginate($perPage);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+        if ($startDate) {
+            $query->whereDate('date_log', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('date_log', '<=', $endDate);
+        }
+        return $query->orderBy('date_log', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -45,31 +60,38 @@ class LogFingerTempRepository implements LogFingerRepositoryInterface
 
     public function show($id)
     {
-        $logfinger = $this->model->where('id', $id)->first($this->field);
-        return $logfinger ? $logfinger : $logfinger = null;
+        $logfingerTemp = $this->model
+                            ->with([
+                                'employee' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                            ])
+                            ->where('id', $id)
+                            ->first($this->field);
+        return $logfingerTemp ? $logfingerTemp : $logfingerTemp = null;
     }
 
     public function update($id, $data)
     {
-        $logfinger = $this->model->find($id);
-        if ($logfinger) {
-            $logfinger->update($data);
-            return $logfinger;
+        $logfingerTemp = $this->model->find($id);
+        if ($logfingerTemp) {
+            $logfingerTemp->update($data);
+            return $logfingerTemp;
         }
         return null;
     }
 
     public function destroy($id)
     {
-        $logfinger = $this->model->find($id);
-        if ($logfinger) {
-            $logfinger->delete();
-            return $logfinger;
+        $logfingerTemp = $this->model->find($id);
+        if ($logfingerTemp) {
+            $logfingerTemp->delete();
+            return $logfingerTemp;
         }
         return null;
     }
 
-    public function logFingerUser($perPage, $search = null)
+    public function logFingerTempUser($perPage, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -82,6 +104,12 @@ class LogFingerTempRepository implements LogFingerRepositoryInterface
                             },
                         ])
                         ->select($this->field);
+        if ($startDate) {
+            $query->whereDate('datetime', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('datetime', '<=', $endDate);
+        }
         $query->where('employee_id', $user->employee->id);
         return $query->orderBy('datetime', 'ASC')->paginate($perPage);
     }

@@ -13,9 +13,9 @@ class LogFingerService implements LogFingerServiceInterface
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search)
+    public function index($perPage, $search, $startDate, $endDate)
     {
-        return $this->repository->index($perPage, $search);
+        return $this->repository->index($perPage, $search, $startDate, $endDate);
     }
 
     public function store(array $data)
@@ -40,8 +40,8 @@ class LogFingerService implements LogFingerServiceInterface
         return $this->repository->destroy($id);
     }
 
-    public function logFingerUser($perPage, $search)
+    public function logFingerUser($perPage, $startDate, $endDate)
     {
-        return $this->repository->logFingerUser($perPage, $search);
+        return $this->repository->logFingerUser($perPage, $startDate, $endDate);
     }
 }

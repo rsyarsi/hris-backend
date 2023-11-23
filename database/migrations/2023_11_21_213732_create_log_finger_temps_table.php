@@ -18,12 +18,13 @@ return new class extends Migration
             $table->date('date_log')->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id', 26)->nullable();
-            $table->bigInteger('function');
-            $table->bigInteger('snfinger');
-            $table->integer('manual');
-            $table->string('user_manual', 150);
-            $table->date('manual_date');
-            $table->bigInteger('pin');
+            $table->bigInteger('function')->nullable();
+            $table->bigInteger('snfinger')->nullable();
+            $table->timestamp('absen')->nullable();
+            $table->integer('manual')->nullable();
+            $table->string('user_manual', 150)->nullable();
+            $table->date('manual_date')->nullable();
+            $table->bigInteger('pin')->nullable();
             $table->timestamps();
         });
     }

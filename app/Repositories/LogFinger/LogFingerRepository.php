@@ -30,7 +30,7 @@ class LogFingerRepository implements LogFingerRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $startDate = null, $endDate = null)
     {
         $query = $this->model
                         ->with([
@@ -39,6 +39,20 @@ class LogFingerRepository implements LogFingerRepositoryInterface
                             },
                         ])
                         ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+        if ($startDate) {
+            $query->whereDate('datetime', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('datetime', '<=', $endDate);
+        }
         return $query->orderBy('datetime', 'ASC')->paginate($perPage);
     }
 
@@ -49,7 +63,14 @@ class LogFingerRepository implements LogFingerRepositoryInterface
 
     public function show($id)
     {
-        $logfinger = $this->model->where('id', $id)->first($this->field);
+        $logfinger = $this->model
+                            ->with([
+                                'employee' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                            ])
+                            ->where('id', $id)
+                            ->first($this->field);
         return $logfinger ? $logfinger : $logfinger = null;
     }
 
@@ -73,7 +94,7 @@ class LogFingerRepository implements LogFingerRepositoryInterface
         return null;
     }
 
-    public function logFingerUser($perPage, $search = null)
+    public function logFingerUser($perPage, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -86,6 +107,12 @@ class LogFingerRepository implements LogFingerRepositoryInterface
                             },
                         ])
                         ->select($this->field);
+        if ($startDate) {
+            $query->whereDate('datetime', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('datetime', '<=', $endDate);
+        }
         $query->where('employee_id', $user->employee->id);
         return $query->orderBy('datetime', 'ASC')->paginate($perPage);
     }
