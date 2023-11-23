@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,5 +50,14 @@ class GenerateAbsen extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_manual_id', 'id');
+    }
+
+    public static function executeStoredProcedure($period1, $period2)
+    {
+        // Assuming 'your_stored_procedure' is the name of your stored procedure
+        $result = DB::select('CALL generateabsensi(?, ?)', [$period1, $period2]);
+
+        // Process the result as needed
+        return $result;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Models\GenerateAbsen;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GenerateAbsenRequest;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
@@ -84,5 +85,17 @@ class GenerateAbsenController extends Controller
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function executeStoredProcedure(GenerateAbsenRequest $request)
+    {
+        $period1 = $request->input('period_1');
+        $period2 = $request->input('period_2');
+        $generateAbsen = GenerateAbsen::executeStoredProcedure($period1, $period2);
+        return $this->success('Generate Absen successfully', $generateAbsen, 201);
+        // try {
+        // } catch (\Exception $e) {
+        //     return $this->error($e->getMessage(), $e->getCode());
+        // }
     }
 }

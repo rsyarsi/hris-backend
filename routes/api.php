@@ -177,6 +177,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employee-contract-details', EmployeeContractDetailController::class)->parameters(['employee-contract-details' => 'employee_contract_detail']);
         // route for generate absen
         Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate-absen']);
+        Route::controller(GenerateAbsenController::class)->group(function () {
+            // route for execute generate absen
+            Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
+        });
     });
 });
 
