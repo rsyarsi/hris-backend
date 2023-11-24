@@ -60,13 +60,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     ->select($this->field);
         // Additional conditions
         if ($period_1 && $period_2) {
-            $query->whereBetween('period', [$period_1, $period_2]);
+            $query->whereBetween('date', [$period_1, $period_2]);
         } elseif ($period_1) {
-            $query->where('period', $period_1);
+            $query->where('date', $period_1);
         } elseif ($period_2) {
-            $query->where('period', $period_2);
+            $query->where('date', $period_2);
         }
-
         if ($unit) {
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
                 $employeeQuery->where('unit_id', $unit);
