@@ -4,7 +4,7 @@ namespace App\Repositories\ShiftSchedule;
 
 use App\Models\ShiftSchedule;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
-
+use Carbon\Carbon;
 
 class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 {
@@ -309,5 +309,76 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             ->where('date', '>=', $fromDate)
             ->where('date', '<=', $toDate)
             ->exists();
+    }
+
+    public function shiftScheduleEmployeeToday()
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $shiftschedule = $this->model
+                            ->with([
+                                'employee' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'shift' => function ($query) {
+                                    $query->select(
+                                        'id',
+                                        'shift_group_id',
+                                        'code',
+                                        'name',
+                                        'in_time',
+                                        'out_time',
+                                        'finger_in_less',
+                                        'finger_in_more',
+                                        'finger_out_less',
+                                        'finger_out_more',
+                                        'night_shift',
+                                        'active',
+                                        'user_created_id',
+                                        'user_updated_id',
+                                    );
+                                },
+                                // 'shiftExcange' => function ($query) {
+                                //     $query->select(
+                                //         'id',
+                                //         'employee_id',
+                                //         'leave_type_id',
+                                //         'from_date',
+                                //         'to_date',
+                                //         'duration',
+                                //         'note',
+                                //         'leave_status_id',
+                                //     );
+                                // },
+                                'userExchange' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userCreate' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userUpdate' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userSetup' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'leave' => function ($query) {
+                                    $query->select(
+                                        'employee_id',
+                                        'leave_type_id',
+                                        'from_date',
+                                        'to_date',
+                                        'duration',
+                                        'note',
+                                        'leave_status_id',
+                                    );
+                                },
+                            ])
+                        ->where('employee_id', $user->employee->id)
+                        ->where('date', Carbon::today())
+                        ->first($this->field);
+        return $shiftschedule ? $shiftschedule : $shiftschedule = null;
     }
 }

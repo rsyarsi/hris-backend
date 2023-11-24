@@ -121,4 +121,9 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         $this->repository->shiftSchedulesExist($employeeId, $fromDate, $toDate);
     }
+
+    public function shiftScheduleEmployeeToday()
+    {
+        return $this->repository->shiftScheduleEmployeeToday();
+    }
 }

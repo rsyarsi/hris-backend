@@ -137,4 +137,14 @@ class OvertimeController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function overtimeEmployeeToday(Request $request)
+    {
+        try {
+            $shiftSchedules = $this->overtimeService->overtimeEmployeeToday();
+            return $this->success('Overtime employee today retrieved successfully', $shiftSchedules);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

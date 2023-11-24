@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Overtime;
 
+use Carbon\Carbon;
 use App\Models\{Employee, Overtime};
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
 
@@ -192,5 +193,27 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             return $overtime;
         }
         return null;
+    }
+
+    public function overtimeEmployeeToday()
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $overtime = $this->model
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'overtimeStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                        ])
+                        ->where('employee_id', $user->employee->id)
+                        ->where('from_date', '>=', Carbon::today()->startOfDay())
+                        ->where('from_date', '<', Carbon::tomorrow()->startOfDay())
+                        ->first($this->field);
+        return $overtime ? $overtime : $overtime = null;
     }
 }

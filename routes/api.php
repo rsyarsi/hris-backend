@@ -149,6 +149,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master shift schedules
         Route::resource('shift-schedules', ShiftScheduleController::class)->parameters(['shift-schedules' => 'shift_schedules']);
         Route::controller(ShiftScheduleController::class)->group(function () {
+            // route for shift schedules where employee today
+            Route::get('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
             // route for shift schedules where employee
             Route::get('shift-schedules-where-employee', 'shiftScheduleEmployee')->name('shift-schedules-where-employee');
             // route for multiple shift schedule
@@ -206,6 +208,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     Route::controller(OvertimeController::class)->group(function () {
         // route for overtime overtime where employee login
         Route::get('overtime-where-employee', 'overtimeEmployee')->name('overtime-where-employee');
+        // route for overtime where employee today
+        Route::get('overtime-employee-today', 'overtimeEmployeeToday')->name('overtime-employee-today');
         // route for Overtime where supervisor or manager login
         Route::get('overtime-supervisor-manager', 'overtimeSupervisorOrManager')->name('overtime-supervisor-manager');
         // route for overtime where status
