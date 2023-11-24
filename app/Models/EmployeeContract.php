@@ -38,6 +38,7 @@ class EmployeeContract extends Model
         'position_id',
         'manager_id',
         'department_id',
+        'supervisor_id'
     ];
 
     public function employee()
@@ -73,6 +74,11 @@ class EmployeeContract extends Model
     public function manager()
     {
         return $this->belongsTo(Employee::class, 'manager_id', 'id');
+    }
+
+    public function supervisor()
+    {
+        return $this->belongsTo(Employee::class, 'supervisor_id', 'id');
     }
 
     public function employeeContractDetail()
