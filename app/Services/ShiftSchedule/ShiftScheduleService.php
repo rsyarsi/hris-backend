@@ -4,19 +4,22 @@ namespace App\Services\ShiftSchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
-use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Services\Shift\ShiftServiceInterface;
+use App\Services\Overtime\OvertimeServiceInterface;
+use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
+use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 
 class ShiftScheduleService implements ShiftScheduleServiceInterface
 {
     private $repository;
     private $shiftService;
+    private $overtimeService;
 
-    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftServiceInterface $shiftService)
+    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftServiceInterface $shiftService, OvertimeServiceInterface $overtimeService)
     {
         $this->repository = $repository;
         $this->shiftService = $shiftService;
+        $this->overtimeService = $overtimeService;
     }
 
     public function index($perPage, $search, $startDate, $endDate)
@@ -122,8 +125,8 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         $this->repository->shiftSchedulesExist($employeeId, $fromDate, $toDate);
     }
 
-    public function shiftScheduleEmployeeToday()
+    public function shiftScheduleEmployeeToday($employeeId)
     {
-        return $this->repository->shiftScheduleEmployeeToday();
+        return $this->repository->shiftScheduleEmployeeToday($employeeId);
     }
 }

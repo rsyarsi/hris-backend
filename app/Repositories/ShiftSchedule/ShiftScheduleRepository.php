@@ -311,7 +311,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             ->exists();
     }
 
-    public function shiftScheduleEmployeeToday()
+    public function shiftScheduleEmployeeToday($employeeId)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -376,7 +376,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                     );
                                 },
                             ])
-                        ->where('employee_id', $user->employee->id)
+                        ->where('employee_id', $employeeId)
                         ->where('date', Carbon::today())
                         ->first($this->field);
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;
