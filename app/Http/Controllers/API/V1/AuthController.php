@@ -20,10 +20,6 @@ class AuthController extends Controller
         'id',
         'name',
         'email',
-        'user_device_id',
-        'firebase_id',
-        'imei',
-        'ip'
     ];
     /**
      * Create a new AuthController instance.
@@ -55,7 +51,7 @@ class AuthController extends Controller
     public function loginMobileApps(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'username' => 'required|string|max:255',
             'password' => 'required|string|min:6',
             'user_device_id' => 'nullable|string',
             'firebase_id' => 'nullable|string',
@@ -67,7 +63,11 @@ class AuthController extends Controller
 
         $credentials = $validator->validated();
 
-        if (!$token = auth()->attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+        if (!$token = auth()->attempt([
+                                        'username' => $credentials['username'],
+                                        'password' => $credentials['password']]
+                                    ))
+        {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -89,10 +89,17 @@ class AuthController extends Controller
 
         if ($user->user_device_id !== $request->input('user_device_id')) {
             Auth::logout();
-            return response()->json(['error' => 'User is already logged in from another device!'], 401);
+            return response()->json(['error' => 'User telah login di perangkat lain, silahkan hubungi HRD!'], 401);
         }
 
-        return $this->createNewToken($token);
+        $this->createNewToken($token);
+        return $this->success('Login From Mobile App Berhasil!',
+            [
+                'name' => $user->name,
+                'email' => $user->email,
+                'employee_id' => $user->username,
+            ]
+        );
     }
 
     private function isUserLoggedInFromAnotherDevice($user, $credentials)

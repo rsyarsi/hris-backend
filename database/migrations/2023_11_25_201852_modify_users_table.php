@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('firebase_id')->nullable();
             $table->string('imei')->nullable();
             $table->string('ip')->nullable();
+            $table->string('username')->nullable();
         });
     }
 
@@ -29,7 +30,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['supervisor_id', 'firebase_id', 'imei', 'ip']);
+            $table->dropColumn(['user_device_id', 'firebase_id', 'imei', 'ip']);
         });
     }
 };
