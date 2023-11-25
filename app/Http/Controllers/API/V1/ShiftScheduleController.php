@@ -103,9 +103,9 @@ class ShiftScheduleController extends Controller
     public function shiftScheduleEmployeeToday(Request $request)
     {
         try {
-            $employeeId = $request->input('employee_id');
+            $employeeId = $request->input('employment_id');
             $shiftSchedules = $this->shiftScheduleService->shiftScheduleEmployeeToday($employeeId);
-            $shiftSchedulesArray = $shiftSchedules->toArray();
+            $shiftSchedulesArray = $shiftSchedules;
             return response()->json([
                 'message' => 'Jadwal Karyawan hari ini berhasil di ambil!',
                 'success' => 'true',

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\ShiftSchedule;
 
+use App\Models\Employee;
 use App\Models\ShiftSchedule;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 use Carbon\Carbon;
@@ -313,10 +314,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 
     public function shiftScheduleEmployeeToday($employeeId)
     {
-        $user = auth()->user();
-        if (!$user->employee) {
-            return [];
-        }
+        $employee = Employee::where('employment_number', $employeeId)->first();
         $shiftschedule = $this->model
                             ->with([
                                 'employee' => function ($query) {
@@ -376,7 +374,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                     );
                                 },
                             ])
-                        ->where('employee_id', $employeeId)
+                        ->where('employee_id', $employee->id)
                         ->where('date', Carbon::today())
                         ->first($this->field);
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;

@@ -141,7 +141,7 @@ class OvertimeController extends Controller
     public function overtimeEmployeeToday(Request $request)
     {
         try {
-            $employeeId = $request->input('employee_id');
+            $employeeId = $request->input('employment_id');
             $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
             $overtimeArray = $overtime->toArray();
             return response()->json([
