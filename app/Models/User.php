@@ -23,6 +23,10 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'user_device_id',
+        'firebase_id',
+        'imei',
+        'ip',
     ];
 
     /**
@@ -64,5 +68,13 @@ class User extends Authenticatable implements JWTSubject
     public function employee()
     {
         return $this->hasOne(Employee::class);
+    }
+
+    public function updateDeviceInfo($user_device_id, $firebase_id)
+    {
+        $this->update([
+            'user_device_id' => $user_device_id,
+            'firebase_id' => $firebase_id,
+        ]);
     }
 }

@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('api')->prefix('v1/auth')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('/login', 'login');
+        Route::post('/login-mobile-app', 'loginMobileApps');
         Route::post('/register', 'register');
         Route::post('/refresh', 'refresh');
         Route::get('/user-profile', 'userProfile');
@@ -182,6 +183,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(GenerateAbsenController::class)->group(function () {
             // route for execute generate absen
             Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
+            // route for absen from mobile
+            Route::post('absen-from-mobile', 'absenFromMobile')->name('absen-from-mobile');
         });
     });
 });

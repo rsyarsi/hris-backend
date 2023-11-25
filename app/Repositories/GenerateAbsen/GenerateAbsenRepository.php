@@ -104,4 +104,29 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         }
         return null;
     }
+
+    public function absenFromMobile(array $data)
+    {
+        $employeeId = $data['employee_id'];
+        $date = $data['date'];
+
+        // Check if a record exists for the employee and date
+        $existingRecord = $this->model
+            ->where('employee_id', $employeeId)
+            ->where('date', $date)
+            ->first();
+
+        if ($existingRecord) {
+            // Update the existing record
+            $existingRecord->update([
+                'time_out_at' => $data['time_out_at'],
+            ]);
+
+            return $existingRecord;
+        } else {
+            // Create a new record
+            $data['time_out_at'] = null;
+            return $this->model->create($data);
+        }
+    }
 }

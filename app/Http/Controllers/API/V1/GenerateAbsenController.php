@@ -6,7 +6,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Models\GenerateAbsen;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GenerateAbsenRequest;
+use App\Http\Requests\{AbsenFromMobileRequest, GenerateAbsenRequest};
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
 
 class GenerateAbsenController extends Controller
@@ -94,6 +94,17 @@ class GenerateAbsenController extends Controller
             $period2 = $request->input('period_2');
             $generateAbsen = GenerateAbsen::executeStoredProcedure($period1, $period2);
             return $this->success('Generate Absen successfully', $generateAbsen, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function absenFromMobile(AbsenFromMobileRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $generateabsen = $this->generateAbsenService->absenFromMobile($data);
+            return $this->success('Absen from mobile successfully', $generateabsen, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

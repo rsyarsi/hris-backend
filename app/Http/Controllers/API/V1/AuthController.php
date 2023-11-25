@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Traits\ResponseAPI;
 use App\Models\User;
+use App\Traits\ResponseAPI;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -13,14 +15,23 @@ class AuthController extends Controller
 {
     use ResponseAPI;
 
-    private $field = ['id', 'name', 'email'];
+    private $field =
+    [
+        'id',
+        'name',
+        'email',
+        'user_device_id',
+        'firebase_id',
+        'imei',
+        'ip'
+    ];
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'loginMobileApps', 'register']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -40,6 +51,56 @@ class AuthController extends Controller
         }
         return $this->createNewToken($token);
     }
+
+    public function loginMobileApps(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+            'user_device_id' => 'nullable|string',
+            'firebase_id' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $credentials = $validator->validated();
+
+        if (!$token = auth()->attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+
+        // Check if the user is already logged in from another device
+        // if ($this->isUserLoggedInFromAnotherDevice($user, $credentials)) {
+        //     Auth::logout();
+        //     return response()->json(['error' => 'User is already logged in from another device!'], 401);
+        // }
+
+        if ($user->user_device_id == null) {
+            // Store or update device information
+            $user->updateDeviceInfo(
+                Str::uuid(),
+                $request->input('firebase_id'),
+            );
+        }
+
+        if ($user->user_device_id !== $request->input('user_device_id')) {
+            Auth::logout();
+            return response()->json(['error' => 'User is already logged in from another device!'], 401);
+        }
+
+        return $this->createNewToken($token);
+    }
+
+    private function isUserLoggedInFromAnotherDevice($user, $credentials)
+    {
+        return $user->user_device_id !== null ||
+                $user->firebase_id !== null;
+    }
+
     /**
      * Register a User.
      *
@@ -140,7 +201,7 @@ class AuthController extends Controller
                     ->with('permissions:id,name,guard_name');
             }
         ]);
-        
+
         if (!$user->employee) {
             // Handle the case where the user does not have an associated Employee record
             return $this->success('User Profile Successfully Retrieved, The user dont have relation with employee', $user);
