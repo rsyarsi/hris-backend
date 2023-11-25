@@ -68,7 +68,11 @@ class AuthController extends Controller
                                         'password' => $credentials['password']]
                                     ))
         {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'message' => 'Login gagal!',
+                'success' => false,
+                'code' => 201
+            ]);
         }
 
         $user = Auth::user();
