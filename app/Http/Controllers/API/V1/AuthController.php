@@ -92,14 +92,17 @@ class AuthController extends Controller
             return response()->json(['error' => 'User telah login di perangkat lain, silahkan hubungi HRD!'], 401);
         }
 
-        $this->createNewToken($token);
-        return $this->success('Login From Mobile App Berhasil!',
-            [
+        // $this->createNewToken($token);
+        return response()->json([
+            'message' => 'Login From Mobile App Berhasil!',
+            'success' => 'true',
+            'code' => 200,
+            'data' => [
                 'name' => $user->name,
                 'email' => $user->email,
                 'employee_id' => $user->username,
-            ]
-        );
+            ],
+        ]);
     }
 
     private function isUserLoggedInFromAnotherDevice($user, $credentials)
