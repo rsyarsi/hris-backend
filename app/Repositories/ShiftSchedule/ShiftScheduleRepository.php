@@ -315,6 +315,9 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
     public function shiftScheduleEmployeeToday($employeeId)
     {
         $employee = Employee::where('employment_number', $employeeId)->first();
+        if (!$employee) {
+            return [];
+        }
         $shiftschedule = $this->model
                             ->with([
                                 'employee' => function ($query) {

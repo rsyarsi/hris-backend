@@ -105,13 +105,22 @@ class ShiftScheduleController extends Controller
         try {
             $employeeId = $request->input('employment_id');
             $shiftSchedules = $this->shiftScheduleService->shiftScheduleEmployeeToday($employeeId);
-            $shiftSchedulesArray = $shiftSchedules;
-            return response()->json([
-                'message' => 'Jadwal Karyawan hari ini berhasil di ambil!',
-                'success' => 'true',
-                'code' => 200,
-                'data' => [$shiftSchedulesArray],
-            ]);
+            if ($shiftSchedules) {
+                $shiftSchedulesArray = $shiftSchedules->toArray();
+                return response()->json([
+                    'message' => 'Jadwal Karyawan hari ini berhasil diambil!',
+                    'success' => 'true',
+                    'code' => 200,
+                    'data' => [$shiftSchedulesArray],
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Karyawan tidak ditemukan atau tidak memiliki jadwal hari ini.',
+                    'success' => 'false',
+                    'code' => 404,
+                    'data' => null,
+                ]);
+            }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

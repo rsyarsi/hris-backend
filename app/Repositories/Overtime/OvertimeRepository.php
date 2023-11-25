@@ -198,6 +198,9 @@ class OvertimeRepository implements OvertimeRepositoryInterface
     public function overtimeEmployeeToday($employeeId)
     {
         $employee = Employee::where('employment_number', $employeeId)->first();
+        if (!$employee) {
+            return [];
+        }
         $overtime = $this->model
                         ->with([
                             'employee' => function ($query) {
