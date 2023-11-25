@@ -141,8 +141,15 @@ class OvertimeController extends Controller
     public function overtimeEmployeeToday(Request $request)
     {
         try {
-            $shiftSchedules = $this->overtimeService->overtimeEmployeeToday();
-            return $this->success('Overtime employee today retrieved successfully', $shiftSchedules);
+            $employeeId = $request->input('employee_id');
+            $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
+            $overtimeArray = $overtime->toArray();
+            return response()->json([
+                'message' => 'Overtime Karyawan hari ini berhasil di ambil!',
+                'success' => 'true',
+                'code' => 200,
+                'data' => [$overtimeArray],
+            ]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

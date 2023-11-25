@@ -90,8 +90,8 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->updateStatus($id, $data);
     }
 
-    public function overtimeEmployeeToday()
+    public function overtimeEmployeeToday($employeeId)
     {
-        return $this->repository->overtimeEmployeeToday();
+        return $this->repository->overtimeEmployeeToday($employeeId);
     }
 }

@@ -195,7 +195,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return null;
     }
 
-    public function overtimeEmployeeToday()
+    public function overtimeEmployeeToday($employeeId)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -210,7 +210,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                         ])
-                        ->where('employee_id', $user->employee->id)
+                        ->where('employee_id', $employeeId)
                         ->where('from_date', '>=', Carbon::today()->startOfDay())
                         ->where('from_date', '<', Carbon::tomorrow()->startOfDay())
                         ->first($this->field);
