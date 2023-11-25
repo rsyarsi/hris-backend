@@ -82,7 +82,7 @@ class AuthController extends Controller
         if ($user->user_device_id == null) {
             // Store or update device information
             $user->updateDeviceInfo(
-                Str::uuid(),
+                $request->input('user_device_id'),
                 $request->input('firebase_id'),
             );
         }
