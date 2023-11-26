@@ -1,11 +1,12 @@
 <?php
 namespace App\Services\GenerateAbsen;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
-use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
-use Carbon\Carbon;
+use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 
 class GenerateAbsenService implements GenerateAbsenServiceInterface
 {
@@ -49,11 +50,14 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
 
     public function absenFromMobile(array $data)
     {
+        $type = Str::upper($data['Type']); // ABSEN / SPL(SURAT PERINTAH LEMBUR)
+        $function = Str::upper($data['Function']); // IN / OUT
+        $jam = Carbon::parse($data['Jam']);
+
+        // return $type;
+
         $currentDate = Carbon::parse($data['Tanggal']);
-        $jamMasuk = Carbon::parse($data['Jam_masuk']);
-        $jamKeluar = Carbon::parse($data['Jam_keluar']);
-        $dateJamMasuk = $data['Tanggal'].' '.$data['Jam_masuk'];
-        // $dateKeluarMasuk = $data['Tanggal'].' '.$data['Jam_keluar'];
+        $dateJamMasuk = $data['Tanggal'].' '.$data['Jam'];
         // $ipAddress = $data['Ip_address'];
 
         $employmentId = $data['Employment_id']; // nip karyawan
@@ -71,10 +75,13 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $data['employee_id'] = $employee->id;
         $data['employment_id'] = $employee->employment_number;
         $data['shift_id'] = $shiftSchedule->shift->id;
+
         $data['date_in_at'] = $timeInSchedule->format('Y-m-d');
-        $data['time_in_at'] = $jamMasuk->format('H:i:s');
+        $data['time_in_at'] = $jam->format('H:i:s');
+
         $data['date_out_at'] = $timeOutSchedule->format('Y-m-d');
-        $data['time_out_at'] = $jamKeluar->format('H:i:s'); // update just employee finished works
+        $data['time_out_at'] = $jam->format('H:i:s');
+
         $data['schedule_date_in_at'] = $timeInSchedule->format('Y-m-d');
         $data['schedule_time_in_at'] = $timeInSchedule->format('H:i:s');
         $data['schedule_date_out_at'] = $timeOutSchedule->format('Y-m-d');
@@ -83,6 +90,8 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $data['night'] = $shiftSchedule->night;
         $data['national_holiday'] = $shiftSchedule->national_holiday;
         $data['note'] = 'WARNING';
+        $data['type'] = $type;
+        $data['function'] = $function;
         // Calculate lateness
         $telat = null;
         if (Carbon::parse($dateJamMasuk)->greaterThan($timeInSchedule)) {

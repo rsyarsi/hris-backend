@@ -19,7 +19,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
         'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4', 'manual', 'user_manual_id',
-        'input_manual_at', 'lock', 'gp_in', 'gp_out',
+        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type'
     ];
 
     public function __construct(GenerateAbsen $model)
@@ -110,32 +110,73 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     {
         $employeeId = $data['employee_id'];
         $date = $data['date'];
-        $timeOutAt = $data['time_out_at'];
+        $type = $data['type']; // ABSEN / SPL(SURAT PERINTAH LEMBUR)
+        $function = $data['function']; // IN / OUT
 
-        // Check if a record exists for the employee and date
-        $existingRecord = $this->model
-            ->where('employee_id', $employeeId)
-            ->where('date', $date)
-            ->first();
-
-        if ($existingRecord) {
-            // Update the existing record
-            // Calculate pulang awal
-            $scheduleTimeOutAt = $existingRecord->schedule_time_out_at;
-            $pa = null;
-            if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
-                $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+        // ABSEN
+        if ($type == 'ABSEN') {
+            $existingRecordAbsen = $this->model
+                        ->where('employee_id', $employeeId)
+                        ->where('date', $date)
+                        ->where('type', 'ABSEN')
+                        ->first();
+            if ($existingRecordAbsen && $type == 'ABSEN' && $function == 'IN') {
+                return 'Anda sudah absen masuk';
             }
-            $existingRecord->update([
-                'time_out_at' => $data['time_out_at'],
-                'pa' => $pa,
-            ]);
+            elseif (!$existingRecordAbsen && $type == 'ABSEN' && $function == 'IN') { // Create a new record
+                $data['time_out_at'] = null;
+                return $this->model->create($data);
+            }
 
-            return $existingRecord;
+            if ($existingRecordAbsen->time_out_at !== null && $type == 'ABSEN' && $function == 'OUT') {
+                return 'Anda sudah absen pulang';
+            }
+            elseif ($existingRecordAbsen->time_out_at == null && $type == 'ABSEN' && $function == 'OUT') { // Check if a record exists for the employee and date
+                $timeOutAt = $data['time_out_at'];
+                $scheduleTimeOutAt = $existingRecordAbsen->schedule_time_out_at;
+                $pa = null; //pa = pulang awal
+                if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
+                    $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+                }
+                $existingRecordAbsen->update([
+                    'time_out_at' => $data['time_out_at'],
+                    'pa' => $pa,
+                ]);
+                return $existingRecordAbsen;
+            }
         } else {
-            // Create a new record
-            $data['time_out_at'] = null;
-            return $this->model->create($data);
+            // OVERTIME
+            $existingRecordOvertime = $this->model
+                            ->where('employee_id', $employeeId)
+                            ->where('date', $date)
+                            ->where('type', 'SPL')
+                            ->first();
+            // return $existingRecordOvertime;
+            if ($existingRecordOvertime && $type == 'SPL' && $function == 'IN') {
+                return 'Anda sudah absen overtime masuk';
+            }
+            elseif (!$existingRecordOvertime && $type == 'SPL' && $function == 'IN') { // Create a new record
+                $data['time_out_at'] = null;
+                $data['telat'] = null;
+                return $this->model->create($data);
+            }
+
+            if ($existingRecordOvertime->time_out_at !== null && $type == 'SPL' && $function == 'OUT') {
+                return 'Anda sudah absen overtime pulang';
+            }
+            elseif ($existingRecordOvertime->time_out_at == null && $type == 'SPL' && $function == 'OUT') { // Check if a record exists for the employee and date
+                $timeOutAt = $data['time_out_at'];
+                $scheduleTimeOutAt = $existingRecordOvertime->schedule_time_out_at;
+                $pa = null; //pa = pulang awal
+                if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
+                    $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+                }
+                $existingRecordOvertime->update([
+                    'time_out_at' => $data['time_out_at'],
+                    'pa' => null,
+                ]);
+                return $existingRecordOvertime;
+            }
         }
     }
 }
