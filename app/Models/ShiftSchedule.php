@@ -78,4 +78,9 @@ class ShiftSchedule extends Model
     {
         return $this->belongsTo(Leave::class, 'leave_id', 'id');
     }
+
+    public function generateAbsen()
+    {
+        return $this->belongsTo(GenerateAbsen::class, 'date', 'date');
+    }
 }

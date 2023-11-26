@@ -325,7 +325,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 'employee_id',
                                 'shift_id',
                                 DB::raw("TO_CHAR(date, 'YYYY-MM-DD') as date"), // Include the formatted date
-                                DB::raw("TO_CHAR(date, 'Day') as day_name"),
+                                DB::raw("TO_CHAR(date, 'TMDay') as day_name"),
                                 'time_in',
                                 'time_out',
                                 'late_note',
@@ -346,6 +346,16 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->with([
                                 'employee' => function ($query) {
                                     $query->select('id', 'name');
+                                },
+                                'generateAbsen' => function ($query) {
+                                    $query->select('id', 'period', 'date', DB::raw("TO_CHAR(date, 'TMDay') as day_name"), 'employee_id', 'shift_id', 'date_in_at', 'time_in_at',
+                                        'date_out_at', 'time_out_at', 'schedule_date_in_at', 'schedule_time_in_at',
+                                        'schedule_date_out_at', 'schedule_time_out_at', 'telat', 'pa', 'holiday',
+                                        'night', 'national_holiday', 'note', 'leave_id', 'leave_type_id', 'leave_time_at',
+                                        'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
+                                        'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
+                                        'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4'
+                                    );
                                 },
                                 'shift' => function ($query) {
                                     $query->select(
@@ -425,7 +435,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 'employee_id',
                                 'shift_id',
                                 DB::raw("TO_CHAR(date, 'YYYY-MM-DD') as date"), // Include the formatted date
-                                DB::raw("TO_CHAR(date, 'Day') as day_name"),
+                                DB::raw("TO_CHAR(date, 'TMDay') as day_name"),
                                 'time_in',
                                 'time_out',
                                 'late_note',
@@ -446,6 +456,16 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->with([
                                 'employee' => function ($query) {
                                     $query->select('id', 'name');
+                                },
+                                'generateAbsen' => function ($query) {
+                                    $query->select('id', 'period', 'date', DB::raw("TO_CHAR(date, 'TMDay') as day_name"), 'employee_id', 'shift_id', 'date_in_at', 'time_in_at',
+                                        'date_out_at', 'time_out_at', 'schedule_date_in_at', 'schedule_time_in_at',
+                                        'schedule_date_out_at', 'schedule_time_out_at', 'telat', 'pa', 'holiday',
+                                        'night', 'national_holiday', 'note', 'leave_id', 'leave_type_id', 'leave_time_at',
+                                        'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
+                                        'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
+                                        'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4'
+                                    );
                                 },
                                 'shift' => function ($query) {
                                     $query->select(
