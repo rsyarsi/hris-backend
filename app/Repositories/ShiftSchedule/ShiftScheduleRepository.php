@@ -368,6 +368,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 },
                                 'leave' => function ($query) {
                                     $query->select(
+                                        'id',
                                         'employee_id',
                                         'leave_type_id',
                                         'from_date',
@@ -375,7 +376,10 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                         'duration',
                                         'note',
                                         'leave_status_id',
-                                    );
+                                    )->with([
+                                        'leaveType:id,name',
+                                        'leaveStatus:id,name'
+                                    ]);
                                 },
                             ])
                         ->where('employee_id', $employee->id)
