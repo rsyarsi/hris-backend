@@ -62,6 +62,11 @@ class LeaveService implements LeaveServiceInterface
         return $this->repository->leaveEmployee($perPage, $overtimeStatus, $startDate, $endDate);
     }
 
+    public function leaveEmployeeMobile($employeeId)
+    {
+        return $this->repository->leaveEmployeeMobile($employeeId);
+    }
+
     public function leaveSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate)
     {
         $user = auth()->user();

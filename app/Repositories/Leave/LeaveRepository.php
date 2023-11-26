@@ -212,6 +212,41 @@ class LeaveRepository implements LeaveRepositoryInterface
         return $query->paginate($perPage);
     }
 
+    public function leaveEmployeeMobile($employeeId)
+    {
+        $employee = Employee::where('employment_number', $employeeId)->first();
+        if (!$employee) {
+            return [];
+        }
+        $leave = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'leaveType' => function ($query) {
+                            $query->select('id', 'name', 'is_salary_deduction', 'active');
+                        },
+                        'leaveStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'leaveHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'leave_id',
+                                'description',
+                                'ip_address',
+                                'user_id',
+                                'user_agent',
+                                'comment',
+                            );
+                        }
+                    ])
+                    ->where('employee_id', $employee->id)
+                    ->orderBy('from_date', 'DESC')
+                    ->get($this->field);
+        return $leave ? $leave : $leave = null;
+    }
+
     public function leaveSupervisorOrManager($perPage, $leaveStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();

@@ -9,6 +9,7 @@ Interface LeaveRepositoryInterface{
     public function update($id, array $data);
     public function destroy($id);
     public function leaveEmployee($perPage, $leaveStatus, $startDate, $endDate);
+    public function leaveEmployeeMobile($employeeId);
     public function leaveSupervisorOrManager($perPage, $leaveStatus, $startDate, $endDate);
     public function leaveStatus($perPage, $search, $overtimeStatus);
     public function updateStatus($id, array $data);

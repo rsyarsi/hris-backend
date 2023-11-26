@@ -103,12 +103,17 @@ class GenerateAbsenController extends Controller
     {
         try {
             $data = $request->validated();
+            // $generateabsen = $this->generateAbsenService->absenFromMobile($data);
+            // return response()->json([
+            //     'message' => 'Absen Berhasil!',
+            //     'success' => 'true',
+            //     'code' => 200,
+            //     'data' => $generateabsen,
+            // ]);
             $ipAddress = str_replace('.', '', $request->input('Ip_address'));
             $ipAddressServer = '17216';
-
             // Extract the first 5 characters from $ipAddress
             $firstFiveCharacters = substr($ipAddress, 0, 5);
-
             if ($firstFiveCharacters == substr($ipAddressServer, 0, 5)) {
                 $generateabsen = $this->generateAbsenService->absenFromMobile($data);
                 return response()->json([

@@ -98,6 +98,17 @@ class LeaveController extends Controller
         }
     }
 
+    public function leaveEmployeeMobile(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employment_id');
+            $leaves = $this->leaveService->leaveEmployeeMobile($employeeId);
+            return $this->success('Leave where status retrieved successfully', $leaves);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function leaveSupervisorOrManager(Request $request)
     {
         try {

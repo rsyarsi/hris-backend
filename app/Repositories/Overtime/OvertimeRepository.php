@@ -121,6 +121,30 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return $query->paginate($perPage);
     }
 
+    public function overtimeEmployeeMobile($employeeId)
+    {
+        $employee = Employee::where('employment_number', $employeeId)->first();
+        if (!$employee) {
+            return [];
+        }
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        $overtime = $this->model
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'overtimeStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                        ])
+                        ->where('employee_id', $employee->id)
+                        ->whereBetween('from_date', [$startOfMonth, $endOfMonth])
+                        ->orderBy('from_date', 'DESC')
+                        ->get($this->field);
+        return $overtime ? $overtime : $overtime = null;
+    }
+
     public function overtimeSupervisorOrManager($perPage, $overtimeStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();

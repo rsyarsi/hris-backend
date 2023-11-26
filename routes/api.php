@@ -152,6 +152,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(ShiftScheduleController::class)->group(function () {
             // route for shift schedules where employee today
             Route::post('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
+            // route for shift schedules where employee mobile (1 month)
+            Route::post('shift-schedules-employee-mobile', 'shiftScheduleEmployeeMobile')->name('shift-schedules-employee-mobile');
             // route for shift schedules where employee
             Route::get('shift-schedules-where-employee', 'shiftScheduleEmployee')->name('shift-schedules-where-employee');
             // route for multiple shift schedule
@@ -195,6 +197,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     Route::controller(LeaveController::class)->group(function () {
         // route for leave where employee login
         Route::get('leave-where-employee', 'leaveEmployee')->name('leave-where-employee');
+        // route for leave where employee mobile
+        Route::post('leave-employee-mobile', 'leaveEmployeeMobile')->name('leave-employee-mobile');
         // route for leave where supervisor or manager login
         Route::get('leave-supervisor-manager', 'leaveSupervisorOrManager')->name('leave-supervisor-manager');
         // route for leave where status
@@ -211,8 +215,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     Route::controller(OvertimeController::class)->group(function () {
         // route for overtime overtime where employee login
         Route::get('overtime-where-employee', 'overtimeEmployee')->name('overtime-where-employee');
+        // route for overtime overtime where employee mobile (1 month)
+        Route::post('overtime-employee-mobile', 'overtimeEmployeeMobile')->name('overtime-employee-mobile');
         // route for overtime where employee today
-        Route::get('overtime-employee-today', 'overtimeEmployeeToday')->name('overtime-employee-today');
+        Route::post('overtime-employee-today', 'overtimeEmployeeToday')->name('overtime-employee-today');
         // route for Overtime where supervisor or manager login
         Route::get('overtime-supervisor-manager', 'overtimeSupervisorOrManager')->name('overtime-supervisor-manager');
         // route for overtime where status

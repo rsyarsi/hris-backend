@@ -97,6 +97,17 @@ class OvertimeController extends Controller
         }
     }
 
+    public function overtimeEmployeeMobile(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employment_id');
+            $overtimes = $this->overtimeService->overtimeEmployeeMobile($employeeId);
+            return $this->success('Overtime where employee retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function overtimeSupervisorOrManager(Request $request)
     {
         try {

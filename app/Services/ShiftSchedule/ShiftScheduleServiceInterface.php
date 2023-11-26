@@ -14,4 +14,5 @@ interface ShiftScheduleServiceInterface
     public function deleteByLeaveId($employeeId, $leaveId);
     public function shiftSchedulesExist($employeeId, $fromDate, $toDate);
     public function shiftScheduleEmployeeToday($employeeId);
+    public function shiftScheduleEmployeeMobile($employeeId);
 }
