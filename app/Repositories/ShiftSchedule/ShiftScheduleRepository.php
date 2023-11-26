@@ -320,6 +320,29 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             return [];
         }
         $shiftschedule = $this->model
+                            ->select([
+                                'id',
+                                'employee_id',
+                                'shift_id',
+                                DB::raw("TO_CHAR(date, 'YYYY-MM-DD') as date"), // Include the formatted date
+                                DB::raw("TO_CHAR(date, 'Day') as day_name"),
+                                'time_in',
+                                'time_out',
+                                'late_note',
+                                'shift_exchange_id',
+                                'user_exchange_id',
+                                'user_exchange_at',
+                                'created_user_id',
+                                'updated_user_id',
+                                'setup_user_id',
+                                'setup_at',
+                                'period',
+                                'leave_note',
+                                'holiday',
+                                'night',
+                                'national_holiday',
+                                'leave_id',
+                            ])
                             ->with([
                                 'employee' => function ($query) {
                                     $query->select('id', 'name');
@@ -384,7 +407,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ])
                         ->where('employee_id', $employee->id)
                         ->where('date', Carbon::today())
-                        ->first($this->field);
+                        ->first();
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;
     }
 
