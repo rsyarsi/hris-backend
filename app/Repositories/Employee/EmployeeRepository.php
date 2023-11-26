@@ -438,4 +438,24 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                         ->first('id');
         return $employee ? $employee : $employee = null;
     }
+
+    public function employeeWhereEmployeeNumber($employeeNumber)
+    {
+        $employee = $this->model
+                        ->where('employment_number', $employeeNumber)
+                        ->first(
+                            ['id',
+                            'name',
+                            'email',
+                            'position_id',
+                            'unit_id',
+                            'department_id',
+                            'employment_number',
+                            'user_id',
+                            'supervisor_id',
+                            'manager_id',
+                            'pin']
+                        );
+        return $employee ? $employee : $employee = null;
+    }
 }

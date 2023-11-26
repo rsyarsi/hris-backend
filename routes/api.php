@@ -151,7 +151,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('shift-schedules', ShiftScheduleController::class)->parameters(['shift-schedules' => 'shift_schedules']);
         Route::controller(ShiftScheduleController::class)->group(function () {
             // route for shift schedules where employee today
-            Route::get('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
+            Route::post('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
             // route for shift schedules where employee
             Route::get('shift-schedules-where-employee', 'shiftScheduleEmployee')->name('shift-schedules-where-employee');
             // route for multiple shift schedule

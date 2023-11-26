@@ -2,6 +2,7 @@
 
 namespace App\Repositories\GenerateAbsen;
 
+use Carbon\Carbon;
 use App\Models\GenerateAbsen;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 
@@ -109,6 +110,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     {
         $employeeId = $data['employee_id'];
         $date = $data['date'];
+        $timeOutAt = $data['time_out_at'];
 
         // Check if a record exists for the employee and date
         $existingRecord = $this->model
@@ -118,8 +120,15 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 
         if ($existingRecord) {
             // Update the existing record
+            // Calculate pulang awal
+            $scheduleTimeOutAt = $existingRecord->schedule_time_out_at;
+            $pa = null;
+            if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
+                $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+            }
             $existingRecord->update([
                 'time_out_at' => $data['time_out_at'],
+                'pa' => $pa,
             ]);
 
             return $existingRecord;

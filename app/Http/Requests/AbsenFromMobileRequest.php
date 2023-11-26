@@ -24,7 +24,12 @@ class AbsenFromMobileRequest extends FormRequest
     public function rules()
     {
         return [
-            'absen_at' => 'required|date',
+            'Id_schedule' => 'required|exists:shift_schedules,id',
+            'Jam_masuk' => 'required|string',
+            'Jam_keluar' => 'required|string',
+            'Tanggal' => 'required|date',
+            'Ip_address' => 'required|string',
+            'Employment_id' => 'required|exists:employees,employment_number',
         ];
     }
 }

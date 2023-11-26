@@ -13,4 +13,5 @@ Interface EmployeeRepositoryInterface{
     public function updateEmployeeContract($id, array $data);
     public function updateUserId($id, array $data);
     public function employeeWherePin($pin);
+    public function employeeWhereEmployeeNumber($employeeNumber);
 }

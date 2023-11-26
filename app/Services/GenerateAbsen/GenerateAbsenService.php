@@ -49,25 +49,32 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
 
     public function absenFromMobile(array $data)
     {
-        $user = auth()->user();
-        if (!$user->employee) {
+        $currentDate = Carbon::parse($data['Tanggal']);
+        $jamMasuk = Carbon::parse($data['Jam_masuk']);
+        $jamKeluar = Carbon::parse($data['Jam_keluar']);
+        $dateJamMasuk = $data['Tanggal'].' '.$data['Jam_masuk'];
+        // $dateKeluarMasuk = $data['Tanggal'].' '.$data['Jam_keluar'];
+        // $ipAddress = $data['Ip_address'];
+
+        $employmentId = $data['Employment_id']; // nip karyawan
+        $employee = $this->employeeService->employeeWhereEmployeeNumber($employmentId);
+        if (!$employee) {
             return [];
         }
-        $shiftSchedule = $this->shiftScheduleService->shiftScheduleEmployeeToday();
-        $currentDate = Carbon::now();
-        $absenAt = Carbon::parse($data['absen_at']);
+        $shiftScheduleId = $data['Id_schedule']; // nip karyawan
+        $shiftSchedule = $this->shiftScheduleService->show($shiftScheduleId);
         $timeInSchedule = Carbon::parse($shiftSchedule->time_in);
         $timeOutSchedule = Carbon::parse($shiftSchedule->time_out);
         $data['period'] = $currentDate->format('Y-m');
         $data['date'] = $currentDate->format('Y-m-d');
         $data['day'] = $currentDate->format('l');
-        $data['employee_id'] = $user->employee->id;
-        $data['employment_id'] = $user->employee->employment_number;
+        $data['employee_id'] = $employee->id;
+        $data['employment_id'] = $employee->employment_number;
         $data['shift_id'] = $shiftSchedule->shift->id;
         $data['date_in_at'] = $timeInSchedule->format('Y-m-d');
-        $data['time_in_at'] = $absenAt->format('H:i:s');
+        $data['time_in_at'] = $jamMasuk->format('H:i:s');
         $data['date_out_at'] = $timeOutSchedule->format('Y-m-d');
-        $data['time_out_at'] = $absenAt->format('H:i:s'); // update just employee finished works
+        $data['time_out_at'] = $jamKeluar->format('H:i:s'); // update just employee finished works
         $data['schedule_date_in_at'] = $timeInSchedule->format('Y-m-d');
         $data['schedule_time_in_at'] = $timeInSchedule->format('H:i:s');
         $data['schedule_date_out_at'] = $timeOutSchedule->format('Y-m-d');
@@ -78,12 +85,10 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $data['note'] = 'WARNING';
         // Calculate lateness
         $telat = null;
-        if ($absenAt->greaterThan($timeInSchedule)) {
-            $telat = $absenAt->diffInMinutes($timeInSchedule);
+        if (Carbon::parse($dateJamMasuk)->greaterThan($timeInSchedule)) {
+            $telat = Carbon::parse($dateJamMasuk)->diffInMinutes($timeInSchedule);
         }
-        $data['telat'] = $telat; // No lateness
-        $data['user_manual_id'] = auth()->id();
-        $data['input_manual_at'] = now();
+        $data['telat'] = $telat;
         return $this->repository->absenFromMobile($data);
     }
 }

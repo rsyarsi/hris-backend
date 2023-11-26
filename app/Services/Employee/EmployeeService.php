@@ -70,4 +70,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeWherePin($pin);
     }
+
+    public function employeeWhereEmployeeNumber($employmentNumber)
+    {
+        return $this->repository->employeeWhereEmployeeNumber($employmentNumber);
+    }
 }
