@@ -2,10 +2,11 @@
 
 namespace App\Repositories\ShiftSchedule;
 
+use Carbon\Carbon;
 use App\Models\Employee;
 use App\Models\ShiftSchedule;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
-use Carbon\Carbon;
 
 class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 {
@@ -392,6 +393,29 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
         $shiftschedule = $this->model
+                            ->select([
+                                'id',
+                                'employee_id',
+                                'shift_id',
+                                DB::raw("TO_CHAR(date, 'YYYY-MM-DD') as date"), // Include the formatted date
+                                DB::raw("TO_CHAR(date, 'Day') as day_name"),
+                                'time_in',
+                                'time_out',
+                                'late_note',
+                                'shift_exchange_id',
+                                'user_exchange_id',
+                                'user_exchange_at',
+                                'created_user_id',
+                                'updated_user_id',
+                                'setup_user_id',
+                                'setup_at',
+                                'period',
+                                'leave_note',
+                                'holiday',
+                                'night',
+                                'national_holiday',
+                                'leave_id',
+                            ])
                             ->with([
                                 'employee' => function ($query) {
                                     $query->select('id', 'name');
@@ -440,6 +464,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 },
                                 'leave' => function ($query) {
                                     $query->select(
+                                        'id',
                                         'employee_id',
                                         'leave_type_id',
                                         'from_date',
@@ -447,13 +472,16 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                         'duration',
                                         'note',
                                         'leave_status_id',
-                                    );
+                                    )->with([
+                                        'leaveType:id,name',
+                                        'leaveStatus:id,name'
+                                    ]);
                                 },
                             ])
-                        ->where('employee_id', $employee->id)
-                        ->whereBetween('date', [$startOfMonth, $endOfMonth])
-                        ->orderBy('date', 'ASC')
-                        ->get($this->field);
+                            ->where('employee_id', $employee->id)
+                            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+                            ->orderBy('date', 'ASC')
+                            ->get();
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;
     }
 }

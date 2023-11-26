@@ -242,7 +242,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                         }
                     ])
                     ->where('employee_id', $employee->id)
-                    ->orderBy('from_date', 'DESC')
+                    ->orderBy('from_date', 'ASC')
                     ->get($this->field);
         return $leave ? $leave : $leave = null;
     }

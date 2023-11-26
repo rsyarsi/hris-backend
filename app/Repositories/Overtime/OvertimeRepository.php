@@ -140,7 +140,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         ])
                         ->where('employee_id', $employee->id)
                         ->whereBetween('from_date', [$startOfMonth, $endOfMonth])
-                        ->orderBy('from_date', 'DESC')
+                        ->orderBy('from_date', 'ASC')
                         ->get($this->field);
         return $overtime ? $overtime : $overtime = null;
     }
