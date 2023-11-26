@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -81,6 +82,11 @@ class ShiftSchedule extends Model
 
     public function generateAbsen()
     {
-        return $this->hasMany(GenerateAbsen::class, 'date', 'date');
+        return $this->belongsTo(GenerateAbsen::class, 'date', 'date');
+    }
+
+    public function overtime()
+    {
+        return $this->belongsTo(Overtime::class, 'date', DB::raw("DATE(from_date)"));
     }
 }
