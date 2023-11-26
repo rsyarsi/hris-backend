@@ -81,6 +81,6 @@ class ShiftSchedule extends Model
 
     public function generateAbsen()
     {
-        return $this->belongsTo(GenerateAbsen::class, 'date', 'date');
+        return $this->hasMany(GenerateAbsen::class, 'date', 'date');
     }
 }

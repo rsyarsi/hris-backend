@@ -354,7 +354,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                         'night', 'national_holiday', 'note', 'leave_id', 'leave_type_id', 'leave_time_at',
                                         'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
                                         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
-                                        'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4'
+                                        'schedule_overtime_out_at'
                                     );
                                 },
                                 'shift' => function ($query) {
@@ -464,7 +464,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                         'night', 'national_holiday', 'note', 'leave_id', 'leave_type_id', 'leave_time_at',
                                         'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
                                         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
-                                        'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4'
+                                        'schedule_overtime_out_at'
                                     );
                                 },
                                 'shift' => function ($query) {
