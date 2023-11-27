@@ -159,7 +159,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                                                 'payroll_component_id',
                                                 'nominal',
                                                 'active'
-                                            );
+                                            )->with('payrollComponent:id,name');
                                         },
                                     ])
                                     ->where('id', $id)
