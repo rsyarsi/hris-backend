@@ -117,10 +117,10 @@ class GenerateAbsenController extends Controller
             if ($firstFiveCharacters == substr($ipAddressServer, 0, 5)) {
                 $generateabsen = $this->generateAbsenService->absenFromMobile($data);
                 return response()->json([
-                    'message' => 'Absen Berhasil!',
+                    'message' => $generateabsen['message'],
                     'success' => 'true',
                     'code' => 200,
-                    'data' => $generateabsen,
+                    'data' => $generateabsen['data'],
                 ]);
             } else {
                 return response()->json([

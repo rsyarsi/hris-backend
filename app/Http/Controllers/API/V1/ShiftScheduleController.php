@@ -102,9 +102,9 @@ class ShiftScheduleController extends Controller
 
     public function shiftScheduleEmployeeMobile(Request $request)
     {
-        $employeeId = $request->input('employment_id');
-        $shiftSchedules = $this->shiftScheduleService->shiftScheduleEmployeeMobile($employeeId);
         try {
+            $employeeId = $request->input('employment_id');
+            $shiftSchedules = $this->shiftScheduleService->shiftScheduleEmployeeMobile($employeeId);
             return $this->success('Shift schedule employee retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -117,12 +117,11 @@ class ShiftScheduleController extends Controller
             $employeeId = $request->input('employment_id');
             $shiftSchedules = $this->shiftScheduleService->shiftScheduleEmployeeToday($employeeId);
             if ($shiftSchedules) {
-                $shiftSchedulesArray = $shiftSchedules->toArray();
                 return response()->json([
                     'message' => 'Jadwal Karyawan hari ini berhasil diambil!',
                     'success' => 'true',
                     'code' => 200,
-                    'data' => [$shiftSchedulesArray],
+                    'data' => [$shiftSchedules],
                 ]);
             } else {
                 return response()->json([

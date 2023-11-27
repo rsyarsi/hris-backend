@@ -121,15 +121,24 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         ->where('type', 'ABSEN')
                         ->first();
             if ($existingRecordAbsen && $type == 'ABSEN' && $function == 'IN') {
-                return 'Anda sudah absen masuk';
+                return [
+                    'message' => 'Anda Sudah Absen Masuk!',
+                    'data' => []
+                ];
             }
             elseif (!$existingRecordAbsen && $type == 'ABSEN' && $function == 'IN') { // Create a new record
                 $data['time_out_at'] = null;
-                return $this->model->create($data);
+                return [
+                    'message' => 'Absen Masuk Berhasil!',
+                    'data' => [$this->model->create($data)]
+                ];
             }
 
             if ($existingRecordAbsen->time_out_at !== null && $type == 'ABSEN' && $function == 'OUT') {
-                return 'Anda sudah absen pulang';
+                return [
+                    'message' => 'Anda Sudah Absen Keluar!',
+                    'data' => []
+                ];
             }
             elseif ($existingRecordAbsen->time_out_at == null && $type == 'ABSEN' && $function == 'OUT') { // Check if a record exists for the employee and date
                 $timeOutAt = $data['time_out_at'];
@@ -142,7 +151,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     'time_out_at' => $data['time_out_at'],
                     'pa' => $pa,
                 ]);
-                return $existingRecordAbsen;
+                return [
+                    'message' => 'Absen Keluar Berhasil!',
+                    'data' => [$existingRecordAbsen]
+                ];
             }
         } else {
             // OVERTIME
@@ -153,16 +165,25 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             ->first();
             // return $existingRecordOvertime;
             if ($existingRecordOvertime && $type == 'SPL' && $function == 'IN') {
-                return 'Anda sudah absen overtime masuk';
+                return [
+                    'message' => 'Anda Sudah Absen Overtime Masuk!',
+                    'data' => []
+                ];
             }
             elseif (!$existingRecordOvertime && $type == 'SPL' && $function == 'IN') { // Create a new record
                 $data['time_out_at'] = null;
                 $data['telat'] = null;
-                return $this->model->create($data);
+                return [
+                    'message' => 'Absen Keluar Berhasil!',
+                    'data' => [$this->model->create($data)]
+                ];
             }
 
             if ($existingRecordOvertime->time_out_at !== null && $type == 'SPL' && $function == 'OUT') {
-                return 'Anda sudah absen overtime pulang';
+                return [
+                    'message' => 'Anda Sudah Absen Overtime Pulang!',
+                    'data' => []
+                ];
             }
             elseif ($existingRecordOvertime->time_out_at == null && $type == 'SPL' && $function == 'OUT') { // Check if a record exists for the employee and date
                 $timeOutAt = $data['time_out_at'];
@@ -175,7 +196,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     'time_out_at' => $data['time_out_at'],
                     'pa' => null,
                 ]);
-                return $existingRecordOvertime;
+                return [
+                    'message' => 'Absen Keluar Berhasil!',
+                    'data' => [$existingRecordOvertime]
+                ];
             }
         }
     }
