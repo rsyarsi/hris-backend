@@ -105,6 +105,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'employee_id' => $user->username,
+                'UuidEmployment' => $user->employee->id,
             ],
         ]);
     }
