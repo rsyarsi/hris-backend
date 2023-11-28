@@ -8,6 +8,7 @@ use App\Models\GenerateAbsen;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{AbsenFromMobileRequest, GenerateAbsenRequest};
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
+use Carbon\Carbon;
 
 class GenerateAbsenController extends Controller
 {

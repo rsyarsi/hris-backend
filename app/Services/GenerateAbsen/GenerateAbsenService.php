@@ -54,8 +54,6 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $function = Str::upper($data['Function']); // IN / OUT
         $jam = Carbon::parse($data['Jam']);
 
-        // return $type;
-
         $currentDate = Carbon::parse($data['Tanggal']);
         $dateJamMasuk = $data['Tanggal'].' '.$data['Jam'];
         // $ipAddress = $data['Ip_address'];
@@ -67,6 +65,25 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         }
         $shiftScheduleId = $data['Id_schedule']; // nip karyawan
         $shiftSchedule = $this->shiftScheduleService->show($shiftScheduleId);
+        // return $shiftSchedule;
+        
+        $timeInScheduleCarbon = Carbon::parse($shiftSchedule->time_in);
+
+        // Calculate the start of the allowed range (1 hour before $timeInSchedule)
+        $allowedStartTime = $timeInScheduleCarbon->copy()->subHour();
+
+        // Calculate the end of the allowed range (scheduled time)
+        $allowedEndTime = $timeInScheduleCarbon->copy();
+
+        $result = ($function == 'IN' && ($jam->gte($allowedStartTime) && $jam->lte($allowedEndTime) || $jam->gt($allowedEndTime))) ? 'yes' : 'no';
+
+        if ($result === 'no') {
+            return [
+                'message' => 'Absen Hanya boleh 1 jam sebelum jadwal!',
+                'data' => []
+            ];
+        }
+
         $timeInSchedule = Carbon::parse($shiftSchedule->time_in);
         $timeOutSchedule = Carbon::parse($shiftSchedule->time_out);
         $data['period'] = $currentDate->format('Y-m');
