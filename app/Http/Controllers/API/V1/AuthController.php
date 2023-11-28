@@ -75,7 +75,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         // Check if the user is already logged in from another device
         // if ($this->isUserLoggedInFromAnotherDevice($user, $credentials)) {
@@ -106,6 +106,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'employee_id' => $user->username,
                 'UuidEmployment' => $user->employee->id ?? '',
+                'roles' => $user->roles ?? '',
             ],
         ]);
     }
