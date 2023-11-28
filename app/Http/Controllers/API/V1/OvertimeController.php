@@ -155,12 +155,11 @@ class OvertimeController extends Controller
             $employeeId = $request->input('employment_id');
             $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
             if ($overtime) {
-                $overtimeArray = $overtime->toArray();
                 return response()->json([
                     'message' => 'Overtime Karyawan hari ini berhasil di ambil!',
                     'success' => 'true',
                     'code' => 200,
-                    'data' => [$overtimeArray],
+                    'data' => [$overtime],
                 ]);
             } else {
                 return response()->json([

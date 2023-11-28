@@ -4,6 +4,7 @@ namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
 use App\Models\{Employee, Leave};
+use Illuminate\Support\Facades\DB;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
@@ -218,32 +219,63 @@ class LeaveRepository implements LeaveRepositoryInterface
         if (!$employee) {
             return [];
         }
-        $leave = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'leaveStatus' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveHistory' => function ($query) {
-                            $query->select(
-                                'id',
-                                'leave_id',
-                                'description',
-                                'ip_address',
-                                'user_id',
-                                'user_agent',
-                                'comment',
-                            );
-                        }
+        // $leave = DB::table('leaves')
+        //             ->select([
+        //                 'leaves.id',
+        //                 'leaves.employee_id',
+        //                 DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
+        //                 DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
+        //                 DB::raw("COALESCE(leaves.duration::text, '') as duration"),
+        //                 DB::raw("COALESCE(leaves.note, '') as note"),
+        //                 'employees.name as employee_name',
+        //                 'leave_types.id as leave_type_id',
+        //                 'leave_types.name as leave_type_name',
+        //                 DB::raw("COALESCE(leave_types.is_salary_deduction::text, '') as is_salary_deduction"),
+        //                 'leave_statuses.name as overtime_status_name',
+        //                 DB::raw("JSON_AGG(
+        //                     JSON_BUILD_OBJECT(
+        //                         'id', leave_histories.id,
+        //                         'leave_id', leave_histories.leave_id,
+        //                         'description', leave_histories.description,
+        //                         'ip_address', leave_histories.ip_address,
+        //                         'user_id', leave_histories.user_id,
+        //                         'user_agent', leave_histories.user_agent,
+        //                         'comment', leave_histories.comment
+        //                     )
+        //                 ) as leave_history"),
+        //             ])
+        //             ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+        //             ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+        //             ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+        //             ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
+        //             ->where('leaves.employee_id', $employee->id)
+        //             ->orderBy('leaves.from_date', 'ASC')
+        //             ->groupBy('leaves.id', 'leaves.employee_id', 'leaves.from_date', 'leaves.to_date', 'leaves.duration', 'leaves.note', 'employees.name', 'leave_types.id', 'leave_types.name', 'leave_types.is_salary_deduction', 'leave_statuses.name')
+        //             ->get();
+
+        $leave = DB::table('leaves')
+                    ->select([
+                        DB::raw("COALESCE(leaves.id, '') as id"),
+                        DB::raw("COALESCE(leaves.employee_id, '') as employee_id"),
+                        DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
+                        DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
+                        DB::raw("COALESCE(leaves.duration::text, '') as duration"),
+                        DB::raw("COALESCE(leaves.note, '') as note"),
+                        DB::raw("COALESCE(employees.name, '') as employee_name"),
+                        DB::raw("COALESCE(leave_types.id::text, '') as leave_type_id"),
+                        DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
+                        DB::raw("COALESCE(leave_types.is_salary_deduction::text, '') as is_salary_deduction"),
+                        DB::raw("COALESCE(leave_statuses.name, '') as overtime_status_name"),
+                        // DB::raw("COALESCE(leave_histories.description, '') as history_description"),
                     ])
+                    ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+                    ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+                    ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+                    // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
                     ->where('employee_id', $employee->id)
                     ->orderBy('from_date', 'ASC')
-                    ->get($this->field);
+                    // ->groupBy('leaves.id', 'leaves.employee_id', 'leaves.from_date', 'leaves.to_date', 'leaves.duration', 'leaves.note', 'employees.name', 'leave_types.id', 'leave_types.name', 'leave_types.is_salary_deduction', 'leave_statuses.name', 'leave_histories.description')
+                    ->get();
         return $leave ? $leave : $leave = null;
     }
 

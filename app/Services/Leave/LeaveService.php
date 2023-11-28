@@ -5,14 +5,20 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Services\Leave\LeaveServiceInterface;
 use App\Repositories\Leave\LeaveRepositoryInterface;
+use App\Services\Employee\EmployeeServiceInterface;
+use App\Services\Firebase\FirebaseServiceInterface;
 
 class LeaveService implements LeaveServiceInterface
 {
     private $repository;
+    private $firebaseService;
+    private $employeeService;
 
-    public function __construct(LeaveRepositoryInterface $repository)
+    public function __construct(LeaveRepositoryInterface $repository, FirebaseServiceInterface $firebaseService, EmployeeServiceInterface $employeeService)
     {
         $this->repository = $repository;
+        $this->firebaseService = $firebaseService;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search)
@@ -26,6 +32,14 @@ class LeaveService implements LeaveServiceInterface
         $toDate = Carbon::parse($data['to_date']);
         $durationInMinutes = $fromDate->diffInMinutes($toDate);
         $data['duration'] = $durationInMinutes;
+
+        // $firebaseId = $data['duration'];
+        // $typeSend = 'LEAVE';
+
+        // $employeeId = $data['employee_id'];
+        // $employee = $this->employeeService->show($employeeId);
+
+        // $this->firebaseService->sendNotification($firebaseId, $typeSend, $employee);
         return $this->repository->store($data);
     }
 

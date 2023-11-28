@@ -3,6 +3,7 @@
 namespace App\Repositories\Overtime;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\{Employee, Overtime};
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
 
@@ -129,19 +130,27 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         }
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
-        $overtime = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'overtimeStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
+        $overtime = DB::table('overtimes')
+                        ->select([
+                            DB::raw("COALESCE(overtimes.id, '') as id"),
+                            DB::raw("COALESCE(overtimes.employee_id, '') as employee_id"),
+                            DB::raw("COALESCE(overtimes.task, '') as task"),
+                            DB::raw("COALESCE(overtimes.note, '') as note"),
+                            DB::raw("COALESCE(overtimes.overtime_status_id::text, '') as overtime_status_id"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
+                            DB::raw("COALESCE(overtimes.amount::text, '') as amount"),
+                            DB::raw("COALESCE(overtimes.type, '') as type"),
+                            DB::raw("COALESCE(overtimes.duration::text, '') as duration"),
+                            DB::raw("COALESCE(employees.name, '') as employee_name"),
+                            DB::raw("COALESCE(overtime_statuses.name, '') as overtime_status_name"),
                         ])
-                        ->where('employee_id', $employee->id)
-                        ->whereBetween('from_date', [$startOfMonth, $endOfMonth])
-                        ->orderBy('from_date', 'ASC')
-                        ->get($this->field);
+                        ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
+                        ->leftJoin('overtime_statuses', 'overtimes.overtime_status_id', '=', 'overtime_statuses.id')
+                        ->where('overtimes.employee_id', $employee->id)
+                        ->whereBetween('overtimes.from_date', [$startOfMonth, $endOfMonth])
+                        ->orderBy('overtimes.from_date', 'ASC')
+                        ->get();
         return $overtime ? $overtime : $overtime = null;
     }
 
@@ -225,16 +234,24 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         if (!$employee) {
             return [];
         }
-        $overtime = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'overtimeStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
+        $overtime = DB::table('overtimes')
+                        ->select([
+                            DB::raw("COALESCE(overtimes.id, '') as id"),
+                            DB::raw("COALESCE(overtimes.employee_id, '') as employee_id"),
+                            DB::raw("COALESCE(overtimes.task, '') as task"),
+                            DB::raw("COALESCE(overtimes.note, '') as note"),
+                            DB::raw("COALESCE(overtimes.overtime_status_id::text, '') as overtime_status_id"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
+                            DB::raw("COALESCE(overtimes.amount::text, '') as amount"),
+                            DB::raw("COALESCE(overtimes.type, '') as type"),
+                            DB::raw("COALESCE(overtimes.duration::text, '') as duration"),
+                            DB::raw("COALESCE(employees.name, '') as employee_name"),
+                            DB::raw("COALESCE(overtime_statuses.name, '') as overtime_status_name"),
                         ])
-                        ->where('employee_id', $employee->id)
+                        ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
+                        ->leftJoin('overtime_statuses', 'overtimes.overtime_status_id', '=', 'overtime_statuses.id')
+                        ->where('overtimes.employee_id', $employee->id)
                         ->where('from_date', '>=', Carbon::today()->startOfDay())
                         ->where('from_date', '<', Carbon::tomorrow()->startOfDay())
                         ->first($this->field);

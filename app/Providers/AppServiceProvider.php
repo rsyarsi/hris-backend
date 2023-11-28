@@ -51,6 +51,7 @@ use App\Services\EmployeeContract\{EmployeeContractService, EmployeeContractServ
 use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, EmployeeContractDetailServiceInterface};
 use App\Services\Helper\{HelperService, HelperServiceInterface};
 use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterface};
+use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
 use App\Repositories\Permission\{PermissionRepository, PermissionRepositoryInterface};
@@ -301,6 +302,9 @@ class AppServiceProvider extends ServiceProvider
         // Generate Absen
         $this->app->bind(GenerateAbsenRepositoryInterface::class, GenerateAbsenRepository::class);
         $this->app->bind(GenerateAbsenServiceInterface::class, GenerateAbsenService::class);
+
+        // Firebase
+        $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
     }
 
     /**
