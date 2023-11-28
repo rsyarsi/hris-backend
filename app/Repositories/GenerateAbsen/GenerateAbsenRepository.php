@@ -116,45 +116,57 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         // ABSEN
         if ($type == 'ABSEN') {
             $existingRecordAbsen = $this->model
-                        ->where('employee_id', $employeeId)
-                        ->where('date', $date)
-                        ->where('type', 'ABSEN')
-                        ->first();
-            if ($existingRecordAbsen && $type == 'ABSEN' && $function == 'IN') {
-                return [
-                    'message' => 'Anda Sudah Absen Masuk!',
-                    'data' => []
-                ];
-            }
-            elseif (!$existingRecordAbsen && $type == 'ABSEN' && $function == 'IN') { // Create a new record
-                $data['time_out_at'] = null;
-                return [
-                    'message' => 'Absen Masuk Berhasil!',
-                    'data' => [$this->model->create($data)]
-                ];
+                                        ->where('employee_id', $employeeId)
+                                        ->where('date', $date)
+                                        ->where('type', 'ABSEN')
+                                        ->first();
+
+            if ($type == 'ABSEN' && $function == 'IN') {
+                if ($existingRecordAbsen) {
+                    return [
+                        'message' => 'Anda Sudah Absen Masuk!',
+                        'data' => []
+                    ];
+                } else { // Create a new record
+                    $data['time_out_at'] = null;
+                    return [
+                        'message' => 'Absen Masuk Berhasil!',
+                        'data' => [$this->model->create($data)]
+                    ];
+                }
             }
 
-            if ($existingRecordAbsen->time_out_at !== null && $type == 'ABSEN' && $function == 'OUT') {
-                return [
-                    'message' => 'Anda Sudah Absen Keluar!',
-                    'data' => []
-                ];
-            }
-            elseif ($existingRecordAbsen->time_out_at == null && $type == 'ABSEN' && $function == 'OUT') { // Check if a record exists for the employee and date
-                $timeOutAt = $data['time_out_at'];
-                $scheduleTimeOutAt = $existingRecordAbsen->schedule_time_out_at;
-                $pa = null; //pa = pulang awal
-                if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
-                    $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+            if ($type == 'ABSEN' && $function == 'OUT') {
+                if ($existingRecordAbsen) {
+                    if ($existingRecordAbsen->time_out_at !== null) {
+                        return [
+                            'message' => 'Anda Sudah Absen Keluar!',
+                            'data' => []
+                        ];
+                    } else { // Check if a record exists for the employee and date
+                        $timeOutAt = $data['time_out_at'];
+                        $scheduleTimeOutAt = $existingRecordAbsen->schedule_time_out_at;
+                        $pa = null; //pa = pulang awal
+                        if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
+                            $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+                        }
+                        $existingRecordAbsen->update([
+                            'time_out_at' => $data['time_out_at'],
+                            'pa' => $pa,
+                        ]);
+                        return [
+                            'message' => 'Absen Keluar Berhasil!',
+                            'data' => [$existingRecordAbsen]
+                        ];
+                    }
+                } else {
+                    // Handle the case where $existingRecordAbsen is null (data doesn't exist)
+                    // You might want to return an appropriate response or handle it accordingly
+                    return [
+                        'message' => 'Anda Belum Absen/Data not found',
+                        'data' => []
+                    ];
                 }
-                $existingRecordAbsen->update([
-                    'time_out_at' => $data['time_out_at'],
-                    'pa' => $pa,
-                ]);
-                return [
-                    'message' => 'Absen Keluar Berhasil!',
-                    'data' => [$existingRecordAbsen]
-                ];
             }
         } else {
             // OVERTIME
