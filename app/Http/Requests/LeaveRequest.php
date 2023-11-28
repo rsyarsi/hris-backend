@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\{DateSmallerThan, NotOverlappingPermissions};
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
+use App\Rules\{DateSmallerThan, NotOverlappingPermissions};
 
 class LeaveRequest extends FormRequest
 {
@@ -40,5 +41,20 @@ class LeaveRequest extends FormRequest
             'to_date' => 'required|date',
             'note' => 'required',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }
