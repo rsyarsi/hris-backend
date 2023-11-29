@@ -18,14 +18,19 @@ class PphRepository implements PphRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field)
-        ->where(function ($query) use ($search) {
-            $query->where('period', 'like', "%{$search}%")
-                ->orWhere('employee_id', $search)
-                ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                    $employeeQuery->where('name', 'like', "%{$search}%");
-                });
-        });
+        $query = $this->model
+                    ->with(['employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                    ])
+                    ->select($this->field)
+                    ->where(function ($query) use ($search) {
+                        $query->where('period', 'like', "%{$search}%")
+                            ->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->where('name', 'like', "%{$search}%");
+                            });
+                    });
         return $query->orderBy('period', 'DESC')->paginate($perPage);
     }
 
