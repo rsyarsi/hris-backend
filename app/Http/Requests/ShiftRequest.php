@@ -27,12 +27,7 @@ class ShiftRequest extends FormRequest
     {
         return [
             'shift_group_id' => 'required|exists:shift_groups,id',
-            'code' => [
-                'required',
-                'string',
-                'max:45',
-                Rule::unique('shifts')->ignore($this->route('shift')),
-            ],
+            'code' => 'required|max:45',
             'name' => [
                 'required',
                 'string',
