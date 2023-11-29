@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\UniquePphRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
@@ -24,10 +25,20 @@ class PphRequest extends FormRequest
      */
     public function rules()
     {
+        $pphId = $this->route('pph');
         return [
             'employee_id' => 'required|exists:employees,id',
             'nilai' => 'required|integer',
-            'period' => 'required|string|max:45',
+            'period' => [
+                'required',
+                'string',
+                'max:45',
+                new UniquePphRule(
+                    $this->input('employee_id'),
+                    $this->input('period'),
+                    $pphId // Pass the pph ID for exclusion on update
+                )
+            ],
         ];
     }
 
