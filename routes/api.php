@@ -13,7 +13,8 @@ use App\Http\Controllers\API\V1\{
     LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
-    ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController
+    ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
+    PphController
 };
 
 /*
@@ -187,6 +188,13 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
             // route for absen from mobile
             Route::post('absen-from-mobile', 'absenFromMobile')->name('absen-from-mobile');
+        });
+        Route::resource('pph', PphController::class)->parameters(['pph' => 'pph']);
+        Route::controller(PphController::class)->group(function () {
+            // route for pph employee login
+            Route::get('pph-employee', 'pphEmployee')->name('pph-employee');
+            // route for import pph
+            Route::post('import-pph', 'importPph')->name('import-pph');
         });
     });
 });

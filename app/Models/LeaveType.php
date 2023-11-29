@@ -13,5 +13,5 @@ class LeaveType extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['name', 'is_salary_deduction', 'active'];
+    protected $fillable = ['name', 'is_salary_deduction', 'active', 'day', 'upload_photo'];
 }

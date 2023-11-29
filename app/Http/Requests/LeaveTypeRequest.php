@@ -34,6 +34,8 @@ class LeaveTypeRequest extends FormRequest
             ],
             'is_salary_deduction' => 'nullable|integer',
             'active' => 'nullable|integer',
+            'day' => 'nullable|integer',
+            'upload_photo' => 'nullable|integer',
         ];
     }
 

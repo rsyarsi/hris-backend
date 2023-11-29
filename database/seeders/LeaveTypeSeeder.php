@@ -18,8 +18,10 @@ class LeaveTypeSeeder extends Seeder
         for ($i = 1; $i <= 3; $i++) {
             LeaveType::create([
                 'name' => 'LEAVE TYPE ' . $i,
-                'is_salary_deduction' => rand(0, 1),
-                'active' => rand(0, 1),
+                'is_salary_deduction' => 0,
+                'active' => 0,
+                'day' => 0,
+                'upload_photo' => 0,
             ]);
         }
     }

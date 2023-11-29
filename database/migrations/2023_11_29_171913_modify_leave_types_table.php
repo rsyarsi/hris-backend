@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::table('leave_types', function (Blueprint $table) {
             $table->string('is_salary_deduction')->nullable()->change();
-            $table->string('day')->nullable();
-            $table->string('upload_photo')->nullable();
+            $table->integer('day')->nullable();
+            $table->smallInteger('upload_photo')->nullable();
         });
     }
 

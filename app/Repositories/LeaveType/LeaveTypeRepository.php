@@ -9,7 +9,7 @@ use App\Repositories\LeaveType\LeaveTypeRepositoryInterface;
 class LeaveTypeRepository implements LeaveTypeRepositoryInterface
 {
     private $model;
-    private $field = ['id', 'name', 'is_salary_deduction', 'active'];
+    private $field = ['name', 'is_salary_deduction', 'active', 'day', 'upload_photo'];
 
     public function __construct(LeaveType $model)
     {
