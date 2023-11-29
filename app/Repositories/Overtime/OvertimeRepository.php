@@ -142,6 +142,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                             DB::raw("COALESCE(overtimes.amount::text, '') as amount"),
                             DB::raw("COALESCE(overtimes.type, '') as type"),
                             DB::raw("COALESCE(overtimes.duration::text, '') as duration"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.created_at, 'YYYY-MM-DD'), '') as tglinput"),
                             DB::raw("COALESCE(employees.name, '') as employee_name"),
                             DB::raw("COALESCE(overtime_statuses.name, '') as overtime_status_name"),
                         ])

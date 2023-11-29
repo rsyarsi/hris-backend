@@ -32,8 +32,8 @@ class LeaveTypeRequest extends FormRequest
                 'string',
                 Rule::unique('leave_types')->ignore($this->route('leave_type')),
             ],
-            'is_salary_deduction' => 'required|integer',
-            'active' => 'required|integer',
+            'is_salary_deduction' => 'nullable|integer',
+            'active' => 'nullable|integer',
         ];
     }
 
