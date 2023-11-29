@@ -19,7 +19,8 @@ class PphRepository implements PphRepositoryInterface
     public function index($perPage, $search = null)
     {
         $query = $this->model
-                    ->with(['employee' => function ($query) {
+                    ->with(['employee' => function ($query)
+                        {
                             $query->select('id', 'name', 'employment_number');
                         },
                     ])
@@ -41,7 +42,14 @@ class PphRepository implements PphRepositoryInterface
 
     public function show($id)
     {
-        $position = $this->model->where('id', $id)->first($this->field);
+        $position = $this->model
+                        ->with(['employee' => function ($query)
+                            {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                        ])
+                        ->where('id', $id)
+                        ->first($this->field);
         return $position ? $position : $position = null;
     }
 
