@@ -150,7 +150,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         ->leftJoin('overtime_statuses', 'overtimes.overtime_status_id', '=', 'overtime_statuses.id')
                         ->where('overtimes.employee_id', $employee->id)
                         ->whereBetween('overtimes.from_date', [$startOfMonth, $endOfMonth])
-                        ->orderBy('overtimes.from_date', 'ASC')
+                        ->orderBy('overtimes.from_date', 'DESC')
                         ->get();
         return $overtime ? $overtime : $overtime = null;
     }
