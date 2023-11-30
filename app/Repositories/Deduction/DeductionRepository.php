@@ -1,17 +1,27 @@
 <?php
 
-namespace App\Repositories\Pph;
+namespace App\Repositories\Deduction;
 
-use App\Models\Pph;
-use App\Repositories\Pph\PphRepositoryInterface;
+use App\Models\Deduction;
+use App\Repositories\Deduction\DeductionRepositoryInterface;
 
 
-class PphRepository implements PphRepositoryInterface
+class DeductionRepository implements DeductionRepositoryInterface
 {
     private $model;
-    private $field = ['id', 'employee_id', 'nilai', 'period'];
+    private $field = [
+        'id',
+        'employee_id',
+        'nilai',
+        'keterangan',
+        'tenor',
+        'period',
+        'pembayaran',
+        'sisa',
+        'kode_lunas',
+    ];
 
-    public function __construct(Pph $model)
+    public function __construct(Deduction $model)
     {
         $this->model = $model;
     }
@@ -73,7 +83,7 @@ class PphRepository implements PphRepositoryInterface
         return null;
     }
 
-    public function pphEmployee($perPage, $search = null)
+    public function deductionEmployee($perPage, $search = null)
     {
         $user = auth()->user();
         if (!$user->employee) {

@@ -52,6 +52,7 @@ use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, Employee
 use App\Services\Helper\{HelperService, HelperServiceInterface};
 use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterface};
 use App\Services\Pph\{PphService, PphServiceInterface};
+use App\Services\Deduction\{DeductionService, DeductionServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -103,6 +104,7 @@ use App\Repositories\EmployeeContractDetail\{EmployeeContractDetailRepository, E
 use App\Repositories\Helper\{HelperRepository, HelperRepositoryInterface};
 use App\Repositories\GenerateAbsen\{GenerateAbsenRepository, GenerateAbsenRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
+use App\Repositories\Deduction\{DeductionRepository, DeductionRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -308,6 +310,10 @@ class AppServiceProvider extends ServiceProvider
         // PPH
         $this->app->bind(PphRepositoryInterface::class, PphRepository::class);
         $this->app->bind(PphServiceInterface::class, PphService::class);
+        
+        // Deduction
+        $this->app->bind(DeductionRepositoryInterface::class, DeductionRepository::class);
+        $this->app->bind(DeductionServiceInterface::class, DeductionService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

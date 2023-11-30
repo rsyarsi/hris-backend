@@ -32,7 +32,13 @@ class PayrollComponentRequest extends FormRequest
                 'string',
                 Rule::unique('mpayrollcomponents')->ignore($this->route('payroll_component')),
             ],
+            'order' => [
+                'required',
+                'integer',
+                Rule::unique('mpayrollcomponents')->ignore($this->route('payroll_component')),
+            ],
             'active' => 'required|integer',
+            'group_component_payroll' => 'required|string|max:255',
         ];
     }
 

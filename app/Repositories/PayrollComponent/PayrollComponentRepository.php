@@ -9,7 +9,7 @@ use App\Repositories\PayrollComponent\PayrollComponentRepositoryInterface;
 class PayrollComponentRepository implements PayrollComponentRepositoryInterface
 {
     private $model;
-    private $field = ['id', 'name', 'active'];
+    private $field = ['id', 'name', 'active', 'group_component_payroll', 'order'];
 
     public function __construct(PayrollComponent $model)
     {
@@ -22,7 +22,7 @@ class PayrollComponentRepository implements PayrollComponentRepositoryInterface
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
-        return $query->orderBy('id', 'ASC')->paginate($perPage);
+        return $query->orderBy('order', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)

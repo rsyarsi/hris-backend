@@ -13,5 +13,5 @@ class PayrollComponent extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['name', 'active'];
+    protected $fillable = ['name', 'active', 'group_component_payroll', 'order'];
 }

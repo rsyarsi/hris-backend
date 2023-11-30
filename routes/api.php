@@ -14,7 +14,7 @@ use App\Http\Controllers\API\V1\{
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
-    PphController
+    PphController, DeductionController
 };
 
 /*
@@ -195,6 +195,13 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('pph-employee', 'pphEmployee')->name('pph-employee');
             // route for import pph
             Route::post('import-pph', 'importPph')->name('import-pph');
+        });
+        Route::resource('deductions', DeductionController::class)->parameters(['deductions' => 'deduction']);
+        Route::controller(DeductionController::class)->group(function () {
+            // route for deductions employee login
+            Route::get('deduction-employee', 'deductionEmployee')->name('deductions-employee');
+            // route for import deductions
+            Route::post('import-deductions', 'importDeduction')->name('import-deductions');
         });
     });
 });

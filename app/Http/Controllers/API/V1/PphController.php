@@ -5,10 +5,9 @@ namespace App\Http\Controllers\API\V1;
 use App\Imports\PphImport;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
-use App\Http\Requests\PphRequest;
+use App\Http\Requests\{PphRequest, ImportPphRequest};
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\ImportPphRequest;
 use App\Services\Pph\PphServiceInterface;
 
 class PphController extends Controller
