@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class LeaveNewStatusRequest extends FormRequest
 {
@@ -26,5 +27,20 @@ class LeaveNewStatusRequest extends FormRequest
         return [
             'leave_status_id' => 'required|exists:leave_statuses,id',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

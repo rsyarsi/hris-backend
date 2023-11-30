@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class EmployeePositionHistoryRequest extends FormRequest
 {
@@ -31,5 +32,20 @@ class EmployeePositionHistoryRequest extends FormRequest
             'started_at' => 'required|date',
             'ended_at' => 'required|date',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

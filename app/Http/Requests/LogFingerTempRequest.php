@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class LogFingerTempRequest extends FormRequest
 {
@@ -28,5 +29,20 @@ class LogFingerTempRequest extends FormRequest
             'datetime' => 'required|date',
             'function' => 'required|integer',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeLegalityRequest extends FormRequest
 {
@@ -30,9 +31,21 @@ class EmployeeLegalityRequest extends FormRequest
             'started_at' => 'required|date',
             'ended_at' => 'nullable|date',
             'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-            // 'file_url' => 'nullable|string|max:255',
-            // 'file_path' => 'nullable|string|max:255',
-            // 'file_disk' => 'nullable|string|max:255',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

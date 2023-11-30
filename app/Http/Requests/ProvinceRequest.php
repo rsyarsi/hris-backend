@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class ProvinceRequest extends FormRequest
 {
@@ -48,5 +49,20 @@ class ProvinceRequest extends FormRequest
             'code' => Str::upper($this->input('code')),
             'name' => Str::upper($this->input('name')),
         ]);
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

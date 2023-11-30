@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class ShiftRequest extends FormRequest
 {
@@ -28,12 +29,7 @@ class ShiftRequest extends FormRequest
         return [
             'shift_group_id' => 'required|exists:shift_groups,id',
             'code' => 'required|max:45',
-            'name' => [
-                'required',
-                'string',
-                'max:150',
-                Rule::unique('shifts')->ignore($this->route('shift')),
-            ],
+            'name' => 'required|string|max:150',
             'in_time' => 'required|max:45',
             'out_time' => 'required|max:45',
             'finger_in_less' => 'required|integer|digits_between:1,11',
@@ -42,6 +38,7 @@ class ShiftRequest extends FormRequest
             'finger_out_more' => 'required|integer|digits_between:1,11',
             'night_shift' => 'required|integer',
             'active' => 'required|integer',
+            'libur' => 'required|integer',
         ];
     }
 
@@ -51,5 +48,20 @@ class ShiftRequest extends FormRequest
             'name' => Str::upper($this->input('name')),
             'code' => Str::upper($this->input('code')),
         ]);
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

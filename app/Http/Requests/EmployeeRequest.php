@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeRequest extends FormRequest
 {
@@ -71,15 +72,37 @@ class EmployeeRequest extends FormRequest
                 'string',
                 Rule::unique('employees')->ignore($this->route('employee')),
             ],
+            'user_id' => [
+                'nullable',
+                'max:36',
+                'string',
+                'exists:users,id',
+                Rule::unique('employees')->ignore($this->route('employee')),
+            ],
             'resigned_at' => 'nullable|date',
-            'user_id' => 'nullable|exists:users,id',
             'supervisor_id' => 'nullable|exists:employees,id',
             'manager_id' => 'nullable|exists:employees,id',
+            'shift_group_id' => 'nullable|exists:shift_groups,id',
             'pin' => [
                 'nullable',
                 'integer',
                 Rule::unique('employees')->ignore($this->route('employee')),
             ],
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

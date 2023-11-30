@@ -25,6 +25,7 @@ class ShiftRepository implements ShiftRepositoryInterface
         'active',
         'user_created_id',
         'user_updated_id',
+        'libur',
     ];
 
     public function __construct(Shift $model)

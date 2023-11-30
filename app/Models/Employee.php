@@ -58,7 +58,8 @@ class Employee extends Model
         'user_id',
         'supervisor_id',
         'manager_id',
-        'pin'
+        'pin',
+        'shift_group_id'
     ];
 
     public function identityType()
@@ -134,6 +135,11 @@ class Employee extends Model
     public function supervisor()
     {
         return $this->belongsTo(Employee::class, 'supervisor_id', 'id');
+    }
+
+    public function shiftGroup()
+    {
+        return $this->belongsTo(ShiftGroup::class, 'shift_group_id', 'id');
     }
 
     public function employeeOrganization()

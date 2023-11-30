@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 use App\Rules\UniquePayrollComponent;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeContractDetailRequest extends FormRequest
 {
@@ -39,5 +40,20 @@ class EmployeeContractDetailRequest extends FormRequest
             'nominal' => 'required|max:18',
             'active' => 'required|integer',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

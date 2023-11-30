@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class ImportShiftScheduleRequest extends FormRequest
 {
@@ -40,5 +41,20 @@ class ImportShiftScheduleRequest extends FormRequest
             'file.mimes' => 'Only Excel files (xlsx) and csv are allowed.',
             'file.max' => 'The file may not be greater than 2MB.',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

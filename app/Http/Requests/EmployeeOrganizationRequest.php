@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeOrganizationRequest extends FormRequest
 {
@@ -30,5 +31,20 @@ class EmployeeOrganizationRequest extends FormRequest
             'started_year' => 'nullable|integer|digits_between:1,10',
             'ended_year' => 'nullable|integer|digits_between:1,10',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

@@ -31,6 +31,7 @@ class Shift extends Model
         'active',
         'user_created_id',
         'user_updated_id',
+        'libur',
     ];
 
     public function shiftGroup()
