@@ -33,7 +33,7 @@ class ShiftRepository implements ShiftRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $groupShiftId = null)
     {
         $query = $this->model
                     ->with([
@@ -50,6 +50,10 @@ class ShiftRepository implements ShiftRepositoryInterface
                     ->select($this->field);
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+        }
+        // Add the condition to filter by shift_group_id
+        if ($groupShiftId !== null) {
+            $query->where('shift_group_id', $groupShiftId);
         }
         return $query->paginate($perPage);
     }
