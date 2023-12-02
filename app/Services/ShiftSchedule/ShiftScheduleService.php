@@ -31,11 +31,20 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
+
         $data['created_user_id'] = auth()->id();
         $data['setup_user_id'] = auth()->id();
-        $data['time_in'] = $data['date'] . ' ' . $shift->in_time;
-        $data['time_out'] = $data['date'] . ' ' . $shift->out_time;
+        $data['setup_at'] = now();
+
+        // Calculate time_in and time_out based on night_shift
+        $data['time_in'] = $shiftId ? $data['date'] . ' ' . $shift->in_time : null;
+        $data['time_out'] = $shiftId ? $data['date'] . ' ' . $shift->out_time : null;
+        if ($shiftId && $shift->night_shift) {
+            $data['time_out'] = Carbon::parse($data['time_out'])->addDay()->format('Y-m-d H:i:s');
+        }
+
         $data['night'] = $shift->night_shift;
+
         return $this->repository->store($data);
     }
 
@@ -49,8 +58,14 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         $shiftSchedule = $this->repository->show($id);
         $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
+
+        // Calculate time_in and time_out based on night_shift
         $data['time_in'] = $shift ? $shiftSchedule->date . ' ' . $shift->in_time : null;
         $data['time_out'] = $shift ? $shiftSchedule->date . ' ' . $shift->out_time : null;
+        if ($shift && $shift->night_shift) {
+            $data['time_out'] = Carbon::parse($data['time_out'])->addDay()->format('Y-m-d H:i:s');
+        }
+
         return $this->repository->update($id, $data);
     }
 
@@ -81,13 +96,22 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         // Loop through the date range
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
             $ulid = Ulid::generate(); // Generate a ULID
+
+            $timeIn = $shiftId ? $date->format('Y-m-d') . ' ' . $shift->in_time : null;
+
+            // Calculate time_out based on night_shift
+            $timeOut = $shiftId ? $date->format('Y-m-d') . ' ' . $shift->out_time : null;
+            if ($shiftId && $shift->night_shift) {
+                $timeOut = $date->copy()->addDay()->format('Y-m-d') . ' ' . $shift->out_time;
+            }
+
             $shiftScheduleData = [
                 'id' => Str::lower($ulid),
                 'employee_id' => $data['employee_id'],
                 'shift_id' => $shiftId,
                 'date' => $date->format('Y-m-d'),
-                'time_in' => $shiftId ? $date->format('Y-m-d') . ' ' . $shift->in_time : null,
-                'time_out' => $shiftId ?  $date->format('Y-m-d') . ' ' . $shift->out_time : null,
+                'time_in' => $timeIn,
+                'time_out' => $timeOut,
                 'late_note' => null,
                 'shift_exchange_id' => null,
                 'user_exchange_id' => null,

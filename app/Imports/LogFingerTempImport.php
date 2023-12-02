@@ -2,10 +2,10 @@
 
 namespace App\Imports;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Symfony\Component\Uid\Ulid;
-use App\Models\{Employee, LogFingerTemp};
 use Maatwebsite\Excel\Concerns\ToModel;
+use App\Models\{Employee, LogFingerTemp};
 
 class LogFingerTempImport implements ToModel
 {
@@ -25,10 +25,7 @@ class LogFingerTempImport implements ToModel
         // Check if the entry already exists in the shift_schedules table
         $existingEntry = LogFingerTemp::where([
             'employee_id' => $employee->id,
-            'datetime' => $row[2],
-            'time_in' => $row[5],
-            'time_out' => $row[6],
-            'tgl_log' => $row[7],
+            'date_log' => $row[1],
         ])->first();
 
         // If the entry exists, skip it
@@ -37,19 +34,18 @@ class LogFingerTempImport implements ToModel
         }
 
         $uuid = Str::uuid(); // Generate a UUID
+        $datetime = Carbon::parse($row[1]);
         return new LogFingerTemp([
             'id' => $uuid,
+            'date_log' => $datetime->toDateString(),
             'employee_id' => $employee->id,
-            'code_sn_finger' => $row[1],
-            'datetime' => $row[2],
-            'manual' => $row[3],
-            'code_pin' => $row[4],
-            'user_manual_id' => auth()->id(),
-            'input_manual_at' => now(),
-            'time_in' => $row[5],
-            'time_out' => $row[6],
-            'tgl_log' => $row[7],
-            'absen_type' => $row[8],
+            'function' => $row[7],
+            'snfinger' => $row[2],
+            'absen' => $row[1],
+            'manual' => $row[5],
+            'user_manual' => auth()->id(),
+            'manual_date' => $datetime->toDateString(),
+            'pin' => $row[6],
         ]);
     }
 }

@@ -19,7 +19,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         'current_province_id', 'current_city_id', 'current_district_id', 'current_village_id',
         'current_home_phone_number', 'current_home_phone_country', 'status_employment_id', 'position_id',
         'unit_id', 'department_id', 'started_at', 'employment_number', 'resigned_at', 'user_id', 'supervisor_id',
-        'manager_id', 'pin', 'shift_group_id'
+        'manager_id', 'pin', 'shift_group_id', 'kabid_id', 'kabag_id', 'kains_id',
     ];
 
     public function __construct(Employee $model)
@@ -74,6 +74,15 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name', 'email');
                             },
                             'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabid' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kains' => function ($query) {
                                 $query->select('id', 'name', 'email');
                             },
                             'user' => function ($query) {
@@ -137,6 +146,21 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             },
                             'shiftGroup' => function ($query) {
                                 $query->select('id', 'name');
+                            },
+                            'manager' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabid' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kains' => function ($query) {
+                                $query->select('id', 'name', 'email');
                             },
                             'user' => function ($query) {
                                 $query->select('id', 'name')->with([
@@ -344,6 +368,21 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             'shiftGroup' => function ($query) {
                                 $query->select('id', 'name');
                             },
+                            'manager' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabid' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kains' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
                             'user' => function ($query) {
                                 $query->select('id', 'name')->with([
                                     'roles:id,name',
@@ -423,6 +462,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                 'supervisor_id' => $data['supervisor_id'],
                 'started_at' => $data['started_at'],
                 'shift_group_id' => $data['shift_group_id'],
+                'kabid_id' => $data['kabid_id'],
+                'kabag_id' => $data['kabag_id'],
+                'kains_id' => $data['kains_id'],
             ]);
             return $employee;
         }

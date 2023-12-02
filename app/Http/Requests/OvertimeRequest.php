@@ -31,7 +31,7 @@ class OvertimeRequest extends FormRequest
             'note' => 'required|max:255',
             'overtime_status_id' => 'required|exists:overtime_statuses,id',
             'amount' => 'required|max:18',
-            'type' => 'required|in:HARI-KERJA,HARI-LIBUR',
+            'type' => 'required|string|max:255',
             'from_date' => ['required',
                             'date',
                             new NotOverlappingPermissions(

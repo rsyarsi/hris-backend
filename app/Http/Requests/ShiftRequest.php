@@ -28,17 +28,18 @@ class ShiftRequest extends FormRequest
     {
         return [
             'shift_group_id' => 'required|exists:shift_groups,id',
-            'code' => 'required|max:45',
-            'name' => 'required|string|max:150',
-            'in_time' => 'required|max:45',
-            'out_time' => 'required|max:45',
-            'finger_in_less' => 'required|integer|digits_between:1,11',
-            'finger_in_more' => 'required|integer|digits_between:1,11',
-            'finger_out_less' => 'required|integer|digits_between:1,11',
-            'finger_out_more' => 'required|integer|digits_between:1,11',
-            'night_shift' => 'required|integer',
-            'active' => 'required|integer',
-            'libur' => 'required|integer',
+            'code' => 'nullable|max:45',
+            'name' => 'nullable|string|max:150',
+            'in_time' => 'nullable|max:45',
+            'out_time' => 'nullable|max:45',
+            'finger_in_less' => 'nullable|integer|digits_between:1,11',
+            'finger_in_more' => 'nullable|integer|digits_between:1,11',
+            'finger_out_less' => 'nullable|integer|digits_between:1,11',
+            'finger_out_more' => 'nullable|integer|digits_between:1,11',
+            'night_shift' => 'nullable|integer',
+            'active' => 'nullable|integer',
+            'libur' => 'nullable|integer',
+            'on_call' => 'nullable|integer',
         ];
     }
 
