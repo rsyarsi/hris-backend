@@ -60,9 +60,7 @@ class Employee extends Model
         'manager_id',
         'pin',
         'shift_group_id',
-        'kabid_id',
         'kabag_id',
-        'kains_id',
     ];
 
     public function identityType()
@@ -140,19 +138,9 @@ class Employee extends Model
         return $this->belongsTo(Employee::class, 'supervisor_id', 'id');
     }
 
-    public function kabid()
-    {
-        return $this->belongsTo(Employee::class, 'kabid_id', 'id');
-    }
-
     public function kabag()
     {
         return $this->belongsTo(Employee::class, 'kabag_id', 'id');
-    }
-
-    public function kains()
-    {
-        return $this->belongsTo(Employee::class, 'kains_id', 'id');
     }
 
     public function shiftGroup()

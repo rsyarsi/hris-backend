@@ -39,9 +39,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
         'manager_id',
         'department_id',
         'supervisor_id',
-        'kabid_id',
         'kabag_id',
-        'kains_id',
     ];
 
     public function __construct(
@@ -85,13 +83,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                             'supervisor' => function ($query) {
                                 $query->select('id', 'name', 'employment_number');
                             },
-                            'kabid' => function ($query) {
-                                $query->select('id', 'name', 'email');
-                            },
                             'kabag' => function ($query) {
-                                $query->select('id', 'name', 'email');
-                            },
-                            'kains' => function ($query) {
                                 $query->select('id', 'name', 'email');
                             },
                             'employeeContractDetail' => function ($query) {
@@ -132,9 +124,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['manager_id'] = $data['manager_id'];
             $dataContract['supervisor_id'] = $data['supervisor_id'];
             $dataContract['shift_group_id'] = $data['shift_group_id'];
-            $dataContract['kabid_id'] = $data['kabid_id'];
             $dataContract['kabag_id'] = $data['kabag_id'];
-            $dataContract['kains_id'] = $data['kains_id'];
             $this->employeeService->updateEmployeeContract($id, $dataContract);
         }
         return $this->model->create($data);
@@ -168,13 +158,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                                         'supervisor' => function ($query) {
                                             $query->select('id', 'name', 'employment_number');
                                         },
-                                        'kabid' => function ($query) {
-                                            $query->select('id', 'name', 'email');
-                                        },
                                         'kabag' => function ($query) {
-                                            $query->select('id', 'name', 'email');
-                                        },
-                                        'kains' => function ($query) {
                                             $query->select('id', 'name', 'email');
                                         },
                                         'employeeContractDetail' => function ($query) {
@@ -206,9 +190,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['manager_id'] = $data['manager_id'];
             $dataContract['supervisor_id'] = $data['supervisor_id'];
             $dataContract['shift_group_id'] = $data['shift_group_id'];
-            $dataContract['kabid_id'] = $data['kabid_id'];
             $dataContract['kabag_id'] = $data['kabag_id'];
-            $dataContract['kains_id'] = $data['kains_id'];
             $this->employeeService->updateEmployeeContract($employeeId, $dataContract);
             $employeeContract->update($data);
             return $employeeContract;

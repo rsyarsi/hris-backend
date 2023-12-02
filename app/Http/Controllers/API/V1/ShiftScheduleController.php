@@ -121,7 +121,7 @@ class ShiftScheduleController extends Controller
                     'message' => 'Jadwal Karyawan hari ini berhasil diambil!',
                     'success' => 'true',
                     'code' => 200,
-                    'data' => [$shiftSchedules],
+                    'data' => $shiftSchedules,
                 ]);
             } else {
                 return response()->json([

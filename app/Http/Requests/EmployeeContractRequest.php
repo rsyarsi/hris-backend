@@ -45,6 +45,7 @@ class EmployeeContractRequest extends FormRequest
             'position_id' => 'nullable|exists:mpositions,id',
             'manager_id' => 'nullable|exists:employees,id',
             'supervisor_id' => 'nullable|exists:employees,id',
+            'kabag_id' => 'nullable|exists:employees,id',
         ];
     }
 
