@@ -25,7 +25,8 @@ class ShiftController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $shifts = $this->shiftService->index($perPage, $search);
+            $groupShiftId = $request->input('group_shift_id');
+            $shifts = $this->shiftService->index($perPage, $search, $groupShiftId);
             return $this->success('Shifts retrieved successfully', $shifts);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
