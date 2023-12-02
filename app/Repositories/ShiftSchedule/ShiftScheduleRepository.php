@@ -445,7 +445,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                     ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
                     ->where('shift_schedules.employee_id', $employee->id)
-                    ->where(DB::raw("TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD')"), Carbon::now()->toDateString())
+                    // ->where(DB::raw("TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD')"), $datwa)
+                    ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)")
                     ->unionAll($lembur)
                     ->orderBy('date', 'ASC')
                     ->get();
