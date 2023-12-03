@@ -24,7 +24,7 @@ class GenerateAbsen extends Model
         'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
         'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4', 'manual', 'user_manual_id',
-        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type'
+        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type', 'overtime_hours'
     ];
 
     public function employee()

@@ -26,6 +26,8 @@ class LeaveRepository implements LeaveRepositoryInterface
         'duration',
         'note',
         'leave_status_id',
+        'quantity_cuti_awal',
+        'sisa_cuti'
     ];
 
     public function __construct(Leave $model, LeaveHistoryServiceInterface $leaveHistory, LeaveStatusServiceInterface $leaveStatus, ShiftScheduleServiceInterface $shiftSchedule)
