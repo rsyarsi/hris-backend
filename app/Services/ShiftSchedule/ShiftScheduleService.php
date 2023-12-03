@@ -43,6 +43,10 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
             $data['time_out'] = Carbon::parse($data['time_out'])->addDay()->format('Y-m-d H:i:s');
         }
 
+        if ($shift && $shift->libur == 1) {
+            $data['holiday'] = 1;
+        }
+
         $data['night'] = $shift->night_shift;
 
         return $this->repository->store($data);
@@ -64,6 +68,11 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         $data['time_out'] = $shift ? $shiftSchedule->date . ' ' . $shift->out_time : null;
         if ($shift && $shift->night_shift) {
             $data['time_out'] = Carbon::parse($data['time_out'])->addDay()->format('Y-m-d H:i:s');
+            $data['holiday'] = 1;
+        }
+
+        if ($shift && $shift->libur == 1) {
+            $data['holiday'] = 1;
         }
 
         return $this->repository->update($id, $data);
