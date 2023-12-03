@@ -122,14 +122,14 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             } else {
                 $dataContract['employment_number'] = $employee->employment_number;
             }
-            $dataContract['started_at'] = $data['start_at'];
-            $dataContract['unit_id'] = $data['unit_id'];
-            $dataContract['position_id'] = $data['position_id'];
-            $dataContract['department_id'] = $data['department_id'];
-            $dataContract['manager_id'] = $data['manager_id'];
-            $dataContract['supervisor_id'] = $data['supervisor_id'];
-            $dataContract['shift_group_id'] = $data['shift_group_id'];
-            $dataContract['kabag_id'] = $data['kabag_id'];
+            $dataContract['started_at'] = $data['start_at'] ?? null;
+            $dataContract['unit_id'] = $data['unit_id'] ?? null;
+            $dataContract['position_id'] = $data['position_id'] ?? null;
+            $dataContract['department_id'] = $data['department_id'] ?? null;
+            $dataContract['manager_id'] = $data['manager_id'] ?? null;
+            $dataContract['supervisor_id'] = $data['supervisor_id'] ?? null;
+            $dataContract['shift_group_id'] = $data['shift_group_id'] ?? null;
+            $dataContract['kabag_id'] = $data['kabag_id'] ?? null;
             $this->employeeService->updateEmployeeContract($id, $dataContract);
         }
         $createdData = $this->model->create($data);
@@ -203,13 +203,13 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
         if ($employeeContract) {
             $dataContract['employment_number'] = $employee->employment_number;
             $dataContract['started_at'] = $employee->started_at;
-            $dataContract['unit_id'] = $data['unit_id'];
-            $dataContract['position_id'] = $data['position_id'];
-            $dataContract['department_id'] = $data['department_id'];
-            $dataContract['manager_id'] = $data['manager_id'];
-            $dataContract['supervisor_id'] = $data['supervisor_id'];
-            $dataContract['shift_group_id'] = $data['shift_group_id'];
-            $dataContract['kabag_id'] = $data['kabag_id'];
+            $dataContract['unit_id'] = $data['unit_id'] ?? null;
+            $dataContract['position_id'] = $data['position_id'] ?? null;
+            $dataContract['department_id'] = $data['department_id'] ?? null;
+            $dataContract['manager_id'] = $data['manager_id'] ?? null;
+            $dataContract['supervisor_id'] = $data['supervisor_id'] ?? null;
+            $dataContract['shift_group_id'] = $data['shift_group_id'] ?? null;
+            $dataContract['kabag_id'] = $data['kabag_id'] ?? null;
             $this->employeeService->updateEmployeeContract($employeeId, $dataContract);
             $employeeContract->update($data);
             return $employeeContract;
