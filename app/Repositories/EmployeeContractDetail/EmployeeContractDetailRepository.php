@@ -138,4 +138,9 @@ class EmployeeContractDetailRepository implements EmployeeContractDetailReposito
     {
         return $this->model->where('employee_contract_id', $employeeContractId)->delete();
     }
+
+    public function storeMultiple(array $data)
+    {
+        return $this->model->insert($data);
+    }
 }

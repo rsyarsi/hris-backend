@@ -4,10 +4,12 @@ namespace App\Repositories\EmployeeContract;
 
 use Carbon\Carbon;
 use App\Models\EmployeeContract;
+use App\Models\EmployeeContractDetail;
 use App\Services\Helper\HelperServiceInterface;
 use App\Services\Employee\EmployeeServiceInterface;
-use App\Services\EmployeeContractDetail\EmployeeContractDetailServiceInterface;
+use App\Services\PayrollComponent\PayrollComponentServiceInterface;
 use App\Repositories\EmployeeContract\EmployeeContractRepositoryInterface;
+use App\Services\EmployeeContractDetail\EmployeeContractDetailServiceInterface;
 
 class EmployeeContractRepository implements EmployeeContractRepositoryInterface
 {
@@ -15,6 +17,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
     private $employeeService;
     private $helperService;
     private $contractDetailService;
+    private $payrollComponentService;
 
     private $field = [
         'id',
@@ -47,12 +50,14 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
         EmployeeServiceInterface $employeeService,
         HelperServiceInterface $helperService,
         EmployeeContractDetailServiceInterface $contractDetailService,
+        PayrollComponentServiceInterface $payrollComponentService,
     )
     {
         $this->model = $model;
         $this->employeeService = $employeeService;
         $this->helperService = $helperService;
         $this->contractDetailService = $contractDetailService;
+        $this->payrollComponentService = $payrollComponentService;
     }
 
     public function index($perPage, $search = null)
@@ -127,7 +132,21 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['kabag_id'] = $data['kabag_id'];
             $this->employeeService->updateEmployeeContract($id, $dataContract);
         }
-        return $this->model->create($data);
+        $createdData = $this->model->create($data);
+
+        $existingRecordContractDetail = EmployeeContractDetail::where('employee_contract_id', $createdData->id)->first();
+        if (!$existingRecordContractDetail) {
+            // insert all component payroll in new contract
+            $componentPayroll = $this->payrollComponentService->index(1000, null);
+            foreach ($componentPayroll as $item) {
+                $value['payroll_component_id'] = $item->id;
+                $value['employee_contract_id'] = $createdData->id;
+                $value['nominal'] = 0;
+                $value['active'] = 0;
+                $this->contractDetailService->storeMultiple($value);
+            }
+        }
+        return $createdData;
     }
 
     public function show($id)

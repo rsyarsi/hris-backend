@@ -138,6 +138,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employee-certificates', EmployeeCertificateController::class);
         // route for master employee skills
         Route::resource('employee-skills', EmployeeSkillController::class);
+        // route for employee-contracts
+        Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
+        // route for employee-contract-details
+        Route::resource('employee-contract-details', EmployeeContractDetailController::class)->parameters(['employee-contract-details' => 'employee_contract_detail']);
         // route for master leave types
         Route::resource('leave-types', LeaveTypeController::class)->parameters(['leave-types' => 'leave_type']);
         // route for master leave statuses
@@ -177,10 +181,6 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route log finger where user login -> employee_id
             Route::get('log-finger-temp-user', 'logFingerTempUser')->name('log-finger-temp-user');
         });
-        // route for employee-contracts
-        Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
-        // route for employee-contract-details
-        Route::resource('employee-contract-details', EmployeeContractDetailController::class)->parameters(['employee-contract-details' => 'employee_contract_detail']);
         // route for generate absen
         Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate-absen']);
         Route::controller(GenerateAbsenController::class)->group(function () {

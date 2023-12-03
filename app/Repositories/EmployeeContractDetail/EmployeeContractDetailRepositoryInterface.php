@@ -9,4 +9,5 @@ Interface EmployeeContractDetailRepositoryInterface{
     public function update($id, array $data);
     public function destroy($id);
     public function deleteByEmployeeContractId($id);
+    public function storeMultiple(array $data);
 }

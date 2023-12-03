@@ -43,4 +43,9 @@ class EmployeeContractDetailService implements EmployeeContractDetailServiceInte
     {
         return $this->repository->deleteByEmployeeContractId($id);
     }
+
+    public function storeMultiple(array $data)
+    {
+        return $this->repository->storeMultiple($data);
+    }
 }
