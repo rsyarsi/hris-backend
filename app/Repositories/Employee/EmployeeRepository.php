@@ -19,7 +19,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         'current_province_id', 'current_city_id', 'current_district_id', 'current_village_id',
         'current_home_phone_number', 'current_home_phone_country', 'status_employment_id', 'position_id',
         'unit_id', 'department_id', 'started_at', 'employment_number', 'resigned_at', 'user_id', 'supervisor_id',
-        'manager_id', 'pin', 'shift_group_id', 'kabag_id',
+        'manager_id', 'pin', 'shift_group_id', 'kabag_id', 'nomor_rekening', 'status_employee'
     ];
 
     public function __construct(Employee $model)
@@ -445,6 +445,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                 'started_at' => $data['started_at'],
                 'shift_group_id' => $data['shift_group_id'],
                 'kabag_id' => $data['kabag_id'],
+                'status_employee' => $data['status_employee'],
             ]);
             return $employee;
         }

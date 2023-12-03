@@ -4,6 +4,7 @@ namespace App\Services\GenerateAbsen;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Services\Employee\EmployeeServiceInterface;
+use App\Services\Overtime\OvertimeServiceInterface;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
@@ -13,12 +14,19 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
     private $repository;
     private $employeeService;
     private $shiftScheduleService;
+    private $overtimeService;
 
-    public function __construct(GenerateAbsenRepositoryInterface $repository, EmployeeServiceInterface $employeeService, ShiftScheduleServiceInterface $shiftScheduleService)
+    public function __construct(
+        GenerateAbsenRepositoryInterface $repository,
+        EmployeeServiceInterface $employeeService,
+        ShiftScheduleServiceInterface $shiftScheduleService,
+        OvertimeServiceInterface $overtimeService
+    )
     {
         $this->repository = $repository;
         $this->employeeService = $employeeService;
         $this->shiftScheduleService = $shiftScheduleService;
+        $this->overtimeService = $overtimeService;
     }
 
     public function index($perPage, $search, $period_1, $period_2, $unit)
@@ -116,6 +124,16 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
             $telat = Carbon::parse($dateJamMasuk)->diffInMinutes($timeInSchedule);
         }
         $data['telat'] = $telat;
+
+        // OVERTIME
+        if ($type == 'SPL') {
+            $overtimeId = $data['Overtime_id']; // nip karyawan
+            $overtime = $this->overtimeService->show($overtimeId);
+            $data['overtime_at'] = Carbon::parse($overtime->from_date)->toDateString();
+            $data['from_date_overtime'] = $overtime->from_date;
+            $data['to_date_overtime'] = $overtime->to_date;
+            $data['duration_overtime'] = $overtime->duration;
+        }
         return $this->repository->absenFromMobile($data);
     }
 }

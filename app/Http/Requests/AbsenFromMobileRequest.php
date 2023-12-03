@@ -31,6 +31,7 @@ class AbsenFromMobileRequest extends FormRequest
             'Tanggal' => 'required|date',
             'Ip_address' => 'required|string',
             'Employment_id' => 'required|exists:employees,employment_number',
+            'Overtime_id' => 'required|exists:overtimes,id',
         ];
     }
 }

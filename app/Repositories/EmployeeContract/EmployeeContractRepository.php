@@ -130,6 +130,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['supervisor_id'] = $data['supervisor_id'] ?? null;
             $dataContract['shift_group_id'] = $data['shift_group_id'] ?? null;
             $dataContract['kabag_id'] = $data['kabag_id'] ?? null;
+            $dataContract['status_employee'] = $data['status_employee'] ?? null;
             $this->employeeService->updateEmployeeContract($id, $dataContract);
         }
         $createdData = $this->model->create($data);
@@ -210,6 +211,7 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             $dataContract['supervisor_id'] = $data['supervisor_id'] ?? null;
             $dataContract['shift_group_id'] = $data['shift_group_id'] ?? null;
             $dataContract['kabag_id'] = $data['kabag_id'] ?? null;
+            $dataContract['status_employee'] = $data['status_employee'] ?? null;
             $this->employeeService->updateEmployeeContract($employeeId, $dataContract);
             $employeeContract->update($data);
             return $employeeContract;

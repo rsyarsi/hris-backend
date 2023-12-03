@@ -61,6 +61,8 @@ class Employee extends Model
         'pin',
         'shift_group_id',
         'kabag_id',
+        'nomor_rekening',
+        'status_employee',
     ];
 
     public function identityType()

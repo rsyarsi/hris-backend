@@ -3,14 +3,17 @@ namespace App\Services\EmployeeContract;
 
 use App\Services\EmployeeContract\EmployeeContractServiceInterface;
 use App\Repositories\EmployeeContract\EmployeeContractRepositoryInterface;
+use App\Services\ContractType\ContractTypeServiceInterface;
 
 class EmployeeContractService implements EmployeeContractServiceInterface
 {
     private $repository;
+    private $contractTypeService;
 
-    public function __construct(EmployeeContractRepositoryInterface $repository)
+    public function __construct(EmployeeContractRepositoryInterface $repository, ContractTypeServiceInterface $contractTypeService)
     {
         $this->repository = $repository;
+        $this->contractTypeService = $contractTypeService;
     }
 
     public function index($perPage, $search)
@@ -20,6 +23,9 @@ class EmployeeContractService implements EmployeeContractServiceInterface
 
     public function store(array $data)
     {
+        $contractType = $this->contractTypeService->show($data['contract_type_id']);
+        $data['status_employee'] = $contractType->name;
+
         $transactionNumber = $this->generateNextTransactionNumber();
         $data['transaction_number'] = $transactionNumber;
         return $this->repository->store($data);
