@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->bigInteger('nomor_rekening')->nullable();
+            $table->bigInteger('rekening_number')->nullable();
+            $table->bigInteger('bpjs_number')->nullable();
+            $table->bigInteger('bpjstk_number')->nullable();
             $table->string('status_employee')->nullable();
         });
     }
@@ -27,7 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->dropColumn(['nomor_rekening', 'status_employee']);
+            $table->dropColumn(['rekening_number', 'bpjs_number', 'bpjstk_number', 'status_employee']);
         });
     }
 };

@@ -87,7 +87,9 @@ class EmployeeRequest extends FormRequest
                 Rule::unique('employees')->ignore($this->route('employee')),
             ],
             'kabag_id' => 'nullable|exists:employees,id',
-            'nomor_rekening' => 'nullable|integer',
+            'rekening_number' => 'nullable|integer',
+            'bpjs_number' => 'nullable|integer',
+            'bpjstk_number' => 'nullable|integer',
             'status_employee' => 'nullable|string|max:255',
         ];
     }

@@ -61,7 +61,9 @@ class Employee extends Model
         'pin',
         'shift_group_id',
         'kabag_id',
-        'nomor_rekening',
+        'rekening_number',
+        'bpjs_number',
+        'bpjstk_number',
         'status_employee',
     ];
 
