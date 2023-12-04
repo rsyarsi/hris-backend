@@ -5,10 +5,15 @@ namespace App\Imports;
 use Illuminate\Support\Str;
 use App\Models\{Employee, Pph};
 use Symfony\Component\Uid\Ulid;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
-class PphImport implements ToModel
+class PphImport implements ToModel, WithStartRow
 {
+    public function startRow(): int
+    {
+        return 2;
+    }
+
     /**
     * @param array $row
     *
@@ -16,10 +21,6 @@ class PphImport implements ToModel
     */
     public function model(array $row)
     {
-        if (!isset($row[0])) {
-            return null;
-        }
-
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
         if (!$employee) {

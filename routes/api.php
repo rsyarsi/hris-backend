@@ -121,6 +121,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('employee-number-null', 'employeeNumberNull')->name('employee-number-null');
             // route for employee end contracts (employee have contract ended 14 days)
             Route::get('employee-end-contracts', 'employeeEndContract')->name('employee-end-contracts');
+            // route for import employee
+            Route::post('import-employee', 'importEmployee')->name('import-employee');
         });
         // route for master employee organizations
         Route::resource('employee-organizations', EmployeeOrganizationController::class);

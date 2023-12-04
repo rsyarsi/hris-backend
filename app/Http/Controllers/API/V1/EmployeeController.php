@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Imports\EmployeeImport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\EmployeeRequest;
 use App\Services\Employee\EmployeeServiceInterface;
 
@@ -102,6 +104,16 @@ class EmployeeController extends Controller
             $search = $request->input('search');
             $employees = $this->employeeService->employeeEndContract($perPage, $search);
             return $this->success('Employees end contract retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    function importEmployee()
+    {
+        try {
+            Excel::import(new EmployeeImport, request()->file('file'));
+            return $this->success('Employee imported successfully', [], 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -6,10 +6,16 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 use App\Models\{Employee, Deduction};
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
-class DeductionImport implements ToModel
+
+class DeductionImport implements ToModel, WithStartRow
 {
+    public function startRow(): int
+    {
+        return 2;
+    }
+
     /**
     * @param array $row
     *
@@ -17,10 +23,6 @@ class DeductionImport implements ToModel
     */
     public function model(array $row)
     {
-        if (!isset($row[0])) {
-            return null;
-        }
-
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
 

@@ -36,7 +36,7 @@ class AuthController extends Controller
      */
     public function login(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'username' => 'required|integer',
             'password' => 'required|string|min:6',
         ]);
         if ($validator->fails()) {
@@ -76,12 +76,6 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-
-        // Check if the user is already logged in from another device
-        // if ($this->isUserLoggedInFromAnotherDevice($user, $credentials)) {
-        //     Auth::logout();
-        //     return response()->json(['error' => 'User is already logged in from another device!'], 401);
-        // }
 
         if ($user->user_device_id == null) {
             // Store or update device information

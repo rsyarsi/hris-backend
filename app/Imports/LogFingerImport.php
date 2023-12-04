@@ -4,10 +4,15 @@ namespace App\Imports;
 
 use Illuminate\Support\Str;
 use App\Models\{Employee, LogFinger};
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
-class LogFingerImport implements ToModel
+class LogFingerImport implements ToModel, WithStartRow
 {
+    public function startRow(): int
+    {
+        return 2;
+    }
+
     /**
     * @param array $row
     *

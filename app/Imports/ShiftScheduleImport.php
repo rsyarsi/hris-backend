@@ -2,13 +2,17 @@
 
 namespace App\Imports;
 
-use App\Models\{Shift, Employee, ShiftSchedule};
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Symfony\Component\Uid\Ulid;
+use App\Models\{Shift, Employee, ShiftSchedule};
+use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
-class ShiftScheduleImport implements ToModel
+class ShiftScheduleImport implements ToModel, WithStartRow
 {
+    public function startRow(): int
+    {
+        return 2;
+    }
     /**
     * @param array $row
     *
@@ -16,9 +20,6 @@ class ShiftScheduleImport implements ToModel
     */
     public function model(array $row)
     {
-        if (!isset($row[0])) {
-            return null;
-        }
         $createdUserId = auth()->id();
         $setupUserId = auth()->id();
         $date = $row[3];
