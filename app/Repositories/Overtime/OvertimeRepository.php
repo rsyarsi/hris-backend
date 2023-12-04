@@ -6,11 +6,15 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\{Employee, Overtime};
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
+use App\Services\Employee\EmployeeServiceInterface;
+use App\Services\Firebase\FirebaseServiceInterface;
 
 
 class OvertimeRepository implements OvertimeRepositoryInterface
 {
     private $model;
+    private $firebaseService;
+    private $employeeService;
     private $field = [
         'id',
         'employee_id',
@@ -24,9 +28,11 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         'duration',
     ];
 
-    public function __construct(Overtime $model)
+    public function __construct(Overtime $model, FirebaseServiceInterface $firebaseService, EmployeeServiceInterface $employeeService)
     {
         $this->model = $model;
+        $this->firebaseService = $firebaseService;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search = null)
@@ -54,7 +60,30 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function store(array $data)
     {
-        return $this->model->create($data);
+        $typeSend = 'Overtime';
+        $overtime = $this->model->create($data);
+        $employee = $this->employeeService->show($overtime->employee_id);
+
+        $registrationIds = [];
+
+        if ($employee && $employee->supervisor->user !== null) {
+            $registrationIds[] = $employee->supervisor->user->firebase_id;
+        }
+
+        if ($employee && $employee->manager->user !== null) {
+            $registrationIds[] = $employee->manager->user->firebase_id;
+        }
+
+        if ($employee && $employee->kabag->user !== null) {
+            $registrationIds[] = $employee->kabag->user->firebase_id;
+        }
+
+        // Check if there are valid registration IDs before sending the notification
+        if (!empty($registrationIds)) {
+            return $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee);
+        }
+
+        return $overtime;
     }
 
     public function show($id)

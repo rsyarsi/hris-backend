@@ -143,13 +143,13 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'manager' => function ($query) {
-                                $query->select('id', 'name', 'email');
+                                $query->select('id', 'name', 'email', 'user_id')->with('user:id,email,username,firebase_id');
                             },
                             'supervisor' => function ($query) {
-                                $query->select('id', 'name', 'email');
+                                $query->select('id', 'name', 'email', 'user_id')->with('user:id,email,username,firebase_id');
                             },
                             'kabag' => function ($query) {
-                                $query->select('id', 'name', 'email');
+                                $query->select('id', 'name', 'email', 'user_id')->with('user:id,email,username,firebase_id');
                             },
                             'user' => function ($query) {
                                 $query->select('id', 'name')->with([
