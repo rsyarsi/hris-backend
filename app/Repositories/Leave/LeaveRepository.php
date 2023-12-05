@@ -5,9 +5,12 @@ namespace App\Repositories\Leave;
 use Carbon\Carbon;
 use App\Models\{Employee, Leave};
 use Illuminate\Support\Facades\DB;
+use App\Services\Employee\EmployeeServiceInterface;
+use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
+use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class LeaveRepository implements LeaveRepositoryInterface
@@ -15,8 +18,10 @@ class LeaveRepository implements LeaveRepositoryInterface
     private $model;
     private $leaveHistory;
     private $leaveStatus;
-    private $shiftSchedule;
-
+    private $shiftScheduleService;
+    private $firebaseService;
+    private $employeeService;
+    private $generateAbsenService;
     private $field = [
         'id',
         'employee_id',
@@ -27,15 +32,29 @@ class LeaveRepository implements LeaveRepositoryInterface
         'note',
         'leave_status_id',
         'quantity_cuti_awal',
-        'sisa_cuti'
+        'sisa_cuti',
+        'file_url',
+        'file_path',
+        'file_disk',
     ];
 
-    public function __construct(Leave $model, LeaveHistoryServiceInterface $leaveHistory, LeaveStatusServiceInterface $leaveStatus, ShiftScheduleServiceInterface $shiftSchedule)
+    public function __construct(
+        Leave $model,
+        LeaveHistoryServiceInterface $leaveHistory,
+        LeaveStatusServiceInterface $leaveStatus,
+        ShiftScheduleServiceInterface $shiftScheduleService,
+        FirebaseServiceInterface $firebaseService,
+        EmployeeServiceInterface $employeeService,
+        GenerateAbsenServiceInterface $generateAbsenService
+    )
     {
         $this->model = $model;
         $this->leaveHistory = $leaveHistory;
         $this->leaveStatus = $leaveStatus;
-        $this->shiftSchedule = $shiftSchedule;
+        $this->shiftScheduleService = $shiftScheduleService;
+        $this->firebaseService = $firebaseService;
+        $this->employeeService = $employeeService;
+        $this->generateAbsenService = $generateAbsenService;
     }
 
     public function index($perPage, $search = null)
@@ -107,7 +126,33 @@ class LeaveRepository implements LeaveRepositoryInterface
         $fromDate = Carbon::parse($data['from_date']);
         $toDate = Carbon::parse($data['to_date']);
         $employeeId = $leave->employee_id;
-        $this->shiftSchedule->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+        $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+
+        // firebase
+        $typeSend = 'Leaves';
+        $employee = $this->employeeService->show($leave->employee_id);
+
+        $registrationIds = [];
+        if($employee->supervisor != null){
+            if($employee->supervisor->user != null){
+                $registrationIds[] = $employee->supervisor->user->firebase_id;
+            }
+        }
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
+        }
+        if($employee->manager_id != null ){
+            if($employee->manager->user != null){
+                $registrationIds[] = $employee->manager->user->firebase_id;
+            }
+        }
+        // Check if there are valid registration IDs before sending the notification
+        if (!empty($registrationIds)) {
+           $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+        }
+
         return $leave;
     }
 
@@ -147,12 +192,42 @@ class LeaveRepository implements LeaveRepositoryInterface
         $historyData = [
             'leave_id' => $leave->id,
             'user_id' => auth()->id(),
-            'description' => $leave->leaveStatus->name,
+            'description' => 'LEAVE STATUS '. $leave->leaveStatus->name,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'comment' => $data['note'],
         ];
         $this->leaveHistory->store($historyData);
+        // update shift schedule if exists in the table shift_schedules
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = $leave->employee_id;
+        $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+
+        // firebase
+        $typeSend = 'Leaves';
+        $employee = $this->employeeService->show($leave->employee_id);
+
+        $registrationIds = [];
+        if($employee->supervisor != null){
+            if($employee->supervisor->user != null){
+                $registrationIds[] = $employee->supervisor->user->firebase_id;
+            }
+        }
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
+        }
+        if($employee->manager_id != null ){
+            if($employee->manager->user != null){
+                $registrationIds[] = $employee->manager->user->firebase_id;
+            }
+        }
+        // Check if there are valid registration IDs before sending the notification
+        if (!empty($registrationIds)) {
+           $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+        }
         if ($leave) {
             $leave->update($data);
             return $leave;
@@ -165,7 +240,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $leave = $this->model->find($id);
         if ($leave) {
             $this->leaveHistory->deleteByLeaveId($id);
-            $this->shiftSchedule->deleteByLeaveId($leave->employee_id, $id);
+            $this->shiftScheduleService->deleteByLeaveId($leave->employee_id, $id);
             $leave->delete();
             return $leave;
         }
@@ -380,9 +455,30 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function updateStatus($id, $data)
     {
         $leave = $this->model->find($id);
+        $status = $data['leave_status_id'];
+        $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+        $date = Carbon::parse($leave->from_date);
+        if ($status == 4) { // if approval HRD
+            $absen = $this->generateAbsenService->findDate($leave->employee_id, $date->toDateString());
+            $dataAbsen['period'] = $date->format('Y-m');
+            $dataAbsen['employee_id'] = $leave->employee_id;
+            $dataAbsen['date'] = $date->toDateString();
+            $dataAbsen['day'] = $date->format('l');
+            $dataAbsen['leave_id'] = $leave->id;
+            $dataAbsen['leave_type_id'] = $leave->leave_type_id;
+            $dataAbsen['leave_time_at'] = $leave->from_date;
+            $dataAbsen['leave_out_at'] = $leave->to_date;
+            $dataAbsen['schedule_leave_time_at'] = $leave->from_date;
+            $dataAbsen['schedule_leave_out_at'] = $leave->to_date;
+            $dataAbsen['schedule_leave_out_at'] = $leave->to_date;
+            if (!$absen) { // if in the table generate_absen not exists -> created the data.
+                $this->generateAbsenService->store($dataAbsen);
+            } else {
+                $this->generateAbsenService->update($absen->id, $dataAbsen);
+            }
+        }
         if ($leave) {
-            $leave->update(['leave_status_id' => $data['leave_status_id']]);
-            $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+            $leave->update(['leave_status_id' => $status]);
             $historyData = [
                 'leave_id' => $leave->id,
                 'user_id' => auth()->id(),
@@ -392,6 +488,31 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'comment' => $leave->note,
             ];
             $this->leaveHistory->store($historyData);
+
+            // firebase
+            $typeSend = 'Leaves Update';
+            $employee = $this->employeeService->show($leave->employee_id);
+
+            $registrationIds = [];
+            if($employee->supervisor != null){
+                if($employee->supervisor->user != null){
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
+            }
+            if($employee->kabag_id != null ){
+                if($employee->kabag->user != null){
+                    $registrationIds[] = $employee->kabag->user->firebase_id;
+                }
+            }
+            if($employee->manager_id != null ){
+                if($employee->manager->user != null){
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
+            }
+            // Check if there are valid registration IDs before sending the notification
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            }
             return $leave;
         }
         return null;

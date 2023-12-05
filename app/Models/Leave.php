@@ -26,7 +26,10 @@ class Leave extends Model
         'note',
         'leave_status_id',
         'quantity_cuti_awal',
-        'sisa_cuti'
+        'sisa_cuti',
+        'file_url',
+        'file_path',
+        'file_disk',
     ];
 
     public function employee()

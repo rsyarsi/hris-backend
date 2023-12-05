@@ -56,6 +56,11 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         return $this->repository->destroy($id);
     }
 
+    public function findDate($employeeId, $date)
+    {
+        return $this->repository->findDate($employeeId, $date);
+    }
+
     public function absenFromMobile(array $data)
     {
         $type = Str::upper($data['Type']); // ABSEN / SPL(SURAT PERINTAH LEMBUR)

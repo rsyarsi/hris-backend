@@ -3,22 +3,19 @@ namespace App\Services\Leave;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Leave\LeaveServiceInterface;
-use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
+use App\Repositories\Leave\LeaveRepositoryInterface;
 
 class LeaveService implements LeaveServiceInterface
 {
     private $repository;
-    private $firebaseService;
-    private $employeeService;
 
-    public function __construct(LeaveRepositoryInterface $repository, FirebaseServiceInterface $firebaseService, EmployeeServiceInterface $employeeService)
+    public function __construct(LeaveRepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->firebaseService = $firebaseService;
-        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search)
@@ -28,18 +25,29 @@ class LeaveService implements LeaveServiceInterface
 
     public function store(array $data)
     {
+        $leaveType = $data['leave_type_id'];
         $fromDate = Carbon::parse($data['from_date']);
         $toDate = Carbon::parse($data['to_date']);
         $durationInMinutes = $fromDate->diffInMinutes($toDate);
         $data['duration'] = $durationInMinutes;
+        $data['leave_status_id'] = $data['leave_status_id'];
 
-        // $firebaseId = $data['duration'];
-        // $typeSend = 'LEAVE';
-
-        // $employeeId = $data['employee_id'];
-        // $employee = $this->employeeService->show($employeeId);
-
-        // $this->firebaseService->sendNotification($firebaseId, $typeSend, $employee);
+        if ($leaveType == 2) {
+            $file = $data['file'];
+            if ($file && $file->isValid()) {
+                // Upload the file to AWS S3 storage
+                $filePath = $file->store('leaves', 's3');
+                // Make the file public by setting ACL to 'public-read'
+                Storage::disk('s3')->setVisibility($filePath, 'public');
+                $fileUrl = Storage::disk('s3')->url($filePath);
+            } else {
+                $filePath = null;
+                $fileUrl = null;
+            }
+            $data['file_path'] = $filePath;
+            $data['file_url'] = $fileUrl;
+            $data['file_disk'] = 's3';
+        }
         return $this->repository->store($data);
     }
 
@@ -50,6 +58,7 @@ class LeaveService implements LeaveServiceInterface
 
     public function update($id, $data)
     {
+        $leaveType = $data['leave_type_id'];
         if (isset($data['from_date']) || isset($data['to_date'])) {
             $fromDate = Carbon::parse($data['from_date'] ?? $this->repository->show($id)->from_date);
             $toDate = Carbon::parse($data['to_date'] ?? $this->repository->show($id)->to_date);
@@ -61,6 +70,24 @@ class LeaveService implements LeaveServiceInterface
                 $duration = $fromDate->diffInDays($toDate);
                 $data['duration'] = $duration;
             }
+        }
+        $data['leave_status_id'] = $data['leave_status_id'];
+
+        if ($leaveType == 2) {
+            $file = $data['file'];
+            if ($file && $file->isValid()) {
+                // Upload the file to AWS S3 storage
+                $filePath = $file->store('leaves', 's3');
+                // Make the file public by setting ACL to 'public-read'
+                Storage::disk('s3')->setVisibility($filePath, 'public');
+                $fileUrl = Storage::disk('s3')->url($filePath);
+            } else {
+                $filePath = null;
+                $fileUrl = null;
+            }
+            $data['file_path'] = $filePath;
+            $data['file_url'] = $fileUrl;
+            $data['file_disk'] = 's3';
         }
 
         return $this->repository->update($id, $data);

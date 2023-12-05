@@ -31,7 +31,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'holiday',
         'night',
         'national_holiday',
-        'leave_id'
+        'leave_id',
+        'absen_type'
     ];
 
     public function __construct(ShiftSchedule $model)
@@ -286,6 +287,18 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 
     public function updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leaveId, $leaveNote)
     {
+        $oldData = $this->model
+                        ->where('leave_id', $leaveId)
+                        ->first();
+
+        if ($oldData) {
+            $this->model->where('id', $oldData->id)
+                        ->update([
+                            'leave_id' => null,
+                            'leave_note' => null,
+                        ]);
+        }
+
         return $this->model
                     ->where('employee_id', $employeeId)
                     ->whereDate('date', '>=', $fromDate)
@@ -301,7 +314,10 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         return $this->model
                     ->where('employee_id', $employeeId)
                     ->where('leave_id', $leaveId)
-                    ->update(['leave_id' => null]);
+                    ->update([
+                        'leave_id' => null,
+                        'leave_note' => null
+                    ]);
     }
 
     public function shiftSchedulesExist($employeeId, $fromDate, $toDate)

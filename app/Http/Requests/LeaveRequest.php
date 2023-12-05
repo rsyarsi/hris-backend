@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
-use App\Rules\{DateSmallerThan, NotOverlappingPermissions};
+use App\Rules\{DateSmallerThan, NotOverlappingPermissionsLeaves};
 
 class LeaveRequest extends FormRequest
 {
@@ -25,22 +25,37 @@ class LeaveRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'employee_id' => 'required|exists:employees,id',
             'leave_type_id' => 'required|exists:leave_types,id',
             'leave_status_id' => 'required|exists:leave_statuses,id',
-            'from_date' => ['required',
-                            'date',
-                            new NotOverlappingPermissions(
-                                $this->input('employee_id'),
-                                $this->input('from_date'),
-                                $this->input('to_date')
-                            ),
-                            new DateSmallerThan('to_date'),
-                        ],
+            'from_date' => [
+                'required',
+                'date',
+                new DateSmallerThan('to_date'),
+            ],
             'to_date' => 'required|date',
             'note' => 'required',
+            'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048',
         ];
+
+        // Add a condition based on the value of Type
+        if ($this->input('leave_type_id') === 2) {
+            $rules['file'] = 'required|mimes:jpeg,png,jpg,gif,pdf|max:5048';
+        } else {
+            $rules['file'] = 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048';
+        }
+
+        // Conditionally apply the NotOverlappingPermissionsLeaves rule for creating new records
+        if ($this->isMethod('post')) {
+            $rules['from_date'][] = new NotOverlappingPermissionsLeaves(
+                $this->input('employee_id'),
+                $this->input('from_date'),
+                $this->input('to_date')
+            );
+        }
+
+        return $rules;
     }
 
     protected function failedValidation($validator)

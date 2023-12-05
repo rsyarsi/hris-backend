@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::table('leaves', function (Blueprint $table) {
             $table->integer('quantity_cuti_awal')->nullable();
             $table->integer('sisa_cuti')->nullable();
+            $table->string('file_url')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_disk')->nullable();
         });
     }
 
@@ -27,7 +30,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('leaves', function (Blueprint $table) {
-            $table->dropColumn(['quantity_cuti_awal', 'sisa_cuti']);
+            $table->dropColumn(['file_url', 'file_path', 'file_disk', 'quantity_cuti_awal', 'sisa_cuti']);
         });
     }
 };

@@ -4,7 +4,6 @@ namespace App\Repositories\GenerateAbsen;
 
 use Carbon\Carbon;
 use App\Models\GenerateAbsen;
-use App\Models\Overtime;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 
 
@@ -105,6 +104,14 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             return $generateAbsen;
         }
         return null;
+    }
+
+    public function findDate($employeeId, $date)
+    {
+        return $this->model
+            ->where('employee_id', $employeeId)
+            ->where('date', $date)
+            ->first();
     }
 
     public function absenFromMobile(array $data)
