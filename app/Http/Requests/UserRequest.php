@@ -35,6 +35,15 @@ class UserRequest extends FormRequest
                 Rule::unique('users')->ignore($this->route('user')),
             ],
             'password' => [Rule::requiredIf($this->isMethod('post')), 'string', 'max:255'],
+            'username' => [
+                'required',
+                'max:255',
+                Rule::unique('users')->ignore($this->route('user')),
+            ],
+            'user_device_id' => 'required|string|max:255',
+            'firebase_id' => 'required|string|max:255',
+            'imei' => 'required|string|max:255',
+            'ip' => 'required|string|max:255',
             'role' => 'nullable|exists:roles,name',
             'employee_id' => 'nullable|exists:employees,id',
         ];

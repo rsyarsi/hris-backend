@@ -9,7 +9,16 @@ use App\Repositories\User\UserRepositoryInterface;
 class UserRepository implements UserRepositoryInterface
 {
     private $model;
-    private $field = ['id', 'name', 'email'];
+    private $field = [
+        'id', 
+        'name', 
+        'email', 
+        'user_device_id',
+        'firebase_id',
+        'imei',
+        'ip',
+        'username'
+    ];
 
     public function __construct(User $model)
     {
