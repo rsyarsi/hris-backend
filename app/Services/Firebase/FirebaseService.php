@@ -18,7 +18,7 @@ class FirebaseService implements FirebaseServiceInterface
             ],
             'notification' => [
                 'title' => $typeSend . ' Notification',
-                'body' => 'Dear User, Anda mendapatkan ' .$typeSend. ' notifikasi baru',
+                'body' => 'Dear User, Anda mendapatkan ' .$typeSend. ' notifikasi baru, dari '.$employee,
                 'image' => ''
             ]
         ]);;

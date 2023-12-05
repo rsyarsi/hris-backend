@@ -127,12 +127,12 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
 
         // OVERTIME
         if ($type == 'SPL') {
-            $overtimeId = $data['Overtime_id']; // nip karyawan
+            $overtimeId = $data['Overtime_id'] ?? null;
             $overtime = $this->overtimeService->show($overtimeId);
-            $data['overtime_at'] = Carbon::parse($overtime->from_date)->toDateString();
-            $data['from_date_overtime'] = $overtime->from_date;
-            $data['to_date_overtime'] = $overtime->to_date;
-            $data['duration_overtime'] = $overtime->duration;
+            $data['overtime_at'] = Carbon::parse($overtime->from_date)->toDateString() ?? null;
+            $data['from_date_overtime'] = $overtime->from_date ?? null;
+            $data['to_date_overtime'] = $overtime->to_date ?? null;
+            $data['duration_overtime'] = $overtime->duration ?? null;
         }
         return $this->repository->absenFromMobile($data);
     }

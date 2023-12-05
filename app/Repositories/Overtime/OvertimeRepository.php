@@ -66,21 +66,21 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
         $registrationIds = [];
 
-        if ($employee && $employee->supervisor->user !== null) {
+        if ($employee && $employee->supervisor !== null) {
             $registrationIds[] = $employee->supervisor->user->firebase_id;
         }
 
-        if ($employee && $employee->manager->user !== null) {
+        if ($employee && $employee->manager !== null) {
             $registrationIds[] = $employee->manager->user->firebase_id;
         }
 
-        if ($employee && $employee->kabag->user !== null) {
+        if ($employee && $employee->kabag !== null) {
             $registrationIds[] = $employee->kabag->user->firebase_id;
         }
 
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-            return $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee);
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
 
         return $overtime;
@@ -104,7 +104,28 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function update($id, $data)
     {
+        $typeSend = 'Overtime';
         $overtime = $this->model->find($id);
+        $employee = $this->employeeService->show($overtime->employee_id);
+
+        $registrationIds = [];
+
+        if ($employee && $employee->supervisor !== null) {
+            $registrationIds[] = $employee->supervisor->user->firebase_id;
+        }
+
+        if ($employee && $employee->manager !== null) {
+            $registrationIds[] = $employee->manager->user->firebase_id;
+        }
+
+        if ($employee && $employee->kabag !== null) {
+            $registrationIds[] = $employee->kabag->user->firebase_id;
+        }
+
+        // Check if there are valid registration IDs before sending the notification
+        if (!empty($registrationIds)) {
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+        }
         if ($overtime) {
             $overtime->update($data);
             return $overtime;

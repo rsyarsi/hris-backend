@@ -114,12 +114,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         $type = $data['type']; // ABSEN / SPL(SURAT PERINTAH LEMBUR)
         $function = $data['function']; // IN / OUT
         $overtimeId = $data['Overtime_id']; // OVERTIME ID YANG DIKIRIM DARI FE
-        $fromDateOvertime = Carbon::parse($data['from_date_overtime']); // FROM DATE OVERTIME DI TABLE OVERTIMES
-        $toDateOvertime = Carbon::parse($data['to_date_overtime']); // TO DATE OVERTIME DI TABLE OVERTIMES
-        $durationOvertime = $data['duration_overtime']; // DURATION OVERTIME DI TABLE OVERTIMES
+        // $fromDateOvertime = Carbon::parse($data['from_date_overtime']); // FROM DATE OVERTIME DI TABLE OVERTIMES
+        // $toDateOvertime = Carbon::parse($data['to_date_overtime']); // TO DATE OVERTIME DI TABLE OVERTIMES
+        // $durationOvertime = $data['duration_overtime']; // DURATION OVERTIME DI TABLE OVERTIMES
         $date = $data['date']; // TIME IN DARI FE
         $timeIn = $data['time_in_at']; // TIME IN DARI FE
-        $timestampTimeIn = Carbon::parse($date.''.$timeIn);
+        // $timestampTimeIn = Carbon::parse($date.''.$timeIn);
 
         // ABSEN
         if ($type == 'ABSEN') {
@@ -198,8 +198,8 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $data['overtime_id'] = $overtimeId;
                     $data['overtime_time_at'] = $timeIn;
 
-                    $data['schedule_overtime_time_at'] = $data['from_date_overtime'];
-                    $data['schedule_overtime_out_at'] = $data['to_date_overtime'];
+                    $data['schedule_overtime_time_at'] = $data['from_date_overtime'] ?? null;
+                    $data['schedule_overtime_out_at'] = $data['to_date_overtime'] ?? null;
 
                     $data['telat'] = 0;
                     $data['pa'] = 0;

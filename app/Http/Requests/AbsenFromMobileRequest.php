@@ -23,7 +23,7 @@ class AbsenFromMobileRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'Id_schedule' => 'required|exists:shift_schedules,id',
             'Jam' => 'required|string',
             'Function' => 'nullable|string',
@@ -31,7 +31,15 @@ class AbsenFromMobileRequest extends FormRequest
             'Tanggal' => 'nullable|date',
             'Ip_address' => 'nullable|string',
             'Employment_id' => 'nullable|exists:employees,employment_number',
-            'Overtime_id' => 'nullable|exists:overtimes,id',
         ];
+
+        // Add a condition based on the value of Type
+        if ($this->input('Type') === 'SPL') {
+            $rules['Overtime_id'] = 'required|exists:overtimes,id';
+        } else {
+            $rules['Overtime_id'] = 'nullable|exists:overtimes,id';
+        }
+
+        return $rules;
     }
 }
