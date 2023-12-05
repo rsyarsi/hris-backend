@@ -26,12 +26,12 @@ class AbsenFromMobileRequest extends FormRequest
         return [
             'Id_schedule' => 'required|exists:shift_schedules,id',
             'Jam' => 'required|string',
-            'Function' => 'required|string',
+            'Function' => 'nullable|string',
             'Type' => 'required|string',
-            'Tanggal' => 'required|date',
-            'Ip_address' => 'required|string',
-            'Employment_id' => 'required|exists:employees,employment_number',
-            'Overtime_id' => 'required|exists:overtimes,id',
+            'Tanggal' => 'nullable|date',
+            'Ip_address' => 'nullable|string',
+            'Employment_id' => 'nullable|exists:employees,employment_number',
+            'Overtime_id' => 'nullable|exists:overtimes,id',
         ];
     }
 }
