@@ -21,7 +21,7 @@ class FirebaseService implements FirebaseServiceInterface
                 'body' => 'Dear User, Anda mendapatkan ' .$typeSend. ' notifikasi baru, dari '.$employee,
                 'image' => ''
             ]
-        ]);;
+        ]);
         // Check for errors
         if ($response->failed()) {
             // Log or handle the error as needed

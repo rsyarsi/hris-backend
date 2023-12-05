@@ -65,22 +65,24 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $employee = $this->employeeService->show($overtime->employee_id);
 
         $registrationIds = [];
-
-        if ($employee && $employee->supervisor !== null) {
-            $registrationIds[] = $employee->supervisor->user->firebase_id;
+        if($employee->supervisor != null){
+            if($employee->supervisor->user != null){
+                $registrationIds[] = $employee->supervisor->user->firebase_id;
+            }
         }
-
-        if ($employee && $employee->manager !== null) {
-            $registrationIds[] = $employee->manager->user->firebase_id;
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
         }
-
-        if ($employee && $employee->kabag !== null) {
-            $registrationIds[] = $employee->kabag->user->firebase_id;
+        if($employee->manager_id != null ){
+            if($employee->manager->user != null){
+                $registrationIds[] = $employee->manager->user->firebase_id;
+            }
         }
-
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+           $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
 
         return $overtime;

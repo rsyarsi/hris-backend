@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
-use App\Rules\{DateSmallerThan, NotOverlappingPermissions};
+use App\Rules\{DateSmallerThan, NotOverlappingPermissionsOvertimes};
 
 class OvertimeRequest extends FormRequest
 {
@@ -34,7 +34,7 @@ class OvertimeRequest extends FormRequest
             'type' => 'required|string|max:255',
             'from_date' => ['required',
                             'date',
-                            new NotOverlappingPermissions(
+                            new NotOverlappingPermissionsOvertimes(
                                 $this->input('employee_id'),
                                 $this->input('from_date'),
                                 $this->input('to_date')

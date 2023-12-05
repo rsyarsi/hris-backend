@@ -99,7 +99,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'employee_id' => $user->username,
-                'UuidEmployment' => $user->employee->id ?? '',
+                'UuidEmployment' => $user->employee->id ?? '01hgtqbn8wa1a1mkdqfn70dqs1',
                 'roles' => $user->roles ?? '',
             ],
         ]);

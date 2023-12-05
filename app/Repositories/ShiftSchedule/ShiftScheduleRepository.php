@@ -439,9 +439,9 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         DB::raw("'' as overtime_id")
                     ])
                     ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
-                    ->leftJoin('generate_absen', 'shift_schedules.date', '=', 'generate_absen.date')
+                    ->leftJoin('generate_absen', 'shift_schedules.date', '=', 'generate_absen.date','shift_schedules.employee_id','=','generate_absen.employee_id')
                     ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
-                    ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')
+                    ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id' ,'shift_schedules.employee_id','=','leaves.employee_id')
                     ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                     ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
                     ->where('shift_schedules.employee_id', $employee->id)
@@ -594,8 +594,10 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
                                 DB::raw("COALESCE(leave_statuses.name, '') as leave_status_name"),
                             ])
+
                             ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
-                            ->leftJoin('generate_absen', 'shift_schedules.date', '=', 'generate_absen.date')
+                            ->leftJoin('generate_absen', DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"),
+                                        'shift_schedules.employee_id', '=', 'generate_absen.employee_id' )
                             ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
                             ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')
                             ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
