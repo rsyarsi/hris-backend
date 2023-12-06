@@ -71,7 +71,8 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Login gagal!',
                 'success' => false,
-                'code' => 201
+                'code' => 201,
+                'data' => []
             ]);
         }
 
@@ -87,7 +88,12 @@ class AuthController extends Controller
 
         if ($user->user_device_id !== $request->input('user_device_id')) {
             Auth::logout();
-            return response()->json(['error' => 'User telah login di perangkat lain, silahkan hubungi HRD!'], 401);
+            return response()->json([
+                'message' => 'User telah login di perangkat lain, silahkan hubungi HRD!',
+                'success' => false,
+                'code' => 401,
+                'data' => []
+            ]);
         }
 
         // $this->createNewToken($token);
