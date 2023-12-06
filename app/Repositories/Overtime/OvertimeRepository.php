@@ -82,7 +82,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         }
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-           $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
 
         return $overtime;

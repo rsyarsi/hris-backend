@@ -25,7 +25,7 @@ class EmployeeCertificateService implements EmployeeCertificateServiceInterface
         $file = $data['file'];
         if ($file && $file->isValid()) {
             // Upload the file to AWS S3 storage
-            $filePath = $file->store('employee_certificates', 's3');
+            $filePath = $file->store('hrd/employee_certificates', 's3');
             // Make the file public by setting ACL to 'public-read'
             Storage::disk('s3')->setVisibility($filePath, 'public');
             $fileUrl = Storage::disk('s3')->url($filePath);
