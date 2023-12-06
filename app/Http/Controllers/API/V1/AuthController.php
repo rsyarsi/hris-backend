@@ -101,13 +101,13 @@ class AuthController extends Controller
             'message' => 'Login From Mobile App Berhasil!',
             'success' => 'true',
             'code' => 200,
-            'data' => [
+            'data' => [[
                 'name' => $user->name,
                 'email' => $user->email,
                 'employee_id' => $user->username,
-                'UuidEmployment' => $user->employee->id ?? '01hgtqbn8wa1a1mkdqfn70dqs1',
-                'roles' => $user->roles ?? '',
-            ],
+                'UuidEmployment' => $user->employee->id ?? '',
+                'role' => $user->role ?? '',
+            ]]
         ]);
     }
 
