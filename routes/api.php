@@ -14,7 +14,7 @@ use App\Http\Controllers\API\V1\{
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
-    PphController, DeductionController
+    PphController, DeductionController, GeneratePayrollController
 };
 
 /*
@@ -190,6 +190,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
             // route for absen from mobile
             Route::post('absen-from-mobile', 'absenFromMobile')->name('absen-from-mobile');
+        });
+        // route for generate payroll
+        Route::resource('generate-payroll', GeneratePayrollController::class)->parameters(['generate-payroll' => 'generate-payroll']);
+        Route::controller(GeneratePayrollController::class)->group(function () {
+            // route for execute generate payroll
+            Route::post('execute-generate-payroll', 'executeStoredProcedure')->name('execute-generate-payroll');
         });
         Route::resource('pph', PphController::class)->parameters(['pph' => 'pph']);
         Route::controller(PphController::class)->group(function () {
