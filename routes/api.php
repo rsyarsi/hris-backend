@@ -14,7 +14,7 @@ use App\Http\Controllers\API\V1\{
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
-    PphController, DeductionController, GeneratePayrollController
+    PphController, DeductionController, GeneratePayrollController, UmpController
 };
 
 /*
@@ -211,6 +211,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for import deductions
             Route::post('import-deductions', 'importDeduction')->name('import-deductions');
         });
+        Route::resource('umps', UmpController::class)->parameters(['umps' => 'ump']);
     });
 });
 
