@@ -17,7 +17,14 @@ class UserRepository implements UserRepositoryInterface
         'firebase_id',
         'imei',
         'ip',
-        'username'
+        'username',
+        'administrator', 
+        'hrd', 
+        'manager', 
+        'supervisor', 
+        'pegawai', 
+        'kabag', 
+        'staf'
     ];
 
     public function __construct(User $model)

@@ -105,8 +105,14 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'employee_id' => $user->username,
-                'UuidEmployment' => $user->employee->id ?? '',
-                'role' => $user->role ?? '',
+                'UuidEmployment' => $user->employee->id,
+                'administrator' => $user->administrator,
+                'hrd' => $user->hrd,
+                'manager' => $user->manager,
+                'supervisor' => $user->supervisor,
+                'pegawai' => $user->pegawai,
+                'kabag' => $user->kabag,
+                'staf' => $user->staf,
             ]]
         ]);
     }

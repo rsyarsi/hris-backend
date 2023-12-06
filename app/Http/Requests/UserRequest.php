@@ -46,6 +46,13 @@ class UserRequest extends FormRequest
             'ip' => 'nullable|string|max:255',
             'role' => 'nullable|exists:roles,name',
             'employee_id' => 'nullable|exists:employees,id',
+            'administrator' => 'nullable|in:1,0',
+            'hrd' => 'nullable|in:1,0',
+            'manager' => 'nullable|in:1,0',
+            'supervisor' => 'nullable|in:1,0',
+            'pegawai' => 'nullable|in:1,0',
+            'kabag' => 'nullable|in:1,0',
+            'staf' => 'nullable|in:1,0',
         ];
     }
 
