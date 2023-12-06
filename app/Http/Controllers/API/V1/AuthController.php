@@ -69,7 +69,7 @@ class AuthController extends Controller
                                     ))
         {
             return response()->json([
-                'message' => 'Login gagal!',
+                'message' => 'Username atau password salah, Login gagal!',
                 'success' => false,
                 'code' => 201,
                 'data' => []
