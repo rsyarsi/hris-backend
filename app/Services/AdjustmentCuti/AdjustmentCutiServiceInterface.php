@@ -1,10 +1,10 @@
 <?php
-namespace App\Services\Deduction;
+namespace App\Services\AdjustmentCuti;
 
-interface DeductionServiceInterface
+interface AdjustmentCutiServiceInterface
 {
     public function index($perPage, $search);
-    public function deductionEmployee($perPage, $search, $employeeId);
+    public function adjustmentCutiEmployee($perPage, $search, $employeeId);
     public function store(array $data);
     public function show($id);
     public function update($id, array $data);

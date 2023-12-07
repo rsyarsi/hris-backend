@@ -1,14 +1,15 @@
 <?php
-namespace App\Services\Deduction;
+namespace App\Services\AdjustmentCuti;
 
-use App\Services\Deduction\DeductionServiceInterface;
-use App\Repositories\Deduction\DeductionRepositoryInterface;
+use Illuminate\Support\Str;
+use App\Services\AdjustmentCuti\AdjustmentCutiServiceInterface;
+use App\Repositories\AdjustmentCuti\AdjustmentCutiRepositoryInterface;
 
-class DeductionService implements DeductionServiceInterface
+class AdjustmentCutiService implements AdjustmentCutiServiceInterface
 {
     private $repository;
 
-    public function __construct(DeductionRepositoryInterface $repository)
+    public function __construct(AdjustmentCutiRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -18,9 +19,9 @@ class DeductionService implements DeductionServiceInterface
         return $this->repository->index($perPage, $search);
     }
 
-    public function deductionEmployee($perPage, $search, $employeeId)
+    public function adjustmentCutiEmployee($perPage, $search, $employeeId)
     {
-        return $this->repository->deductionEmployee($perPage, $search, $employeeId);
+        return $this->repository->adjustmentCutiEmployee($perPage, $search, $employeeId);
     }
 
     public function store(array $data)

@@ -90,7 +90,8 @@ class DeductionController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $deduction = $this->deductionService->deductionEmployee($perPage, $search);
+            $employeeId = $request->input('employee_id');
+            $deduction = $this->deductionService->deductionEmployee($perPage, $search, $employeeId);
             return $this->success('Deduction employee retrieved successfully', $deduction);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

@@ -83,7 +83,7 @@ class DeductionRepository implements DeductionRepositoryInterface
         return null;
     }
 
-    public function deductionEmployee($perPage, $search = null)
+    public function deductionEmployee($perPage, $search = null, $employeeId)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -94,7 +94,7 @@ class DeductionRepository implements DeductionRepositoryInterface
                         ->where(function ($query) use ($search) {
                             $query->where('period', 'like', "%{$search}%");
                         });
-        $query->where('employee_id', $user->employee->id);
+        $query->where('employee_id', $employeeId);
         return $query->orderBy('period', 'DESC')->paginate($perPage);
     }
 }

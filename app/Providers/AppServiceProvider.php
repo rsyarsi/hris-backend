@@ -54,6 +54,7 @@ use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterf
 use App\Services\Pph\{PphService, PphServiceInterface};
 use App\Services\Deduction\{DeductionService, DeductionServiceInterface};
 use App\Services\Ump\{UmpService, UmpServiceInterface};
+use App\Services\AdjustmentCuti\{AdjustmentCutiService, AdjustmentCutiServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -107,6 +108,7 @@ use App\Repositories\GenerateAbsen\{GenerateAbsenRepository, GenerateAbsenReposi
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
 use App\Repositories\Deduction\{DeductionRepository, DeductionRepositoryInterface};
 use App\Repositories\Ump\{UmpRepository, UmpRepositoryInterface};
+use App\Repositories\AdjustmentCuti\{AdjustmentCutiRepository, AdjustmentCutiRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -321,6 +323,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UmpRepositoryInterface::class, UmpRepository::class);
         $this->app->bind(UmpServiceInterface::class, UmpService::class);
 
+        // Adjustment Cuti
+        $this->app->bind(AdjustmentCutiRepositoryInterface::class, AdjustmentCutiRepository::class);
+        $this->app->bind(AdjustmentCutiServiceInterface::class, AdjustmentCutiService::class);
+        
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
     }
