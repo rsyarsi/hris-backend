@@ -56,6 +56,7 @@ use App\Services\Pph\{PphService, PphServiceInterface};
 use App\Services\Deduction\{DeductionService, DeductionServiceInterface};
 use App\Services\Ump\{UmpService, UmpServiceInterface};
 use App\Services\AdjustmentCuti\{AdjustmentCutiService, AdjustmentCutiServiceInterface};
+use App\Services\TimesheetOvertime\{TimesheetOvertimeService, TimesheetOvertimeServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -111,6 +112,7 @@ use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
 use App\Repositories\Deduction\{DeductionRepository, DeductionRepositoryInterface};
 use App\Repositories\Ump\{UmpRepository, UmpRepositoryInterface};
 use App\Repositories\AdjustmentCuti\{AdjustmentCutiRepository, AdjustmentCutiRepositoryInterface};
+use App\Repositories\TimesheetOvertime\{TimesheetOvertimeRepository, TimesheetOvertimeRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -332,6 +334,10 @@ class AppServiceProvider extends ServiceProvider
         // Adjustment Cuti
         $this->app->bind(AdjustmentCutiRepositoryInterface::class, AdjustmentCutiRepository::class);
         $this->app->bind(AdjustmentCutiServiceInterface::class, AdjustmentCutiService::class);
+        
+        // Timesheet Overtime
+        $this->app->bind(TimesheetOvertimeRepositoryInterface::class, TimesheetOvertimeRepository::class);
+        $this->app->bind(TimesheetOvertimeServiceInterface::class, TimesheetOvertimeService::class);
         
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

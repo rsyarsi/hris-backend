@@ -14,7 +14,8 @@ use App\Http\Controllers\API\V1\{
     ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
-    PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController
+    PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
+    TimesheetOvertimeController
 };
 
 /*
@@ -197,6 +198,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for execute generate payroll
             Route::post('execute-generate-payroll', 'executeStoredProcedure')->name('execute-generate-payroll');
         });
+        // route for pph
         Route::resource('pph', PphController::class)->parameters(['pph' => 'pph']);
         Route::controller(PphController::class)->group(function () {
             // route for pph employee login
@@ -204,6 +206,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for import pph
             Route::post('import-pph', 'importPph')->name('import-pph');
         });
+        // route for deduction
         Route::resource('deductions', DeductionController::class)->parameters(['deductions' => 'deduction']);
         Route::controller(DeductionController::class)->group(function () {
             // route for deductions employee login
@@ -211,12 +214,17 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for import deductions
             Route::post('import-deductions', 'importDeduction')->name('import-deductions');
         });
+        // route for ump
         Route::resource('umps', UmpController::class)->parameters(['umps' => 'ump']);
+        // route for adjustment cuti
         Route::resource('adjustment-cuti', AdjustmentCutiController::class)->parameters(['adjustment-cuti' => 'adjustment_cuti']);
         Route::controller(AdjustmentCutiController::class)->group(function () {
             // route for deductions employee login
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
         });
+        
+        // route for timesheet overtimes
+        Route::resource('timesheet-overtimes', TimesheetOvertimeController::class)->parameters(['timesheet-overtimes' => 'timesheet-overtime']);
     });
 });
 
