@@ -83,7 +83,7 @@ class AdjustmentCutiController extends Controller
         }
     }
 
-    public function adjustmentcutiEmployee(Request $request)
+    public function adjustmentCutiEmployee(Request $request)
     {
         try {
             $perPage = $request->input('per_page', 10);
