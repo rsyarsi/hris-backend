@@ -51,7 +51,7 @@ use App\Services\EmployeeContract\{EmployeeContractService, EmployeeContractServ
 use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, EmployeeContractDetailServiceInterface};
 use App\Services\Helper\{HelperService, HelperServiceInterface};
 use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterface};
-use App\Services\Payroll\{GeneratePayrollService, GeneratePayrollServiceInterface};
+use App\Services\GeneratePayroll\{GeneratePayrollService, GeneratePayrollServiceInterface};
 use App\Services\Pph\{PphService, PphServiceInterface};
 use App\Services\Deduction\{DeductionService, DeductionServiceInterface};
 use App\Services\Ump\{UmpService, UmpServiceInterface};
@@ -106,7 +106,7 @@ use App\Repositories\EmployeeContract\{EmployeeContractRepository, EmployeeContr
 use App\Repositories\EmployeeContractDetail\{EmployeeContractDetailRepository, EmployeeContractDetailRepositoryInterface};
 use App\Repositories\Helper\{HelperRepository, HelperRepositoryInterface};
 use App\Repositories\GenerateAbsen\{GenerateAbsenRepository, GenerateAbsenRepositoryInterface};
-use App\Repositories\Payroll\{GeneratePayrollRepository, GeneratePayrollRepositoryInterface};
+use App\Repositories\GeneratePayroll\{GeneratePayrollRepository, GeneratePayrollRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
 use App\Repositories\Deduction\{DeductionRepository, DeductionRepositoryInterface};
 use App\Repositories\Ump\{UmpRepository, UmpRepositoryInterface};
