@@ -212,7 +212,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('import-deductions', 'importDeduction')->name('import-deductions');
         });
         Route::resource('umps', UmpController::class)->parameters(['umps' => 'ump']);
-        Route::resource('adjustment-cuti', AdjustmentCutiController::class)->parameters(['adjustment-cuti' => 'adjustment-cuti']);
+        Route::resource('adjustment-cuti', AdjustmentCutiController::class)->parameters(['adjustment-cuti' => 'adjustment_cuti']);
         Route::controller(AdjustmentCutiController::class)->group(function () {
             // route for deductions employee login
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
