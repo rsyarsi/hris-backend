@@ -26,7 +26,7 @@ class TimesheetOvertimeController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $timesheetOvertime = $this->timesheetOvertimeService->index($perPage, $search);
-            return $this->success('TimesheetOvertime retrieved successfully', $timesheetOvertime);
+            return $this->success('Timesheet Overtime retrieved successfully', $timesheetOvertime);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -37,7 +37,7 @@ class TimesheetOvertimeController extends Controller
         try {
             $data = $request->validated();
             $timesheetOvertime = $this->timesheetOvertimeService->store($data);
-            return $this->success('TimesheetOvertime created successfully', $timesheetOvertime, 201);
+            return $this->success('Timesheet Overtime created successfully', $timesheetOvertime, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -48,9 +48,9 @@ class TimesheetOvertimeController extends Controller
         try {
             $timesheetOvertime = $this->timesheetOvertimeService->show($id);
             if (!$timesheetOvertime) {
-                return $this->error('TimesheetOvertime not found', 404);
+                return $this->error('Timesheet Overtime not found', 404);
             }
-            return $this->success('TimesheetOvertime retrieved successfully', $timesheetOvertime);
+            return $this->success('Timesheet Overtime retrieved successfully', $timesheetOvertime);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -62,9 +62,9 @@ class TimesheetOvertimeController extends Controller
             $data = $request->validated();
             $timesheetOvertime = $this->timesheetOvertimeService->update($id, $data);
             if (!$timesheetOvertime) {
-                return $this->error('TimesheetOvertime not found', 404);
+                return $this->error('Timesheet Overtime not found', 404);
             }
-            return $this->success('TimesheetOvertime updated successfully', $timesheetOvertime, 201);
+            return $this->success('Timesheet Overtime updated successfully', $timesheetOvertime, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -75,9 +75,9 @@ class TimesheetOvertimeController extends Controller
         try {
             $timesheetOvertime = $this->timesheetOvertimeService->destroy($id);
             if (!$timesheetOvertime) {
-                return $this->error('TimesheetOvertime not found', 404);
+                return $this->error('Timesheet Overtime not found', 404);
             }
-            return $this->success('TimesheetOvertime deleted successfully, id : '.$timesheetOvertime->id, []);
+            return $this->success('Timesheet Overtime deleted successfully, id : '.$timesheetOvertime->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -88,8 +88,9 @@ class TimesheetOvertimeController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $timesheetOvertime = $this->timesheetOvertimeService->timesheetovertimeEmployee($perPage, $search);
-            return $this->success('TimesheetOvertime employee retrieved successfully', $timesheetOvertime);
+            $employeeId = $request->input('employee_id');
+            $timesheetOvertime = $this->timesheetOvertimeService->timesheetovertimeEmployee($perPage, $search, $employeeId);
+            return $this->success('Timesheet Overtime employee retrieved successfully', $timesheetOvertime);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

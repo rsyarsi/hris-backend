@@ -32,10 +32,10 @@ return new class extends Migration
             $table->date('date_out_at')->nullable();
             $table->string('time_out_at')->nullable();
             $table->string('jamlemburawal')->nullable();
-            $table->decimal('jamlemburconvert', 18, 0)->nullable();
+            $table->decimal('jamlemburconvert', 18, 2)->nullable();
             $table->string('jamlembur')->nullable();
-            $table->decimal('tuunjangan', 18, 0)->nullable();
-            $table->decimal('uanglembur', 18, 0)->nullable();
+            $table->decimal('tuunjangan', 18, 2)->nullable();
+            $table->decimal('uanglembur', 18, 2)->nullable();
             $table->string('period', 7)->nullable();
             $table->timestamps();
         });

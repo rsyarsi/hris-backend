@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\Shift;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -150,8 +151,9 @@ class ShiftScheduleController extends Controller
     public function importShiftSchedule(ImportShiftScheduleRequest $request)
     {
         try {
-            Excel::import(new ShiftScheduleImport, request()->file('file'));
-            return $this->success('Shift schedule imported successfully', [], 201);
+            $importShiftSchedule = Excel::import(new ShiftScheduleImport, request()->file('file'));
+            // return $importShiftSchedule;
+            return $this->success('Shift schedule imported successfully!', $importShiftSchedule, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

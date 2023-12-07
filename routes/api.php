@@ -222,9 +222,13 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for deductions employee login
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
         });
-        
+
         // route for timesheet overtimes
         Route::resource('timesheet-overtimes', TimesheetOvertimeController::class)->parameters(['timesheet-overtimes' => 'timesheet-overtime']);
+        Route::controller(TimesheetOvertimeController::class)->group(function () {
+            // route for deductions employee login
+            Route::get('timesheet-overtime-employee', 'timesheetOvertimeEmployee')->name('timesheet-overtime-employee');
+        });
     });
 });
 

@@ -9,8 +9,9 @@ use App\Repositories\TimesheetOvertime\TimesheetOvertimeRepositoryInterface;
 class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterface
 {
     private $model;
-    private $field = 
+    private $field =
     [
+        'id',
         'employee_id',
         'employee_name',
         'unitname',
@@ -55,7 +56,7 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
                                 $employeeQuery->where('name', 'like', "%{$search}%");
                             });
                     });
-        return $query->orderBy('period', 'DESC')->paginate($perPage);
+        return $query->orderBy('schedule_date_in_at', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -65,49 +66,44 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
 
     public function show($id)
     {
-        $position = $this->model
-                        ->with(['employee' => function ($query)
-                            {
-                                $query->select('id', 'name', 'employment_number');
-                            },
-                        ])
-                        ->where('id', $id)
-                        ->first($this->field);
-        return $position ? $position : $position = null;
+        $timesheetOvertime = $this->model
+                                    ->with(['employee' => function ($query)
+                                        {
+                                            $query->select('id', 'name', 'employment_number');
+                                        },
+                                    ])
+                                    ->where('id', $id)
+                                    ->first($this->field);
+        return $timesheetOvertime ? $timesheetOvertime : $timesheetOvertime = null;
     }
 
     public function update($id, $data)
     {
-        $position = $this->model->find($id);
-        if ($position) {
-            $position->update($data);
-            return $position;
+        $timesheetOvertime = $this->model->find($id);
+        if ($timesheetOvertime) {
+            $timesheetOvertime->update($data);
+            return $timesheetOvertime;
         }
         return null;
     }
 
     public function destroy($id)
     {
-        $position = $this->model->find($id);
-        if ($position) {
-            $position->delete();
-            return $position;
+        $timesheetOvertime = $this->model->find($id);
+        if ($timesheetOvertime) {
+            $timesheetOvertime->delete();
+            return $timesheetOvertime;
         }
         return null;
     }
 
-    public function timesheetOvertimeEmployee($perPage, $search = null)
+    public function timesheetOvertimeEmployee($perPage, $search = null, $employeeId)
     {
-        $user = auth()->user();
-        if (!$user->employee) {
-            return [];
+        $query = $this->model->select($this->field);
+        if ($search !== null) {
+            $query->whereRaw('period LIKE ?', "%". $search ."%");
         }
-        $query = $this->model
-                        ->select($this->field)
-                        ->where(function ($query) use ($search) {
-                            $query->where('period', 'like', "%{$search}%");
-                        });
-        $query->where('employee_id', $user->employee->id);
-        return $query->orderBy('period', 'DESC')->paginate($perPage);
+        $query->where('employee_id', $employeeId);
+        return $query->orderBy('schedule_date_in_at', 'DESC')->paginate($perPage);
     }
 }

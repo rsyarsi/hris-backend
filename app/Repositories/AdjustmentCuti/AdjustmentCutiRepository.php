@@ -9,7 +9,7 @@ use App\Repositories\AdjustmentCuti\AdjustmentCutiRepositoryInterface;
 class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
 {
     private $model;
-    private $field = 
+    private $field =
     [
         'id',
         'employee_id',

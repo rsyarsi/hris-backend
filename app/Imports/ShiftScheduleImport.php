@@ -4,7 +4,8 @@ namespace App\Imports;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Models\{Shift, Employee, ShiftSchedule};
+use App\Models\{Shift, Employee, ShiftGroup, ShiftSchedule};
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
 class ShiftScheduleImport implements ToModel, WithStartRow
@@ -25,13 +26,27 @@ class ShiftScheduleImport implements ToModel, WithStartRow
         $date = $row[3];
 
         $shiftCode = $row[1];
-        $shift = Shift::where('code', $shiftCode)->first();
+        // $shift = Shift::where('code', $shiftCode)->first();
 
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
 
+        if (!$employee) {
+            return; // reject the request if employee not found
+        }
+
+        // shift group
+        $shiftGroupId = $employee->shift_group_id;
+        $shift = Shift::where('shift_group_id', $shiftGroupId)
+                        ->where('code', $shiftCode)
+                        ->first();
+
         if (!$employee || !$shift) {
             return null; // Skip this row
+        }
+
+        if (!$shift) {
+            return;
         }
 
         // Check if the entry already exists in the shift_schedules table
@@ -47,13 +62,18 @@ class ShiftScheduleImport implements ToModel, WithStartRow
         }
 
         $ulid = Ulid::generate(); // Generate a ULID
+        $timeIn = Carbon::parse($date . ' ' . $shift->in_time);
+        // $timeOut = Carbon::parse($date . ' ' . $shift->out_time);
+        $timeOut = $shift->night_shift == 1
+                        ? Carbon::parse($date . ' ' . $shift->out_time)->addDay()
+                        : Carbon::parse($date . ' ' . $shift->out_time);
         return new ShiftSchedule([
             'id' => Str::lower($ulid),
             'employee_id' => $employee->id,
             'shift_id' => $shift->id,
             'date' => $date,
-            'time_in' => $date . ' ' . $shift->in_time,
-            'time_out' => $date . ' ' . $shift->out_time,
+            'time_in' => $timeIn,
+            'time_out' => $timeOut,
             'late_note' => null,
             'shift_exchange_id' => null,
             'user_exchange_id' => null,

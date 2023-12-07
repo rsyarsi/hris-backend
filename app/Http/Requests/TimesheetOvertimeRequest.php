@@ -14,7 +14,7 @@ class TimesheetOvertimeRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -41,10 +41,10 @@ class TimesheetOvertimeRequest extends FormRequest
             'date_out_at' => 'nullable|date',
             'time_out_at' => 'nullable|string|max:255',
             'jamlemburawal' => 'nullable|string|max:255',
-            'jamlemburconvert' => 'nullable|integer',
+            'jamlemburconvert' => 'nullable|numeric',
             'jamlembur' => 'nullable|string|max:255',
-            'tuunjangan' => 'nullable|integer',
-            'uanglembur' => 'nullable|integer',
+            'tuunjangan' => 'nullable|numeric',
+            'uanglembur' => 'nullable|numeric',
             'period' => 'nullable|string|max:255',
         ];
     }
