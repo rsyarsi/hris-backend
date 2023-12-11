@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Employee;
 
+use Carbon\Carbon;
 use App\Models\Employee;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 
@@ -498,9 +499,10 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 
     public function employeeActive($perPage, $search = null)
     {
+        $now = Carbon::now();
         $query = $this->model
                         ->where('started_at', '!=', null)
-                        ->where('resigned_at', '=', null)
+                        // ->where('resigned_at', '=', null)
                         ->where('employment_number', '!=', null)
                         ->with([
                             'identityType' => function ($query) {
@@ -556,9 +558,21 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'roles:id,name',
                                     'roles.permissions:id,name',
                                 ]);
+                            },
+                            'contract' => function ($query) {
+                                $query->select('id');
                             }
                         ])
                         ->select($this->field);
+        $query->where(function ($query) use ($now) {
+            $query->where(function ($query) use ($now) {
+                $query->where('started_at', '<=', $now)
+                    ->where(function ($query) use ($now) {
+                        $query->where('resigned_at', '>=', $now)
+                            ->orWhere('resigned_at', '=', null);
+                    });
+            });
+        });
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }

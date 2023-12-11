@@ -197,6 +197,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for generate payroll
         Route::resource('generate-payroll', GeneratePayrollController::class)->parameters(['generate-payroll' => 'generate-payroll']);
         Route::controller(GeneratePayrollController::class)->group(function () {
+            // route for generate payroll employee
+            Route::get('generate-payroll-employee', 'generatePayrollEmployee')->name('generate-payroll-employee');
             // route for execute generate payroll
             Route::post('execute-generate-payroll', 'executeStoredProcedure')->name('execute-generate-payroll');
         });

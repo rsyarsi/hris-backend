@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use Carbon\Carbon;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
-use App\Models\GeneratePayroll;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GeneratePayrollRequest;
+use App\Http\Requests\{ExecuteGeneratePayrollRequest, GeneratePayrollRequest};
 use App\Services\GeneratePayroll\GeneratePayrollServiceInterface;
 
 class GeneratePayrollController extends Controller
@@ -27,10 +25,8 @@ class GeneratePayrollController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $period_1 = $request->input('period_1');
-            $period_2 = $request->input('period_2');
             $unit = $request->input('unit');
-            $generatepayrolls = $this->generatePayrollService->index($perPage, $search, $period_1, $period_2, $unit);
+            $generatepayrolls = $this->generatePayrollService->index($perPage, $search, $unit);
             return $this->success('Generate Payrolls retrieved successfully', $generatepayrolls);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -88,17 +84,26 @@ class GeneratePayrollController extends Controller
         }
     }
 
-    public function executeStoredProcedure(GeneratePayrollRequest $request)
+    public function executeStoredProcedure(ExecuteGeneratePayrollRequest $request)
     {
         try {
-            $employeeIdss = $request->input('employee_idss');
             $periodeAbsen = $request->input('periode_absen');
             $periodePayroll = $request->input('periode_payroll');
-            $years = $request->input('years');
-            $dateNow = $request->input('datenow');
-            // $dateNow = Carbon::now()->toDateString();
-            $generatePayroll = GeneratePayroll::executeStoredProcedure($employeeIdss, $periodeAbsen, $periodePayroll, $years, $dateNow);
+            $generatePayroll = $this->generatePayrollService->executeStoredProcedure($periodeAbsen, $periodePayroll);
             return $this->success('Generate Payroll successfully', $generatePayroll, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function generatePayrollEmployee(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $employeeId = $request->input('employee_id');
+        $generatepayrolls = $this->generatePayrollService->generatePayrollEmployee($perPage, $search, $employeeId);
+        return $this->success('Generate Payrolls employee retrieved successfully', $generatepayrolls);
+        try {
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

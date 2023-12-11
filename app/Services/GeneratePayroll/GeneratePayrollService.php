@@ -1,43 +1,25 @@
 <?php
 namespace App\Services\GeneratePayroll;
 
-use Carbon\Carbon;
-use Illuminate\Support\Str;
-use App\Services\Employee\EmployeeServiceInterface;
-use App\Services\Overtime\OvertimeServiceInterface;
 use App\Services\GeneratePayroll\GeneratePayrollServiceInterface;
-use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\GeneratePayroll\GeneratePayrollRepositoryInterface;
 
 class GeneratePayrollService implements GeneratePayrollServiceInterface
 {
     private $repository;
-    private $employeeService;
-    private $shiftScheduleService;
-    private $overtimeService;
 
-    public function __construct(
-        GeneratePayrollRepositoryInterface $repository,
-        EmployeeServiceInterface $employeeService,
-        ShiftScheduleServiceInterface $shiftScheduleService,
-        OvertimeServiceInterface $overtimeService
-    )
+    public function __construct(GeneratePayrollRepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->employeeService = $employeeService;
-        $this->shiftScheduleService = $shiftScheduleService;
-        $this->overtimeService = $overtimeService;
     }
 
-    public function index($perPage, $search, $period_1, $period_2, $unit)
+    public function index($perPage, $search, $unit)
     {
-        return $this->repository->index($perPage, $search, $period_1, $period_2, $unit);
+        return $this->repository->index($perPage, $search, $unit);
     }
 
     public function store(array $data)
     {
-        $data['user_manual_id'] = auth()->id();
-        $data['input_manual_at'] = now();
         return $this->repository->store($data);
     }
 
@@ -54,5 +36,15 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
     public function destroy($id)
     {
         return $this->repository->destroy($id);
+    }
+
+    public function executeStoredProcedure($periodeAbsen, $periodePayroll)
+    {
+        return $this->repository->executeStoredProcedure($periodeAbsen, $periodePayroll);
+    }
+
+    public function generatePayrollEmployee($perPage, $search, $unit)
+    {
+        return $this->repository->generatePayrollEmployee($perPage, $search, $unit);
     }
 }

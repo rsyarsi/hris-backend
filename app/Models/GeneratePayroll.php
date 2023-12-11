@@ -51,13 +51,4 @@ class GeneratePayroll extends Model
     {
         return $this->belongsTo(Unit::class, 'employee_position_id', 'id');
     }
-
-    public static function executeStoredProcedure($employeeIdss, $periodeAbsen, $periodePayroll, $years, $dateNow)
-    {
-        // Assuming 'your_stored_procedure' is the name of your stored procedure
-        $result = DB::select('CALL generatepayroll(?, ?, ?, ?, ?)', [$employeeIdss, $periodeAbsen, $periodePayroll, $years, dateNow]);
-
-        // Process the result as needed
-        return $result;
-    }
 }
