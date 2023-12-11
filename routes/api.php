@@ -15,7 +15,7 @@ use App\Http\Controllers\API\V1\{
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
-    TimesheetOvertimeController
+    TimesheetOvertimeController, CatatanCutiController
 };
 
 /*
@@ -221,6 +221,13 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(AdjustmentCutiController::class)->group(function () {
             // route for deductions employee login
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
+        });
+        
+        // route for catatan cuti
+        Route::resource('catatan-cuti', CatatanCutiController::class)->parameters(['catatan-cuti' => 'catatan_cuti']);
+        Route::controller(CatatanCutiController::class)->group(function () {
+            // route for deductions employee login
+            Route::get('catatan-cuti-employee', 'catatanCutiEmployee')->name('catatan-cuti-employee');
         });
 
         // route for timesheet overtimes

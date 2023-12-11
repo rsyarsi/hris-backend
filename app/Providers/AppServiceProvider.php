@@ -57,6 +57,7 @@ use App\Services\Deduction\{DeductionService, DeductionServiceInterface};
 use App\Services\Ump\{UmpService, UmpServiceInterface};
 use App\Services\AdjustmentCuti\{AdjustmentCutiService, AdjustmentCutiServiceInterface};
 use App\Services\TimesheetOvertime\{TimesheetOvertimeService, TimesheetOvertimeServiceInterface};
+use App\Services\CatatanCuti\{CatatanCutiService, CatatanCutiServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -113,6 +114,7 @@ use App\Repositories\Deduction\{DeductionRepository, DeductionRepositoryInterfac
 use App\Repositories\Ump\{UmpRepository, UmpRepositoryInterface};
 use App\Repositories\AdjustmentCuti\{AdjustmentCutiRepository, AdjustmentCutiRepositoryInterface};
 use App\Repositories\TimesheetOvertime\{TimesheetOvertimeRepository, TimesheetOvertimeRepositoryInterface};
+use App\Repositories\CatatanCuti\{CatatanCutiRepository, CatatanCutiRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -334,6 +336,10 @@ class AppServiceProvider extends ServiceProvider
         // Adjustment Cuti
         $this->app->bind(AdjustmentCutiRepositoryInterface::class, AdjustmentCutiRepository::class);
         $this->app->bind(AdjustmentCutiServiceInterface::class, AdjustmentCutiService::class);
+        
+        // Catatan Cuti
+        $this->app->bind(CatatanCutiRepositoryInterface::class, CatatanCutiRepository::class);
+        $this->app->bind(CatatanCutiServiceInterface::class, CatatanCutiService::class);
         
         // Timesheet Overtime
         $this->app->bind(TimesheetOvertimeRepositoryInterface::class, TimesheetOvertimeRepository::class);

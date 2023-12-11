@@ -1,10 +1,10 @@
 <?php
-namespace App\Repositories\AdjustmentCuti;
+namespace App\Repositories\CatatanCuti;
 
-Interface AdjustmentCutiRepositoryInterface {
+Interface CatatanCutiRepositoryInterface {
 
     public function index($perPage, $search);
-    public function adjustmentCutiEmployee($perPage, $search, $employeeId);
+    public function catatanCutiEmployee($perPage, $search, $employeeId);
     public function store(array $data);
     public function show($id);
     public function update($id, array $data);
