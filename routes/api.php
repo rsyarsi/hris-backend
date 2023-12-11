@@ -118,6 +118,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master employees
         Route::resource('employees', EmployeeController::class)->parameters(['employees' => 'employee']);
         Route::controller(EmployeeController::class)->group(function () {
+            // route for employee active(resigned_at = null)
+            Route::get('employee-active', 'employeeActive')->name('employee-active');
             // route for employee number null(employee before have contract)
             Route::get('employee-number-null', 'employeeNumberNull')->name('employee-number-null');
             // route for employee end contracts (employee have contract ended 14 days)
@@ -222,7 +224,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for deductions employee login
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
         });
-        
+
         // route for catatan cuti
         Route::resource('catatan-cuti', CatatanCutiController::class)->parameters(['catatan-cuti' => 'catatan_cuti']);
         Route::controller(CatatanCutiController::class)->group(function () {

@@ -495,4 +495,73 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                         );
         return $employee ? $employee : $employee = null;
     }
+
+    public function employeeActive($perPage, $search = null)
+    {
+        $query = $this->model
+                        ->where('started_at', '!=', null)
+                        ->where('resigned_at', '=', null)
+                        ->where('employment_number', '!=', null)
+                        ->with([
+                            'identityType' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'sex' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'maritalStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'religion' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'province' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'city' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'district' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'village' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'statusEmployment' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'position' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'unit' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'shiftGroup' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'manager' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'user' => function ($query) {
+                                $query->select('id', 'name', 'email')->with([
+                                    'roles:id,name',
+                                    'roles.permissions:id,name',
+                                ]);
+                            }
+                        ])
+                        ->select($this->field);
+        if ($search !== null) {
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+        }
+        return $query->paginate($perPage);
+    }
 }

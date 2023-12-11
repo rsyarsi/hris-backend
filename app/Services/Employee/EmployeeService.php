@@ -75,4 +75,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeWhereEmployeeNumber($employmentNumber);
     }
+
+    public function employeeActive($perPage, $search)
+    {
+        return $this->repository->employeeActive($perPage, $search);
+    }
 }

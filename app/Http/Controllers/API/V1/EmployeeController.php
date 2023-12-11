@@ -118,4 +118,16 @@ class EmployeeController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function employeeActive(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $employees = $this->employeeService->employeeActive($perPage, $search);
+            return $this->success('Employees active retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
