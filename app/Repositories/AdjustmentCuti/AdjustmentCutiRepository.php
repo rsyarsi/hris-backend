@@ -26,7 +26,11 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field);
+        $query = $this->model->with([
+            'employee' => function ($query) {
+                $query->select('id', 'name', 'employment_number');
+            },
+        ])->select($this->field);
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('year', 'like', '%' . $search . '%')

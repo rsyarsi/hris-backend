@@ -150,7 +150,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         }
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-           $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
 
         return $leave;
@@ -226,7 +226,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         }
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-           $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
         if ($leave) {
             $leave->update($data);
@@ -455,6 +455,7 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function updateStatus($id, $data)
     {
         $leave = $this->model->find($id);
+        $shiftSchedule = $this->shiftScheduleService->show($id);
         $status = $data['leave_status_id'];
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         $date = Carbon::parse($leave->from_date);
@@ -492,7 +493,6 @@ class LeaveRepository implements LeaveRepositoryInterface
             // firebase
             $typeSend = 'Leaves Update';
             $employee = $this->employeeService->show($leave->employee_id);
-
             $registrationIds = [];
             if($employee->supervisor != null){
                 if($employee->supervisor->user != null){

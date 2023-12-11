@@ -5,8 +5,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Leave\LeaveServiceInterface;
-use App\Services\Employee\EmployeeServiceInterface;
-use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 
 class LeaveService implements LeaveServiceInterface
