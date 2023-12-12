@@ -168,6 +168,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $existingRecordAbsen->update([
                             'time_out_at' => $data['time_out_at'],
                             'pa' => $pa,
+                            'note' => $pa == null ? '' : 'WARNING',
                         ]);
                         return [
                             'message' => 'Absen Keluar Berhasil!',

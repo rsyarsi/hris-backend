@@ -120,7 +120,6 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $data['holiday'] = $shiftSchedule->holiday;
         $data['night'] = $shiftSchedule->night;
         $data['national_holiday'] = $shiftSchedule->national_holiday;
-        $data['note'] = 'WARNING';
         $data['type'] = $type;
         $data['function'] = $function;
         // Calculate lateness
@@ -129,6 +128,7 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
             $telat = Carbon::parse($dateJamMasuk)->diffInMinutes($timeInSchedule);
         }
         $data['telat'] = $telat;
+        $data['note'] = $telat == null ? '' : 'WARNING';
 
         // OVERTIME
         if ($type == 'SPL') {
