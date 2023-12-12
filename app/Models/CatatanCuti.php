@@ -18,6 +18,8 @@ class CatatanCuti extends Model
 
     protected $fillable =
     [
+        'adjustment_cuti_id',
+        'leave_id',
         'employee_id',
         'quantity_awal',
         'quantity_akhir',
@@ -28,6 +30,16 @@ class CatatanCuti extends Model
         'batal',
     ];
 
+    public function adjustmentCuti()
+    {
+        return $this->belongsTo(AdjustmentCuti::class, 'adjustment_cuti_id', 'id');
+    }
+
+    public function leave()
+    {
+        return $this->belongsTo(Leave::class, 'leave_id', 'id');
+    }
+    
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'id');

@@ -29,19 +29,22 @@ class LeaveRequest extends FormRequest
             'employee_id' => 'required|exists:employees,id',
             'leave_type_id' => 'required|exists:leave_types,id',
             'leave_status_id' => 'required|exists:leave_statuses,id',
-            // 'from_date' => [
-            //     'required',
-            //     'date',
-            //     new DateSmallerThan('to_date'),
-            // ],
-            'from_date' => 'required|date',
+            'from_date' => [
+                'required',
+                'date',
+                new DateSmallerThan('to_date'),
+            ],
+            // 'from_date' => 'required|date',
             'to_date' => 'required|date',
             'note' => 'required',
             'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048',
         ];
 
         // Add a condition based on the value of Type
-        if ($this->input('leave_type_id') === 2) {
+        $leaveTypeId = (int) $this->input('leave_type_id');
+
+        // Add a condition based on the value of Type
+        if ($leaveTypeId === 2) {
             $rules['file'] = 'required|mimes:jpeg,png,jpg,gif,pdf|max:5048';
         } else {
             $rules['file'] = 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048';

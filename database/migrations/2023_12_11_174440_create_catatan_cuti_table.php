@@ -14,7 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('catatan_cuti', function (Blueprint $table) {
-            $table->ulid()->primary();
+            $table->ulid('id')->primary();
+            $table->foreign('adjustment_cuti_id')->references('id')->on('adjustment_cuti')->onDelete('set null');
+            $table->string('adjustment_cuti_id', 26)->nullable();
+            $table->foreign('leave_id')->references('id')->on('leaves')->onDelete('set null');
+            $table->string('leave_id', 26)->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id', 26)->nullable();
             $table->integer('quantity_awal')->nullable();

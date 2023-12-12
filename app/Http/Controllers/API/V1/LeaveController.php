@@ -12,7 +12,6 @@ use App\Services\Leave\LeaveServiceInterface;
 class LeaveController extends Controller
 {
     use ResponseAPI;
-
     private $leaveService;
 
     public function __construct(LeaveServiceInterface $leaveService)

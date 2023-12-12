@@ -223,17 +223,17 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for adjustment cuti
         Route::resource('adjustment-cuti', AdjustmentCutiController::class)->parameters(['adjustment-cuti' => 'adjustment_cuti']);
         Route::controller(AdjustmentCutiController::class)->group(function () {
-            // route for deductions employee login
+            // route for deductions employee
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
         });
-
         // route for catatan cuti
         Route::resource('catatan-cuti', CatatanCutiController::class)->parameters(['catatan-cuti' => 'catatan_cuti']);
         Route::controller(CatatanCutiController::class)->group(function () {
-            // route for deductions employee login
+            // route for catatan cuti employee
             Route::get('catatan-cuti-employee', 'catatanCutiEmployee')->name('catatan-cuti-employee');
+            // route for catatan cuti
+            Route::get('catatan-cuti-employee-latest', 'catatanCutiEmployeeLatest')->name('catatan-cuti-employee-latest');
         });
-
         // route for timesheet overtimes
         Route::resource('timesheet-overtimes', TimesheetOvertimeController::class)->parameters(['timesheet-overtimes' => 'timesheet-overtime']);
         Route::controller(TimesheetOvertimeController::class)->group(function () {

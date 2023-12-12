@@ -30,6 +30,7 @@ class AdjustmentCutiRequest extends FormRequest
             'quantity_adjustment' => 'required|digits_between:1,11',
             'quantity_akhir' => 'required|digits_between:1,11',
             'year' => 'required|max:5',
+            'description' => 'required|max:255',
         ];
     }
 

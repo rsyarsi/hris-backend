@@ -4,28 +4,24 @@ namespace App\Repositories\CatatanCuti;
 
 use App\Models\CatatanCuti;
 use App\Repositories\CatatanCuti\CatatanCutiRepositoryInterface;
-
+use Carbon\Carbon;
 
 class CatatanCutiRepository implements CatatanCutiRepositoryInterface
 {
     private $model;
     private $field =
     [
+        'id',
+        'adjustment_cuti_id',
+        'leave_id',
         'employee_id',
-        'name',
-        'relationship_id',
-        'as_emergency',
-        'is_dead',
-        'birth_date',
-        'phone',
-        'phone_country',
-        'address',
-        'postal_code',
-        'province_id',
-        'city_id',
-        'district_id',
-        'village_id',
-        'job_id',
+        'quantity_awal',
+        'quantity_akhir',
+        'quantity_in',
+        'quantity_out',
+        'type',
+        'description',
+        'batal',
     ];
 
     public function __construct(CatatanCuti $model)
@@ -37,6 +33,34 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
     {
         $query = $this->model
                         ->with([
+                            'adjustmentCuti' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id', 
+                                    'quantity_awal', 
+                                    'quantity_adjustment', 
+                                    'quantity_akhir', 
+                                    'year'
+                                );
+                            },
+                            'leave' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'leave_type_id',
+                                    'from_date',
+                                    'to_date',
+                                    'duration',
+                                    'note',
+                                    'leave_status_id',
+                                    'quantity_cuti_awal',
+                                    'sisa_cuti',
+                                    'file_url',
+                                )->with([
+                                    'leaveType:id,name,is_salary_deduction,active,day,upload_photo',
+                                    'leaveStatus:id,name',
+                                ]);
+                            },
                             'employee' => function ($query) {
                                 $query->select('id', 'name', 'employment_number');
                             }
@@ -49,7 +73,7 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
                             });
             });
         }
-        return $query->orderBy('id', 'ASC')->paginate($perPage);
+        return $query->orderBy('id', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -111,10 +135,32 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
     public function catatanCutiEmployee($perPage, $search = null, $employeeId)
     {
         $query = $this->model->select($this->field);
-        if ($search !== null) {
-            $query->whereRaw('year LIKE ?', "%". $search ."%");
-        }
         $query->where('employee_id', $employeeId);
-        return $query->orderBy('year', 'DESC')->paginate($perPage);
+        return $query->orderBy('id', 'DESC')->paginate($perPage);
+    }
+
+    public function catatanCutiEmployeeLatest($employeeId)
+    {
+        $currentYear = now()->year;
+        $catatanCuti = $this->model
+                            ->select($this->field)
+                            ->where('employee_id', $employeeId)
+                            ->where('batal', 0)
+                            ->whereYear('created_at', $currentYear)
+                            ->latest()
+                            ->first(); // Retrieve the latest record
+        return $catatanCuti ? $catatanCuti : $catatanCuti = null;
+    }
+
+    function updateStatus($leaveId, $data)
+    {
+        $catatanCuti = $this->model->where('leave_id', $leaveId)
+                                    ->latest()
+                                    ->first(); // Retrieve the latest record
+        if ($catatanCuti) {
+            $catatanCuti->update($data);
+            return $catatanCuti;
+        }
+        return null;
     }
 }

@@ -95,4 +95,15 @@ class CatatanCutiController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function catatanCutiEmployeeLatest(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $catatanCuti = $this->catatanCutiService->catatanCutiEmployeeLatest($employeeId);
+            return $this->success('Catatan Cuti employee latest retrieved successfully', $catatanCuti);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

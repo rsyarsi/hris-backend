@@ -1,7 +1,8 @@
 <?php
 namespace App\Repositories\Leave;
 
-Interface LeaveRepositoryInterface{
+Interface LeaveRepositoryInterface
+{
 
     public function index($perPage, $search);
     public function store(array $data);

@@ -3,12 +3,14 @@
 namespace App\Repositories\AdjustmentCuti;
 
 use App\Models\AdjustmentCuti;
+use App\Services\CatatanCuti\CatatanCutiServiceInterface;
 use App\Repositories\AdjustmentCuti\AdjustmentCutiRepositoryInterface;
 
 
 class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
 {
     private $model;
+    private $catatanCutiService;
     private $field =
     [
         'id',
@@ -16,12 +18,14 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
         'quantity_awal',
         'quantity_adjustment',
         'quantity_akhir',
-        'year'
+        'year',
+        'description'
     ];
 
-    public function __construct(AdjustmentCuti $model)
+    public function __construct(AdjustmentCuti $model, CatatanCutiServiceInterface $catatanCutiService)
     {
         $this->model = $model;
+        $this->catatanCutiService = $catatanCutiService;
     }
 
     public function index($perPage, $search = null)
@@ -45,7 +49,21 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
 
     public function store(array $data)
     {
-        return $this->model->create($data);
+        $adjustmentCuti = $this->model->create($data);
+        $catatanCutiData = [
+            'adjustment_cuti_id' => $adjustmentCuti->id,
+            'leave_id' => null,
+            'employee_id' => $adjustmentCuti->employee_id,
+            'quantity_awal' => $adjustmentCuti->quantity_awal,
+            'quantity_akhir' => $adjustmentCuti->quantity_akhir,
+            'quantity_in' => 0,
+            'quantity_out' => 0,
+            'type' => 'ADJUSTMENT CUTI',
+            'description' => $adjustmentCuti->description,
+            'batal' => 0,
+        ];
+        $this->catatanCutiService->store($catatanCutiData);
+        return $adjustmentCuti;
     }
 
     public function show($id)
@@ -63,10 +81,23 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
 
     public function update($id, $data)
     {
-        $adjustmentcuti = $this->model->find($id);
-        if ($adjustmentcuti) {
-            $adjustmentcuti->update($data);
-            return $adjustmentcuti;
+        $adjustmentCuti = $this->model->find($id);
+        if ($adjustmentCuti) {
+            $adjustmentCuti->update($data);
+            $catatanCutiData = [
+                'adjustment_cuti_id' => $adjustmentCuti->id,
+                'leave_id' => null,
+                'employee_id' => $adjustmentCuti->employee_id,
+                'quantity_awal' => $adjustmentCuti->quantity_awal,
+                'quantity_akhir' => $adjustmentCuti->quantity_akhir,
+                'quantity_in' => 0,
+                'quantity_out' => 0,
+                'type' => 'ADJUSTMENT CUTI',
+                'description' => $adjustmentCuti->description,
+                'batal' => 0,
+            ];
+            $this->catatanCutiService->store($catatanCutiData);
+            return $adjustmentCuti;
         }
         return null;
     }
@@ -84,10 +115,7 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
     public function adjustmentCutiEmployee($perPage, $search = null, $employeeId)
     {
         $query = $this->model->select($this->field);
-        if ($search !== null) {
-            $query->whereRaw('year LIKE ?', "%". $search ."%");
-        }
         $query->where('employee_id', $employeeId);
-        return $query->orderBy('year', 'DESC')->paginate($perPage);
+        return $query->orderBy('id', 'DESC')->paginate($perPage);
     }
 }

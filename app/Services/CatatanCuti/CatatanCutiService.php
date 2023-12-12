@@ -18,14 +18,13 @@ class CatatanCutiService implements CatatanCutiServiceInterface
         return $this->repository->index($perPage, $search);
     }
 
-    public function adjustmentCutiEmployee($perPage, $search, $employeeId)
+    public function catatanCutiEmployee($perPage, $search, $employeeId)
     {
-        return $this->repository->adjustmentCutiEmployee($perPage, $search, $employeeId);
+        return $this->repository->catatanCutiEmployee($perPage, $search, $employeeId);
     }
 
     public function store(array $data)
     {
-        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->store($data);
     }
 
@@ -36,12 +35,21 @@ class CatatanCutiService implements CatatanCutiServiceInterface
 
     public function update($id, $data)
     {
-        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->update($id, $data);
     }
-
+    
     public function destroy($id)
     {
         return $this->repository->destroy($id);
+    }
+    
+    public function catatanCutiEmployeeLatest($employeeId)
+    {
+        return $this->repository->catatanCutiEmployeeLatest($employeeId);
+    }
+
+    public function updateStatus($id, $data)
+    {
+        return $this->repository->updateStatus($id, $data);
     }
 }

@@ -3,14 +3,16 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\{Employee, Leave};
+use App\Models\{Employee, Leave, ShiftSchedule};
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Leave\LeaveRepositoryInterface;
+use App\Services\CatatanCuti\CatatanCutiServiceInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
+use App\Services\LeaveType\LeaveTypeServiceInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class LeaveRepository implements LeaveRepositoryInterface
@@ -22,6 +24,8 @@ class LeaveRepository implements LeaveRepositoryInterface
     private $firebaseService;
     private $employeeService;
     private $generateAbsenService;
+    private $catatanCutiService;
+    private $leaveTypeService;
     private $field = [
         'id',
         'employee_id',
@@ -45,7 +49,9 @@ class LeaveRepository implements LeaveRepositoryInterface
         ShiftScheduleServiceInterface $shiftScheduleService,
         FirebaseServiceInterface $firebaseService,
         EmployeeServiceInterface $employeeService,
-        GenerateAbsenServiceInterface $generateAbsenService
+        GenerateAbsenServiceInterface $generateAbsenService,
+        CatatanCutiServiceInterface $catatanCutiService,
+        LeaveTypeServiceInterface $leaveTypeService
     )
     {
         $this->model = $model;
@@ -55,6 +61,8 @@ class LeaveRepository implements LeaveRepositoryInterface
         $this->firebaseService = $firebaseService;
         $this->employeeService = $employeeService;
         $this->generateAbsenService = $generateAbsenService;
+        $this->catatanCutiService = $catatanCutiService;
+        $this->leaveTypeService = $leaveTypeService;
     }
 
     public function index($perPage, $search = null)
@@ -112,6 +120,7 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function store(array $data)
     {
         $leave = $this->model->create($data);
+        $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         $historyData = [
             'leave_id' => $leave->id,
@@ -128,10 +137,40 @@ class LeaveRepository implements LeaveRepositoryInterface
         $employeeId = $leave->employee_id;
         $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
 
+        // catatan cuti
+        if ($data['leave_type_id'] == 1 || $data['leave_type_id'] == 6) {
+            $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
+            if ($catatanCutiLatest === null) {
+                $quantityAkhirCatatan = 12;
+            } else {
+                $quantityAkhirCatatan = $catatanCutiLatest->quantity_akhir;
+            }
+            $quantityOut = $fromDate->diffInDays($toDate);
+            $quantityOut = $quantityOut == 0 ? 1 : ($quantityOut + 1);
+            $quantityAkhir = (int)$quantityAkhirCatatan - (int)$quantityOut;
+            $catatanCutiData = [
+                'adjustment_cuti_id' => null,
+                'leave_id' => $leave->id,
+                'employee_id' => $leave->employee_id,
+                'quantity_awal' => $quantityAkhirCatatan,
+                'quantity_akhir' => $quantityAkhir,
+                'quantity_in' => 0,
+                'quantity_out' => $quantityOut,
+                'type' => 'LEAVE',
+                'description' => $leaveType->name,
+                'batal' => 0,
+            ];
+            $this->catatanCutiService->store($catatanCutiData);
+            $updateLeave = [
+                'quantity_cuti_awal' => $quantityAkhirCatatan,
+                'sisa_cuti' => $quantityAkhir,
+            ];
+            $leave->update($updateLeave);
+        }
+        
         // firebase
         $typeSend = 'Leaves';
         $employee = $this->employeeService->show($leave->employee_id);
-
         $registrationIds = [];
         if($employee->supervisor != null){
             if($employee->supervisor->user != null){
@@ -180,6 +219,29 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     'comment',
                                 );
                             },
+                            'shiftSchedule' => function ($query) {
+                                $query->select(
+                                    'employee_id',
+                                    'shift_id',
+                                    'date',
+                                    'time_in',
+                                    'time_out',
+                                    'late_note',
+                                    'shift_exchange_id',
+                                    'user_exchange_id',
+                                    'user_exchange_at',
+                                    'created_user_id',
+                                    'updated_user_id',
+                                    'setup_user_id',
+                                    'setup_at',
+                                    'period',
+                                    'leave_note',
+                                    'holiday',
+                                    'night',
+                                    'national_holiday',
+                                    'leave_id'
+                                );
+                            },
                         ])
                         ->where('id', $id)
                         ->first($this->field);
@@ -203,11 +265,10 @@ class LeaveRepository implements LeaveRepositoryInterface
         $toDate = Carbon::parse($data['to_date']);
         $employeeId = $leave->employee_id;
         $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
-
+        
         // firebase
         $typeSend = 'Leaves';
         $employee = $this->employeeService->show($leave->employee_id);
-
         $registrationIds = [];
         if($employee->supervisor != null){
             if($employee->supervisor->user != null){
@@ -455,7 +516,6 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function updateStatus($id, $data)
     {
         $leave = $this->model->find($id);
-        $shiftSchedule = $this->shiftScheduleService->show($id);
         $status = $data['leave_status_id'];
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         $date = Carbon::parse($leave->from_date);
@@ -489,6 +549,23 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'comment' => $leave->note,
             ];
             $this->leaveHistory->store($historyData);
+
+            // update data batal catatan cuti
+            if (($leave->leave_type_id == 6 || $leave->leave_type_id == 1) && $status == 8) {
+                $leave->update([
+                    'quantity_cuti_awal' => 0,
+                    'sisa_cuti' => 0
+                ]);
+                // update shift schedule
+                ShiftSchedule::where('leave_id', $leave->id)
+                            ->update([
+                                'leave_id' => null,
+                                'leave_note' => null
+                            ]);
+                
+                // update catatan cuti
+                $this->catatanCutiService->updateStatus($leave->id, ['batal' => 1]);
+            }
 
             // firebase
             $typeSend = 'Leaves Update';

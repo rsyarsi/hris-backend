@@ -23,6 +23,7 @@ class AdjustmentCuti extends Model
         'quantity_adjustment',
         'quantity_akhir',
         'year',
+        'description'
     ];
 
     public function employee()
