@@ -20,7 +20,7 @@ return new class extends Migration
             $table->tinyInteger('supervisor')->nullable()->default(0);
             $table->tinyInteger('pegawai')->nullable()->default(0);
             $table->tinyInteger('kabag')->nullable()->default(0);
-            $table->tinyInteger('staf')->nullable()->default(0);
+            $table->tinyInteger('staff')->nullable()->default(0);
         });
     }
 
@@ -32,7 +32,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['administrator', 'hrd', 'manager', 'supervisor', 'pegawai', 'kabag', 'staf']);
+            $table->dropColumn(['administrator', 'hrd', 'manager', 'supervisor', 'pegawai', 'kabag', 'staff']);
         });
     }
 };

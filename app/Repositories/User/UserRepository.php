@@ -10,21 +10,21 @@ class UserRepository implements UserRepositoryInterface
 {
     private $model;
     private $field = [
-        'id', 
-        'name', 
-        'email', 
+        'id',
+        'name',
+        'email',
         'user_device_id',
         'firebase_id',
         'imei',
         'ip',
         'username',
-        'administrator', 
-        'hrd', 
-        'manager', 
-        'supervisor', 
-        'pegawai', 
-        'kabag', 
-        'staf'
+        'administrator',
+        'hrd',
+        'manager',
+        'supervisor',
+        'pegawai',
+        'kabag',
+        'staff'
     ];
 
     public function __construct(User $model)

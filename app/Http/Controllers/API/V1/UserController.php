@@ -20,7 +20,12 @@ class UserController extends Controller
     private $permissionService;
     private $employeeService;
 
-    public function __construct(UserServiceInterface $userService, RoleServiceInterface $roleService, PermissionServiceInterface $permissionService, EmployeeServiceInterface $employeeService)
+    public function __construct(
+        UserServiceInterface $userService,
+        RoleServiceInterface $roleService,
+        PermissionServiceInterface $permissionService,
+        EmployeeServiceInterface $employeeService
+        )
     {
         $this->middleware('auth:api');
         $this->userService = $userService;
@@ -66,7 +71,6 @@ class UserController extends Controller
                     }
                 }
             }
-
             return $this->success('User created successfully', $user, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -103,9 +107,7 @@ class UserController extends Controller
             // asign role to user
             $roles = $request->input('role');
             if ($roles) {
-                foreach ($roles as $role) {
-                    $user->assignRole($role);
-                }
+                $user->syncRoles($roles); // Use syncRoles to sync the roles
             }
 
             return $this->success('User updated successfully', $user, 201);

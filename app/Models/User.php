@@ -28,13 +28,13 @@ class User extends Authenticatable implements JWTSubject
         'imei',
         'ip',
         'username',
-        'administrator', 
-        'hrd', 
-        'manager', 
-        'supervisor', 
-        'pegawai', 
-        'kabag', 
-        'staf'
+        'administrator',
+        'hrd',
+        'manager',
+        'supervisor',
+        'pegawai',
+        'kabag',
+        'staff'
     ];
 
     /**

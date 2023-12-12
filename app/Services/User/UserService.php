@@ -23,6 +23,24 @@ class UserService implements UserServiceInterface
     {
         $data['name'] = $this->formatTextTitle($data['name']);
         $data['password'] = $this->encryptPassword($data['password']);
+
+        // Define the roles mapping
+        $rolesMapping = [
+            'administrator' => 'administrator',
+            'hrd' => 'hrd',
+            'manager' => 'manager',
+            'supervisor' => 'supervisor',
+            'employee' => 'pegawai', // Assuming you have a 'pegawai' role
+            'kabag' => 'kabag',
+            'staff' => 'staff',
+        ];
+
+        // Loop through the roles and set the corresponding values in the $data array
+        foreach ($data['role'] as $role) {
+            if (array_key_exists($role, $rolesMapping)) {
+                $data[$rolesMapping[$role]] = 1;
+            }
+        }
         return $this->repository->store($data);
     }
 
@@ -37,6 +55,29 @@ class UserService implements UserServiceInterface
 
         if(\array_key_exists('password', $data)) {
             $data['password'] = $this->encryptPassword($data['password']);
+        }
+
+        // Define the roles mapping
+        $rolesMapping = [
+            'administrator' => 'administrator',
+            'hrd' => 'hrd',
+            'manager' => 'manager',
+            'supervisor' => 'supervisor',
+            'employee' => 'pegawai', // Assuming you have a 'pegawai' role
+            'kabag' => 'kabag',
+            'staff' => 'staff',
+        ];
+
+        // Initialize all fields to 0
+        foreach ($rolesMapping as $field) {
+            $data[$field] = 0;
+        }
+
+        // Loop through the roles and set the corresponding values in the $data array
+        foreach ($data['role'] as $role) {
+            if (\array_key_exists($role, $rolesMapping)) {
+                $data[$rolesMapping[$role]] = 1;
+            }
         }
 
         return $this->repository->update($id, $data);
