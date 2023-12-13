@@ -42,7 +42,7 @@ class OvertimeController extends Controller
                 'success' => $overtime['success'],
                 'code' => $overtime['code'],
                 'data' => $overtime['data']
-            ]);
+            ], $overtime['code']);
             // return $this->success('Overtime created successfully', $overtime, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
