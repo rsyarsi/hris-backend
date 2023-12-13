@@ -16,9 +16,11 @@ class LeaveStatusSeeder extends Seeder
     public function run()
     {
         LeaveStatus::create(['name' => 'PENDING']);
+        LeaveStatus::create(['name' => 'APPROVAL KABAG']);
         LeaveStatus::create(['name' => 'APPROVAL SUPERVISOR']);
         LeaveStatus::create(['name' => 'APPROVAL MANAGER']);
         LeaveStatus::create(['name' => 'APPROVAL HRD']);
+        LeaveStatus::create(['name' => 'REJECTED KABAG']);
         LeaveStatus::create(['name' => 'REJECTED SUPERVISOR']);
         LeaveStatus::create(['name' => 'REJECTED MANAGER']);
         LeaveStatus::create(['name' => 'REJECTED HRD']);
