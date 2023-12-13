@@ -96,7 +96,6 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         foreach ($employees as $item) {
            $result = DB::select('CALL generatepayroll(?, ?, ?, ?, ?)', [(string)$item->id, $periodeAbsen->format('Y-m'), $periodePayroll->format('Y-m'), $periodePayroll->format('Y'), $now->toDateString()]);
         }
-        // $result = DB::select('CALL generatepayroll(?, ?, ?, ?, ?)', [(string)$employees->id, $periodeAbsen->format('Y-m'), $periodePayroll->format('Y-m'), $periodePayroll->format('Y'), $now->toDateString()]);
         if ($result) {
             return $result;
         }

@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories\GeneratePayroll;
 
-Interface GeneratePayrollRepositoryInterface{
-
+Interface GeneratePayrollRepositoryInterface
+{
     public function index($perPage, $search, $unit);
     public function store(array $data);
     public function show($id);

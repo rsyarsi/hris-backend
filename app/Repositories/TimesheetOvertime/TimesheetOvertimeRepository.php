@@ -2,13 +2,17 @@
 
 namespace App\Repositories\TimesheetOvertime;
 
+use Carbon\Carbon;
 use App\Models\TimesheetOvertime;
+use Illuminate\Support\Facades\DB;
+use App\Services\Employee\EmployeeServiceInterface;
 use App\Repositories\TimesheetOvertime\TimesheetOvertimeRepositoryInterface;
 
 
 class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterface
 {
     private $model;
+    private $employeeService;
     private $field =
     [
         'id',
@@ -35,9 +39,10 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
         'period',
     ];
 
-    public function __construct(TimesheetOvertime $model)
+    public function __construct(TimesheetOvertime $model, EmployeeServiceInterface $employeeService)
     {
         $this->model = $model;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search = null)
@@ -105,5 +110,24 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
         }
         $query->where('employee_id', $employeeId);
         return $query->orderBy('schedule_date_in_at', 'DESC')->paginate($perPage);
+    }
+
+    public function executeStoredProcedure($periodeAbsenStart, $periodeAbsenEnd)
+    {
+        $employees = $this->employeeService->employeeActive(999999999, null);
+        $now = Carbon::now();
+        foreach ($employees as $item) {
+           $result = DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
+                        $now->toDateString(),
+                        $periodeAbsenStart->toDateString(),
+                        $periodeAbsenEnd->toDateString(),
+                        $item->id,
+                        $periodeAbsenStart->format('Y-m')
+                    ]);
+        }
+        if ($result) {
+            return $result;
+        }
+        return null;
     }
 }

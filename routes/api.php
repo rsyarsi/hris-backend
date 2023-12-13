@@ -239,6 +239,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(TimesheetOvertimeController::class)->group(function () {
             // route for deductions employee login
             Route::get('timesheet-overtime-employee', 'timesheetOvertimeEmployee')->name('timesheet-overtime-employee');
+            Route::post('execute-generate-overtime', 'executeStoredProcedure')->name('execute-generate-overtime');
         });
     });
 });
