@@ -66,7 +66,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                             ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
                                             ->exists();
         if (!$checkShiftSchedule) {
-            return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+            return [
+                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan',
+                'success' => false,
+                'code' => 422,
+                'data' => []
+            ];
         }
         $typeSend = 'Overtime';
         $overtime = $this->model->create($data);
@@ -93,6 +98,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         }
 
         return $overtime;
+        return [
+            'message' => 'Overtime created successfully',
+            'success' => true,
+            'code' => 201,
+            'data' => [$overtime]
+        ];
     }
 
     public function show($id)

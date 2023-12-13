@@ -34,10 +34,17 @@ class LeaveController extends Controller
 
     public function store(LeaveRequest $request)
     {
-        $data = $request->validated();
-        $leave = $this->leaveService->store($data);
-        return $this->success('Leave created successfully', $leave, 201);
         try {
+            $data = $request->validated();
+            $leave = $this->leaveService->store($data);
+            // return $leave;
+            return response()->json([
+                'message' => $leave['message'],
+                'success' => $leave['success'],
+                'code' => $leave['code'],
+                'data' => $leave['data']
+            ]);
+            // return $this->success('Leave created successfully', $leave, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

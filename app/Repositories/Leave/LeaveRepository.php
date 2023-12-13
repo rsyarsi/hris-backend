@@ -124,7 +124,13 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
                                     ->exists();
         if (!$checkShiftSchedule) {
-            return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+            // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+            return [
+                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan',
+                'success' => false,
+                'code' => 422,
+                'data' => []
+            ];
         }
         $leave = $this->model->create($data);
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
@@ -199,7 +205,12 @@ class LeaveRepository implements LeaveRepositoryInterface
             $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
 
-        return $leave;
+        return [
+            'message' => 'Leave created successfully',
+            'success' => true,
+            'code' => 201,
+            'data' => [$leave]
+        ];
     }
 
     public function show($id)

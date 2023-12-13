@@ -37,7 +37,13 @@ class OvertimeController extends Controller
         try {
             $data = $request->validated();
             $overtime = $this->overtimeService->store($data);
-            return $this->success('Overtime created successfully', $overtime, 201);
+            return response()->json([
+                'message' => $overtime['message'],
+                'success' => $overtime['success'],
+                'code' => $overtime['code'],
+                'data' => $overtime['data']
+            ]);
+            // return $this->success('Overtime created successfully', $overtime, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
