@@ -67,10 +67,10 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                             ->exists();
         if (!$checkShiftSchedule) {
             return [
-                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan',
+                'message' => 'Validation Error!',
                 'success' => false,
                 'code' => 422,
-                'data' => []
+                'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
         $typeSend = 'Overtime';
@@ -97,7 +97,6 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
 
-        return $overtime;
         return [
             'message' => 'Overtime created successfully',
             'success' => true,

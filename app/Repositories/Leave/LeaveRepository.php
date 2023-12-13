@@ -126,10 +126,10 @@ class LeaveRepository implements LeaveRepositoryInterface
         if (!$checkShiftSchedule) {
             // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
             return [
-                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan',
+                'message' => 'Validation Error',
                 'success' => false,
                 'code' => 422,
-                'data' => []
+                'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
         $leave = $this->model->create($data);
