@@ -34,11 +34,11 @@ class OvertimeRequest extends FormRequest
             'type' => 'required|string|max:255',
             'from_date' => ['required',
                             'date',
-                            new NotOverlappingPermissionsOvertimes(
-                                $this->input('employee_id'),
-                                $this->input('from_date'),
-                                $this->input('to_date')
-                            ),
+                            // new NotOverlappingPermissionsOvertimes(
+                            //     $this->input('employee_id'),
+                            //     $this->input('from_date'),
+                            //     $this->input('to_date')
+                            // ),
                             new DateSmallerThan('to_date'),
                         ],
             'to_date' => 'required|date',

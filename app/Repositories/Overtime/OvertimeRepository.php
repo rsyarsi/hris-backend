@@ -3,11 +3,12 @@
 namespace App\Repositories\Overtime;
 
 use Carbon\Carbon;
+use App\Models\ShiftSchedule;
 use Illuminate\Support\Facades\DB;
 use App\Models\{Employee, Overtime};
-use App\Repositories\Overtime\OvertimeRepositoryInterface;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
+use App\Repositories\Overtime\OvertimeRepositoryInterface;
 
 
 class OvertimeRepository implements OvertimeRepositoryInterface
@@ -60,10 +61,16 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function store(array $data)
     {
+        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
+                                            ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                            ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                            ->exists();
+        if (!$checkShiftSchedule) {
+            return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+        }
         $typeSend = 'Overtime';
         $overtime = $this->model->create($data);
         $employee = $this->employeeService->show($overtime->employee_id);
-
         $registrationIds = [];
         if($employee->supervisor != null){
             if($employee->supervisor->user != null){

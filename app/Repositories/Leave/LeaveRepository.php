@@ -119,6 +119,13 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function store(array $data)
     {
+        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
+                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                    ->exists();
+        if (!$checkShiftSchedule) {
+            return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+        }
         $leave = $this->model->create($data);
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
