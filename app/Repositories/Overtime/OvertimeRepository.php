@@ -234,6 +234,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         // Get employees supervised or managed by the logged-in user
         $subordinateIds = Employee::where('supervisor_id', $user->employee->id)
                                     ->orWhere('manager_id', $user->employee->id)
+                                    ->orWhere('kabag_id', $user->employee->id)
                                     ->pluck('id');
         $query = $this->model
                     ->with([

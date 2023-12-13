@@ -114,10 +114,12 @@ class LeaveService implements LeaveServiceInterface
             'hrd',
             'supervisor',
             'manager',
+            'kabag',
             'ADMINISTRATOR',
             'HRD',
             'SUPERVISOR',
             'MANAGER',
+            'KABAG',
         ];
 
         if ($user->hasAnyRole($allowedRoles)) {
