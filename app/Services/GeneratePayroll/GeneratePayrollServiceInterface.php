@@ -10,4 +10,5 @@ interface GeneratePayrollServiceInterface
     public function destroy($id);
     public function executeStoredProcedure($periodeAbsen, $periodePayroll);
     public function generatePayrollEmployee($perPage, $search, $employeeId);
+    public function sendSlipGaji($id);
 }

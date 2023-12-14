@@ -1,6 +1,10 @@
 <?php
 namespace App\Services\GeneratePayroll;
 
+use App\Mail\SlipGajiEmail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Services\GeneratePayroll\GeneratePayrollServiceInterface;
 use App\Repositories\GeneratePayroll\GeneratePayrollRepositoryInterface;
 
@@ -46,5 +50,35 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
     public function generatePayrollEmployee($perPage, $search, $unit)
     {
         return $this->repository->generatePayrollEmployee($perPage, $search, $unit);
+    }
+
+    public function sendSlipGaji($id)
+    {
+        $item = $this->repository->show($id);
+        if ($item) {
+            $pdf = PDF::setOptions(['isRemoteEnabled' => TRUE, 'enable_javascript' => TRUE]);
+            $pdf = PDF::loadView('pdf.slip_gaji.slip_gaji', compact('item'));
+            $pdf->setPaper('a4', 'potrait');
+            // Generate a unique filename
+            $filename = $item->period_payroll . '-' . $item->employeement_id . '.pdf';
+            // Save the PDF to local storage
+            // Storage::put('slip/' . $filename, $pdf->output());
+
+            $s3FilePath = 'hrd/slip/' . $filename;
+            Storage::disk('s3')->put($s3FilePath, $pdf->output());
+            Storage::disk('s3')->setVisibility($s3FilePath, 'public');
+            $fileUrl = Storage::disk('s3')->url($s3FilePath);
+            // return $fileUrl;
+            // Send email with attached PDF
+            Mail::to($item->employee_email)->send(new SlipGajiEmail($item, $s3FilePath));
+
+            return [
+                'file_name' => $filename,
+                'file_path' => $s3FilePath,
+                'file_url' => $fileUrl,
+                'email_address' => $item->employee_email
+            ];
+        }
+        return null;
     }
 }

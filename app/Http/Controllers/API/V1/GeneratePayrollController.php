@@ -98,12 +98,27 @@ class GeneratePayrollController extends Controller
 
     public function generatePayrollEmployee(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $search = $request->input('search');
-        $employeeId = $request->input('employee_id');
-        $generatepayrolls = $this->generatePayrollService->generatePayrollEmployee($perPage, $search, $employeeId);
-        return $this->success('Generate Payrolls employee retrieved successfully', $generatepayrolls);
         try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $employeeId = $request->input('employee_id');
+            $generatepayrolls = $this->generatePayrollService->generatePayrollEmployee($perPage, $search, $employeeId);
+            return $this->success('Generate Payrolls employee retrieved successfully', $generatepayrolls);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function sendSlipGaji($id)
+    {
+        try {
+            $generatepayrolls = $this->generatePayrollService->sendSlipGaji($id);
+            return $this->success('Slip Gaji send successfully!', [
+                'file_name' => $generatepayrolls['file_name'],
+                'file_path' => $generatepayrolls['file_path'],
+                'file_url' => $generatepayrolls['file_url'],
+                'email_address' => $generatepayrolls['email_address'],
+            ]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
