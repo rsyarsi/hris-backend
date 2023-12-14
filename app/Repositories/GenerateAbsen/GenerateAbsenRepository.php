@@ -214,7 +214,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $data['time_out_at'] = null;
                     $data['overtime_out_at'] = null;
                     return [
-                        'message' => 'Absen Masuk Berhasil Overtime!',
+                        'message' => 'Absen Masuk Overtime Berhasil!',
                         'data' => [$this->model->create($data)]
                     ];
                 }
