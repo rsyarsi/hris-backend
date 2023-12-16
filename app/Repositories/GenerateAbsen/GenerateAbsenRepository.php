@@ -133,6 +133,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             $existingRecordAbsen = $this->model
                                         ->where('employee_id', $employeeId)
                                         ->where('date', $date)
+                                        ->orWhere('date_out_at', $date)
                                         ->where('type', 'ABSEN')
                                         ->first();
 
@@ -144,6 +145,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     ];
                 } else { // Create a new record
                     $data['time_out_at'] = null;
+                    $data['note'] = "BELUM ABSEN PULANG";
                     return [
                         'message' => 'Absen Masuk Berhasil!',
                         'data' => [$this->model->create($data)]
@@ -176,8 +178,6 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         ];
                     }
                 } else {
-                    // Handle the case where $existingRecordAbsen is null (data doesn't exist)
-                    // You might want to return an appropriate response or handle it accordingly
                     return [
                         'message' => 'Anda Belum Absen/Data not found',
                         'data' => []
@@ -189,6 +189,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             $existingRecordOvertime = $this->model
                             ->where('employee_id', $employeeId)
                             ->where('date', $date)
+                            ->orWhere('date_out_at', $date)
                             ->where('type', 'SPL')
                             ->first();
 
@@ -211,6 +212,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 
                     $data['telat'] = 0;
                     $data['pa'] = 0;
+                    $data['note'] = "BELUM ABSEN PULANG OVERTIME";
                     $data['time_out_at'] = null;
                     $data['overtime_out_at'] = null;
                     return [
@@ -231,6 +233,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $existingRecordOvertime->update([
                             'time_out_at' => $data['time_out_at'],
                             'overtime_out_at' => $data['time_out_at'],
+                            'note' => '',
                         ]);
                         return [
                             'message' => 'Absen Keluar Overtime Berhasil!',
