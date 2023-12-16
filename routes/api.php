@@ -137,6 +137,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employee-position-histories', EmployeePositionHistoryController::class);
         // route for master employee legalities
         Route::resource('employee-legalities', EmployeeLegalityController::class);
+        Route::controller(EmployeeLegalityController::class)->group(function () {
+            // route for employee legalities ended
+            Route::get('employee-legalities-ended', 'employeeLegalitiesEnded')->name('employee-legalities-ended');
+        });
         // route for master employee families
         Route::resource('employee-families', EmployeeFamilyController::class);
         // route for master employee certificates

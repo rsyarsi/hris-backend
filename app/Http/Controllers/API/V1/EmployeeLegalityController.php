@@ -82,4 +82,16 @@ class EmployeeLegalityController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function employeeLegalitiesEnded(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $employees = $this->employeeLegalityService->employeeLegalitiesEnded($perPage, $search);
+            return $this->success('Employees end legality ended retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

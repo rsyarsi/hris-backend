@@ -53,13 +53,13 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
                             $query->select('id', 'name', 'employment_number');
                         },
                     ])
-                    ->select($this->field)
                     ->where('period', 'like', "%{$period}%")
                     ->where(function ($query) use ($search) {
                         $lowerSearch = strtolower($search);
                         $query->where('employee_id', $lowerSearch)
                             ->orWhere(DB::raw('LOWER(employee_name)'), 'like', "%{$lowerSearch}%");
-                    });
+                    })
+                    ->select($this->field);
         return $query->orderBy('schedule_date_in_at', 'DESC')->paginate($perPage);
     }
 

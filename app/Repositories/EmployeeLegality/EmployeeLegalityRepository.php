@@ -3,8 +3,9 @@
 namespace App\Repositories\EmployeeLegality;
 
 use App\Models\EmployeeLegality;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\EmployeeLegality\EmployeeLegalityRepositoryInterface;
-
+use Carbon\Carbon;
 
 class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
 {
@@ -30,16 +31,20 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'legalityType' => function ($query) {
                             $query->select('id', 'name', 'active', 'extended');
                         },
                     ])
+                    ->where(function ($subquery) use ($search) {
+                        $lowerSearch = strtolower($search);
+                        $subquery->orWhere('employee_id', $lowerSearch)
+                                    ->orWhereHas('employee', function ($employeeQuery) use ($lowerSearch) {
+                                        $employeeQuery->where(DB::raw('LOWER(name)'), 'like', '%' . $lowerSearch . '%');
+                                    });
+                    })
                     ->select($this->field);
-        // if ($search !== null) {
-        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        // }
         return $query->paginate($perPage);
     }
 
@@ -82,5 +87,28 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
             return $employeelegality;
         }
         return null;
+    }
+
+    public function employeeLegalitiesEnded($perPage, $search = null)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'legalityType' => function ($query) {
+                            $query->select('id', 'name', 'active', 'extended');
+                        },
+                    ])
+                    ->where('ended_at', '<=', now()->addMonths(3)->toDateString())
+                    ->where(function ($subquery) use ($search) {
+                        $lowerSearch = strtolower($search);
+                        $subquery->orWhere('employee_id', $lowerSearch)
+                                    ->orWhereHas('employee', function ($employeeQuery) use ($lowerSearch) {
+                                        $employeeQuery->where(DB::raw('LOWER(name)'), 'like', '%' . $lowerSearch . '%');
+                                    });
+                    })
+                    ->select($this->field);
+        return $query->orderBy('ended_at', 'ASC')->paginate($perPage);
     }
 }

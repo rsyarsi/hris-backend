@@ -79,4 +79,9 @@ class EmployeeLegalityService implements EmployeeLegalityServiceInterface
     {
         return $this->repository->destroy($id);
     }
+
+    public function employeeLegalitiesEnded($perPage, $search)
+    {
+        return $this->repository->employeeLegalitiesEnded($perPage, $search);
+    }
 }
