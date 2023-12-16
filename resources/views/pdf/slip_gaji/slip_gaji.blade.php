@@ -833,7 +833,7 @@
                         alt=""
                         class="bee-fixedwidth"
                         src="https://hrmsyarsi.netlify.app/logo.png"
-                        style="max-width: 385px"
+                        style="max-width: 150px"
                     />
                 </div>
             </div>

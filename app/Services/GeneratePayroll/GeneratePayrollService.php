@@ -66,12 +66,13 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
             $pdf->setPaper('a4', 'potrait');
             // Generate a unique filename
             $filename = $item->period_payroll . '-' . $item->employeement_id . '.pdf';
-
+            // save to local
+            // Storage::put('hrd/slip/' . $filename, $pdf->output());
             $s3FilePath = 'hrd/slip/' . $filename;
             Storage::disk('s3')->put($s3FilePath, $pdf->output());
             Storage::disk('s3')->setVisibility($s3FilePath, 'public');
             $fileUrl = Storage::disk('s3')->url($s3FilePath);
-            // Send email with attached PDF
+            // // Send email with attached PDF
             Mail::to($item->employee_email)->send(new SlipGajiEmail($item, $s3FilePath));
 
             return [
@@ -93,7 +94,7 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         foreach ($items as $item) {
             $pdf = PDF::setOptions(['isRemoteEnabled' => TRUE, 'enable_javascript' => TRUE]);
             $pdf = PDF::loadView('pdf.slip_gaji.slip_gaji', compact('item'));
-            $pdf->setPaper('a4', 'potrait');
+            $pdf->setPaper('letter', 'potrait');
 
             // Generate a unique filename
             $filename = $item->period_payroll . '-' . $item->employeement_id . '.pdf';
