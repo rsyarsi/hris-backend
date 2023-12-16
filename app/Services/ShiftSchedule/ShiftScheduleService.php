@@ -71,8 +71,10 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
             $data['holiday'] = 1;
         }
 
-        if ($shift && $shift->libur == 1) {
+        if ($shift && $shift->libur == "1") {
             $data['holiday'] = 1;
+        } else {
+            $data['holiday'] = 0;
         }
 
         return $this->repository->update($id, $data);

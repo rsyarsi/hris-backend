@@ -115,8 +115,11 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         return $query->orderBy('period_payroll', 'DESC')->paginate($perPage);
     }
 
-    public function sendSlipGaji($employeeId)
+    public function indexPeriod($period)
     {
-        //
+        return $this->model
+                    ->where('period_payroll', $period)
+                    ->where('employee_email', '!=', null)
+                    ->get($this->field);
     }
 }

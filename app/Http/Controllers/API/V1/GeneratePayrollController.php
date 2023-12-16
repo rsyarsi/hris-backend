@@ -123,4 +123,15 @@ class GeneratePayrollController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function sendSlipGajiPeriod(Request $request)
+    {
+        try {
+            $period = $request->input('period');
+            $generatepayrolls = $this->generatePayrollService->sendSlipGajiPeriod($period);
+            return $this->success('Slip Gaji Send successfully!', $generatepayrolls);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

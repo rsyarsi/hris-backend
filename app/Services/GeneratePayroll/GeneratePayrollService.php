@@ -22,6 +22,11 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         return $this->repository->index($perPage, $search, $unit);
     }
 
+    public function indexPeriod($period)
+    {
+        return $this->repository->indexPeriod($period);
+    }
+
     public function store(array $data)
     {
         return $this->repository->store($data);
@@ -61,14 +66,11 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
             $pdf->setPaper('a4', 'potrait');
             // Generate a unique filename
             $filename = $item->period_payroll . '-' . $item->employeement_id . '.pdf';
-            // Save the PDF to local storage
-            // Storage::put('slip/' . $filename, $pdf->output());
 
             $s3FilePath = 'hrd/slip/' . $filename;
             Storage::disk('s3')->put($s3FilePath, $pdf->output());
             Storage::disk('s3')->setVisibility($s3FilePath, 'public');
             $fileUrl = Storage::disk('s3')->url($s3FilePath);
-            // return $fileUrl;
             // Send email with attached PDF
             Mail::to($item->employee_email)->send(new SlipGajiEmail($item, $s3FilePath));
 
@@ -81,4 +83,38 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         }
         return null;
     }
+
+    public function sendSlipGajiPeriod($period)
+    {
+        $results = [];
+
+        $items = $this->repository->indexPeriod($period);
+
+        foreach ($items as $item) {
+            $pdf = PDF::setOptions(['isRemoteEnabled' => TRUE, 'enable_javascript' => TRUE]);
+            $pdf = PDF::loadView('pdf.slip_gaji.slip_gaji', compact('item'));
+            $pdf->setPaper('a4', 'potrait');
+
+            // Generate a unique filename
+            $filename = $item->period_payroll . '-' . $item->employeement_id . '.pdf';
+
+            $s3FilePath = 'hrd/slip/' . $filename;
+            Storage::disk('s3')->put($s3FilePath, $pdf->output());
+            Storage::disk('s3')->setVisibility($s3FilePath, 'public');
+            $fileUrl = Storage::disk('s3')->url($s3FilePath);
+
+            // Send email with attached PDF
+            Mail::to($item->employee_email)->send(new SlipGajiEmail($item, $s3FilePath));
+
+            $results[] = [
+                'file_name' => $filename,
+                'file_path' => $s3FilePath,
+                'file_url' => $fileUrl,
+                'email_address' => $item->employee_email
+            ];
+        }
+
+        return $results;
+    }
+
 }
