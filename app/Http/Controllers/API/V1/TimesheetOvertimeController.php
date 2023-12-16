@@ -27,7 +27,8 @@ class TimesheetOvertimeController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $timesheetOvertime = $this->timesheetOvertimeService->index($perPage, $search);
+            $period = $request->input('period');
+            $timesheetOvertime = $this->timesheetOvertimeService->index($perPage, $search, $period);
             return $this->success('Timesheet Overtime retrieved successfully', $timesheetOvertime);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

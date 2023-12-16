@@ -45,7 +45,7 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
         $this->employeeService = $employeeService;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $period)
     {
         $query = $this->model
                     ->with(['employee' => function ($query)
@@ -54,12 +54,11 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
                         },
                     ])
                     ->select($this->field)
+                    ->where('period', 'like', "%{$period}%")
                     ->where(function ($query) use ($search) {
-                        $query->where('period', 'like', "%{$search}%")
-                            ->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->where('name', 'like', "%{$search}%");
-                            });
+                        $lowerSearch = strtolower($search);
+                        $query->where('employee_id', $lowerSearch)
+                            ->orWhere(DB::raw('LOWER(employee_name)'), 'like', "%{$lowerSearch}%");
                     });
         return $query->orderBy('schedule_date_in_at', 'DESC')->paginate($perPage);
     }

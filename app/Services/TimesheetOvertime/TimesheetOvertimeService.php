@@ -17,9 +17,9 @@ class TimesheetOvertimeService implements TimesheetOvertimeServiceInterface
         $this->employeeService = $employeeService;
     }
 
-    public function index($perPage, $search)
+    public function index($perPage, $search, $period)
     {
-        return $this->repository->index($perPage, $search);
+        return $this->repository->index($perPage, $search, $period);
     }
 
     public function timesheetOvertimeEmployee($perPage, $search, $employeeId)
