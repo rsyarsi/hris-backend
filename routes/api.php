@@ -138,6 +138,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master employee legalities
         Route::resource('employee-legalities', EmployeeLegalityController::class);
         Route::controller(EmployeeLegalityController::class)->group(function () {
+            // route for count employee legalities ended
+            Route::get('count-employee-legalities-ended', 'countEmployeeLegalitiesEnded')->name('count-employee-legalities-ended');
             // route for employee legalities ended
             Route::get('employee-legalities-ended', 'employeeLegalitiesEnded')->name('employee-legalities-ended');
         });

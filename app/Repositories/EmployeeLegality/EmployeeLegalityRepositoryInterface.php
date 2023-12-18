@@ -9,4 +9,5 @@ Interface EmployeeLegalityRepositoryInterface{
     public function update($id, array $data);
     public function destroy($id);
     public function employeeLegalitiesEnded($perPage, $search);
+    public function countEmployeeLegalitiesEnded();
 }

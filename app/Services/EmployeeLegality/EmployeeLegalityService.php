@@ -84,4 +84,9 @@ class EmployeeLegalityService implements EmployeeLegalityServiceInterface
     {
         return $this->repository->employeeLegalitiesEnded($perPage, $search);
     }
+
+    public function countEmployeeLegalitiesEnded()
+    {
+        return $this->repository->countEmployeeLegalitiesEnded();
+    }
 }

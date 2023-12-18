@@ -111,4 +111,22 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
                     ->select($this->field);
         return $query->orderBy('ended_at', 'ASC')->paginate($perPage);
     }
+
+    public function countEmployeeLegalitiesEnded()
+    {
+        $query = $this->model
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'legalityType' => function ($query) {
+                                $query->select('id', 'name', 'active', 'extended');
+                            },
+                        ])
+                        ->where('ended_at', '<=', now()->addMonths(3)->toDateString())
+                        ->count();
+        return [
+            'count' => $query
+        ];
+    }
 }
