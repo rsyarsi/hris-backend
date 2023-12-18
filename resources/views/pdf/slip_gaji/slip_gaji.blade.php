@@ -387,7 +387,7 @@
                                     "
                                                 >
                                     <span class="tinyMce-placeholder"
-                                    >NOVEMBER 2023</span
+                                    >{{ date("M Y", strtotime($item->period)) }}</span
                                     >
                                                 </h1>
                                             </td>
@@ -611,7 +611,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   NIK DISINI</p>
+                                                    <p style="margin: 0">: {{ $item->employeement_id }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -766,7 +766,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        :   NAMA KARYAWAN DISINI
+                                                        : {{ $item->employee_name }}
                                                     </p>
                                                 </div>
                                             </td>
@@ -922,7 +922,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        :   DEPARTEMEN DISINI
+                                                        : {{ $item->employee_department_name }}
                                                     </p>
                                                 </div>
                                             </td>
@@ -1077,7 +1077,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   JABATAN DISINI</p>
+                                                    <p style="margin: 0">: {{ $item->employee_position_name }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -1232,7 +1232,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        :   MARITAL STATUS DISINI
+                                                        : {{ $item->employee->maritalStatus->name }}
                                                     </p>
                                                 </div>
                                             </td>
@@ -1604,7 +1604,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_fix_gapok,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -1720,7 +1720,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_jht,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -1935,7 +1935,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_jp,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2118,7 +2118,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_fix_transport,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2234,7 +2234,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_bpjskesehatan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2429,7 +2429,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_fix_uangmakan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2543,7 +2543,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2738,7 +2738,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_fix_tunjangankemahalan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2852,7 +2852,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3053,7 +3053,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_jabatan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3169,7 +3169,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3352,7 +3352,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_dinasmalam,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3468,7 +3468,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3669,7 +3669,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_tunjanganppr,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3978,7 +3978,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -4094,7 +4094,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:  Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_pph21,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -4277,7 +4277,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_intensifkhusus,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -4586,7 +4586,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_extrafooding,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -4805,7 +4805,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_lembur,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -4919,7 +4919,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:  Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->salary_total_before_zakat,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5077,7 +5077,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5191,7 +5191,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:  Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->zakat,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5349,7 +5349,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5463,7 +5463,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:  Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->salary_after_zakat,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5777,7 +5777,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. ?</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -6349,7 +6349,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_companies_bpjskesehatan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -6605,7 +6605,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_companies_jht,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -6663,7 +6663,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        No. BPJS Tenaga Kerja : 
+                                                        No. BPJS Tenaga Kerja : {{ $item->employee->bpjstk_number }}
                                                     </p>
                                                 </div>
                                             </td>
@@ -6865,7 +6865,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_companies_jkk,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -6923,7 +6923,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        No. BPJS Kesehatan : 
+                                                        No. BPJS Kesehatan : {{ $item->employee->bpjs_number }}
                                                     </p>
                                                 </div>
                                             </td>
@@ -7107,7 +7107,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_companies_jkm,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -7322,7 +7322,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_companies_jp,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -7537,7 +7537,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">:   Rp. 100.000.000</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_bpjskesehatan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
