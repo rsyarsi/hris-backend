@@ -152,7 +152,6 @@ class ShiftScheduleController extends Controller
     {
         try {
             $importShiftSchedule = Excel::import(new ShiftScheduleImport, request()->file('file'));
-            // return $importShiftSchedule;
             return $this->success('Shift schedule imported successfully!', $importShiftSchedule, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
