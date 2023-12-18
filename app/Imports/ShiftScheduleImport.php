@@ -4,7 +4,7 @@ namespace App\Imports;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Models\{Shift, Employee, ShiftGroup, ShiftSchedule};
+use App\Models\{Shift, Employee, GenerateAbsen, ShiftGroup, ShiftSchedule};
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
@@ -41,6 +41,31 @@ class ShiftScheduleImport implements ToModel, WithStartRow
                         ->where('code', $shiftCode)
                         ->first();
 
+        $dateCarbon = Carbon::parse($date);
+        if ($shift->code == "L" || $shift->code == "LIBUR") {
+            $data['period'] = $row[2];
+            $data['date'] = $row[3];
+            $data['day'] = $dateCarbon->format('l');
+            $data['employee_id'] = $employee->id;
+            $data['employment_id'] = $employeeNumber;
+            $data['shift_id'] = $shift->id;
+            $data['date_in_at'] = $date;
+            $data['time_in_at'] = '';
+            $data['date_out_at'] = $date;
+            $data['time_out_at'] = '';
+            $data['schedule_date_in_at'] = $date;
+            $data['schedule_time_in_at'] = '';
+            $data['schedule_date_out_at'] = $date;
+            $data['schedule_time_out_at'] = '';
+            $data['holiday'] = 1;
+            $data['night'] = 0;
+            $data['national_holiday'] = 0;
+            $data['type'] = '';
+            $data['function'] = '';
+            $data['note'] = 'LIBUR';
+            GenerateAbsen::create($data);
+        }
+
         if (!$employee || !$shift) {
             return null; // Skip this row
         }
@@ -62,8 +87,8 @@ class ShiftScheduleImport implements ToModel, WithStartRow
         }
 
         $ulid = Ulid::generate(); // Generate a ULID
+
         $timeIn = Carbon::parse($date . ' ' . $shift->in_time);
-        // $timeOut = Carbon::parse($date . ' ' . $shift->out_time);
         $timeOut = $shift->night_shift == 1
                         ? Carbon::parse($date . ' ' . $shift->out_time)->addDay()
                         : Carbon::parse($date . ' ' . $shift->out_time);
