@@ -180,7 +180,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             ];
             $leave->update($updateLeave);
         }
-        
+
         // firebase
         $typeSend = 'Leaves';
         $employee = $this->employeeService->show($leave->employee_id);
@@ -283,7 +283,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $toDate = Carbon::parse($data['to_date']);
         $employeeId = $leave->employee_id;
         $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
-        
+
         // firebase
         $typeSend = 'Leaves';
         $employee = $this->employeeService->show($leave->employee_id);
@@ -538,7 +538,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $status = $data['leave_status_id'];
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         $date = Carbon::parse($leave->from_date);
-        if ($status == 4) { // if approval HRD
+        if ($status == 5) { // if approval HRD
             $absen = $this->generateAbsenService->findDate($leave->employee_id, $date->toDateString());
             $dataAbsen['period'] = $date->format('Y-m');
             $dataAbsen['employee_id'] = $leave->employee_id;
@@ -581,7 +581,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 'leave_id' => null,
                                 'leave_note' => null
                             ]);
-                
+
                 // update catatan cuti
                 $this->catatanCutiService->updateStatus($leave->id, ['batal' => 1]);
             }
