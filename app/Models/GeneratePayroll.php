@@ -28,7 +28,8 @@ class GeneratePayroll extends Model
         'liability_companies_jht', 'liability_companies_jp', 'liability_companies_bpjskesehatan', 'liability_companies_total',
         'liability_employee_potongan', 'liability_employee_jht', 'liability_employee_jp', 'liability_employee_bpjskesehatan',
         'liability_employee_pph21', 'liability_employee_total', 'salary_total', 'salary_total_before_zakat',
-        'zakat', 'salary_after_zakat', 'period_payroll'
+        'zakat', 'salary_after_zakat', 'period_payroll', 'thr', 'liability_employee_foods', 'liability_employee_absens',
+        'notes'
     ];
 
     public function employee()

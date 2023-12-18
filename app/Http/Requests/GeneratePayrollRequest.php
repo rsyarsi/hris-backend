@@ -47,7 +47,11 @@ class GeneratePayrollRequest extends FormRequest
             'salary_total_before_zakat' => 'nullable|numeric',
             'liability_employee_potongan' => 'nullable|numeric',
             'zakat' => 'nullable|numeric',
-            'period_payroll' => 'nullable|numeric',
+            'period_payroll' => 'nullable|string',
+            'thr' => 'nullable|numeric',
+            'liability_employee_foods' => 'nullable|numeric',
+            'liability_employee_absens' => 'nullable|numeric',
+            'notes' => 'nullable|string',
         ];
     }
 

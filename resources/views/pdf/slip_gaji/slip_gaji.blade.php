@@ -387,7 +387,7 @@
                                     "
                                                 >
                                     <span class="tinyMce-placeholder"
-                                    >{{ date("M Y", strtotime($item->period)) }}</span
+                                    >{{ date("M Y", strtotime($item->period_payroll)) }}</span
                                     >
                                                 </h1>
                                             </td>
@@ -2543,7 +2543,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_foods,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -2852,7 +2852,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_absens,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3169,7 +3169,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->liability_employee_potongan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3468,7 +3468,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->salary_total_before_zakat,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -3978,7 +3978,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->employee_tunjangan_hdm,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5077,7 +5077,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->kelebihanpotongan,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5349,7 +5349,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->salary_bruto,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -5777,7 +5777,7 @@
                                       mso-line-height-alt: 14.399999999999999px;
                                     "
                                                 >
-                                                    <p style="margin: 0">: Rp. ?</p>
+                                                    <p style="margin: 0">: Rp. {{ number_format($item->thr,0,",",".") }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -7782,7 +7782,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0; margin-bottom: 16px">
-                                                        Catatan tambahan disini
+                                                        {{ $item->notes }}
                                                     </p>
                                                     <p style="margin: 0; margin-bottom: 16px"></p>
                                                 </div>
