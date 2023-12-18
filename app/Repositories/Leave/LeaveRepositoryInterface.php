@@ -15,4 +15,5 @@ Interface LeaveRepositoryInterface
     public function leaveStatus($perPage, $search, $overtimeStatus);
     public function updateStatus($id, array $data);
     public function leaveSisa($employeeId);
+    public function leaveSupervisorOrManagerMobile($employeeId);
 }

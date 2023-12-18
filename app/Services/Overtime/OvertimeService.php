@@ -101,4 +101,9 @@ class OvertimeService implements OvertimeServiceInterface
     {
         return $this->repository->overtimeEmployeeToday($employeeId);
     }
+
+    public function overtimeSupervisorOrManagerMobile($employeeId)
+    {
+        return $this->repository->overtimeSupervisorOrManagerMobile($employeeId);
+    }
 }

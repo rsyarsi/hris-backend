@@ -122,7 +122,18 @@ class OvertimeController extends Controller
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $overtimes = $this->overtimeService->overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);
-            return $this->success('Overtime where manager/supervisor login retrieved successfully', $overtimes);
+            return $this->success('Overtime where manager/supervisor/kabag login retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function overtimeSupervisorOrManagerMobile(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $overtimes = $this->overtimeService->overtimeSupervisorOrManagerMobile($employeeId);
+            return $this->success('Overtime where manager/supervisor/kabag mobile retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

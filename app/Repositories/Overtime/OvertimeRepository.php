@@ -262,6 +262,27 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return $query->paginate($perPage);
     }
 
+    public function overtimeSupervisorOrManagerMobile($employeeId)
+    {
+        $subordinateIds = Employee::where('supervisor_id', $employeeId)
+                                    ->orWhere('manager_id', $employeeId)
+                                    ->orWhere('kabag_id', $employeeId)
+                                    ->pluck('id');
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'overtimeStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                    ])
+                    ->select($this->field);
+
+        $query->whereIn('employee_id', $subordinateIds);
+        return $query->get();
+    }
+
     public function overtimeStatus($perPage, $search = null, $overtimeStatus = null)
     {
         $query = $this->model

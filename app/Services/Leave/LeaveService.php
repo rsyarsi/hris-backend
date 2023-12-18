@@ -128,6 +128,11 @@ class LeaveService implements LeaveServiceInterface
         return null;
     }
 
+    public function leaveSupervisorOrManagerMobile($employeeId)
+    {
+        return $this->repository->leaveSupervisorOrManagerMobile($employeeId);
+    }
+
     public function leaveStatus($perPage, $search, $leaveStatus)
     {
         $search = Str::upper($search);

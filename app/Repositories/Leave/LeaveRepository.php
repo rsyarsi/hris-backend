@@ -491,6 +491,44 @@ class LeaveRepository implements LeaveRepositoryInterface
         return $query->paginate($perPage);
     }
 
+    public function leaveSupervisorOrManagerMobile($employeeId)
+    {
+        // Get employees supervised or managed by the logged-in user
+        $subordinateIds = Employee::where('supervisor_id', $employeeId)
+                                    ->orWhere('manager_id', $employeeId)
+                                    ->orWhere('kabag_id', $employeeId)
+                                    ->pluck('id');
+
+        $query = $this->model
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment'
+                    );
+                }
+            ])
+            ->select($this->field);
+
+        // Filter leave data for supervised or managed employees
+        $query->whereIn('employee_id', $subordinateIds);
+        return $query->get();
+    }
+
     public function leaveStatus($perPage, $search = null, $leaveStatus = null)
     {
         $query = $this->model
