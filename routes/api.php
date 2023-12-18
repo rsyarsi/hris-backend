@@ -264,10 +264,14 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('leave-employee-mobile', 'leaveEmployeeMobile')->name('leave-employee-mobile');
         // route for leave where supervisor or manager login
         Route::get('leave-supervisor-manager', 'leaveSupervisorOrManager')->name('leave-supervisor-manager');
+        // route for leave where supervisor or manager mobile
+        Route::get('leave-supervisor-manager-mobile', 'leaveSupervisorOrManagerMobile')->name('leave-supervisor-manager-mobile');
         // route for leave where status
         Route::get('leave-where-statuses', 'leaveStatus')->name('leave-where-statuses');
         // route for leave update status(approval/rejected)
         Route::post('leave-update-statuses/{id}', 'updateStatus')->name('leave-update-statuses');
+        // route for get data sisa cuti, if select type cuti tahunan
+        Route::post('leave-sisa', 'leaveSisa')->name('leave-sisa');
     });
     // route for leave-histories
     Route::resource('leave-histories', LeaveHistoryController::class);
@@ -284,6 +288,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('overtime-employee-today', 'overtimeEmployeeToday')->name('overtime-employee-today');
         // route for Overtime where supervisor or manager login
         Route::get('overtime-supervisor-manager', 'overtimeSupervisorOrManager')->name('overtime-supervisor-manager');
+        // route for Overtime where supervisor or manager mobile
+        Route::get('overtime-supervisor-manager-mobile', 'overtimeSupervisorOrManagerMobile')->name('overtime-supervisor-manager-mobile');
         // route for overtime where status
         Route::get('overtime-where-statuses', 'overtimeStatus')->name('overtime-where-statuses');
         // route for overtime update status(approval/rejected)

@@ -624,4 +624,12 @@ class LeaveRepository implements LeaveRepositoryInterface
         }
         return null;
     }
+
+    function leaveSisa($employeeId)
+    {
+        $sisaCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($employeeId);
+        return [
+            'leaves_qty_akhir' => $sisaCutiLatest->quantity_akhir
+        ];
+    }
 }

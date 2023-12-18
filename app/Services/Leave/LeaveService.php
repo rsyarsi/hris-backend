@@ -138,4 +138,9 @@ class LeaveService implements LeaveServiceInterface
     {
         return $this->repository->updateStatus($id, $data);
     }
+
+    public function leaveSisa($employeeId)
+    {
+        return $this->repository->leaveSisa($employeeId);
+    }
 }

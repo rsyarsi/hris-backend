@@ -153,4 +153,19 @@ class LeaveController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function leaveSisa(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $leave = $this->leaveService->leaveSisa($employeeId);
+            if (!$leave) {
+                return $this->error('Leave not found', 404);
+            }
+            return $this->success('Sisa Cuti retrieved successfully', $leave, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
 }
