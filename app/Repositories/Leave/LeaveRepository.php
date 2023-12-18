@@ -535,26 +535,37 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function updateStatus($id, $data)
     {
         $leave = $this->model->find($id);
+        // return $leave;
         $status = $data['leave_status_id'];
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
-        $date = Carbon::parse($leave->from_date);
+        // $date = Carbon::parse($leave->from_date);
         if ($status == 5) { // if approval HRD
-            $absen = $this->generateAbsenService->findDate($leave->employee_id, $date->toDateString());
-            $dataAbsen['period'] = $date->format('Y-m');
-            $dataAbsen['employee_id'] = $leave->employee_id;
-            $dataAbsen['date'] = $date->toDateString();
-            $dataAbsen['day'] = $date->format('l');
-            $dataAbsen['leave_id'] = $leave->id;
-            $dataAbsen['leave_type_id'] = $leave->leave_type_id;
-            $dataAbsen['leave_time_at'] = $leave->from_date;
-            $dataAbsen['leave_out_at'] = $leave->to_date;
-            $dataAbsen['schedule_leave_time_at'] = $leave->from_date;
-            $dataAbsen['schedule_leave_out_at'] = $leave->to_date;
-            $dataAbsen['schedule_leave_out_at'] = $leave->to_date;
-            if (!$absen) { // if in the table generate_absen not exists -> created the data.
-                $this->generateAbsenService->store($dataAbsen);
-            } else {
-                $this->generateAbsenService->update($absen->id, $dataAbsen);
+            $startDate = Carbon::parse($leave->from_date);
+            $endDate = Carbon::parse($leave->to_date);
+
+            while ($startDate->lte($endDate)) {
+                $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
+
+                $dataAbsen = [
+                    'period' => $startDate->format('Y-m'),
+                    'employee_id' => $leave->employee_id,
+                    'date' => $startDate->toDateString(),
+                    'day' => $startDate->format('l'),
+                    'leave_id' => $leave->id,
+                    'leave_type_id' => $leave->leave_type_id,
+                    'leave_time_at' => $leave->from_date,
+                    'leave_out_at' => $leave->to_date,
+                    'schedule_leave_time_at' => $leave->from_date,
+                    'schedule_leave_out_at' => $leave->to_date,
+                ];
+
+                if (!$absen) { // if in the table generate_absen not exists -> create the data.
+                    $this->generateAbsenService->store($dataAbsen);
+                } else {
+                    $this->generateAbsenService->update($absen->id, $dataAbsen);
+                }
+
+                $startDate->addDay(); // Move to the next day
             }
         }
         if ($leave) {
