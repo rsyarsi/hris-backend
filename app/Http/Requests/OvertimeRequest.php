@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
-use App\Rules\{DateSmallerThan, NotOverlappingPermissionsOvertimes};
+use App\Rules\{DateSmallerThan, UniqueOvertimeDateRange};
 
 class OvertimeRequest extends FormRequest
 {
@@ -25,24 +25,26 @@ class OvertimeRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'employee_id' => 'required|exists:employees,id',
             'task' => 'required|max:255',
             'note' => 'required|max:255',
             'overtime_status_id' => 'required|exists:overtime_statuses,id',
             'amount' => 'required|max:18',
             'type' => 'required|string|max:255',
-            'from_date' => ['required',
+            'from_date' => [
+                            'required',
                             'date',
-                            // new NotOverlappingPermissionsOvertimes(
-                            //     $this->input('employee_id'),
-                            //     $this->input('from_date'),
-                            //     $this->input('to_date')
-                            // ),
-                            new DateSmallerThan('to_date'),
+                            new DateSmallerThan('to_date')
                         ],
             'to_date' => 'required|date',
         ];
+
+        if ($this->isMethod('post')) {
+            $rules['from_date'][] = new UniqueOvertimeDateRange();
+        }
+
+        return $rules;
     }
 
     protected function failedValidation($validator)

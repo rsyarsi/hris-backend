@@ -265,11 +265,13 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for leave where supervisor or manager login
         Route::get('leave-supervisor-manager', 'leaveSupervisorOrManager')->name('leave-supervisor-manager');
         // route for leave where supervisor or manager mobile
-        Route::get('leave-supervisor-manager-mobile', 'leaveSupervisorOrManagerMobile')->name('leave-supervisor-manager-mobile');
+        Route::post('leave-supervisor-manager-mobile', 'leaveSupervisorOrManagerMobile')->name('leave-supervisor-manager-mobile');
         // route for leave where status
         Route::get('leave-where-statuses', 'leaveStatus')->name('leave-where-statuses');
         // route for leave update status(approval/rejected)
         Route::post('leave-update-statuses/{id}', 'updateStatus')->name('leave-update-statuses');
+        // route for leave update status mobile
+        Route::post('leave-update-statuses-mobile', 'updateStatusMobile')->name('leave-update-statuses-mobile');
         // route for get data sisa cuti, if select type cuti tahunan
         Route::post('leave-sisa', 'leaveSisa')->name('leave-sisa');
     });
@@ -289,10 +291,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for Overtime where supervisor or manager login
         Route::get('overtime-supervisor-manager', 'overtimeSupervisorOrManager')->name('overtime-supervisor-manager');
         // route for Overtime where supervisor or manager mobile
-        Route::get('overtime-supervisor-manager-mobile', 'overtimeSupervisorOrManagerMobile')->name('overtime-supervisor-manager-mobile');
+        Route::post('overtime-supervisor-manager-mobile', 'overtimeSupervisorOrManagerMobile')->name('overtime-supervisor-manager-mobile');
         // route for overtime where status
         Route::get('overtime-where-statuses', 'overtimeStatus')->name('overtime-where-statuses');
         // route for overtime update status(approval/rejected)
         Route::post('overtime-update-statuses/{id}', 'updateStatus')->name('overtime-update-statuses');
+        // route for overtime update status mobile
+        Route::post('overtime-update-statuses-mobile', 'updateStatusMobile')->name('overtime-update-statuses-mobile');
     });
 });

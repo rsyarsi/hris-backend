@@ -45,6 +45,6 @@ class DateSmallerThan implements Rule
      */
     public function message()
     {
-        return 'The from date must be smaller than or equal to the to date.';
+        return 'Tanggal mulai harus lebih kecil dari tanggal selesai!';
     }
 }

@@ -53,6 +53,6 @@ class NotOverlappingPermissionsLeaves implements Rule
 
     public function message()
     {
-        return 'Employee already has a permission for the same date range.';
+        return 'Karyawan sudah mengajukan leaves di hari yang sama!.';
     }
 }

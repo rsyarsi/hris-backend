@@ -16,14 +16,16 @@ class NotOverlappingPermissionsOvertimes implements Rule
     protected $employeeId;
     protected $fromDate;
     protected $toDate;
+    protected $recordId; // New property to store the record ID being updated
 
-    public function __construct($employeeId, $fromDate, $toDate)
+    public function __construct($employeeId, $fromDate, $toDate, $recordId = null)
     {
         $this->employeeId = $employeeId;
         $this->fromDate = $fromDate;
         $this->toDate = $toDate;
+        $this->recordId = $recordId; // Set the record ID
     }
-
+    
     /**
      * Determine if the validation rule passes.
      *
@@ -43,7 +45,7 @@ class NotOverlappingPermissionsOvertimes implements Rule
         // Allow a difference of one minute (60 seconds)
         $minimumDifference = 60; // 60 seconds
 
-        $overlappingPermissions = Overtime::where('employee_id', $this->employeeId)
+        $query = Overtime::where('employee_id', $this->employeeId)
             ->where(function ($query) use ($fromDate, $toDate, $minimumDifference) {
                 $query->where(function ($q) use ($fromDate, $toDate, $minimumDifference) {
                     $q->where('from_date', '<', $toDate->subSeconds($minimumDifference))
@@ -51,6 +53,13 @@ class NotOverlappingPermissionsOvertimes implements Rule
                 });
             })
             ->count();
+
+        // Exclude the current record from the validation check when updating
+        if ($this->recordId) {
+            $query->where('id', '!=', $this->recordId);
+        }
+
+        $overlappingPermissions = $query->count();
 
         return $overlappingPermissions === 0;
     }
@@ -62,6 +71,6 @@ class NotOverlappingPermissionsOvertimes implements Rule
      */
     public function message()
     {
-        return 'Employee already has a permission for the same date range.';
+        return 'Karyawan sudah mengajukan lembur di hari yang sama!.';
     }
 }

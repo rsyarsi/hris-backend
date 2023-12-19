@@ -64,7 +64,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
                                             ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
                                             ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                            ->exists();
+                                            ->first();
         if (!$checkShiftSchedule) {
             return [
                 'message' => 'Validation Error!',
@@ -73,8 +73,17 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
-        $typeSend = 'Overtime';
+        if ($checkShiftSchedule->leave_id !== null) {
+            return [
+                'message' => 'Validation Error!',
+                'success' => false,
+                'code' => 422,
+                'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
+            ];
+        }
+
         $overtime = $this->model->create($data);
+        $typeSend = 'Overtime';
         $employee = $this->employeeService->show($overtime->employee_id);
         $registrationIds = [];
         if($employee->supervisor != null){
@@ -123,24 +132,25 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function update($id, $data)
     {
-        $typeSend = 'Overtime';
         $overtime = $this->model->find($id);
+        $typeSend = 'Overtime';
         $employee = $this->employeeService->show($overtime->employee_id);
-
         $registrationIds = [];
-
-        if ($employee && $employee->supervisor !== null) {
-            $registrationIds[] = $employee->supervisor->user->firebase_id;
+        if($employee->supervisor != null){
+            if($employee->supervisor->user != null){
+                $registrationIds[] = $employee->supervisor->user->firebase_id;
+            }
         }
-
-        if ($employee && $employee->manager !== null) {
-            $registrationIds[] = $employee->manager->user->firebase_id;
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
         }
-
-        if ($employee && $employee->kabag !== null) {
-            $registrationIds[] = $employee->kabag->user->firebase_id;
+        if($employee->manager_id != null ){
+            if($employee->manager->user != null){
+                $registrationIds[] = $employee->manager->user->firebase_id;
+            }
         }
-
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
             $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
@@ -268,19 +278,25 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                     ->orWhere('manager_id', $employeeId)
                                     ->orWhere('kabag_id', $employeeId)
                                     ->pluck('id');
-        $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'overtimeStatus' => function ($query) {
-                            $query->select('id', 'name');
-                        },
+        return DB::table('overtimes')
+                    ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
+                    ->leftJoin('overtime_statuses', 'overtimes.overtime_status_id', '=', 'overtime_statuses.id')
+                    ->select([
+                        'overtimes.id',
+                        'overtimes.employee_id',
+                        'overtimes.task',
+                        'overtimes.note',
+                        'overtimes.overtime_status_id',
+                        'overtimes.from_date',
+                        'overtimes.amount',
+                        'overtimes.type',
+                        'overtimes.to_date',
+                        'overtimes.duration',
+                        'employees.name as employee_name',
+                        'overtime_statuses.name as overtime_status_name',
                     ])
-                    ->select($this->field);
-
-        $query->whereIn('employee_id', $subordinateIds);
-        return $query->get();
+                    ->whereIn('overtimes.employee_id', $subordinateIds)
+                    ->get();
     }
 
     public function overtimeStatus($perPage, $search = null, $overtimeStatus = null)
@@ -315,6 +331,60 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $overtime = $this->model->find($id);
         if ($overtime) {
             $overtime->update(['overtime_status_id' => $data['overtime_status_id']]);
+            $typeSend = 'Overtime Update';
+            $employee = $this->employeeService->show($overtime->employee_id);
+            $registrationIds = [];
+            if($employee->supervisor != null){
+                if($employee->supervisor->user != null){
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
+            }
+            if($employee->kabag_id != null ){
+                if($employee->kabag->user != null){
+                    $registrationIds[] = $employee->kabag->user->firebase_id;
+                }
+            }
+            if($employee->manager_id != null ){
+                if($employee->manager->user != null){
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
+            }
+            // Check if there are valid registration IDs before sending the notification
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            }
+            return $overtime;
+        }
+        return null;
+    }
+
+    public function updateStatusMobile($overtimeId, $overtimeStatusId)
+    {
+        $overtime = $this->model->find($overtimeId);
+        if ($overtime) {
+            $overtime->update(['overtime_status_id' => $overtimeStatusId]);
+            $typeSend = 'Overtime Update';
+            $employee = $this->employeeService->show($overtime->employee_id);
+            $registrationIds = [];
+            if($employee->supervisor != null){
+                if($employee->supervisor->user != null){
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
+            }
+            if($employee->kabag_id != null ){
+                if($employee->kabag->user != null){
+                    $registrationIds[] = $employee->kabag->user->firebase_id;
+                }
+            }
+            if($employee->manager_id != null ){
+                if($employee->manager->user != null){
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
+            }
+            // Check if there are valid registration IDs before sending the notification
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            }
             return $overtime;
         }
         return null;

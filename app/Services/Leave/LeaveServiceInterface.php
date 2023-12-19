@@ -14,5 +14,6 @@ interface LeaveServiceInterface
     public function leaveSupervisorOrManagerMobile($employeeId);
     public function leaveStatus($perPage, $search, $leaveStatus);
     public function updateStatus($id, array $data);
+    public function updateStatusMobile($leaveId, $leaveStatusId);
     public function leaveSisa($employeeId);
 }

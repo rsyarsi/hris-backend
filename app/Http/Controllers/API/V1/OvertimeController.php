@@ -166,6 +166,21 @@ class OvertimeController extends Controller
         }
     }
 
+    public function updateStatusMobile(OvertimeNewStatusRequest $request)
+    {
+        try {
+            $overtimeId = $request->input('overtime_id');
+            $overtimeStatusId = $request->input('overtime_status_id');
+            $overtime = $this->overtimeService->updateStatusMobile($overtimeId, $overtimeStatusId);
+            if (!$overtime) {
+                return $this->error('Overtime not found', 404);
+            }
+            return $this->success('Overtime status updated successfully', [$overtime], 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function overtimeEmployeeToday(Request $request)
     {
         try {

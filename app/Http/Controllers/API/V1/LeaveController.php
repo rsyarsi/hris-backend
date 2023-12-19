@@ -165,6 +165,21 @@ class LeaveController extends Controller
         }
     }
 
+    public function updateStatusMobile(LeaveNewStatusRequest $request)
+    {
+        try {
+            $leaveId = $request->input('leave_id');
+            $leaveStatusId = $request->input('leave_status_id');
+            $leave = $this->leaveService->updateStatusMobile($leaveId, $leaveStatusId);
+            if (!$leave) {
+                return $this->error('Leave not found', 404);
+            }
+            return $this->success('Leave status updated successfully', [$leave], 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function leaveSisa(Request $request)
     {
         try {

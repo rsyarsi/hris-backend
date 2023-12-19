@@ -97,6 +97,11 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->updateStatus($id, $data);
     }
 
+    public function updateStatusMobile($overtimeId, $overtimeStatusId)
+    {
+        return $this->repository->updateStatusMobile($overtimeId, $overtimeStatusId);
+    }
+
     public function overtimeEmployeeToday($employeeId)
     {
         return $this->repository->overtimeEmployeeToday($employeeId);

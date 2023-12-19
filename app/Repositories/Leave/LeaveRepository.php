@@ -498,35 +498,38 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     ->orWhere('manager_id', $employeeId)
                                     ->orWhere('kabag_id', $employeeId)
                                     ->pluck('id');
-
-        $query = $this->model
-            ->with([
-                'employee' => function ($query) {
-                    $query->select('id', 'name');
-                },
-                'leaveType' => function ($query) {
-                    $query->select('id', 'name', 'is_salary_deduction', 'active');
-                },
-                'leaveStatus' => function ($query) {
-                    $query->select('id', 'name');
-                },
-                'leaveHistory' => function ($query) {
-                    $query->select(
-                        'id',
-                        'leave_id',
-                        'description',
-                        'ip_address',
-                        'user_id',
-                        'user_agent',
-                        'comment'
-                    );
-                }
-            ])
-            ->select($this->field);
-
-        // Filter leave data for supervised or managed employees
-        $query->whereIn('employee_id', $subordinateIds);
-        return $query->get();
+        return DB::table('leaves')
+                ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+                ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+                ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+                ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
+                ->select([
+                    'leaves.id',
+                    'leaves.employee_id',
+                    'leaves.leave_type_id',
+                    'leaves.from_date',
+                    'leaves.to_date',
+                    'leaves.duration',
+                    'leaves.note',
+                    'leaves.leave_status_id',
+                    'leaves.quantity_cuti_awal',
+                    'leaves.sisa_cuti',
+                    'leaves.file_url',
+                    'leaves.file_path',
+                    'leaves.file_disk',
+                    'employees.name as employee_name',
+                    'leave_types.name as leave_type_name',
+                    'leave_statuses.name as leave_status_name',
+                    'leave_histories.id as leave_history_id',
+                    'leave_histories.description as leave_histories_description',
+                    'leave_histories.ip_address as leave_histories_ip_address',
+                    'leave_histories.user_id as leave_histories_user_id',
+                    'leave_histories.user_agent as leave_histories_user_agent',
+                    'leave_histories.comment as leave_histories_comment',
+                ])
+                ->whereIn('employee_id', $subordinateIds)
+                ->orderBy('from_date', 'DESC')
+                ->get();
     }
 
     public function leaveStatus($perPage, $search = null, $leaveStatus = null)
@@ -573,7 +576,6 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function updateStatus($id, $data)
     {
         $leave = $this->model->find($id);
-        // return $leave;
         $status = $data['leave_status_id'];
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         // $date = Carbon::parse($leave->from_date);
@@ -631,6 +633,93 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 'leave_note' => null
                             ]);
 
+                // update catatan cuti
+                $this->catatanCutiService->updateStatus($leave->id, ['batal' => 1]);
+            }
+
+            // firebase
+            $typeSend = 'Leaves Update';
+            $employee = $this->employeeService->show($leave->employee_id);
+            $registrationIds = [];
+            if($employee->supervisor != null){
+                if($employee->supervisor->user != null){
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
+            }
+            if($employee->kabag_id != null ){
+                if($employee->kabag->user != null){
+                    $registrationIds[] = $employee->kabag->user->firebase_id;
+                }
+            }
+            if($employee->manager_id != null ){
+                if($employee->manager->user != null){
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
+            }
+            // Check if there are valid registration IDs before sending the notification
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            }
+            return $leave;
+        }
+        return null;
+    }
+
+    public function updateStatusMobile($leaveId, $leaveStatusId)
+    {
+        $leave = $this->model->find($leaveId);
+        $leaveStatus = $this->leaveStatus->show($leaveStatusId);
+        if ($leaveStatusId == 5) { // if approval HRD
+            $startDate = Carbon::parse($leave->from_date);
+            $endDate = Carbon::parse($leave->to_date);
+            while ($startDate->lte($endDate)) {
+                $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
+                $dataAbsen = [
+                    'period' => $startDate->format('Y-m'),
+                    'employee_id' => $leave->employee_id,
+                    'date' => $startDate->toDateString(),
+                    'day' => $startDate->format('l'),
+                    'leave_id' => $leave->id,
+                    'leave_type_id' => $leave->leave_type_id,
+                    'leave_time_at' => $leave->from_date,
+                    'leave_out_at' => $leave->to_date,
+                    'schedule_leave_time_at' => $leave->from_date,
+                    'schedule_leave_out_at' => $leave->to_date,
+                ];
+                if (!$absen) { // if in the table generate_absen not exists -> create the data.
+                    $this->generateAbsenService->store($dataAbsen);
+                } else {
+                    $this->generateAbsenService->update($absen->id, $dataAbsen);
+                }
+                $startDate->addDay(); // Move to the next day
+            }
+        }
+        if ($leave) {
+            // update leave status in the table leaves
+            $leave->update(['leave_status_id' => $leaveStatusId]);
+            // create leave history in the table leaves history
+            $historyData = [
+                'leave_id' => $leave->id,
+                'user_id' => auth()->id(),
+                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $leave->note,
+            ];
+            $this->leaveHistory->store($historyData);
+
+            // update data batal catatan cuti
+            if (($leave->leave_type_id == 6 || $leave->leave_type_id == 1) && $leaveStatusId == 8) {
+                $leave->update([
+                    'quantity_cuti_awal' => 0,
+                    'sisa_cuti' => 0
+                ]);
+                // update shift schedule
+                ShiftSchedule::where('leave_id', $leave->id)
+                            ->update([
+                                'leave_id' => null,
+                                'leave_note' => null
+                            ]);
                 // update catatan cuti
                 $this->catatanCutiService->updateStatus($leave->id, ['batal' => 1]);
             }
