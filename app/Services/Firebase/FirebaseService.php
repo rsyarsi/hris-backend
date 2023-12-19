@@ -27,7 +27,6 @@ class FirebaseService implements FirebaseServiceInterface
             // Log or handle the error as needed
             return 'Error sending notification: ' . $response->body();
         }
-
         return $response->body();
     }
 }

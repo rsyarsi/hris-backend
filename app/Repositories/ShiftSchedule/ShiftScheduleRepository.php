@@ -47,7 +47,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'shift' => function ($query) {
                             $query->select(
@@ -131,7 +131,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $shiftschedule = $this->model
                             ->with([
                                 'employee' => function ($query) {
-                                    $query->select('id', 'name');
+                                    $query->select('id', 'name', 'employment_number');
                                 },
                                 'shift' => function ($query) {
                                     $query->select(

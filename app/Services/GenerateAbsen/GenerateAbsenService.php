@@ -69,7 +69,6 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
 
         $currentDate = Carbon::parse($data['Tanggal']);
         $dateJamMasuk = $data['Tanggal'].' '.$data['Jam'];
-        // $ipAddress = $data['Ip_address'];
 
         $employmentId = $data['Employment_id']; // nip karyawan
         $employee = $this->employeeService->employeeWhereEmployeeNumber($employmentId);
@@ -78,16 +77,18 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         }
         $shiftScheduleId = $data['Id_schedule']; // nip karyawan
         $shiftSchedule = $this->shiftScheduleService->show($shiftScheduleId);
-        // return $shiftSchedule;
-
+        // check if leaves in shift schedule
+        if ($shiftSchedule->leave_id !== null) {
+            return [
+                'message' => 'Terdapat data leaves di shift schedule, hubungi atasan!',
+                'data' => []
+            ];
+        }
         $timeInScheduleCarbon = Carbon::parse($shiftSchedule->time_in);
-
         // Calculate the start of the allowed range (1 hour before $timeInSchedule)
         $allowedStartTime = $timeInScheduleCarbon->copy()->subHour();
-
         // Calculate the end of the allowed range (scheduled time)
         $allowedEndTime = $timeInScheduleCarbon->copy();
-
         if ($function == 'IN') {
             $result = ($jam->gte($allowedStartTime) && $jam->lte($allowedEndTime) || $jam->gt($allowedEndTime)) ? 'yes' : 'no';
             if ($result === 'no') {
@@ -97,7 +98,6 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
                 ];
             }
         }
-
         $timeInSchedule = Carbon::parse($shiftSchedule->time_in);
         $timeOutSchedule = Carbon::parse($shiftSchedule->time_out);
         $data['period'] = $currentDate->format('Y-m');
@@ -106,13 +106,10 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $data['employee_id'] = $employee->id;
         $data['employment_id'] = $employee->employment_number;
         $data['shift_id'] = $shiftSchedule->shift->id;
-
         $data['date_in_at'] = $timeInSchedule->format('Y-m-d');
         $data['time_in_at'] = $jam->format('H:i:s');
-
         $data['date_out_at'] = $timeOutSchedule->format('Y-m-d');
         $data['time_out_at'] = $jam->format('H:i:s');
-
         $data['schedule_date_in_at'] = $timeInSchedule->format('Y-m-d');
         $data['schedule_time_in_at'] = $timeInSchedule->format('H:i:s');
         $data['schedule_date_out_at'] = $timeOutSchedule->format('Y-m-d');
