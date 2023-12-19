@@ -129,7 +129,7 @@ class ShiftScheduleController extends Controller
                     'message' => 'Karyawan tidak ditemukan atau tidak memiliki jadwal hari ini.',
                     'success' => 'false',
                     'code' => 404,
-                    'data' => null,
+                    'data' => [],
                 ]);
             }
         } catch (\Exception $e) {

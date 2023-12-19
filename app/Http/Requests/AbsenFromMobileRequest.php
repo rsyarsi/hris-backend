@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class AbsenFromMobileRequest extends FormRequest
 {
@@ -41,5 +42,20 @@ class AbsenFromMobileRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation Error, please check your data!',
+            'success' => false,
+            'code' => 422,
+            'data' => [],
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

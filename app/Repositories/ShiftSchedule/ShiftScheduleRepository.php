@@ -5,6 +5,7 @@ namespace App\Repositories\ShiftSchedule;
 use Carbon\Carbon;
 use App\Models\Shift;
 use App\Models\Employee;
+use App\Models\GenerateAbsen;
 use App\Models\ShiftGroup;
 use App\Models\ShiftSchedule;
 use Illuminate\Support\Facades\DB;
@@ -340,36 +341,37 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $datwa = Carbon::now()->toDateString();
         // check shift group id apakah Non Shift atau tidak
         // $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
-        // if ($employee->shift_group_id == $nonShiftGroupId) {
-        //     // check di table shift schedule
+        // // check di table shift schedule exists ?
+        // $checkShiftSchedule = DB::table('shift_schedules')
+        //                         ->select('shift_schedules.*')
+        //                         ->where('shift_schedules.employee_id', $employee->id)
+        //                         ->where('shift_schedules.date', $datwa)
+        //                         ->first();
 
-        //     $checkShiftSchedule = DB::table('shift_schedules')
-        //                             ->join('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
-        //                             ->select('shift_schedules.*')
-        //                             ->where('shift_schedules.employee_id', $employee->id)
-        //                             ->where('shift_schedules.date', $datwa)
-        //                             ->where('shifts.shift_group_id', $nonShiftGroupId)
-        //                             ->first();
-        //     if ($checkShiftSchedule == null) {
-        //         // get data shift
-        //         $shiftId = $checkShiftSchedule->shift_id;
-        //         $shift = Shift::where('id', $shiftId)->first();
-        //         // // return $shift;
-        //         // // insert data ke table shift schedule
-        //         $dataShiftSchedule['created_user_id'] = auth()->id();
-        //         $dataShiftSchedule['setup_user_id'] = auth()->id();
-        //         $dataShiftSchedule['setup_at'] = now();
-        //         $dataShiftSchedule['time_in'] = $shiftId ? $dataShiftSchedule['date'] . ' ' . $shift->in_time : null;
-        //         $dataShiftSchedule['time_out'] = $shiftId ? $dataShiftSchedule['date'] . ' ' . $shift->out_time : null;
-        //         $dataShiftSchedule['holiday'] = 1;
-        //         $dataShiftSchedule['night'] = 0;
-        //         $this->model->store($dataShiftSchedule);
-        //         // insert data ke generate absen
-        //     }
+        // $shift = Shift::where('shift_group_id', $nonShiftGroupId)
+        //                 ->where('code', 'N')
+        //                 ->orWhere('name', 'NON SHIFT')
+        //                 ->first();
+
+        // if ($employee->shift_group_id == $nonShiftGroupId && $checkShiftSchedule == null) {
+        //     // insert data ke table shift schedule
+        //     $dataShiftSchedule['shift_id'] = $shift->id;
+        //     $dataShiftSchedule['created_user_id'] = auth()->id();
+        //     $dataShiftSchedule['setup_user_id'] = auth()->id();
+        //     $dataShiftSchedule['setup_at'] = now();
+        //     $dataShiftSchedule['time_in'] = '';
+        //     $dataShiftSchedule['time_out'] = '';
+        //     $dataShiftSchedule['holiday'] = 0;
+        //     $dataShiftSchedule['night'] = 0;
+        //     $dataShiftSchedule['period'] = now()->format('Y-m');
+        //     $dataShiftSchedule['absen_type'] = 'ABSEN';
+        //     $this->model->create($dataShiftSchedule);
+        //     // insert data ke generate absen
+        //     $dataGenerateAbsen['period'] = now()->format('Y-m');
+        //     $dataGenerateAbsen['date'] = $datwa;
+        //     GenerateAbsen::create($dataGenerateAbsen);
 
         // }
-
-
 
         $lembur = DB::table('overtimes')
                     ->select([
