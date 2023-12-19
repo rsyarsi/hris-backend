@@ -3,7 +3,7 @@ namespace App\Repositories\GeneratePayroll;
 
 Interface GeneratePayrollRepositoryInterface
 {
-    public function index($perPage, $search, $unit);
+    public function index($perPage, $search, $unit, $period);
     public function indexPeriod($period);
     public function store(array $data);
     public function show($id);

@@ -26,7 +26,8 @@ class GeneratePayrollController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $unit = $request->input('unit');
-            $generatepayrolls = $this->generatePayrollService->index($perPage, $search, $unit);
+            $period = $request->input('period');
+            $generatepayrolls = $this->generatePayrollService->index($perPage, $search, $unit, $period);
             return $this->success('Generate Payrolls retrieved successfully', $generatepayrolls);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

@@ -36,7 +36,7 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         $this->employeeService = $employeeService;
     }
 
-    public function index($perPage, $search = null, $unit = null)
+    public function index($perPage, $search = null, $unit = null, $period = null)
     {
         $query = $this->model
                     ->with([
@@ -52,6 +52,9 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
                 $employeeQuery->where('unit_id', $unit);
             });
+        }
+        if ($period) {
+            $query->where('period_payroll', $period);
         }
         return $query->orderBy('period_payroll', 'DESC')->paginate($perPage);
     }
