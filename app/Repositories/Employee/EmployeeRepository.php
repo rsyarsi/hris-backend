@@ -389,46 +389,43 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $twoWeeksLater = Carbon::now()->addWeeks(2)->toDateString();
 
         $query = $this->model
-                        ->with([
-                            'contract' => function ($query) use ($today, $twoWeeksLater) {
-                                $query->select(
-                                    'id',
-                                    'employee_id',
-                                    'transaction_number',
-                                    'start_at',
-                                    'end_at',
-                                    'sk_number',
-                                    'shift_group_id',
-                                    'umk',
-                                    'contract_type_id',
-                                    'day',
-                                    'hour',
-                                    'hour_per_day',
-                                    'istirahat_overtime',
-                                    'vot1',
-                                    'vot2',
-                                    'vot3',
-                                    'vot4',
-                                    'unit_id',
-                                    'position_id',
-                                    'manager_id',
-                                )->with([
-                                    'employee:id,name',
-                                    'shiftGroup:id,name,hour,day,type',
-                                    'contractType:id,name,active',
-                                    'unit:id,name,active',
-                                    'position:id,name,active',
-                                    'manager:id,name',
-                                    'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active',
-                                    'employeeContractDetail.payrollComponent:id,name,active',
-                                ])->where('end_at', '<=', $today)
-                                ->orWhereBetween('end_at', [$today, $twoWeeksLater]);
-                            }
-                        ])
-                        ->select($this->field);
+            ->with([
+                'contract' => function ($query) use ($today, $twoWeeksLater) {
+                    $query->select(
+                        'id',
+                        'employee_id',
+                        'transaction_number',
+                        'start_at',
+                        'end_at',
+                        'sk_number',
+                        'shift_group_id',
+                        'umk',
+                        'contract_type_id',
+                        'day',
+                        'hour',
+                        'hour_per_day',
+                        'istirahat_overtime',
+                        'vot1',
+                        'vot2',
+                        'vot3',
+                        'vot4',
+                        'unit_id',
+                        'position_id',
+                        'manager_id',
+                    )->with([
+                        'employee:id,name',
+                        'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active','employeeContractDetail.payrollComponent:id,name,active',
+                    ])->latest()->first();
+                }
+            ])
+            ->select($this->field)
+            ->whereHas('contract', function ($contractQuery) use ($today, $twoWeeksLater) {
+                $contractQuery->where('end_at', '<=', $today)
+                                ->orWhereBetween('end_at', [$today, $twoWeeksLater])->latest();
+            });
 
         if ($search !== null) {
-            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+            $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
         }
 
         return $query->paginate($perPage);

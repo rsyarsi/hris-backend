@@ -2,6 +2,7 @@
 
 namespace App\Repositories\EmployeeContract;
 
+use App\Models\Employee;
 use Carbon\Carbon;
 use App\Models\EmployeeContract;
 use App\Models\EmployeeContractDetail;
@@ -242,12 +243,43 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
         $today = Carbon::now()->toDateString();
         $twoWeeksLater = Carbon::now()->addWeeks(2)->toDateString();
 
-        // Retrieve records in the table that have expired or will expire in the next 2 weeks
-        $count = EmployeeContract::where('end_at', '<=', $today)
-                            ->orWhereBetween('end_at', [$today, $twoWeeksLater])
-                            ->count();
+        $count = Employee::with([
+                                'contract' => function ($query) use ($today, $twoWeeksLater) {
+                                    $query->select(
+                                        'id',
+                                        'employee_id',
+                                        'transaction_number',
+                                        'start_at',
+                                        'end_at',
+                                        'sk_number',
+                                        'shift_group_id',
+                                        'umk',
+                                        'contract_type_id',
+                                        'day',
+                                        'hour',
+                                        'hour_per_day',
+                                        'istirahat_overtime',
+                                        'vot1',
+                                        'vot2',
+                                        'vot3',
+                                        'vot4',
+                                        'unit_id',
+                                        'position_id',
+                                        'manager_id',
+                                    )->with([
+                                        'employee:id,name',
+                                        'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active','employeeContractDetail.payrollComponent:id,name,active',
+                                    ])->latest()->first();
+                                }
+                            ])
+                            ->select($this->field)
+                            ->whereHas('contract', function ($contractQuery) use ($today, $twoWeeksLater) {
+                                $contractQuery->where('end_at', '<=', $today)
+                                                ->orWhereBetween('end_at', [$today, $twoWeeksLater])->latest();
+                            });
+
         return [
-            'count' => $count
+            'count' => $count->count()
         ];
     }
 }
