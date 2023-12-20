@@ -112,7 +112,7 @@ class AuthController extends Controller
                 'supervisor' => $user->supervisor,
                 'pegawai' => $user->pegawai,
                 'kabag' => $user->kabag,
-                'staf' => $user->staf,
+                'staf' => $user->staff,
             ]]
         ]);
     }
