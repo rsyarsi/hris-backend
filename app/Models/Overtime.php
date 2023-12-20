@@ -38,4 +38,9 @@ class Overtime extends Model
     {
         return $this->belongsTo(OvertimeStatus::class, 'overtime_status_id', 'id');
     }
+
+    public function overtimeHistory()
+    {
+        return $this->hasMany(OvertimeHistory::class, 'overtime_id');
+    }
 }

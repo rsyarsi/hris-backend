@@ -57,6 +57,17 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
                         },
+                        'overtimeHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'overtime_id',
+                                'user_id',
+                                'description',
+                                'ip_address',
+                                'user_agent',
+                                'comment',
+                            );
+                        },
                     ])
                     ->select($this->field);
         if ($search) {
@@ -146,6 +157,17 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                             },
                             'overtimeStatus' => function ($query) {
                                 $query->select('id', 'name');
+                            },
+                            'overtimeHistory' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'overtime_id',
+                                    'user_id',
+                                    'description',
+                                    'ip_address',
+                                    'user_agent',
+                                    'comment',
+                                );
                             },
                         ])
                         ->where('id', $id)
