@@ -5,8 +5,10 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{ExecuteGeneratePayrollRequest, GeneratePayrollRequest};
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use App\Services\GeneratePayroll\GeneratePayrollServiceInterface;
+use App\Http\Requests\{ExecuteGeneratePayrollRequest, GeneratePayrollRequest};
 
 class GeneratePayrollController extends Controller
 {
@@ -119,6 +121,34 @@ class GeneratePayrollController extends Controller
                 'file_path' => $generatepayrolls['file_path'],
                 'file_url' => $generatepayrolls['file_url'],
                 'email_address' => $generatepayrolls['email_address'],
+            ]);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function printSlipGaji($id)
+    {
+        try {
+            $generatepayrolls = $this->generatePayrollService->show($id);
+
+            // // Get the file content from AWS S3
+            // $fileContent = Storage::disk('s3')->get($generatepayrolls['file_path']);
+
+            // // Create a response with the file content and appropriate headers
+            // $response = Response::make($fileContent, 200);
+
+            // // Set the content type based on your file type (e.g., application/pdf)
+            // $response->header('Content-Type', 'application/pdf');
+
+            // // Set the content disposition to force download
+            // $response->header('Content-Disposition', 'attachment; filename="' . $generatepayrolls['file_name'] . '"');
+
+            // return $response;
+            return $this->success('Slip Gaji send successfully!', [
+                'file_name' => $generatepayrolls['file_name'],
+                'file_path' => $generatepayrolls['file_path'],
+                'file_url' => $generatepayrolls['file_url'],
             ]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

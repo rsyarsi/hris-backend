@@ -211,6 +211,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('generate-payroll-employee', 'generatePayrollEmployee')->name('generate-payroll-employee');
             // route for execute generate payroll
             Route::post('execute-generate-payroll', 'executeStoredProcedure')->name('execute-generate-payroll');
+            // route for print slip gaji
+            Route::post('print-slip-gaji/{id}', 'printSlipGaji')->name('print-slip-gaji');
             // route for send-slip-gaji
             Route::post('send-slip-gaji/{id}', 'sendSlipGaji')->name('send-slip-gaji');
             // route for send-slip-gaji

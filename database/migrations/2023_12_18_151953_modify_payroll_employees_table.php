@@ -18,6 +18,9 @@ return new class extends Migration
             $table->decimal('liability_employee_foods', 18, 2)->nullable();
             $table->decimal('liability_employee_absens', 18, 2)->nullable();
             $table->string('notes')->nullable();
+            $table->string('file_name')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_url')->nullable();
         });
     }
 

@@ -72,6 +72,11 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
             Storage::disk('s3')->put($s3FilePath, $pdf->output());
             Storage::disk('s3')->setVisibility($s3FilePath, 'public');
             $fileUrl = Storage::disk('s3')->url($s3FilePath);
+            // update data
+            $data['file_name'] = $filename;
+            $data['file_path'] = $s3FilePath;
+            $data['file_url'] =  $fileUrl;
+            $this->repository->update($id, $data);
             // // Send email with attached PDF
             Mail::to($item->employee_email)->send(new SlipGajiEmail($item, $s3FilePath));
 
@@ -103,7 +108,11 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
             Storage::disk('s3')->put($s3FilePath, $pdf->output());
             Storage::disk('s3')->setVisibility($s3FilePath, 'public');
             $fileUrl = Storage::disk('s3')->url($s3FilePath);
-
+            // update data
+            $data['file_name'] = $filename;
+            $data['file_path'] = $s3FilePath;
+            $data['file_url'] =  $fileUrl;
+            $this->repository->update($item->id, $data);
             // Send email with attached PDF
             Mail::to($item->employee_email)->send(new SlipGajiEmail($item, $s3FilePath));
 
