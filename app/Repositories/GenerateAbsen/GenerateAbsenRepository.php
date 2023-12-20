@@ -138,12 +138,24 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                                         ->first();
 
             if ($type == 'ABSEN' && $function == 'IN') {
-                if ($existingRecordAbsen) {
+                if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
+                    $existingRecordAbsen->update([
+                        'date_in_at' => $data['date_in_at'],
+                        'time_in_at' => $data['time_in_at'],
+                        'telat' => $data['telat'],
+                        'note' => $data['telat'] !== null ? 'WARNING' : 'BELUM ABSEN PULANG',
+                    ]);
+                    return [
+                        'message' => 'Absen Masuk Berhasil!',
+                        'data' => [$existingRecordAbsen]
+                    ];
+                } elseif ($existingRecordAbsen && $existingRecordAbsen->time_in_at !== null) {
                     return [
                         'message' => 'Anda Sudah Absen Masuk!',
                         'data' => []
                     ];
-                } else { // Create a new record
+                }
+                else { // Create a new record
                     $data['time_out_at'] = null;
                     $data['note'] = "BELUM ABSEN PULANG";
                     return [
@@ -169,8 +181,9 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         }
                         $existingRecordAbsen->update([
                             'time_out_at' => $data['time_out_at'],
+                            'date_out_at' => $data['date_out_at'],
                             'pa' => $pa,
-                            'note' => $pa == null ? '' : 'WARNING',
+                            'note' => $pa == null && $existingRecordAbsen->telat == null ? '' : 'WARNING',
                         ]);
                         return [
                             'message' => 'Absen Keluar Berhasil!',
