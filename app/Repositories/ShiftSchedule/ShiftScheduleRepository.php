@@ -339,39 +339,55 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             return [];
         }
         $datwa = Carbon::now()->toDateString();
+
         // check shift group id apakah Non Shift atau tidak
-        // $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
-        // // check di table shift schedule exists ?
-        // $checkShiftSchedule = DB::table('shift_schedules')
-        //                         ->select('shift_schedules.*')
-        //                         ->where('shift_schedules.employee_id', $employee->id)
-        //                         ->where('shift_schedules.date', $datwa)
-        //                         ->first();
+        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+        // check di table shift schedule exists ?
+        $checkShiftSchedule = DB::table('shift_schedules')
+                                ->select('shift_schedules.*')
+                                ->where('shift_schedules.employee_id', $employee->id)
+                                ->where('shift_schedules.date', $datwa)
+                                ->first();
 
-        // $shift = Shift::where('shift_group_id', $nonShiftGroupId)
-        //                 ->where('code', 'N')
-        //                 ->orWhere('name', 'NON SHIFT')
-        //                 ->first();
+        $shift = Shift::where('shift_group_id', $nonShiftGroupId)
+                        ->where('code', 'N')
+                        ->orWhere('name', 'NON SHIFT')
+                        ->first();
+        // return $employee->shift_group_id; 
+        if ($employee->shift_group_id == $nonShiftGroupId && $checkShiftSchedule == null) {
+            // insert data ke table shift schedule
+            $dataShiftSchedule['employee_id'] = $employee->id;
+            $dataShiftSchedule['shift_id'] = $shift->id;
+            $dataShiftSchedule['date'] = $datwa;
+            $dataShiftSchedule['created_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_at'] = now();
+            $dataShiftSchedule['time_in'] = $datwa . ' ' . $shift->in_time;
+            $dataShiftSchedule['time_out'] = $datwa . ' ' . $shift->out_time;
+            $dataShiftSchedule['period'] = now()->format('Y-m');
+            $dataShiftSchedule['holiday'] = 0;
+            $dataShiftSchedule['night'] = 0;
+            $dataShiftSchedule['national_holiday'] = 0;
+            $dataShiftSchedule['absen_type'] = 'ABSEN';
+            $this->model->create($dataShiftSchedule);
+            // insert data ke generate absen
+            $dataGenerateAbsen['period'] = now()->format('Y-m');
+            $dataGenerateAbsen['date'] = $datwa;
+            $dataGenerateAbsen['schedule_date_in_at'] = $datwa;
+            $dataGenerateAbsen['schedule_time_in_at'] = $shift->in_time;
+            $dataGenerateAbsen['schedule_date_out_at'] = $datwa;
+            $dataGenerateAbsen['schedule_time_out_at'] = $shift->out_time;
+            $dataGenerateAbsen['employee_id'] = $employee->id;
+            $dataGenerateAbsen['shift_id'] = $shift->id;
+            $dataGenerateAbsen['day'] = now()->format('l');
+            $dataGenerateAbsen['note'] = 'BELUM ABSEN IN/OUT';
+            $dataGenerateAbsen['holiday'] = 0;
+            $dataGenerateAbsen['night'] = 0;
+            $dataGenerateAbsen['national_holiday'] = 0;
+            $dataGenerateAbsen['employment_id'] = $employeeId;
+            GenerateAbsen::create($dataGenerateAbsen);
+        }
 
-        // if ($employee->shift_group_id == $nonShiftGroupId && $checkShiftSchedule == null) {
-        //     // insert data ke table shift schedule
-        //     $dataShiftSchedule['shift_id'] = $shift->id;
-        //     $dataShiftSchedule['created_user_id'] = auth()->id();
-        //     $dataShiftSchedule['setup_user_id'] = auth()->id();
-        //     $dataShiftSchedule['setup_at'] = now();
-        //     $dataShiftSchedule['time_in'] = '';
-        //     $dataShiftSchedule['time_out'] = '';
-        //     $dataShiftSchedule['holiday'] = 0;
-        //     $dataShiftSchedule['night'] = 0;
-        //     $dataShiftSchedule['period'] = now()->format('Y-m');
-        //     $dataShiftSchedule['absen_type'] = 'ABSEN';
-        //     $this->model->create($dataShiftSchedule);
-        //     // insert data ke generate absen
-        //     $dataGenerateAbsen['period'] = now()->format('Y-m');
-        //     $dataGenerateAbsen['date'] = $datwa;
-        //     GenerateAbsen::create($dataGenerateAbsen);
-
-        // }
 
         $lembur = DB::table('overtimes')
                     ->select([

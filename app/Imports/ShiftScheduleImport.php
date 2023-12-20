@@ -42,7 +42,17 @@ class ShiftScheduleImport implements ToModel, WithStartRow
                         ->first();
 
         $dateCarbon = Carbon::parse($date);
-        if ($shift->code == "L" || $shift->code == "LIBUR") {
+
+        $existingEntryGenerateAbsen = GenerateAbsen::where([
+            'employee_id' => $employee->id,
+            'shift_id' => $shift->id,
+            'date' => $date,
+        ])->first();
+
+        // If the entry exists, skip it
+        if ($existingEntryGenerateAbsen) {
+            return null; // Skip this row
+        } else if ($shift->code == "L" || $shift->code == "LIBUR") {
             $data['period'] = $row[2];
             $data['date'] = $row[3];
             $data['day'] = $dateCarbon->format('l');
