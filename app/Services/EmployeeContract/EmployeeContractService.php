@@ -69,4 +69,9 @@ class EmployeeContractService implements EmployeeContractServiceInterface
         $transactionNumber = "{$nextNumber}/X/{$nowYear}";
         return $transactionNumber;
     }
+
+    public function countEmployeeEndContract()
+    {
+        return $this->repository->countEmployeeEndContract();
+    }
 }

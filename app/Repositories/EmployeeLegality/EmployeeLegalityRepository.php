@@ -115,14 +115,6 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
     public function countEmployeeLegalitiesEnded()
     {
         $query = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number');
-                            },
-                            'legalityType' => function ($query) {
-                                $query->select('id', 'name', 'active', 'extended');
-                            },
-                        ])
                         ->where('ended_at', '<=', now()->addMonths(3)->toDateString())
                         ->count();
         return [

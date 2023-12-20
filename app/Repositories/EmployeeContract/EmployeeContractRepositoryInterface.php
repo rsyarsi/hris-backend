@@ -9,4 +9,5 @@ Interface EmployeeContractRepositoryInterface{
     public function update($id, array $data);
     public function destroy($id);
     public function getLastTransactionNumber();
+    public function countEmployeeEndContract();
 }

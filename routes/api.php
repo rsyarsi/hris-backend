@@ -151,6 +151,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('employee-skills', EmployeeSkillController::class);
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
+        Route::controller(EmployeeContractController::class)->group(function () {
+            // route for count employee end contracts (employee have contract ended 14 days)
+            Route::get('count-employee-end-contracts', 'countEmployeeEndContract')->name('count-employee-end-contracts');
+        });
         // route for employee-contract-details
         Route::resource('employee-contract-details', EmployeeContractDetailController::class)->parameters(['employee-contract-details' => 'employee_contract_detail']);
         // route for master leave types

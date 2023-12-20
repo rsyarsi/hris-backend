@@ -236,4 +236,18 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             ->orderBy('created_at', 'desc')
             ->first();
     }
+
+    public function countEmployeeEndContract()
+    {
+        $today = Carbon::now()->toDateString();
+        $twoWeeksLater = Carbon::now()->addWeeks(2)->toDateString();
+
+        // Retrieve records in the table that have expired or will expire in the next 2 weeks
+        $count = EmployeeContract::where('end_at', '<=', $today)
+                            ->orWhereBetween('end_at', [$today, $twoWeeksLater])
+                            ->count();
+        return [
+            'count' => $count
+        ];
+    }
 }

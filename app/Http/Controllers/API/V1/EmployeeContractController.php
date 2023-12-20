@@ -82,4 +82,14 @@ class EmployeeContractController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    function countEmployeeEndContract()
+    {
+        $employees = $this->employeeContractService->countEmployeeEndContract();
+        return $this->success('Employees count contract ended retrieved successfully', $employees);
+        try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

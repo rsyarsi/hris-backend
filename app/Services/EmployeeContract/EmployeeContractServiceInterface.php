@@ -10,4 +10,5 @@ interface EmployeeContractServiceInterface
     public function destroy($id);
     public function getLastTransactionNumber();
     public function generateNextTransactionNumber();
+    public function countEmployeeEndContract();
 }

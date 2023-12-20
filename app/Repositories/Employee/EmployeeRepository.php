@@ -385,46 +385,47 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 
     public function employeeEndContract($perPage, $search = null)
     {
-        $today = now()->toDateString();
-        $twoWeeksAgo = now()->subWeeks(2)->toDateString();
+        $today = Carbon::now()->toDateString();
+        $twoWeeksLater = Carbon::now()->addWeeks(2)->toDateString();
 
         $query = $this->model
-            ->with([
-                'contract' => function ($query) use ($today, $twoWeeksAgo) {
-                    $query->select(
-                        'id',
-                        'employee_id',
-                        'transaction_number',
-                        'start_at',
-                        'end_at',
-                        'sk_number',
-                        'shift_group_id',
-                        'umk',
-                        'contract_type_id',
-                        'day',
-                        'hour',
-                        'hour_per_day',
-                        'istirahat_overtime',
-                        'vot1',
-                        'vot2',
-                        'vot3',
-                        'vot4',
-                        'unit_id',
-                        'position_id',
-                        'manager_id',
-                    )->with([
-                        'employee:id,name',
-                        'shiftGroup:id,name,hour,day,type',
-                        'contractType:id,name,active',
-                        'unit:id,name,active',
-                        'position:id,name,active',
-                        'manager:id,name',
-                        'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active',
-                        'employeeContractDetail.payrollComponent:id,name,active',
-                    ])->whereBetween('end_at', [$twoWeeksAgo, $today]);
-                }
-            ])
-            ->select($this->field);
+                        ->with([
+                            'contract' => function ($query) use ($today, $twoWeeksLater) {
+                                $query->select(
+                                    'id',
+                                    'employee_id',
+                                    'transaction_number',
+                                    'start_at',
+                                    'end_at',
+                                    'sk_number',
+                                    'shift_group_id',
+                                    'umk',
+                                    'contract_type_id',
+                                    'day',
+                                    'hour',
+                                    'hour_per_day',
+                                    'istirahat_overtime',
+                                    'vot1',
+                                    'vot2',
+                                    'vot3',
+                                    'vot4',
+                                    'unit_id',
+                                    'position_id',
+                                    'manager_id',
+                                )->with([
+                                    'employee:id,name',
+                                    'shiftGroup:id,name,hour,day,type',
+                                    'contractType:id,name,active',
+                                    'unit:id,name,active',
+                                    'position:id,name,active',
+                                    'manager:id,name',
+                                    'employeeContractDetail:id,employee_contract_id,payroll_component_id,nominal,active',
+                                    'employeeContractDetail.payrollComponent:id,name,active',
+                                ])->where('end_at', '<=', $today)
+                                ->orWhereBetween('end_at', [$today, $twoWeeksLater]);
+                            }
+                        ])
+                        ->select($this->field);
 
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
