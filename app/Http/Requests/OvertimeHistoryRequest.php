@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class LeaveHistoryRequest extends FormRequest
+class OvertimeHistoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class LeaveHistoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'leave_id' => 'required|exists:leaves,id',
+            'overtime_id' => 'required|exists:overtimes,id',
             'user_id' => 'nullable|exists:users,id',
             'description' => 'nullable|max:255',
             'ip_address' => 'nullable|max:45',

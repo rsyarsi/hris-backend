@@ -58,6 +58,7 @@ use App\Services\Ump\{UmpService, UmpServiceInterface};
 use App\Services\AdjustmentCuti\{AdjustmentCutiService, AdjustmentCutiServiceInterface};
 use App\Services\TimesheetOvertime\{TimesheetOvertimeService, TimesheetOvertimeServiceInterface};
 use App\Services\CatatanCuti\{CatatanCutiService, CatatanCutiServiceInterface};
+use App\Services\OvertimeHistory\{OvertimeHistoryService, OvertimeHistoryServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -115,6 +116,7 @@ use App\Repositories\Ump\{UmpRepository, UmpRepositoryInterface};
 use App\Repositories\AdjustmentCuti\{AdjustmentCutiRepository, AdjustmentCutiRepositoryInterface};
 use App\Repositories\TimesheetOvertime\{TimesheetOvertimeRepository, TimesheetOvertimeRepositoryInterface};
 use App\Repositories\CatatanCuti\{CatatanCutiRepository, CatatanCutiRepositoryInterface};
+use App\Repositories\OvertimeHistory\{OvertimeHistoryRepository, OvertimeHistoryRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -344,6 +346,10 @@ class AppServiceProvider extends ServiceProvider
         // Timesheet Overtime
         $this->app->bind(TimesheetOvertimeRepositoryInterface::class, TimesheetOvertimeRepository::class);
         $this->app->bind(TimesheetOvertimeServiceInterface::class, TimesheetOvertimeService::class);
+        
+        // Overtime History
+        $this->app->bind(OvertimeHistoryRepositoryInterface::class, OvertimeHistoryRepository::class);
+        $this->app->bind(OvertimeHistoryServiceInterface::class, OvertimeHistoryService::class);
         
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

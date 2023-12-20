@@ -55,45 +55,45 @@ class LeaveHistoryRepository implements LeaveHistoryRepositoryInterface
 
     public function show($id)
     {
-        $leavehistory = $this->model
-                                    ->with([
-                                        'leave' => function ($query) {
-                                            $query->select(
-                                                'id',
-                                                'employee_id',
-                                                'leave_type_id',
-                                                'from_date',
-                                                'to_date',
-                                                'duration',
-                                                'note',
-                                                'leave_status_id'
-                                            );
-                                        },
-                                        'user' => function ($query) {
-                                            $query->select('id', 'name', 'email');
-                                        },
-                                    ])
-                                    ->where('id', $id)
-                                    ->first($this->field);
-        return $leavehistory ? $leavehistory : $leavehistory = null;
+        $leaveHistory = $this->model
+                            ->with([
+                                'leave' => function ($query) {
+                                    $query->select(
+                                        'id',
+                                        'employee_id',
+                                        'leave_type_id',
+                                        'from_date',
+                                        'to_date',
+                                        'duration',
+                                        'note',
+                                        'leave_status_id'
+                                    );
+                                },
+                                'user' => function ($query) {
+                                    $query->select('id', 'name', 'email');
+                                },
+                            ])
+                            ->where('id', $id)
+                            ->first($this->field);
+        return $leaveHistory ? $leaveHistory : $leaveHistory = null;
     }
 
     public function update($id, $data)
     {
-        $leavehistory = $this->model->find($id);
-        if ($leavehistory) {
-            $leavehistory->update($data);
-            return $leavehistory;
+        $leaveHistory = $this->model->find($id);
+        if ($leaveHistory) {
+            $leaveHistory->update($data);
+            return $leaveHistory;
         }
         return null;
     }
 
     public function destroy($id)
     {
-        $leavehistory = $this->model->find($id);
-        if ($leavehistory) {
-            $leavehistory->delete();
-            return $leavehistory;
+        $leaveHistory = $this->model->find($id);
+        if ($leaveHistory) {
+            $leaveHistory->delete();
+            return $leaveHistory;
         }
         return null;
     }

@@ -15,7 +15,7 @@ use App\Http\Controllers\API\V1\{
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
-    TimesheetOvertimeController, CatatanCutiController
+    TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController
 };
 
 /*
@@ -275,9 +275,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for get data sisa cuti, if select type cuti tahunan
         Route::post('leave-sisa', 'leaveSisa')->name('leave-sisa');
     });
-    // route for leave-histories
+    // route for leave histories
     Route::resource('leave-histories', LeaveHistoryController::class);
-    // route for leave-approvals
+    // route for leave approvals
     Route::resource('leave-approvals', LeaveApprovalController::class);
     // route for overtimes
     Route::resource('overtimes', OvertimeController::class)->parameters(['overtimes' => 'overtime']);
@@ -299,4 +299,6 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for overtime update status mobile
         Route::post('overtime-update-statuses-mobile', 'updateStatusMobile')->name('overtime-update-statuses-mobile');
     });
+    // route for overtime histories
+    Route::resource('overtime-histories', OvertimeHistoryController::class);
 });

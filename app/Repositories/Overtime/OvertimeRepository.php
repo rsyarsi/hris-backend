@@ -9,11 +9,14 @@ use App\Models\{Employee, Overtime};
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
-
+use App\Services\OvertimeHistory\OvertimeHistoryServiceInterface;
+use App\Services\OvertimeStatus\OvertimeStatusServiceInterface;
 
 class OvertimeRepository implements OvertimeRepositoryInterface
 {
     private $model;
+    private $overtimeHistoryService;
+    private $overtimeStatusService;
     private $firebaseService;
     private $employeeService;
     private $field = [
@@ -29,11 +32,19 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         'duration',
     ];
 
-    public function __construct(Overtime $model, FirebaseServiceInterface $firebaseService, EmployeeServiceInterface $employeeService)
+    public function __construct(
+        Overtime $model, 
+        FirebaseServiceInterface $firebaseService, 
+        EmployeeServiceInterface $employeeService,
+        OvertimeHistoryServiceInterface $overtimeHistoryService,
+        OvertimeStatusServiceInterface $overtimeStatusService
+    )
     {
         $this->model = $model;
         $this->firebaseService = $firebaseService;
         $this->employeeService = $employeeService;
+        $this->overtimeHistoryService = $overtimeHistoryService;
+        $this->overtimeStatusService = $overtimeStatusService;
     }
 
     public function index($perPage, $search = null)
@@ -83,6 +94,18 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         }
 
         $overtime = $this->model->create($data);
+        $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
+        // save to table overtime history
+        $historyData = [
+            'overtime_id' => $overtime->id,
+            'user_id' => auth()->id(),
+            'description' => 'OVERTIME STATUS '. $overtimeStatus->name,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'comment' => $data['note'],
+        ];
+        $this->overtimeHistoryService->store($historyData);
+        // send firebase notification
         $typeSend = 'Overtime';
         $employee = $this->employeeService->show($overtime->employee_id);
         $registrationIds = [];
@@ -132,7 +155,18 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function update($id, $data)
     {
-        $overtime = $this->model->find($id);
+        $overtime = $this->model->with('overtimeStatus')->find($id);
+        // save to table overtime history
+        $historyData = [
+            'overtime_id' => $overtime->id,
+            'user_id' => auth()->id(),
+            'description' => 'OVERTIME STATUS '. $overtime->overtimeStatus->name,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'comment' => $data['note'],
+        ];
+        $this->overtimeHistoryService->store($historyData);
+        // send firebase notification
         $typeSend = 'Overtime';
         $employee = $this->employeeService->show($overtime->employee_id);
         $registrationIds = [];
@@ -166,6 +200,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
     {
         $overtime = $this->model->find($id);
         if ($overtime) {
+            $this->overtimeHistoryService->deleteByOvertimeId($id);
             $overtime->delete();
             return $overtime;
         }
@@ -331,6 +366,16 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $overtime = $this->model->find($id);
         if ($overtime) {
             $overtime->update(['overtime_status_id' => $data['overtime_status_id']]);
+            // save to table overtime history
+            $historyData = [
+                'overtime_id' => $overtime->id,
+                'user_id' => auth()->id(),
+                'description' => 'OVERTIME STATUS '. $overtime->overtimeStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $overtime->note,
+            ];
+            $this->overtimeHistoryService->store($historyData);
             $typeSend = 'Overtime Update';
             $employee = $this->employeeService->show($overtime->employee_id);
             $registrationIds = [];
@@ -351,6 +396,16 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $overtime = $this->model->find($overtimeId);
         if ($overtime) {
             $overtime->update(['overtime_status_id' => $overtimeStatusId]);
+            // save to table overtime history
+            $historyData = [
+                'overtime_id' => $overtime->id,
+                'user_id' => auth()->id(),
+                'description' => 'OVERTIME STATUS '. $overtime->overtimeStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $overtime->note,
+            ];
+            $this->overtimeHistoryService->store($historyData);
             $typeSend = 'Overtime Update';
             $employee = $this->employeeService->show($overtime->employee_id);
             $registrationIds = [];
