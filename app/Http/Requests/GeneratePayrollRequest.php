@@ -15,12 +15,12 @@ class GeneratePayrollRequest extends FormRequest
     public function rules()
     {
         return [
-            'employee_day_works' => 'nullable|numeric',
+            // 'employee_day_works' => 'nullable|numeric',
             'employee_fix_gapok' => 'nullable|numeric',
             'employee_fix_transport' => 'nullable|numeric',
             'employee_fix_uangmakan' => 'nullable|numeric',
             'employee_fix_tunjangankemahalan' => 'nullable|numeric',
-            'fix_income_total' => 'nullable|numeric',
+            // 'fix_income_total' => 'nullable|numeric',
             'employee_tunjangan_hdm' => 'nullable|numeric',
             'employee_tunjangan_jabatan' => 'nullable|numeric',
             'employee_tunjangan_dinasmalam' => 'nullable|numeric',
@@ -28,8 +28,8 @@ class GeneratePayrollRequest extends FormRequest
             'employee_tunjangan_intensifkhusus' => 'nullable|numeric',
             'employee_tunjangan_extrafooding' => 'nullable|numeric',
             'employee_tunjangan_lembur' => 'nullable|numeric',
-            'tunjangan_total' => 'nullable|numeric',
-            'salary_bruto' => 'nullable|numeric',
+            // 'tunjangan_total' => 'nullable|numeric',
+            // 'salary_bruto' => 'nullable|numeric',
             'kelebihanpotongan' => 'nullable|numeric',
             'liability_companies_jkk' => 'nullable|numeric',
             'liability_companies_jkm' => 'nullable|numeric',
@@ -42,16 +42,15 @@ class GeneratePayrollRequest extends FormRequest
             'liability_employee_jp' => 'nullable|numeric',
             'liability_employee_bpjskesehatan' => 'nullable|numeric',
             'liability_employee_pph21' => 'nullable|numeric',
-            'liability_employee_total' => 'nullable|numeric',
-            'salary_total' => 'nullable|numeric',
-            'salary_total_before_zakat' => 'nullable|numeric',
-            'liability_employee_potongan' => 'nullable|numeric',
-            'zakat' => 'nullable|numeric',
-            'period_payroll' => 'nullable|string',
-            'thr' => 'nullable|numeric',
             'liability_employee_foods' => 'nullable|numeric',
             'liability_employee_absens' => 'nullable|numeric',
+            // 'liability_employee_total' => 'nullable|numeric',
+            // 'salary_total' => 'nullable|numeric',
+            // 'salary_total_before_zakat' => 'nullable|numeric',
+            'thr' => 'nullable|numeric',
+            'zakat' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            // 'period_payroll' => 'nullable|string',
         ];
     }
 
