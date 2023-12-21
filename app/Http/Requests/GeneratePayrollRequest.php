@@ -37,6 +37,7 @@ class GeneratePayrollRequest extends FormRequest
             'liability_companies_jp' => 'nullable|numeric',
             'liability_companies_bpjskesehatan' => 'nullable|numeric',
             'liability_companies_total' => 'nullable|numeric',
+
             'liability_employee_potongan' => 'nullable|numeric',
             'liability_employee_jht' => 'nullable|numeric',
             'liability_employee_jp' => 'nullable|numeric',
@@ -48,7 +49,7 @@ class GeneratePayrollRequest extends FormRequest
             // 'salary_total' => 'nullable|numeric',
             // 'salary_total_before_zakat' => 'nullable|numeric',
             'thr' => 'nullable|numeric',
-            'zakat' => 'nullable|numeric',
+            // 'zakat' => 'nullable|numeric',
             'notes' => 'nullable|string',
             // 'period_payroll' => 'nullable|string',
         ];
