@@ -27,9 +27,14 @@ class EmployeePositionHistoryRepository implements EmployeePositionHistoryReposi
     public function index($perPage, $search = null)
     {
         $query = $this->model->select($this->field);
-        // if ($search !== null) {
-        //     $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-        // }
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+                            });
+            });
+        }
         return $query->paginate($perPage);
     }
 

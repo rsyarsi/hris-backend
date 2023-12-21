@@ -80,4 +80,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeActive($perPage, $search);
     }
+
+    public function employeeSubordinate($perPage, $search)
+    {
+        return $this->repository->employeeSubordinate($perPage, $search);
+    }
 }

@@ -126,6 +126,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('employee-end-contracts', 'employeeEndContract')->name('employee-end-contracts');
             // route for import employee
             Route::post('import-employee', 'importEmployee')->name('import-employee');
+            // route for employee where spv/kabag/manager yang login
+            Route::get('employee-subordinate', 'employeeSubordinate')->name('employee-subordinate');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);

@@ -576,4 +576,29 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         }
         return $query->paginate($perPage);
     }
+
+    public function employeeSubordinate($perPage, $search = null)
+    {
+        $user = auth()->user();
+
+        if (!$user->employee) {
+            return [];
+        }
+
+        $query = $this->model
+            ->where(function ($query) use ($user) {
+                $query->where('supervisor_id', $user->employee->id)
+                    ->orWhere('manager_id', $user->employee->id)
+                    ->orWhere('kabag_id', $user->employee->id);
+            })
+            ->where('resigned_at', null);
+
+        if ($search !== null) {
+            $query->where(function ($query) use ($search) {
+                $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
+            });
+        }
+
+        return $query->select($this->field)->paginate($perPage);
+    }
 }

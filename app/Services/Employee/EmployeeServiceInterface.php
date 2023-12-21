@@ -15,4 +15,5 @@ interface EmployeeServiceInterface
     public function employeeWherePin($pin);
     public function employeeWhereEmployeeNumber($employeeNumber);
     public function employeeActive($perPage, $search);
+    public function employeeSubordinate($perPage, $search);
 }
