@@ -36,6 +36,17 @@ class GeneratePayrollController extends Controller
         }
     }
 
+    public function indexMobile(Request $request)
+    {
+        $employeeId = $request->input('employee_id');
+        $generatepayrolls = $this->generatePayrollService->indexMobile($employeeId);
+        return $this->success('Generate payrolls mobile retrieved successfully', $generatepayrolls);
+        try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function store(GeneratePayrollRequest $request)
     {
         try {

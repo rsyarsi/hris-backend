@@ -201,6 +201,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for generate absen
         Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate-absen']);
         Route::controller(GenerateAbsenController::class)->group(function () {
+            // route for monitoring absen (absen yang tidak lengkap)
+            Route::get('monitoring-absen', 'monitoringAbsen')->name('monitoring-absen');
             // route for execute generate absen
             Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
             // route for absen from mobile
@@ -209,6 +211,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for generate payroll
         Route::resource('generate-payroll', GeneratePayrollController::class)->parameters(['generate-payroll' => 'generate-payroll']);
         Route::controller(GeneratePayrollController::class)->group(function () {
+            // route for generate payroll mobile
+            Route::get('generate-payroll-mobile', 'indexMobile')->name('generate-payroll-mobile');
             // route for generate payroll employee
             Route::get('generate-payroll-employee', 'generatePayrollEmployee')->name('generate-payroll-employee');
             // route for execute generate payroll

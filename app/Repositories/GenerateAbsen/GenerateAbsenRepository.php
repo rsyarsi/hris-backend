@@ -5,11 +5,12 @@ namespace App\Repositories\GenerateAbsen;
 use Carbon\Carbon;
 use App\Models\GenerateAbsen;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
-
+use App\Services\Overtime\OvertimeServiceInterface;
 
 class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 {
     private $model;
+    private $overtimeService;
     private $field =
     [
         'id', 'period', 'date', 'day', 'employee_id', 'shift_id', 'date_in_at', 'time_in_at',
@@ -22,9 +23,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type'
     ];
 
-    public function __construct(GenerateAbsen $model)
+    public function __construct(GenerateAbsen $model, OvertimeServiceInterface $overtimeService)
     {
         $this->model = $model;
+        $this->overtimeService = $overtimeService;
     }
 
     public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
@@ -72,6 +74,78 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                 $employeeQuery->where('unit_id', $unit);
             });
         }
+        return $query->paginate($perPage);
+    }
+
+    public function monitoringAbsen($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
+    {
+        $query = $this->model
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'unit_id')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                        'finger_in_less',
+                        'finger_in_more',
+                        'finger_out_less',
+                        'finger_out_more',
+                        'night_shift',
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->select($this->field);
+
+        // Additional conditions
+        $query->where(function ($subquery) {
+            $subquery->whereNull('leave_id')
+                ->orWhere('leave_id', '');
+        })
+            ->where(function ($subquery) {
+                $subquery->whereNull('holiday')
+                    ->orWhere('holiday', 0);
+            })
+            ->where(function ($subquery) {
+                $subquery->where(function ($timeQuery) {
+                    $timeQuery->whereNull('time_in_at')
+                        ->whereNull('time_out_at');
+                })
+                    ->orWhere(function ($timeQuery) {
+                        $timeQuery->whereNotNull('time_in_at')
+                            ->whereNull('time_out_at');
+                    });
+            });
+
+        // Period conditions
+        if ($period_1 && $period_2) {
+            $query->whereBetween('date', [$period_1, $period_2]);
+        } elseif ($period_1) {
+            $query->where('date', $period_1);
+        } elseif ($period_2) {
+            $query->where('date', $period_2);
+        }
+
+        // Unit condition
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
+        }
+
         return $query->paginate($perPage);
     }
 
@@ -127,7 +201,6 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         $date = $data['date']; // TIME IN DARI FE
         $timeIn = $data['time_in_at']; // TIME IN DARI FE
         // $timestampTimeIn = Carbon::parse($date.''.$timeIn);
-
         // ABSEN
         if ($type == 'ABSEN') {
             $existingRecordAbsen = $this->model
@@ -198,31 +271,21 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                 }
             }
         } else {
-            // OVERTIME
+            // EXISTING RECORD
             $existingRecordOvertime = $this->model
-                            ->where('employee_id', $employeeId)
-                            ->where('date', $date)
-                            ->orWhere('date_out_at', $date)
-                            ->where('type', 'SPL')
-                            ->first();
+                                            ->where('employee_id', $employeeId)
+                                            ->where('type', 'SPL')
+                                            ->where('date', $date)
+                                            ->orWhere('overtime_out_at', $date)
+                                            ->first();
+            // return $existingRecordOvertime;
 
             if ($type == 'SPL' && $function == 'IN') {
-                if ($existingRecordOvertime) {
-                    return [
-                        'message' => 'Anda Sudah Absen Masuk Overtime!',
-                        'data' => []
-                    ];
-                } else { // Create a new record
-                    // $finalTimeIn = '';
-                    // if ($timestampTimeIn->greaterThan($fromDateOvertime)) {
-                    //     $finalTimeIn = Carbon::parse($$timestampTimeIn)->diffInMinutes($timeInSchedule);
-                    // }
+                if ($existingRecordOvertime == null) {
                     $data['overtime_id'] = $overtimeId;
                     $data['overtime_time_at'] = $timeIn;
-
                     $data['schedule_overtime_time_at'] = $data['from_date_overtime'] ?? null;
                     $data['schedule_overtime_out_at'] = $data['to_date_overtime'] ?? null;
-
                     $data['telat'] = 0;
                     $data['pa'] = 0;
                     $data['note'] = "BELUM ABSEN PULANG OVERTIME";
@@ -230,7 +293,14 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $data['overtime_out_at'] = null;
                     return [
                         'message' => 'Absen Masuk Overtime Berhasil!',
-                        'data' => [$this->model->create($data)]
+                        'data' => [
+                                $this->model->create($data)
+                            ]
+                    ];
+                } else {
+                    return [
+                        'message' => 'Anda Sudah Absen Masuk Overtime!',
+                        'data' => []
                     ];
                 }
             }
@@ -243,9 +313,16 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             'data' => []
                         ];
                     } else { // Check if a record exists for the employee and date
+                        // CHECK TIME OUT
+                        $finalOvertimeOutAt = $data['time_out_at'];
+                        $scheduleOvertimeOutAt = Carbon::parse($existingRecordOvertime->schedule_overtime_out_at);
+                        if ($data['time_out_at'] >= $scheduleOvertimeOutAt->format('H:i:s')) {
+                            $finalOvertimeOutAt = $scheduleOvertimeOutAt->format('H:i:s');
+                        }
+
                         $existingRecordOvertime->update([
-                            'time_out_at' => $data['time_out_at'],
-                            'overtime_out_at' => $data['time_out_at'],
+                            'time_out_at' => $finalOvertimeOutAt,
+                            'overtime_out_at' => $finalOvertimeOutAt,
                             'note' => '',
                         ]);
                         return [

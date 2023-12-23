@@ -49,7 +49,7 @@ class GeneratePayrollRequest extends FormRequest
             // 'salary_total' => 'nullable|numeric',
             // 'salary_total_before_zakat' => 'nullable|numeric',
             'thr' => 'nullable|numeric',
-            // 'zakat' => 'nullable|numeric',
+            'zakat' => 'nullable|numeric',
             'notes' => 'nullable|string',
             // 'period_payroll' => 'nullable|string',
         ];

@@ -502,7 +502,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
                 ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                 ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-                ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
+                // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
                 ->select([
                     'leaves.id',
                     'leaves.employee_id',
@@ -520,12 +520,12 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'employees.name as employee_name',
                     'leave_types.name as leave_type_name',
                     'leave_statuses.name as leave_status_name',
-                    'leave_histories.id as leave_history_id',
-                    'leave_histories.description as leave_histories_description',
-                    'leave_histories.ip_address as leave_histories_ip_address',
-                    'leave_histories.user_id as leave_histories_user_id',
-                    'leave_histories.user_agent as leave_histories_user_agent',
-                    'leave_histories.comment as leave_histories_comment',
+                    // 'leave_histories.id as leave_history_id',
+                    // 'leave_histories.description as leave_histories_description',
+                    // 'leave_histories.ip_address as leave_histories_ip_address',
+                    // 'leave_histories.user_id as leave_histories_user_id',
+                    // 'leave_histories.user_agent as leave_histories_user_agent',
+                    // 'leave_histories.comment as leave_histories_comment',
                 ])
                 ->whereIn('employee_id', $subordinateIds)
                 ->orderBy('from_date', 'DESC')

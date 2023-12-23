@@ -59,6 +59,79 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         return $query->orderBy('period_payroll', 'DESC')->paginate($perPage);
     }
 
+    public function indexMobile($employeeId = null)
+    {
+        $currentYear = now()->year;
+        $query = DB::table('payroll_employees')
+            ->select([
+                'payroll_employees.id',
+                'payroll_employees.employee_name',
+                'payroll_employees.employee_id',
+                'payroll_employees.employeement_id',
+                'payroll_employees.employee_email',
+                'payroll_employees.employee_status',
+                'payroll_employees.employee_id_number',
+                'payroll_employees.employee_tax_number',
+                'payroll_employees.employee_rekening_number',
+                'payroll_employees.employee_department_id',
+                'payroll_employees.employee_department_name',
+                'payroll_employees.employee_position_id',
+                'payroll_employees.employee_position_name',
+                'payroll_employees.employee_sex',
+                'payroll_employees.employee_tax_status',
+                'payroll_employees.employee_start_date',
+                'payroll_employees.employee_day_works',
+                'payroll_employees.employee_fix_gapok',
+                'payroll_employees.employee_fix_transport',
+                'payroll_employees.employee_fix_uangmakan',
+                'payroll_employees.employee_fix_tunjangankemahalan',
+                'payroll_employees.fix_income_total',
+                'payroll_employees.employee_tunjangan_hdm',
+                'payroll_employees.employee_tunjangan_jabatan',
+                'payroll_employees.employee_tunjangan_dinasmalam',
+                'payroll_employees.employee_tunjangan_tunjanganppr',
+                'payroll_employees.employee_tunjangan_intensifkhusus',
+                'payroll_employees.employee_tunjangan_extrafooding',
+                'payroll_employees.employee_tunjangan_lembur',
+                'payroll_employees.tunjangan_total',
+                'payroll_employees.salary_bruto',
+                'payroll_employees.kelebihanpotongan',
+                'payroll_employees.liability_companies_jkk',
+                'payroll_employees.liability_companies_jkm',
+                'payroll_employees.liability_companies_jht',
+                'payroll_employees.liability_companies_jp',
+                'payroll_employees.liability_companies_bpjskesehatan',
+                'payroll_employees.liability_companies_total',
+                'payroll_employees.liability_employee_potongan',
+                'payroll_employees.liability_employee_jht',
+                'payroll_employees.liability_employee_jp',
+                'payroll_employees.liability_employee_bpjskesehatan',
+                'payroll_employees.liability_employee_pph21',
+                'payroll_employees.liability_employee_total',
+                'payroll_employees.salary_total',
+                'payroll_employees.salary_total_before_zakat',
+                'payroll_employees.zakat',
+                'payroll_employees.salary_after_zakat',
+                'payroll_employees.period_payroll',
+                'payroll_employees.thr',
+                'payroll_employees.liability_employee_foods',
+                'payroll_employees.liability_employee_absens',
+                'payroll_employees.notes',
+                'payroll_employees.file_name',
+                'payroll_employees.file_path',
+                'payroll_employees.file_url'
+            ])
+            ->leftJoin('employees', 'payroll_employees.employee_id', '=', 'employees.id')
+            ->where(DB::raw('LEFT(payroll_employees.period_payroll, 4)'), $currentYear)
+            ->orderBy('payroll_employees.period_payroll', 'DESC');
+
+        if ($employeeId) {
+            $query->where('payroll_employees.employee_id', $employeeId);
+        }
+
+        return $query->get();
+    }
+
     public function store(array $data)
     {
         return $this->model->create($data);

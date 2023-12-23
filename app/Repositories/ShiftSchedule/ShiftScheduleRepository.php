@@ -353,7 +353,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         ->where('code', 'N')
                         ->orWhere('name', 'NON SHIFT')
                         ->first();
-        // return $employee->shift_group_id; 
+        // return $employee->shift_group_id;
         if ($employee->shift_group_id == $nonShiftGroupId && $checkShiftSchedule == null) {
             // insert data ke table shift schedule
             $dataShiftSchedule['employee_id'] = $employee->id;
@@ -387,7 +387,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             $dataGenerateAbsen['employment_id'] = $employeeId;
             GenerateAbsen::create($dataGenerateAbsen);
         }
-
 
         $lembur = DB::table('overtimes')
                     ->select([

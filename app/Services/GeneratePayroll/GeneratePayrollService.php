@@ -22,6 +22,11 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         return $this->repository->index($perPage, $search, $unit, $period);
     }
 
+    public function indexMobile($employeeId)
+    {
+        return $this->repository->indexMobile($employeeId);
+    }
+
     public function indexPeriod($period)
     {
         return $this->repository->indexPeriod($period);
