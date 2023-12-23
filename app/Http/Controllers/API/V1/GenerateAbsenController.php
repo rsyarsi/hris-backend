@@ -45,7 +45,7 @@ class GenerateAbsenController extends Controller
             $period_2 = $request->input('period_2');
             $unit = $request->input('unit');
             $generateabsens = $this->generateAbsenService->monitoringAbsen($perPage, $search, $period_1, $period_2, $unit);
-            return $this->success('Generate Absens retrieved successfully', $generateabsens);
+            return $this->success('Monitoring Absens retrieved successfully', $generateabsens);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
