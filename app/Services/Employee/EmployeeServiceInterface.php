@@ -16,4 +16,5 @@ interface EmployeeServiceInterface
     public function employeeWhereEmployeeNumber($employeeNumber);
     public function employeeActive($perPage, $search);
     public function employeeSubordinate($perPage, $search);
+    public function employeeSubordinateMobile($employeeId);
 }

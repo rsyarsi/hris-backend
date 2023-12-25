@@ -580,25 +580,37 @@ class EmployeeRepository implements EmployeeRepositoryInterface
     public function employeeSubordinate($perPage, $search = null)
     {
         $user = auth()->user();
-
         if (!$user->employee) {
             return [];
         }
-
         $query = $this->model
-            ->where(function ($query) use ($user) {
-                $query->where('supervisor_id', $user->employee->id)
-                    ->orWhere('manager_id', $user->employee->id)
-                    ->orWhere('kabag_id', $user->employee->id);
-            })
-            ->where('resigned_at', null);
-
+                        ->where(function ($query) use ($user) {
+                            $query->where('supervisor_id', $user->employee->id)
+                                ->orWhere('manager_id', $user->employee->id)
+                                ->orWhere('kabag_id', $user->employee->id);
+                        })
+                        ->where('resigned_at', null);
         if ($search !== null) {
             $query->where(function ($query) use ($search) {
                 $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
             });
         }
-
         return $query->select($this->field)->paginate($perPage);
+    }
+
+    public function employeeSubordinateMobile($employeeId)
+    {
+        $user = Employee::where('id', $employeeId)->first();
+        if (!$user) {
+            return [];
+        }
+        $query = $this->model
+                        ->where(function ($query) use ($user) {
+                            $query->where('supervisor_id', $user->id)
+                                ->orWhere('manager_id', $user->id)
+                                ->orWhere('kabag_id', $user->id);
+                        })
+                        ->where('resigned_at', null);
+        return $query->select($this->field)->get();
     }
 }

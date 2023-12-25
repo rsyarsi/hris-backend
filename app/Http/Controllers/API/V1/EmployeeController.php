@@ -142,4 +142,15 @@ class EmployeeController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function employeeSubordinateMobile(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $employees = $this->employeeService->employeeSubordinateMobile($employeeId);
+            return $this->success('Employees Subordinate mobile retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

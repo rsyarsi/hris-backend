@@ -85,4 +85,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeSubordinate($perPage, $search);
     }
+
+    public function employeeSubordinateMobile($employeeId)
+    {
+        return $this->repository->employeeSubordinateMobile($employeeId);
+    }
 }
