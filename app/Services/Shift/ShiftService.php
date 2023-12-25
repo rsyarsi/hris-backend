@@ -14,9 +14,9 @@ class ShiftService implements ShiftServiceInterface
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search, $groupShiftId)
+    public function index($perPage, $search, $groupShiftId, $active)
     {
-        return $this->repository->index($perPage, $search, $groupShiftId);
+        return $this->repository->index($perPage, $search, $groupShiftId, $active);
     }
 
     public function store(array $data)
