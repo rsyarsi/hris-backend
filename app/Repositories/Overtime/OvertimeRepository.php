@@ -33,8 +33,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
     ];
 
     public function __construct(
-        Overtime $model, 
-        FirebaseServiceInterface $firebaseService, 
+        Overtime $model,
+        FirebaseServiceInterface $firebaseService,
         EmployeeServiceInterface $employeeService,
         OvertimeHistoryServiceInterface $overtimeHistoryService,
         OvertimeStatusServiceInterface $overtimeStatusService
@@ -74,7 +74,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
         }
@@ -153,7 +154,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $overtime = $this->model
                         ->with([
                             'employee' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name', 'employment_number');
                             },
                             'overtimeStatus' => function ($query) {
                                 $query->select('id', 'name');

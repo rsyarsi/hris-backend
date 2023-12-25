@@ -26,20 +26,24 @@ class EmployeeContractDetailRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'employee_contract_id' => 'required|exists:employee_contracts,id',
             'payroll_component_id' => [
                 'required',
                 'exists:mpayrollcomponents,id',
-                Rule::unique('employee_contract_details')
-                ->where(function ($query) {
-                    $query->where('employee_contract_id', request()->input('employee_contract_id'))
-                        ->where('payroll_component_id', request()->input('payroll_component_id'));
-                }),
             ],
             'nominal' => 'required|max:18',
             'active' => 'required|integer',
         ];
+
+        if ($this->isMethod('post')) {
+            $rules['payroll_component_id'][] = Rule::unique('employee_contract_details')->where(function ($query) {
+                    $query->where('employee_contract_id', request()->input('employee_contract_id'))
+                            ->where('payroll_component_id', request()->input('payroll_component_id'));
+                });
+        }
+
+        return $rules;
     }
 
     protected function failedValidation($validator)

@@ -34,7 +34,7 @@ class EmployeeCertificateRepository implements EmployeeCertificateRepositoryInte
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                     ])
                     ->select($this->field);
@@ -42,7 +42,8 @@ class EmployeeCertificateRepository implements EmployeeCertificateRepositoryInte
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
         }
@@ -59,7 +60,7 @@ class EmployeeCertificateRepository implements EmployeeCertificateRepositoryInte
         $employeecertificate = $this->model
                                     ->with([
                                         'employee' => function ($query) {
-                                            $query->select('id', 'name');
+                                            $query->select('id', 'name', 'employment_number');
                                         },
                                     ])
                                     ->where('id', $id)

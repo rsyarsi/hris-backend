@@ -29,7 +29,8 @@ class PphRepository implements PphRepositoryInterface
                         $query->where('period', 'like', "%{$search}%")
                             ->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->where('name', 'like', "%{$search}%");
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
                     });
         return $query->orderBy('period', 'DESC')->paginate($perPage);

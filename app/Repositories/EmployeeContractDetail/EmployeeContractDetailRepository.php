@@ -97,7 +97,7 @@ class EmployeeContractDetailRepository implements EmployeeContractDetailReposito
                                                     'position_id',
                                                     'manager_id',
                                                 )->with([
-                                                    'employee:id,name',
+                                                    'employee:id,name,employment_number',
                                                     'shiftGroup:id,name,hour,day,type',
                                                     'contractType:id,name,active',
                                                     'unit:id,name,active',

@@ -34,7 +34,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name', 'unit_id')->with('unit:id,name');
+                            $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
                         },
                         'shift' => function ($query) {
                             $query->select(
@@ -72,6 +72,15 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($unit) {
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
                 $employeeQuery->where('unit_id', $unit);
+            });
+        }
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
             });
         }
         return $query->paginate($perPage);
@@ -156,7 +165,14 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 
     public function show($id)
     {
-        $generateAbsen = $this->model->where('id', $id)->first($this->field);
+        $generateAbsen = $this->model
+                                ->with([
+                                    'employee' => function ($query) {
+                                        $query->select('id', 'name', 'email', 'employment_number');
+                                    },
+                                ])
+                                ->where('id', $id)
+                                ->first($this->field);
         return $generateAbsen ? $generateAbsen : $generateAbsen = null;
     }
 

@@ -15,7 +15,7 @@ use App\Http\Controllers\API\V1\{
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
-    TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController
+    TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController
 };
 
 /*
@@ -185,6 +185,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for import shift schedule
             Route::post('import-shift-schedule', 'importShiftSchedule')->name('import-shift-schedule');
         });
+        // route for master shift schedules
+        Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules' => 'shift_schedules']);
+        // Route::controller(ShiftScheduleController::class)->group(function () {
+        //     // route for shift schedules where employee today
+        //     Route::post('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
+        // });
         // route for master log fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
         Route::controller(LogFingerController::class)->group(function () {

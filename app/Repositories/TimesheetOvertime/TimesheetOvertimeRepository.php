@@ -54,12 +54,16 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
                         },
                     ])
                     ->where('period', 'like', "%{$period}%")
-                    ->where(function ($query) use ($search) {
-                        $lowerSearch = strtolower($search);
-                        $query->where('employee_id', $lowerSearch)
-                            ->orWhere(DB::raw('LOWER(employee_name)'), 'like', "%{$lowerSearch}%");
-                    })
                     ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
         return $query->orderBy('schedule_date_in_at', 'DESC')->paginate($perPage);
     }
 

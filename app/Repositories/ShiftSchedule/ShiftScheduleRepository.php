@@ -109,7 +109,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         $query->where(function ($subquery) use ($search) {
                             $subquery->orWhere('employee_id', $search)
                                         ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                            $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+                                            $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                            ->orWhere('employment_number', 'like', '%' . $search . '%');
                                         });
                         });
                     }

@@ -46,7 +46,8 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
                     ])
                     ->select($this->field);
         if ($search !== null) {
-            $query->whereRaw('LOWER(employee_name) LIKE ?', ["%".strtolower($search)."%"]);
+            $query->whereRaw('LOWER(employee_name) LIKE ?', ["%".strtolower($search)."%"])
+                    ->orWhere('employeement_id', 'like', '%' . $search . '%');
         }
         if ($unit) {
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
@@ -139,7 +140,14 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
 
     public function show($id)
     {
-        $generatePayroll = $this->model->where('id', $id)->first($this->field);
+        $generatePayroll = $this->model
+                                ->with([
+                                    'employee' => function ($query) {
+                                        $query->select('id', 'name', 'email', 'employment_number');
+                                    },
+                                ])
+                                ->where('id', $id)
+                                ->first($this->field);
         return $generatePayroll ? $generatePayroll : $generatePayroll = null;
     }
 

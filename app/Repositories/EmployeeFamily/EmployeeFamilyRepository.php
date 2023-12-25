@@ -35,12 +35,19 @@ class EmployeeFamilyRepository implements EmployeeFamilyRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field);
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                    ])
+                    ->select($this->field);
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
         }
@@ -57,7 +64,7 @@ class EmployeeFamilyRepository implements EmployeeFamilyRepositoryInterface
         $employeeFamily = $this->model
                         ->with([
                             'employee' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name', 'employment_number');
                             },
                             'relationship' => function ($query) {
                                 $query->select('id', 'name');

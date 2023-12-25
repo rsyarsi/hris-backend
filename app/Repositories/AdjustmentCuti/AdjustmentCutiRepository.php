@@ -40,7 +40,8 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
                 $subquery->where('year', 'like', '%' . $search . '%')
                     ->orWhere('employee_id', $search)
                     ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                        $employeeQuery->where('name', 'like', '%' . $search . '%');
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                        ->orWhere('employment_number', 'like', '%' . $search . '%');
                     });
             });
         }

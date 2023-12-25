@@ -36,10 +36,10 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
                             'adjustmentCuti' => function ($query) {
                                 $query->select(
                                     'id',
-                                    'employee_id', 
-                                    'quantity_awal', 
-                                    'quantity_adjustment', 
-                                    'quantity_akhir', 
+                                    'employee_id',
+                                    'quantity_awal',
+                                    'quantity_adjustment',
+                                    'quantity_akhir',
                                     'year'
                                 );
                             },
@@ -69,7 +69,8 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
         }
@@ -86,7 +87,7 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
         $catatanCuti = $this->model
                         ->with([
                             'employee' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name', 'employment_number');
                             },
                             'relationship' => function ($query) {
                                 $query->select('id', 'name');

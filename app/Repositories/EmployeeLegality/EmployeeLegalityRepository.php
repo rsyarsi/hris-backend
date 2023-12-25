@@ -37,14 +37,16 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
                             $query->select('id', 'name', 'active', 'extended');
                         },
                     ])
-                    ->where(function ($subquery) use ($search) {
-                        $lowerSearch = strtolower($search);
-                        $subquery->orWhere('employee_id', $lowerSearch)
-                                    ->orWhereHas('employee', function ($employeeQuery) use ($lowerSearch) {
-                                        $employeeQuery->where(DB::raw('LOWER(name)'), 'like', '%' . $lowerSearch . '%');
-                                    });
-                    })
                     ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
         return $query->paginate($perPage);
     }
 
@@ -58,7 +60,7 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
         $employeelegality = $this->model
                                     ->with([
                                         'employee' => function ($query) {
-                                            $query->select('id', 'name');
+                                            $query->select('id', 'name', 'employment_number');
                                         },
                                         'legalityType' => function ($query) {
                                             $query->select('id', 'name', 'active', 'extended');

@@ -114,6 +114,15 @@ class LeaveRepository implements LeaveRepositoryInterface
                         },
                     ])
                     ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
         return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
