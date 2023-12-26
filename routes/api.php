@@ -129,7 +129,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for employee where spv/kabag/manager yang login
             Route::get('employee-subordinate', 'employeeSubordinate')->name('employee-subordinate');
             // route for employee where spv/kabag/manager yang login mobile
-            Route::get('employee-subordinate-mobile', 'employeeSubordinateMobile')->name('employee-subordinate-mobile');
+            Route::post('employee-subordinate-mobile', 'employeeSubordinateMobile')->name('employee-subordinate-mobile');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
