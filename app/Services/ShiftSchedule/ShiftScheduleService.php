@@ -169,4 +169,9 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         return $this->repository->shiftScheduleEmployeeMobile($employeeId);
     }
+    
+    public function shiftScheduleEmployeeDate($employeeId, $date)
+    {
+        return $this->repository->shiftScheduleEmployeeDate($employeeId, $date);
+    }
 }

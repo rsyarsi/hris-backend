@@ -51,10 +51,10 @@ class ShiftSchedule extends Model
         return $this->belongsTo(Shift::class, 'shift_id', 'id');
     }
 
-    // public function shiftExcange()
-    // {
-    //     return $this->belongsTo(Leave::class, 'shift_exchange_id', 'id');
-    // }
+    public function shiftExchange()
+    {
+        return $this->belongsTo(ShiftScheduleExchange::class, 'shift_exchange_id', 'id');
+    }
 
     public function userExchange()
     {

@@ -15,4 +15,5 @@ Interface ShiftScheduleRepositoryInterface
     public function shiftSchedulesExist($employeeId, $fromDate, $toDate);
     public function shiftScheduleEmployeeToday($employeeId);
     public function shiftScheduleEmployeeMobile($employeeId);
+    public function shiftScheduleEmployeeDate($employeeId, $date);
 }

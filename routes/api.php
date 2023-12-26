@@ -178,6 +178,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
             // route for shift schedules where employee mobile (1 month)
             Route::post('shift-schedules-employee-mobile', 'shiftScheduleEmployeeMobile')->name('shift-schedules-employee-mobile');
+            // route for shift schedules where employee and date
+            Route::get('shift-schedules-employee-date', 'shiftScheduleEmployeeDate')->name('shift-schedules-employee-date');
             // route for shift schedules where employee
             Route::get('shift-schedules-where-employee', 'shiftScheduleEmployee')->name('shift-schedules-where-employee');
             // route for multiple shift schedule
@@ -186,7 +188,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('import-shift-schedule', 'importShiftSchedule')->name('import-shift-schedule');
         });
         // route for master shift schedules
-        Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules' => 'shift_schedules']);
+        Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
         // Route::controller(ShiftScheduleController::class)->group(function () {
         //     // route for shift schedules where employee today
         //     Route::post('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');

@@ -37,6 +37,36 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'leave_id',
         'absen_type'
     ];
+    private $fieldShiftScheduleExchange = 
+    [
+        'employe_requested_id',
+        'shift_schedule_date_requested',
+        'shift_schedule_request_id',
+        'shift_schedule_code_requested',
+        'shift_schedule_name_requested',
+        'shift_schedule_time_from_requested',
+        'shift_schedule_time_end_requested',
+        'shift_exchange_type',
+        'to_employee_id',
+        'shift_schedule_date_to',
+        'to_shift_schedule_id',
+        'to_shift_schedule_code',
+        'to_shift_schedule_name',
+        'to_shift_schedule_time_from',
+        'to_shift_schedule_time_end',
+        'exchange_employee_id',
+        'exchange_date',
+        'exchange_shift_schedule_id',
+        'exchange_shift_schedule_code',
+        'exchange_shift_schedule_name',
+        'exchange_shift_schedule_time_from',
+        'exchange_shift_schedule_time_end',
+        'date_created',
+        'date_updated',
+        'user_created_id',
+        'user_updated_id',
+        'cancel',
+    ];
 
     public function __construct(ShiftSchedule $model)
     {
@@ -68,18 +98,9 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 'user_updated_id',
                             )->with('shiftGroup:id,name');
                         },
-                        // 'shiftExcange' => function ($query) {
-                        //     $query->select(
-                        //         'id',
-                        //         'employee_id',
-                        //         'leave_type_id',
-                        //         'from_date',
-                        //         'to_date',
-                        //         'duration',
-                        //         'note',
-                        //         'leave_status_id',
-                        //     );
-                        // },
+                        'shiftExchange' => function ($query) {
+                            $query->select($this->fieldShiftScheduleExchange);
+                        },
                         'userExchange' => function ($query) {
                             $query->select('id', 'name');
                         },
@@ -613,4 +634,15 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;
     }
 
+    public function shiftScheduleEmployeeDate($employeeId, $date)
+    {
+        $shiftSchedul = $this->model
+                            ->where('employee_id', $employeeId)
+                            ->where('date', $date)
+                            ->first($this->field);
+        if ($shiftSchedul) {
+            return $shiftSchedul;
+        }
+        return null;
+    }
 }

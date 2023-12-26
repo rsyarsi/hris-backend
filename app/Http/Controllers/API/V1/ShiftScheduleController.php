@@ -101,6 +101,22 @@ class ShiftScheduleController extends Controller
         }
     }
 
+    public function shiftScheduleEmployeeDate(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $date = $request->input('date');
+            $shiftSchedules = $this->shiftScheduleService->shiftScheduleEmployeeDate($employeeId, $date);
+            if ($shiftSchedules) {
+                return $this->success('Shift schedule berhasil diambil!', $shiftSchedules);
+            } else {
+                return $this->error('Karyawan & tanggal tidak ditemukan!', 404);
+            }
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function shiftScheduleEmployeeMobile(Request $request)
     {
         try {
