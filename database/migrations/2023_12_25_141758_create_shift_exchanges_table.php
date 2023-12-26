@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('shift_exchange_type', 50)->nullable();
             $table->foreign('to_employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('to_employee_id', 26)->nullable();
-            $table->date('shift_schedule_date_to')->nullable();
+            $table->date('to_shift_schedule_date')->nullable();
             $table->foreign('to_shift_schedule_id')->references('id')->on('shift_schedules')->onDelete('set null');
             $table->string('to_shift_schedule_id', 26)->nullable();
             $table->string('to_shift_schedule_code', 50)->nullable();
@@ -59,6 +59,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shift_exchanges');
+        Schema::dropIfExists('shift_schedule_exchanges');
     }
 };

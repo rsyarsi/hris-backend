@@ -59,6 +59,7 @@ use App\Services\AdjustmentCuti\{AdjustmentCutiService, AdjustmentCutiServiceInt
 use App\Services\TimesheetOvertime\{TimesheetOvertimeService, TimesheetOvertimeServiceInterface};
 use App\Services\CatatanCuti\{CatatanCutiService, CatatanCutiServiceInterface};
 use App\Services\OvertimeHistory\{OvertimeHistoryService, OvertimeHistoryServiceInterface};
+use App\Services\ShiftScheduleExchange\{ShiftScheduleExchangeService, ShiftScheduleExchangeServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -117,6 +118,7 @@ use App\Repositories\AdjustmentCuti\{AdjustmentCutiRepository, AdjustmentCutiRep
 use App\Repositories\TimesheetOvertime\{TimesheetOvertimeRepository, TimesheetOvertimeRepositoryInterface};
 use App\Repositories\CatatanCuti\{CatatanCutiRepository, CatatanCutiRepositoryInterface};
 use App\Repositories\OvertimeHistory\{OvertimeHistoryRepository, OvertimeHistoryRepositoryInterface};
+use App\Repositories\ShiftScheduleExchange\{ShiftScheduleExchangeRepository, ShiftScheduleExchangeRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -287,6 +289,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ShiftScheduleRepositoryInterface::class, ShiftScheduleRepository::class);
         $this->app->bind(ShiftScheduleServiceInterface::class, ShiftScheduleService::class);
 
+        // Shift Schedule Exchange
+        $this->app->bind(ShiftScheduleExchangeRepositoryInterface::class, ShiftScheduleExchangeRepository::class);
+        $this->app->bind(ShiftScheduleExchangeServiceInterface::class, ShiftScheduleExchangeService::class);
+
         // Log Finger
         $this->app->bind(LogFingerRepositoryInterface::class, LogFingerRepository::class);
         $this->app->bind(LogFingerServiceInterface::class, LogFingerService::class);
@@ -318,7 +324,7 @@ class AppServiceProvider extends ServiceProvider
         // Generate Absen
         $this->app->bind(GenerateAbsenRepositoryInterface::class, GenerateAbsenRepository::class);
         $this->app->bind(GenerateAbsenServiceInterface::class, GenerateAbsenService::class);
-        
+
         // Generate Payroll
         $this->app->bind(GeneratePayrollRepositoryInterface::class, GeneratePayrollRepository::class);
         $this->app->bind(GeneratePayrollServiceInterface::class, GeneratePayrollService::class);
@@ -338,19 +344,19 @@ class AppServiceProvider extends ServiceProvider
         // Adjustment Cuti
         $this->app->bind(AdjustmentCutiRepositoryInterface::class, AdjustmentCutiRepository::class);
         $this->app->bind(AdjustmentCutiServiceInterface::class, AdjustmentCutiService::class);
-        
+
         // Catatan Cuti
         $this->app->bind(CatatanCutiRepositoryInterface::class, CatatanCutiRepository::class);
         $this->app->bind(CatatanCutiServiceInterface::class, CatatanCutiService::class);
-        
+
         // Timesheet Overtime
         $this->app->bind(TimesheetOvertimeRepositoryInterface::class, TimesheetOvertimeRepository::class);
         $this->app->bind(TimesheetOvertimeServiceInterface::class, TimesheetOvertimeService::class);
-        
+
         // Overtime History
         $this->app->bind(OvertimeHistoryRepositoryInterface::class, OvertimeHistoryRepository::class);
         $this->app->bind(OvertimeHistoryServiceInterface::class, OvertimeHistoryService::class);
-        
+
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
     }

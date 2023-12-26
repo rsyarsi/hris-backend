@@ -27,7 +27,7 @@ class ShiftScheduleExchange extends Model
         'shift_schedule_time_end_requested',
         'shift_exchange_type',
         'to_employee_id',
-        'shift_schedule_date_to',
+        'to_shift_schedule_date',
         'to_shift_schedule_id',
         'to_shift_schedule_code',
         'to_shift_schedule_name',
