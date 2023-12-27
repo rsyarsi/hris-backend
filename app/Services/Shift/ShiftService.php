@@ -50,4 +50,9 @@ class ShiftService implements ShiftServiceInterface
     {
         return Str::upper($data);
     }
+
+    public function searchShiftLibur($shiftGroupId)
+    {
+        return $this->repository->searchShiftLibur($shiftGroupId);
+    }
 }

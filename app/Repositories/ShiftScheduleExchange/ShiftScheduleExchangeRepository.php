@@ -4,11 +4,12 @@ namespace App\Repositories\ShiftScheduleExchange;
 
 use App\Models\ShiftScheduleExchange;
 use App\Repositories\ShiftScheduleExchange\ShiftScheduleExchangeRepositoryInterface;
-
+use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 
 class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepositoryInterface
 {
     private $model;
+    private $shiftScheduleService;
     private $field = [
         'id',
         'employe_requested_id',
@@ -63,9 +64,13 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
         'absen_type',
     ];
 
-    public function __construct(ShiftScheduleExchange $model)
+    public function __construct(
+        ShiftScheduleExchange $model,
+        ShiftScheduleServiceInterface $shiftScheduleService
+    )
     {
         $this->model = $model;
+        $this->shiftScheduleService = $shiftScheduleService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null)
@@ -115,7 +120,27 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
 
     public function store(array $data)
     {
-        return $this->model->create($data);
+        $shiftScheduleExchange = $this->model->create($data);
+        $dataShiftSchedule['employee_id'] = $shiftScheduleExchange->employe_requested_id;
+        $dataShiftSchedule['shift_exchange_id'] = $shiftScheduleExchange->id;
+        $dataShiftSchedule['date_requested'] = $shiftScheduleExchange->shift_schedule_date_requested;
+        $dataShiftSchedule['time_in'] = $shiftScheduleExchange->shift_schedule_time_from_requested;
+        $dataShiftSchedule['time_out'] = $shiftScheduleExchange->shift_schedule_time_end_requested;
+        $dataShiftSchedule['user_exchange_id'] = $shiftScheduleExchange->user_created_id;
+        $dataShiftSchedule['shift_id'] = $data['shift_libur_id'];
+        // $dataShiftSchedule = [
+        //     // $data['shift_id'] => ,
+        //     // $data['date'] => ,
+        //     // $data['time_in'] => ,
+        //     // $data['time_out'] => ,
+        //     // $data['shift_exchange_id'] => ,
+        //     // $data['user_exchange_id'] => ,
+        //     // $data['user_exchange_at'] => ,
+        //     // $data['created_user_id'] => ,
+        //     // $data['updated_user_id'] => ,
+        // ];
+        $this->shiftScheduleService->updateShiftScheduleExchage($dataShiftSchedule);
+        return $shiftScheduleExchange;
     }
 
     public function show($id)

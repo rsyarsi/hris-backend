@@ -14,7 +14,8 @@ use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 {
     private $model;
-    private $field = [
+    private $field =
+    [
         'id',
         'employee_id',
         'shift_id',
@@ -37,8 +38,9 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'leave_id',
         'absen_type'
     ];
-    private $fieldShiftScheduleExchange = 
+    private $fieldShiftScheduleExchange =
     [
+        'id',
         'employe_requested_id',
         'shift_schedule_date_requested',
         'shift_schedule_request_id',
@@ -48,7 +50,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'shift_schedule_time_end_requested',
         'shift_exchange_type',
         'to_employee_id',
-        'shift_schedule_date_to',
+        'to_shift_schedule_date',
         'to_shift_schedule_id',
         'to_shift_schedule_code',
         'to_shift_schedule_name',
@@ -219,6 +221,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
     {
         $shiftschedule = $this->model->find($id);
         if ($shiftschedule) {
+            $data['updated_user_id'] = auth()->id();
             $shiftschedule->update($data);
             return $shiftschedule;
         }
@@ -644,5 +647,23 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             return $shiftSchedul;
         }
         return null;
+    }
+
+    public function updateShiftScheduleExchage($data)
+    {
+        $employeeId = $data['employee_id'];
+        $date = $data['date_requested'];
+        $shiftSchedule = $this->model
+                            ->where('employee_id', $employeeId)
+                            ->where('date', $date)
+                            ->first($this->field);
+
+        $data['shift_exchange_id'] = $data['shift_exchange_id'];
+        $data['time_in'] = $data['time_in'];
+        $data['time_out'] = $data['time_out'];
+        $data['shift_id'] = $data['shift_id'];
+        $data['user_exchange_id'] = $data['user_exchange_id'];
+        $data['user_exchange_at'] = now();
+        return $shiftSchedule->update($data);
     }
 }

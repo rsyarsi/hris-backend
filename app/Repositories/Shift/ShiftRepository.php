@@ -105,4 +105,17 @@ class ShiftRepository implements ShiftRepositoryInterface
         }
         return null;
     }
+
+    public function searchShiftLibur($shiftGroupId)
+    {
+        $shift = $this->model
+                        ->where('shift_group_id', $shiftGroupId)
+                        ->where('code', 'L')
+                        ->orWhere('name', 'LIBUR')
+                        ->first($this->field);
+        if ($shift) {
+            return $shift;
+        }
+        return null;
+    }
 }

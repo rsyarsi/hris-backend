@@ -3,7 +3,6 @@ namespace App\Repositories\ShiftScheduleExchange;
 
 Interface ShiftScheduleExchangeRepositoryInterface
 {
-
     public function index($perPage, $search, $startDate, $endDate);
     public function store(array $data);
     public function show($id);

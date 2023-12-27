@@ -5,7 +5,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 use App\Services\Shift\ShiftServiceInterface;
-use App\Services\Overtime\OvertimeServiceInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 
@@ -15,11 +14,13 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     private $shiftService;
     private $overtimeService;
 
-    public function __construct(ShiftScheduleRepositoryInterface $repository, ShiftServiceInterface $shiftService, OvertimeServiceInterface $overtimeService)
+    public function __construct(
+        ShiftScheduleRepositoryInterface $repository,
+        ShiftServiceInterface $shiftService,
+    )
     {
         $this->repository = $repository;
         $this->shiftService = $shiftService;
-        $this->overtimeService = $overtimeService;
     }
 
     public function index($perPage, $search, $startDate, $endDate)
@@ -31,24 +32,19 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
-
         $data['created_user_id'] = auth()->id();
         $data['setup_user_id'] = auth()->id();
         $data['setup_at'] = now();
-
         // Calculate time_in and time_out based on night_shift
         $data['time_in'] = $shiftId ? $data['date'] . ' ' . $shift->in_time : null;
         $data['time_out'] = $shiftId ? $data['date'] . ' ' . $shift->out_time : null;
         if ($shiftId && $shift->night_shift) {
             $data['time_out'] = Carbon::parse($data['time_out'])->addDay()->format('Y-m-d H:i:s');
         }
-
         if ($shift && $shift->libur == 1) {
             $data['holiday'] = 1;
         }
-
         $data['night'] = $shift->night_shift;
-
         return $this->repository->store($data);
     }
 
@@ -62,7 +58,6 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         $shiftSchedule = $this->repository->show($id);
         $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
-
         // Calculate time_in and time_out based on night_shift
         $data['time_in'] = $shift ? $shiftSchedule->date . ' ' . $shift->in_time : null;
         $data['time_out'] = $shift ? $shiftSchedule->date . ' ' . $shift->out_time : null;
@@ -70,13 +65,11 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
             $data['time_out'] = Carbon::parse($data['time_out'])->addDay()->format('Y-m-d H:i:s');
             $data['holiday'] = 1;
         }
-
         if ($shift && $shift->libur == "1") {
             $data['holiday'] = 1;
         } else {
             $data['holiday'] = 0;
         }
-
         return $this->repository->update($id, $data);
     }
 
@@ -94,22 +87,16 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         $shiftId = $data['shift_id'] ?? null;
         $shift = $this->shiftService->show($shiftId);
-
         $createdUserId = auth()->id();
         $setupUserId = auth()->id();
-
         // Parse the start_date and end_date
         $startDate = Carbon::parse($data['start_date']);
         $endDate = Carbon::parse($data['end_date']);
-
         $shiftSchedules = [];
-
         // Loop through the date range
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
             $ulid = Ulid::generate(); // Generate a ULID
-
             $timeIn = $shiftId ? $date->format('Y-m-d') . ' ' . $shift->in_time : null;
-
             // Calculate time_out based on night_shift
             $timeOut = $shiftId ? $date->format('Y-m-d') . ' ' . $shift->out_time : null;
             if ($shiftId && $shift->night_shift) {
@@ -169,9 +156,14 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
     {
         return $this->repository->shiftScheduleEmployeeMobile($employeeId);
     }
-    
+
     public function shiftScheduleEmployeeDate($employeeId, $date)
     {
         return $this->repository->shiftScheduleEmployeeDate($employeeId, $date);
+    }
+
+    public function updateShiftScheduleExchage($data)
+    {
+        return $this->repository->updateShiftScheduleExchage($data);
     }
 }

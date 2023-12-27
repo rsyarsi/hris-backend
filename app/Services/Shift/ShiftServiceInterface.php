@@ -8,4 +8,5 @@ interface ShiftServiceInterface
     public function show($id);
     public function update($id, array $data);
     public function destroy($id);
+    public function searchShiftLibur($shiftGroupId);
 }
