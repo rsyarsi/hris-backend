@@ -43,6 +43,9 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
         $toEmployeeId = $data['to_employee_id'];
         $toShiftScheduleDate = $data['to_shift_schedule_date'];
 
+        $exchangeEmployeeId = $data['exchange_employee_id'];
+        $exchangeDate = $data['exchange_date'];
+
         // employee service
         $employee = $this->employeeService->show($employeRequestedId);
 
@@ -99,12 +102,10 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
 
             // exchange
             if ($data['exchange_employee_id'] !== null && $employeRequestedId !== $data['to_employee_id']) {
-                $exchangeEmployeeId = $data['exchange_employee_id'];
-                $exchangeDate = $data['exchange_date'];
                 $shiftScheduleExchange = $this->shiftScheduleService->shiftScheduleEmployeeDate($exchangeEmployeeId, $exchangeDate);
-                $data['exchange_date'] = $exchangeDate;
                 $data['exchange_employee_id'] = $exchangeEmployeeId;
                 $data['exchange_shift_schedule_id'] = $shiftScheduleExchange->id;
+                $data['exchange_shift_id'] = $shiftScheduleExchange->shift->id;
                 $data['exchange_shift_schedule_code'] = $shiftScheduleExchange->shift->code;
                 $data['exchange_shift_schedule_name'] = $shiftScheduleExchange->shift->name;
                 $data['exchange_shift_schedule_time_from'] = $shiftScheduleExchange->time_in;

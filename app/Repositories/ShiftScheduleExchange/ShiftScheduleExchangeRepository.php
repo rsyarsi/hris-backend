@@ -125,6 +125,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
         // untuk tukar shift butuh shift id
         $shiftIdRequest = $data['shift_id_request'];
         $toShiftId = $data['to_shift_id'] ?? null;
+        $exchangeShiftId = $data['exchange_shift_id'] ?? null;
 
         $shiftScheduleExchange = $this->model->create($data);
         $employeeRequestId = $shiftScheduleExchange->employe_requested_id;
@@ -164,8 +165,27 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                             'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
                             'user_exchange_at' => now(),
                         ]);
-        }  elseif ($shiftScheduleExchange->shift_exchange_type == "TUKAR SHIFT" && $employeeRequestId !== $employeeToId) {
-
+        }  elseif ($shiftScheduleExchange->shift_exchange_type == "TUKAR SHIFT" && $employeeRequestId !== $employeeExchangeId) {
+            // update shift schedule where tanggal request
+            ShiftSchedule::where('id', $shiftScheduleExchange->shift_schedule_request_id)
+                ->update([
+                    'shift_exchange_id' => $shiftScheduleExchange->id,
+                    'shift_id' => $exchangeShiftId,
+                    'time_in' => $shiftScheduleExchange->shift_schedule_date_requested.' '.Carbon::parse($shiftScheduleExchange->exchange_shift_schedule_time_from)->format('H:i:s'),
+                    'time_out' => $shiftScheduleExchange->shift_schedule_date_requested.' '.Carbon::parse($shiftScheduleExchange->exchange_shift_schedule_time_end)->format('H:i:s'),
+                    'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
+                    'user_exchange_at' => now(),
+                ]);
+            // update shift schedule where tanggal exchange
+            ShiftSchedule::where('id', $shiftScheduleExchange->exchange_shift_schedule_id)
+                ->update([
+                    'shift_exchange_id' => $shiftScheduleExchange->id,
+                    'shift_id' => $shiftIdRequest,
+                    'time_in' => $shiftScheduleExchange->exchange_date.' '.Carbon::parse($shiftScheduleExchange->shift_schedule_time_from_requested)->format('H:i:s'),
+                    'time_out' => $shiftScheduleExchange->exchange_date.' '.Carbon::parse($shiftScheduleExchange->shift_schedule_time_end_requested)->format('H:i:s'),
+                    'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
+                    'user_exchange_at' => now(),
+                ]);
         }
 
         return $shiftScheduleExchange;
