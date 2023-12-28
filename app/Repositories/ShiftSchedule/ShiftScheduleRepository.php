@@ -176,18 +176,9 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                         'user_updated_id',
                                     );
                                 },
-                                // 'shiftExcange' => function ($query) {
-                                //     $query->select(
-                                //         'id',
-                                //         'employee_id',
-                                //         'leave_type_id',
-                                //         'from_date',
-                                //         'to_date',
-                                //         'duration',
-                                //         'note',
-                                //         'leave_status_id',
-                                //     );
-                                // },
+                                'shiftExchange' => function ($query) {
+                                    $query->select($this->fieldShiftScheduleExchange);
+                                },
                                 'userExchange' => function ($query) {
                                     $query->select('id', 'name');
                                 },
@@ -659,9 +650,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->first($this->field);
 
         $data['shift_exchange_id'] = $data['shift_exchange_id'];
-        $data['time_in'] = $data['time_in'];
-        $data['time_out'] = $data['time_out'];
-        $data['shift_id'] = $data['shift_id'];
         $data['user_exchange_id'] = $data['user_exchange_id'];
         $data['user_exchange_at'] = now();
         return $shiftSchedule->update($data);

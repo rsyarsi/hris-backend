@@ -2,6 +2,7 @@
 
 namespace App\Repositories\ShiftScheduleExchange;
 
+use App\Models\ShiftSchedule;
 use App\Models\ShiftScheduleExchange;
 use App\Repositories\ShiftScheduleExchange\ShiftScheduleExchangeRepositoryInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
@@ -121,25 +122,46 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
     public function store(array $data)
     {
         $shiftScheduleExchange = $this->model->create($data);
-        $dataShiftSchedule['employee_id'] = $shiftScheduleExchange->employe_requested_id;
-        $dataShiftSchedule['shift_exchange_id'] = $shiftScheduleExchange->id;
-        $dataShiftSchedule['date_requested'] = $shiftScheduleExchange->shift_schedule_date_requested;
-        $dataShiftSchedule['time_in'] = $shiftScheduleExchange->shift_schedule_time_from_requested;
-        $dataShiftSchedule['time_out'] = $shiftScheduleExchange->shift_schedule_time_end_requested;
-        $dataShiftSchedule['user_exchange_id'] = $shiftScheduleExchange->user_created_id;
-        $dataShiftSchedule['shift_id'] = $data['shift_libur_id'];
-        // $dataShiftSchedule = [
-        //     // $data['shift_id'] => ,
-        //     // $data['date'] => ,
-        //     // $data['time_in'] => ,
-        //     // $data['time_out'] => ,
-        //     // $data['shift_exchange_id'] => ,
-        //     // $data['user_exchange_id'] => ,
-        //     // $data['user_exchange_at'] => ,
-        //     // $data['created_user_id'] => ,
-        //     // $data['updated_user_id'] => ,
-        // ];
-        $this->shiftScheduleService->updateShiftScheduleExchage($dataShiftSchedule);
+        $dataShiftScheduleRequest['employee_id'] = $shiftScheduleExchange->employe_requested_id;
+        $dataShiftScheduleRequest['shift_id'] = $shiftScheduleExchange->shift_schedule_request_id;
+        $dataShiftScheduleRequest['date'] = $shiftScheduleExchange->shift_schedule_date_requested;
+        $dataShiftScheduleRequest['time_in'] = $shiftScheduleExchange->shift_schedule_time_from_requested;
+        $dataShiftScheduleRequest['time_out'] = $shiftScheduleExchange->shift_schedule_time_end_requested;
+        $dataShiftScheduleRequest['shift_exchange_id'] = $shiftScheduleExchange->id;
+        $dataShiftScheduleRequest['user_exchange_id'] = auth()->id();
+        $dataShiftScheduleRequest['user_exchange_at'] = now();
+
+        $dataShiftScheduleTo['employee_id'] = $shiftScheduleExchange->employe_requested_id;
+        $dataShiftScheduleTo['shift_id'] = '';
+        $dataShiftScheduleTo['date'] = '';
+        $dataShiftScheduleTo['time_in'] = '';
+        $dataShiftScheduleTo['time_out'] = '';
+        $dataShiftScheduleTo['shift_exchange_id'] = '';
+        $dataShiftScheduleTo['user_exchange_id'] = '';
+        $dataShiftScheduleTo['user_exchange_at'] = '';
+        
+        $dataShiftScheduleExchange['employee_id'] = $shiftScheduleExchange->employe_requested_id;
+        $dataShiftScheduleExchange['shift_id'] = '';
+        $dataShiftScheduleExchange['date'] = '';
+        $dataShiftScheduleExchange['time_in'] = '';
+        $dataShiftScheduleExchange['time_out'] = '';
+        $dataShiftScheduleExchange['shift_exchange_id'] = '';
+        $dataShiftScheduleExchange['user_exchange_id'] = '';
+        $dataShiftScheduleExchange['user_exchange_at'] = '';
+        
+        // $this->shiftScheduleService->updateShiftScheduleExchage($dataShiftScheduleRequest);
+        // $this->shiftScheduleService->updateShiftScheduleExchage($dataShiftScheduleTo);
+        // $this->shiftScheduleService->updateShiftScheduleExchage($dataShiftScheduleExchange);
+
+        // libur & to
+        $shiftScheduleRequest = ShiftSchedule::where('employee_id', $shiftScheduleExchange->employe_requested_id)
+                                                ->where('date', $shiftScheduleExchange->shift_schedule_date_requested)
+                                                ->update($dataShiftScheduleRequest);
+        // exchange
+        $shiftScheduleExchange = ShiftSchedule::where('employee_id', $shiftScheduleExchange->employe_requested_id)
+                                                ->where('date', $shiftScheduleExchange->shift_schedule_date_requested)
+                                                ->update($dataShiftScheduleRequest);
+        
         return $shiftScheduleExchange;
     }
 

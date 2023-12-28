@@ -17,4 +17,9 @@ class ShiftGroup extends Model
     public $incrementing = false;
 
     protected $fillable = ['name', 'hour', 'day', 'type'];
+
+    function shift()
+    {
+        return $this->hasMany(Shift::class, 'shift_group_id');
+    }
 }

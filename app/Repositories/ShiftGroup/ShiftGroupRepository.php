@@ -18,7 +18,7 @@ class ShiftGroupRepository implements ShiftGroupRepositoryInterface
 
     public function index($perPage, $search = null)
     {
-        $query = $this->model->select($this->field);
+        $query = $this->model->with('shift')->select($this->field);
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
@@ -32,7 +32,7 @@ class ShiftGroupRepository implements ShiftGroupRepositoryInterface
 
     public function show($id)
     {
-        $shiftgroup = $this->model->where('id', $id)->first($this->field);
+        $shiftgroup = $this->model->with('shift')->where('id', $id)->first($this->field);
         return $shiftgroup ? $shiftgroup : $shiftgroup = null;
     }
 

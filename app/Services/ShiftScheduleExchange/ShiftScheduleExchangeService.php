@@ -50,9 +50,8 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
         $shiftScheduleRequested = $this->shiftScheduleService->shiftScheduleEmployeeDate($employeRequestedId, $shiftScheduleDateRequested);
         // return $shiftScheduleRequested;
         if ($shiftExchangeType == "LIBUR") {
-
             $data['shift_schedule_request_id'] = $shiftScheduleRequested->id;
-            $data['shift_libur_id'] = $shiftLibur->id;
+            $data['shift_id'] = $shiftLibur->id;
             $data['shift_schedule_code_requested'] = $shiftLibur->code;
             $data['shift_schedule_name_requested'] = $shiftLibur->name;
             $data['shift_schedule_time_from_requested'] = $shiftScheduleDateRequested. ' 00:00:00';
@@ -74,7 +73,6 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             $data['exchange_shift_schedule_time_from'] = null;
             $data['exchange_shift_schedule_time_end'] = null;
         } else {
-
             $data['shift_schedule_request_id'] = $shiftScheduleRequested->id;
             $data['shift_schedule_code_requested'] = $shiftScheduleRequested->shift->code;
             $data['shift_schedule_name_requested'] = $shiftScheduleRequested->shift->name;
@@ -82,29 +80,32 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             $data['shift_schedule_time_end_requested'] = $shiftScheduleRequested->time_out;
 
             // to
-            $toEmployeeId = $data['to_employee_id'];
-            $toShiftScheduleDate = $data['to_shift_schedule_date'];
-            $shiftScheduleTo = $this->shiftScheduleService->shiftScheduleEmployeeDate($toEmployeeId, $toShiftScheduleDate);
-
-            $data['to_shift_schedule_date'] = $toShiftScheduleDate;
-            $data['to_employee_id'] = $toEmployeeId;
-            $data['to_shift_schedule_id'] = $shiftScheduleTo->id;
-            $data['to_shift_schedule_code'] = $shiftScheduleTo->shift->code;
-            $data['to_shift_schedule_name'] = $shiftScheduleTo->shift->name;
-            $data['to_shift_schedule_time_from'] = $shiftScheduleTo->time_in;
-            $data['to_shift_schedule_time_end'] = $shiftScheduleTo->time_out;
+            if ($data['to_employee_id'] !== null) {
+                $toEmployeeId = $data['to_employee_id'];
+                $toShiftScheduleDate = $data['to_shift_schedule_date'];
+                $shiftScheduleTo = $this->shiftScheduleService->shiftScheduleEmployeeDate($toEmployeeId, $toShiftScheduleDate);
+                $data['to_shift_schedule_date'] = $toShiftScheduleDate;
+                $data['to_employee_id'] = $toEmployeeId;
+                $data['to_shift_schedule_id'] = $shiftScheduleTo->id;
+                $data['to_shift_schedule_code'] = $shiftScheduleTo->shift->code;
+                $data['to_shift_schedule_name'] = $shiftScheduleTo->shift->name;
+                $data['to_shift_schedule_time_from'] = $shiftScheduleTo->time_in;
+                $data['to_shift_schedule_time_end'] = $shiftScheduleTo->time_out;
+            }
 
             // exchange
-            $exchangeEmployeeId = $data['exchange_employee_id'];
-            $exchangeDate = $data['exchange_date'];
-            $shiftScheduleExchange = $this->shiftScheduleService->shiftScheduleEmployeeDate($exchangeEmployeeId, $exchangeDate);
-            $data['exchange_date'] = $exchangeDate;
-            $data['exchange_employee_id'] = $exchangeEmployeeId;
-            $data['exchange_shift_schedule_id'] = $shiftScheduleExchange->id;
-            $data['exchange_shift_schedule_code'] = $shiftScheduleExchange->shift->code;
-            $data['exchange_shift_schedule_name'] = $shiftScheduleExchange->shift->name;
-            $data['exchange_shift_schedule_time_from'] = $shiftScheduleExchange->time_in;
-            $data['exchange_shift_schedule_time_end'] = $shiftScheduleExchange->time_out;
+            if ($data['exchange_employee_id'] !== null) {
+                $exchangeEmployeeId = $data['exchange_employee_id'];
+                $exchangeDate = $data['exchange_date'];
+                $shiftScheduleExchange = $this->shiftScheduleService->shiftScheduleEmployeeDate($exchangeEmployeeId, $exchangeDate);
+                $data['exchange_date'] = $exchangeDate;
+                $data['exchange_employee_id'] = $exchangeEmployeeId;
+                $data['exchange_shift_schedule_id'] = $shiftScheduleExchange->id;
+                $data['exchange_shift_schedule_code'] = $shiftScheduleExchange->shift->code;
+                $data['exchange_shift_schedule_name'] = $shiftScheduleExchange->shift->name;
+                $data['exchange_shift_schedule_time_from'] = $shiftScheduleExchange->time_in;
+                $data['exchange_shift_schedule_time_end'] = $shiftScheduleExchange->time_out;
+            }
         }
 
         $data['date_created'] = now()->format('Y-m-d');

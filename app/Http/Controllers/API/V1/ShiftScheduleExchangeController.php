@@ -36,10 +36,10 @@ class ShiftScheduleExchangeController extends Controller
 
     public function store(ShiftScheduleExchangeRequest $request)
     {
+        $data = $request->validated();
+        $shift = $this->shiftScheduleExchangeService->store($data);
+        return $this->success('Shift schedule exchange created successfully', $shift, 201);
         try {
-            $data = $request->validated();
-            $shift = $this->shiftScheduleExchangeService->store($data);
-            return $this->success('Shift schedule exchange created successfully', $shift, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
