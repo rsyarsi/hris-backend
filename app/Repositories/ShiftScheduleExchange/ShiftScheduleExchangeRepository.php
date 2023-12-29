@@ -226,6 +226,11 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
     {
         $shiftscheduleexchange = $this->model->find($id);
         if ($shiftscheduleexchange) {
+            // ShiftSchedule::where('id', $shiftScheduleExchange->to_shift_schedule_id)
+            //             ->update([
+            //                 'shift_exchange_id' => null,
+            //                 'user_exchange_id' => null,
+            //             ]);
             $shiftscheduleexchange->update($data);
             return $shiftscheduleexchange;
         }
