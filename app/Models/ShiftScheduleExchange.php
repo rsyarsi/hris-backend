@@ -45,6 +45,7 @@ class ShiftScheduleExchange extends Model
         'user_created_id',
         'user_updated_id',
         'cancel',
+        'notes',
     ];
 
     public function employeeRequest()

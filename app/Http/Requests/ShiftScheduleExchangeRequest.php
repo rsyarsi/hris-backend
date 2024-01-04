@@ -34,6 +34,7 @@ class ShiftScheduleExchangeRequest extends FormRequest
             'date_created' => 'nullable|date',
             'date_updated' => 'nullable|date',
             'cancel' => 'nullable|integer',
+            'notes' => 'nullable|string|max:255',
         ];
     }
 }
