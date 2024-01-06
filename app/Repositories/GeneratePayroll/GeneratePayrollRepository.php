@@ -5,13 +5,15 @@ namespace App\Repositories\GeneratePayroll;
 use Carbon\Carbon;
 use App\Models\GeneratePayroll;
 use Illuminate\Support\Facades\DB;
-use App\Repositories\GeneratePayroll\GeneratePayrollRepositoryInterface;
 use App\Services\Employee\EmployeeServiceInterface;
+use App\Services\Deduction\DeductionServiceInterface;
+use App\Repositories\GeneratePayroll\GeneratePayrollRepositoryInterface;
 
 class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
 {
     private $model;
     private $employeeService;
+    private $deductionService;
     private $field =
     [
         'id', 'employee_name', 'employee_id', 'employeement_id', 'employee_email', 'employee_status',
@@ -30,10 +32,15 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         'notes', 'file_name', 'file_path', 'file_url'
     ];
 
-    public function __construct(GeneratePayroll $model, EmployeeServiceInterface $employeeService)
+    public function __construct(
+        GeneratePayroll $model,
+        EmployeeServiceInterface $employeeService,
+        DeductionServiceInterface $deductionService,
+    )
     {
         $this->model = $model;
         $this->employeeService = $employeeService;
+        $this->deductionService = $deductionService;
     }
 
     public function index($perPage, $search = null, $unit = null, $period = null)
@@ -176,15 +183,40 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         $periodeAbsen = Carbon::parse($periodeAbsen);
         $periodePayroll = Carbon::parse($periodePayroll);
         $employees = $this->employeeService->employeeActive(999999999, null);
-        // return $employees;
         $now = Carbon::now();
+
         foreach ($employees as $item) {
-            $result = DB::select('CALL generatepayroll(?, ?, ?, ?, ?)', [(string)$item->id, $periodeAbsen->format('Y-m'), $periodePayroll->format('Y-m'), $periodePayroll->format('Y'), $now->toDateString()]);
+            $result = DB::select('CALL generatepayroll(?, ?, ?, ?, ?)', [
+                (string)$item->id,
+                $periodeAbsen->format('Y-m'),
+                $periodePayroll->format('Y-m'),
+                $periodePayroll->format('Y'),
+                $now->toDateString()
+            ]);
+
+            // Update notes in generate_payroll based on deductions
+            $deductions = DB::table('deductions')
+                            ->where('employee_id', $item->id)
+                            ->where('period', $periodePayroll->format('Y-m'))
+                            ->get();
+
+            $notes = [];
+            foreach ($deductions as $deduction) {
+                $keteranganValue = $deduction->keterangan; // Replace with the actual field name
+                $nilaiValue = $deduction->nilai; // Replace with the actual field name
+                $notes[] = "$keteranganValue: $nilaiValue";
+            }
+
+            if (!empty($notes)) {
+                $notesValue = implode(PHP_EOL, $notes);
+                DB::table('payroll_employees')
+                    ->where('employee_id', $item->id)
+                    ->where('period_payroll', $periodePayroll->format('Y-m'))
+                    ->update(['notes' => $notesValue]);
+            }
         }
-        if ($result) {
-            return $result;
-        }
-        return null;
+
+        return $result;
     }
 
     public function generatePayrollEmployee($perPage, $search = null, $employeeId = null)

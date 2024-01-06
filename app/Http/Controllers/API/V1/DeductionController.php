@@ -27,7 +27,8 @@ class DeductionController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $deduction = $this->deductionService->index($perPage, $search);
+            $period = $request->input('period');
+            $deduction = $this->deductionService->index($perPage, $search, $period);
             return $this->success('Deduction retrieved successfully', $deduction);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

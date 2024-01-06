@@ -3,7 +3,7 @@ namespace App\Services\Deduction;
 
 interface DeductionServiceInterface
 {
-    public function index($perPage, $search);
+    public function index($perPage, $search, $period);
     public function deductionEmployee($perPage, $search, $employeeId);
     public function store(array $data);
     public function show($id);

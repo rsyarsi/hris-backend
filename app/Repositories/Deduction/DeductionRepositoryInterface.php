@@ -1,9 +1,9 @@
 <?php
 namespace App\Repositories\Deduction;
 
-Interface DeductionRepositoryInterface{
-
-    public function index($perPage, $search);
+Interface DeductionRepositoryInterface
+{
+    public function index($perPage, $search, $period);
     public function deductionEmployee($perPage, $search, $employeeId);
     public function store(array $data);
     public function show($id);

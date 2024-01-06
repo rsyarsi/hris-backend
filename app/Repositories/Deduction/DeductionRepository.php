@@ -26,7 +26,7 @@ class DeductionRepository implements DeductionRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $period = null)
     {
         $query = $this->model
                     ->with(['employee' => function ($query)
@@ -43,6 +43,9 @@ class DeductionRepository implements DeductionRepositoryInterface
                                                 ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
                     });
+        if ($period) {
+            $query->where('period', $period);
+        }
         return $query->orderBy('period', 'DESC')->paginate($perPage);
     }
 
