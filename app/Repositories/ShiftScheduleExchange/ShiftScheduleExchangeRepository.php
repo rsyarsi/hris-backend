@@ -140,7 +140,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
             $dataShiftScheduleRequest['time_in'] = $shiftScheduleExchange->shift_schedule_time_from_requested;
             $dataShiftScheduleRequest['time_out'] = $shiftScheduleExchange->shift_schedule_time_end_requested;
             $dataShiftScheduleRequest['shift_exchange_id'] = $shiftScheduleExchange->id;
-            $dataShiftScheduleRequest['user_exchange_id'] = $shiftScheduleExchange->employeeRequest->user->id;
+            $dataShiftScheduleRequest['user_exchange_id'] = $shiftScheduleExchange->employeeRequest->user->id ?? null;
             $dataShiftScheduleRequest['user_exchange_at'] = now();
             ShiftSchedule::where('id', $data['shift_schedule_request_id'])
                         ->update($dataShiftScheduleRequest);
