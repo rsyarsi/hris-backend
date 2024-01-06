@@ -150,7 +150,12 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         $generatePayroll = $this->model
                                 ->with([
                                     'employee' => function ($query) {
-                                        $query->select('id', 'name', 'email', 'employment_number');
+                                        $query->select(
+                                            'id', 'name', 'email', 'employment_number', 'marital_status_id'
+                                            )
+                                            ->with([
+                                                'maritalStatus:id,name',
+                                            ]);
                                     },
                                 ])
                                 ->where('id', $id)

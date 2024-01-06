@@ -1232,7 +1232,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        : {{ $item->employee->maritalStatus->name }}
+                                                        : {{ $item->employee->maritalStatus !== null ? $item->employee->maritalStatus->name : '' }}
                                                     </p>
                                                 </div>
                                             </td>
