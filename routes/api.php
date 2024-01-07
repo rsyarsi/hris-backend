@@ -15,7 +15,8 @@ use App\Http\Controllers\API\V1\{
     ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
-    TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController
+    TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
+    SuratPeringatanController
 };
 
 /*
@@ -273,6 +274,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('timesheet-overtime-employee', 'timesheetOvertimeEmployee')->name('timesheet-overtime-employee');
             Route::post('execute-generate-overtime', 'executeStoredProcedure')->name('execute-generate-overtime');
         });
+        Route::resource('surat-peringatan', SuratPeringatanController::class)->parameters(['surat-peringatan' => 'surat_peringatan']);
     });
 });
 

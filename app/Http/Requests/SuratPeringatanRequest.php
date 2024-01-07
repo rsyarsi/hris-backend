@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class EmployeeLegalityRequest extends FormRequest
+class SuratPeringatanRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +26,12 @@ class EmployeeLegalityRequest extends FormRequest
     {
         return [
             'employee_id' => 'required|exists:employees,id',
-            'legality_type_id' => 'required|exists:mlegalitytypes,id',
-            'started_at' => 'required|date',
-            'ended_at' => 'nullable|date',
+            'date' => 'nullable|date',
+            'no_surat' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'jenis_pelanggaran' => 'nullable|string|max:255',
+            'keterangan' => 'nullable|string|max:255',
+            'batal' => 'nullable|string|max:255',
             'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
         ];
     }

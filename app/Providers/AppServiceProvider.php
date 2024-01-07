@@ -60,6 +60,7 @@ use App\Services\TimesheetOvertime\{TimesheetOvertimeService, TimesheetOvertimeS
 use App\Services\CatatanCuti\{CatatanCutiService, CatatanCutiServiceInterface};
 use App\Services\OvertimeHistory\{OvertimeHistoryService, OvertimeHistoryServiceInterface};
 use App\Services\ShiftScheduleExchange\{ShiftScheduleExchangeService, ShiftScheduleExchangeServiceInterface};
+use App\Services\SuratPeringatan\{SuratPeringatanService, SuratPeringatanServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -119,6 +120,7 @@ use App\Repositories\TimesheetOvertime\{TimesheetOvertimeRepository, TimesheetOv
 use App\Repositories\CatatanCuti\{CatatanCutiRepository, CatatanCutiRepositoryInterface};
 use App\Repositories\OvertimeHistory\{OvertimeHistoryRepository, OvertimeHistoryRepositoryInterface};
 use App\Repositories\ShiftScheduleExchange\{ShiftScheduleExchangeRepository, ShiftScheduleExchangeRepositoryInterface};
+use App\Repositories\SuratPeringatan\{SuratPeringatanRepository, SuratPeringatanRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -356,6 +358,10 @@ class AppServiceProvider extends ServiceProvider
         // Overtime History
         $this->app->bind(OvertimeHistoryRepositoryInterface::class, OvertimeHistoryRepository::class);
         $this->app->bind(OvertimeHistoryServiceInterface::class, OvertimeHistoryService::class);
+
+        // Surat Peringatan
+        $this->app->bind(SuratPeringatanRepositoryInterface::class, SuratPeringatanRepository::class);
+        $this->app->bind(SuratPeringatanServiceInterface::class, SuratPeringatanService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
