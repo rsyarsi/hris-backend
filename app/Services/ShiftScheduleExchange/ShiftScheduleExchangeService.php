@@ -107,6 +107,16 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             // to
             if ($data['to_employee_id'] !== null && $employeRequestedId == $data['to_employee_id']) {
                 $shiftScheduleTo = $this->shiftScheduleService->shiftScheduleEmployeeDate($toEmployeeId, $toShiftScheduleDate);
+                if (!$shiftScheduleTo) {
+                    return [
+                        'message' => 'Validation Error!',
+                        'success' => false,
+                        'code' => 422,
+                        'data' => [
+                                'to_shift_schedule_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']
+                            ]
+                    ];
+                }
                 $data['to_employee_id'] = $toEmployeeId;
                 $data['to_shift_schedule_date'] = $toShiftScheduleDate;
                 $data['shift_id_to'] = $shiftScheduleTo->shift->id;
@@ -121,6 +131,16 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             // exchange
             if ($data['exchange_employee_id'] !== null && $employeRequestedId !== $data['to_employee_id']) {
                 $shiftScheduleExchange = $this->shiftScheduleService->shiftScheduleEmployeeDate($exchangeEmployeeId, $exchangeDate);
+                if (!$shiftScheduleTo) {
+                    return [
+                        'message' => 'Validation Error!',
+                        'success' => false,
+                        'code' => 422,
+                        'data' => [
+                                'exchange_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']
+                            ]
+                    ];
+                }
                 $data['exchange_employee_id'] = $exchangeEmployeeId;
                 $data['exchange_shift_schedule_id'] = $shiftScheduleExchange->id;
                 $data['exchange_shift_id'] = $shiftScheduleExchange->shift->id;
