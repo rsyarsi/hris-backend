@@ -131,7 +131,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             // exchange
             if ($data['exchange_employee_id'] !== null && $employeRequestedId !== $data['to_employee_id']) {
                 $shiftScheduleExchange = $this->shiftScheduleService->shiftScheduleEmployeeDate($exchangeEmployeeId, $exchangeDate);
-                if (!$shiftScheduleTo) {
+                if (!$shiftScheduleExchange) {
                     return [
                         'message' => 'Validation Error!',
                         'success' => false,
