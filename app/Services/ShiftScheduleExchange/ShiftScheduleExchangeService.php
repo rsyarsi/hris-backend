@@ -54,8 +54,26 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
 
         // shift schedule service
         $shiftScheduleRequested = $this->shiftScheduleService->shiftScheduleEmployeeDate($employeRequestedId, $shiftScheduleDateRequested);
+        if (!$shiftScheduleRequested) {
+            return [
+                'message' => 'Validation Error!',
+                'success' => false,
+                'code' => 422,
+                'data' => [
+                        'shift_schedule_date_requested' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']
+                    ]
+            ];
+        }
+        // if (!$shiftScheduleRequested) {
+        //     return [
+        //         'message' => 'Validation Error!',
+        //         'success' => false,
+        //         'code' => 422,
+        //         'data' => [$shiftScheduleRequested]
+        //     ];
+        // }
         $data['shift_schedule_request_id'] = $shiftScheduleRequested->id;
-        $data['shift_id_request'] = $shiftScheduleRequested->shift->id;
+        $data['shift_id_request'] = $shiftScheduleRequested->shift->id ?? null;
 
         if ($shiftExchangeType == "LIBUR") {
             $data['shift_id_request'] = $shiftLibur->id;

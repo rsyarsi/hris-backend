@@ -123,7 +123,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
     public function store(array $data)
     {
         // untuk tukar shift butuh shift id
-        $shiftIdRequest = $data['shift_id_request'];
+        $shiftIdRequest = $data['shift_id_request'] ?? null;
         $toShiftId = $data['to_shift_id'] ?? null;
         $exchangeShiftId = $data['exchange_shift_id'] ?? null;
 
@@ -152,7 +152,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                             'shift_id' => $toShiftId,
                             'time_in' => $shiftScheduleExchange->shift_schedule_date_requested.' '.Carbon::parse($shiftScheduleExchange->to_shift_schedule_time_from)->format('H:i:s'),
                             'time_out' => $shiftScheduleExchange->shift_schedule_date_requested.' '.Carbon::parse($shiftScheduleExchange->to_shift_schedule_time_end)->format('H:i:s'),
-                            'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
+                            'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id ?? null,
                             'user_exchange_at' => now(),
                         ]);
             // update shift schedule where tanggal to
@@ -162,7 +162,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                             'shift_id' => $shiftIdRequest,
                             'time_in' => $shiftScheduleExchange->to_shift_schedule_date.' '.Carbon::parse($shiftScheduleExchange->shift_schedule_time_from_requested)->format('H:i:s'),
                             'time_out' => $shiftScheduleExchange->to_shift_schedule_date.' '.Carbon::parse($shiftScheduleExchange->shift_schedule_time_end_requested)->format('H:i:s'),
-                            'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
+                            'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id ?? null,
                             'user_exchange_at' => now(),
                         ]);
         }  elseif ($shiftScheduleExchange->shift_exchange_type == "TUKAR SHIFT" && $employeeRequestId !== $employeeExchangeId) {
@@ -173,7 +173,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                     'shift_id' => $exchangeShiftId,
                     'time_in' => $shiftScheduleExchange->shift_schedule_date_requested.' '.Carbon::parse($shiftScheduleExchange->exchange_shift_schedule_time_from)->format('H:i:s'),
                     'time_out' => $shiftScheduleExchange->shift_schedule_date_requested.' '.Carbon::parse($shiftScheduleExchange->exchange_shift_schedule_time_end)->format('H:i:s'),
-                    'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
+                    'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id ?? null,
                     'user_exchange_at' => now(),
                 ]);
             // update shift schedule where tanggal exchange
@@ -183,12 +183,18 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                     'shift_id' => $shiftIdRequest,
                     'time_in' => $shiftScheduleExchange->exchange_date.' '.Carbon::parse($shiftScheduleExchange->shift_schedule_time_from_requested)->format('H:i:s'),
                     'time_out' => $shiftScheduleExchange->exchange_date.' '.Carbon::parse($shiftScheduleExchange->shift_schedule_time_end_requested)->format('H:i:s'),
-                    'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id,
+                    'user_exchange_id' => $shiftScheduleExchange->employeeRequest->user->id ?? null,
                     'user_exchange_at' => now(),
                 ]);
         }
 
-        return $shiftScheduleExchange;
+        // return $shiftScheduleExchange;
+        return [
+            'message' => 'Shift schedule exchange created successfully',
+            'success' => true,
+            'code' => 201,
+            'data' => [$shiftScheduleExchange]
+        ];
     }
 
     public function show($id)

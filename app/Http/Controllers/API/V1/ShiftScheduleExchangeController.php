@@ -38,8 +38,14 @@ class ShiftScheduleExchangeController extends Controller
     {
         try {
             $data = $request->validated();
-            $shift = $this->shiftScheduleExchangeService->store($data);
-            return $this->success('Shift schedule exchange created successfully', $shift, 201);
+            $shiftSchedulesExchange = $this->shiftScheduleExchangeService->store($data);
+            return response()->json([
+                'message' => $shiftSchedulesExchange['message'],
+                'success' => $shiftSchedulesExchange['success'],
+                'code' => $shiftSchedulesExchange['code'],
+                'data' => $shiftSchedulesExchange['data']
+            ], $shiftSchedulesExchange['code']);
+            // return $this->success('Shift schedule exchange created successfully', $shiftSchedulesExchange, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
