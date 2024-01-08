@@ -61,6 +61,8 @@ use App\Services\CatatanCuti\{CatatanCutiService, CatatanCutiServiceInterface};
 use App\Services\OvertimeHistory\{OvertimeHistoryService, OvertimeHistoryServiceInterface};
 use App\Services\ShiftScheduleExchange\{ShiftScheduleExchangeService, ShiftScheduleExchangeServiceInterface};
 use App\Services\SuratPeringatan\{SuratPeringatanService, SuratPeringatanServiceInterface};
+use App\Services\PromotionDemotion\{PromotionDemotionService, PromotionDemotionServiceInterface};
+use App\Services\Mutation\{MutationService, MutationServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -121,6 +123,8 @@ use App\Repositories\CatatanCuti\{CatatanCutiRepository, CatatanCutiRepositoryIn
 use App\Repositories\OvertimeHistory\{OvertimeHistoryRepository, OvertimeHistoryRepositoryInterface};
 use App\Repositories\ShiftScheduleExchange\{ShiftScheduleExchangeRepository, ShiftScheduleExchangeRepositoryInterface};
 use App\Repositories\SuratPeringatan\{SuratPeringatanRepository, SuratPeringatanRepositoryInterface};
+use App\Repositories\PromotionDemotion\{PromotionDemotionRepository, PromotionDemotionRepositoryInterface};
+use App\Repositories\Mutation\{MutationRepository, MutationRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -362,6 +366,14 @@ class AppServiceProvider extends ServiceProvider
         // Surat Peringatan
         $this->app->bind(SuratPeringatanRepositoryInterface::class, SuratPeringatanRepository::class);
         $this->app->bind(SuratPeringatanServiceInterface::class, SuratPeringatanService::class);
+
+        // Promotion Demotion
+        $this->app->bind(PromotionDemotionRepositoryInterface::class, PromotionDemotionRepository::class);
+        $this->app->bind(PromotionDemotionServiceInterface::class, PromotionDemotionService::class);
+
+        // Mutation
+        $this->app->bind(MutationRepositoryInterface::class, MutationRepository::class);
+        $this->app->bind(MutationServiceInterface::class, MutationService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

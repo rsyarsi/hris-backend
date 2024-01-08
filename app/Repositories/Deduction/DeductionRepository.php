@@ -87,12 +87,13 @@ class DeductionRepository implements DeductionRepositoryInterface
         return null;
     }
 
-    public function deductionEmployee($perPage, $search = null, $employeeId)
+    public function deductionEmployee($perPage, $search = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
-            return [];
+            $employeeId = null;
         }
+        $employeeId = $user->employee->id;
         $query = $this->model
                         ->select($this->field)
                         ->where(function ($query) use ($search) {

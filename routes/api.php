@@ -16,7 +16,7 @@ use App\Http\Controllers\API\V1\{
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
-    SuratPeringatanController
+    SuratPeringatanController, MutationController, PromotionDemotionController
 };
 
 /*
@@ -256,7 +256,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for adjustment cuti
         Route::resource('adjustment-cuti', AdjustmentCutiController::class)->parameters(['adjustment-cuti' => 'adjustment_cuti']);
         Route::controller(AdjustmentCutiController::class)->group(function () {
-            // route for deductions employee
+            // route for adjustment cuti employee
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
         });
         // route for catatan cuti
@@ -274,7 +274,24 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('timesheet-overtime-employee', 'timesheetOvertimeEmployee')->name('timesheet-overtime-employee');
             Route::post('execute-generate-overtime', 'executeStoredProcedure')->name('execute-generate-overtime');
         });
+        // route for surat peringatan
         Route::resource('surat-peringatan', SuratPeringatanController::class)->parameters(['surat-peringatan' => 'surat_peringatan']);
+        Route::controller(SuratPeringatanController::class)->group(function () {
+            // route for surat peringatan employee login
+            Route::get('surat-peringatan-employee', 'suratPeringatanEmployee')->name('surat-peringatan-employee');
+        });
+        // route for mutations
+        Route::resource('mutations', MutationController::class)->parameters(['mutations' => 'mutation']);
+        Route::controller(MutationController::class)->group(function () {
+            // route for mutation employee login
+            Route::get('mutation-employee', 'mutationEmployee')->name('mutation-employee');
+        });
+        // route for deduction
+        Route::resource('promotion-demotions', PromotionDemotionController::class)->parameters(['promotion-demotions' => 'promotion_demotion']);
+        Route::controller(PromotionDemotionController::class)->group(function () {
+            // route for promotion demotion employee login
+            Route::get('promotion-demotion-employee', 'promotionDemotionEmployee')->name('promotion-demotion-employee');
+        });
     });
 });
 

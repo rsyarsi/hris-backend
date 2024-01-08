@@ -76,4 +76,9 @@ class SuratPeringatanService implements SuratPeringatanServiceInterface
     {
         return Str::upper($data);
     }
+
+    public function suratPeringatanEmployee($perPage, $search)
+    {
+        return $this->repository->suratPeringatanEmployee($perPage, $search);
+    }
 }

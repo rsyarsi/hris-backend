@@ -97,4 +97,20 @@ class SuratPeringatanRepository implements SuratPeringatanRepositoryInterface
         }
         return null;
     }
+
+    public function suratPeringatanEmployee($perPage, $search = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            $employeeId = null;
+        }
+        $employeeId = $user->employee->id;
+        $query = $this->model
+                        ->select($this->field)
+                        ->where(function ($query) use ($search) {
+                            $query->where('date', 'like', "%{$search}%");
+                        });
+        $query->where('employee_id', $employeeId);
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
+    }
 }

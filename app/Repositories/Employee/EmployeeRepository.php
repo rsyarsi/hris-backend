@@ -457,7 +457,31 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update([
-                'user_id' => $data['user_id'],
+                'user_id' => $data,
+            ]);
+            return $employee;
+        }
+        return null;
+    }
+
+    public function updateUnitId($id, $data)
+    {
+        $employee = $this->model->find($id);
+        if ($employee) {
+            $employee->update([
+                'unit_id' => $data,
+            ]);
+            return $employee;
+        }
+        return null;
+    }
+
+    public function updatePositionId($id, $data)
+    {
+        $employee = $this->model->find($id);
+        if ($employee) {
+            $employee->update([
+                'position_id' => $data,
             ]);
             return $employee;
         }

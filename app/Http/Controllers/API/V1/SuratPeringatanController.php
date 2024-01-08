@@ -83,4 +83,16 @@ class SuratPeringatanController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function suratPeringatanEmployee(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $suratPeringatans = $this->suratPeringatanService->suratPeringatanEmployee($perPage, $search);
+            return $this->success('Surat Peringatan retrieved successfully', $suratPeringatans);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

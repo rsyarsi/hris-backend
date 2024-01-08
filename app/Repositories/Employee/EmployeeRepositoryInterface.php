@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories\Employee;
 
-Interface EmployeeRepositoryInterface{
-
+Interface EmployeeRepositoryInterface
+{
     public function index($perPage, $search);
     public function store(array $data);
     public function show($id);
@@ -12,6 +12,8 @@ Interface EmployeeRepositoryInterface{
     public function employeeEndContract($perPage, $search);
     public function updateEmployeeContract($id, array $data);
     public function updateUserId($id, array $data);
+    public function updateUnitId($id, $data);
+    public function updatePositionId($id, $data);
     public function employeeWherePin($pin);
     public function employeeWhereEmployeeNumber($employeeNumber);
     public function employeeActive($perPage, $search);

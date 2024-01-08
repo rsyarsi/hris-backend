@@ -18,9 +18,9 @@ class DeductionService implements DeductionServiceInterface
         return $this->repository->index($perPage, $search, $period);
     }
 
-    public function deductionEmployee($perPage, $search, $employeeId)
+    public function deductionEmployee($perPage, $search)
     {
-        return $this->repository->deductionEmployee($perPage, $search, $employeeId);
+        return $this->repository->deductionEmployee($perPage, $search);
     }
 
     public function store(array $data)
