@@ -34,10 +34,10 @@ class MutationController extends Controller
 
     public function store(MutationRequest $request)
     {
-        $data = $request->validated();
-        $mutation = $this->mutationService->store($data);
-        return $this->success('Mutation created successfully', $mutation, 201);
         try {
+            $data = $request->validated();
+            $mutation = $this->mutationService->store($data);
+            return $this->success('Mutation created successfully', $mutation, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
