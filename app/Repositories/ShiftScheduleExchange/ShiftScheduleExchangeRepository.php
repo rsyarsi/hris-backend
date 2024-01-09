@@ -104,18 +104,18 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                     ->select($this->field);
         if ($search) {
             $query->where(function ($subquery) use ($search) {
-                $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                $subquery->orWhere('employe_requested_id', $search)
+                            ->orWhereHas('employeeRequest', function ($employeeQuery) use ($search) {
                                 $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
                                                 ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
         }
         if ($startDate) {
-            $query->whereDate('date', '>=', $startDate);
+            $query->whereDate('shift_schedule_date_requested', '>=', $startDate);
         }
         if ($endDate) {
-            $query->whereDate('date', '<=', $endDate);
+            $query->whereDate('shift_schedule_date_requested', '<=', $endDate);
         }
         return $query->paginate($perPage);
     }
