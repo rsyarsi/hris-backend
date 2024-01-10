@@ -15,11 +15,13 @@ class MaritalStatusSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            MaritalStatus::create([
-                'name' => 'MARITAL STATUS ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $maritalStatus = [
+            ['name' => 'BELUM MENIKAH', 'active' => 1],
+            ['name' => 'SUDAH MENIKAH', 'active' => 1],
+            ['name' => 'CERAI MATI', 'active' => 1],
+            ['name' => 'JANDA', 'active' => 1],
+            ['name' => 'DUDA', 'active' => 1],
+        ];
+        MaritalStatus::insert($maritalStatus);
     }
 }

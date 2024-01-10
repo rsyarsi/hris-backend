@@ -15,11 +15,13 @@ class ReligionSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            Religion::create([
-                'name' => 'RELIGION ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $religions = [
+            ['name' => 'ISLAM', 'active' => 1],
+            ['name' => 'KRISTEN', 'active' => 1],
+            ['name' => 'HINDU', 'active' => 1],
+            ['name' => 'BUDHA', 'active' => 1],
+            ['name' => 'KONGHUCU', 'active' => 1]
+        ];
+        Religion::insert($religions);
     }
 }

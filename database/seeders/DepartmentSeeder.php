@@ -15,11 +15,23 @@ class DepartmentSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 5; $i++) {
-            Department::create([
-                'name' => 'Department ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $departments = [
+            ['name' => 'DEPARTMEN PELAYANAN MEDIS', 'active' => 1],
+            ['name' => 'DEPARTMEN PENUNJANG MEDIS', 'active' => 1],
+            ['name' => 'DEPARTMEN UMUM', 'active' => 1],
+            ['name' => 'DEPARTMEN ADMINISTRASI', 'active' => 1],
+            ['name' => 'DEPARTMEN SDI', 'active' => 1],
+            ['name' => 'DEPARTMEN KEUANGAN DAN AKUNTANSI', 'active' => 1],
+            ['name' => 'DEPARTMEN DIKLIT', 'active' => 1],
+            ['name' => 'BOARD OF DIRECTOR', 'active' => 1],
+            ['name' => 'DEPARTMEN KEPERAWATAN', 'active' => 1],
+            ['name' => 'DEPARTMEN HUMAS & MARKETING', 'active' => 1],
+            ['name' => 'DEPARTMEN PURCHASING', 'active' => 1],
+            ['name' => 'DEPARTMEN QMR', 'active' => 1],
+            ['name' => 'SPI', 'active' => 1],
+            ['name' => 'IPCN', 'active' => 1],
+            ['name' => 'TIK', 'active' => 1],
+        ];
+        Department::insert($departments);
     }
 }

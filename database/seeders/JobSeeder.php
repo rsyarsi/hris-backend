@@ -15,11 +15,14 @@ class JobSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            Job::create([
-                'name' => 'JOB ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $jobs = [
+            ['name' => 'PEGAWAI SWASTA', 'active' => 1],
+            ['name' => 'PEGAWAI NEGERI SIPIL', 'active' => 1],
+            ['name' => 'PELAJAR MAHASISWA', 'active' => 1],
+            ['name' => 'PENSIUN', 'active' => 1],
+            ['name' => 'TENTARA', 'active' => 1],
+            ['name' => 'KEPOLISIAN', 'active' => 1],
+        ];
+        Job::insert($jobs);
     }
 }

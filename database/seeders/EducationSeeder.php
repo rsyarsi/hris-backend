@@ -15,11 +15,15 @@ class EducationSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            Education::create([
-                'name' => 'EDUCATION ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $educations = [
+            ['name' => 'SD', 'active' => 1],
+            ['name' => 'SMP', 'active' => 1],
+            ['name' => 'SMA SEDERAJAT', 'active' => 1],
+            ['name' => 'D3', 'active' => 1],
+            ['name' => 'S1', 'active' => 1],
+            ['name' => 'S2', 'active' => 1],
+            ['name' => 'S3', 'active' => 1]
+        ];
+        Education::insert($educations);
     }
 }

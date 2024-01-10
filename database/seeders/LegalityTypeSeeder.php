@@ -15,12 +15,10 @@ class LegalityTypeSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            LegalityType::create([
-                'name' => 'LEGALITY TYPE ' . $i,
-                'active' => rand(0, 1),
-                'extended' => true,
-            ]);
-        }
+        $legalityType = [
+            ['name' => 'SIP', 'active' => 1],
+            ['name' => 'STR', 'active' => 1],
+        ];
+        LegalityType::insert($legalityType);
     }
 }

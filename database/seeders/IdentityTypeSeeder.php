@@ -15,11 +15,12 @@ class IdentityTypeSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            IdentityType::create([
-                'name' => 'IDENTITY TYPE ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $identityType = [
+            ['name' => 'KTP', 'active' => 1],
+            ['name' => 'SIM', 'active' => 1],
+            ['name' => 'KTA', 'active' => 1],
+            ['name' => 'LAIN-LAIN', 'active' => 1],
+        ];
+        IdentityType::insert($identityType);
     }
 }

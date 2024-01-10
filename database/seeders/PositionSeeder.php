@@ -15,11 +15,16 @@ class PositionSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            Position::create([
-                'name' => 'POSITION ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $positions = [
+            ['name' => 'DIREKTUR UTAMA', 'active' => 1],
+            ['name' => 'DIREKTUR MEDIS', 'active' => 1],
+            ['name' => 'DIREKTUR SDI', 'active' => 1],
+            ['name' => 'KEPALA BAGIAN', 'active' => 1],
+            ['name' => 'KEPALA INSTALASI', 'active' => 1],
+            ['name' => 'SUPERVISOR', 'active' => 1],
+            ['name' => 'STAFF PELAKSANA', 'active' => 1],
+            ['name' => 'MANAGER', 'active' => 1],
+        ];
+        Position::insert($positions);
     }
 }
