@@ -48,6 +48,7 @@ return new class extends Migration
             $table->foreignId('user_created_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('user_updated_id')->nullable()->constrained('users')->nullOnDelete();
             $table->tinyInteger('cancel')->nullable();
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }

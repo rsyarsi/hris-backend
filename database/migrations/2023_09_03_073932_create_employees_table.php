@@ -50,9 +50,16 @@ return new class extends Migration
             $table->foreignId('unit_id')->nullable()->constrained('munits')->nullOnDelete();
             $table->foreignId('department_id')->nullable()->constrained('mdepartments')->nullOnDelete();
             $table->timestamp('started_at')->nullable();
-            $table->string('employment_number',36)->nullable()->unique();
+            $table->string('employment_number',50)->nullable()->unique();
             $table->timestamp('resigned_at')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->bigInteger('pin')->nullable();
+            $table->bigInteger('rekening_number')->nullable();
+            $table->bigInteger('bpjs_number')->nullable();
+            $table->bigInteger('bpjstk_number')->nullable();
+            $table->string('status_employee')->nullable();
+            $table->foreign('shift_group_id')->references('id')->on('shift_groups')->onDelete('set null');
+            $table->string('shift_group_id',26)->nullable();
             $table->timestamps();
         });
     }

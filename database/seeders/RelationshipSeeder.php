@@ -15,11 +15,12 @@ class RelationshipSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            Relationship::create([
-                'name' => 'RELATIONSHIP ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $relationships = [
+            ['name' => 'SUAMI', 'active' => 1],
+            ['name' => 'ISTRI', 'active' => 1],
+            ['name' => 'ANAK', 'active' => 1],
+            ['name' => 'ORANG TUA', 'active' => 1],
+        ];
+        Relationship::insert($relationships);
     }
 }

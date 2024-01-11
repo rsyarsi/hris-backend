@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('shift_schedules', function (Blueprint $table) {
-            $table->string('absen_type', 20)->nullable();
+            $table->foreign('shift_exchange_id')->nullable()->references('id')->on('shift_schedule_exchanges')->onDelete('set null');
+            $table->string('shift_exchange_id',26)->nullable();
         });
     }
 
@@ -26,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('shift_schedules', function (Blueprint $table) {
-            $table->dropColumn(['absen_type']);
+            $table->dropForeign(['shift_exchange_id']);
+            $table->dropColumn('shift_exchange_id');
         });
     }
 };

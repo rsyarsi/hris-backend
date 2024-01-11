@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 150);
-            $table->tinyInteger('is_salary_deduction');
+            $table->string('name', 150)->nullable();
+            $table->tinyInteger('is_salary_deduction')->nullable();
             $table->tinyInteger('active')->default('1');
+            $table->integer('day')->nullable();
+            $table->smallInteger('upload_photo')->nullable();
             $table->timestamps();
         });
     }

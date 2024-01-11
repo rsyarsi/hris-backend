@@ -16,8 +16,8 @@ class LegalityTypeSeeder extends Seeder
     public function run()
     {
         $legalityType = [
-            ['name' => 'SIP', 'active' => 1],
-            ['name' => 'STR', 'active' => 1],
+            ['name' => 'SIP', 'active' => 1, 'extended' => 0],
+            ['name' => 'STR', 'active' => 1, 'extended' => 0],
         ];
         LegalityType::insert($legalityType);
     }

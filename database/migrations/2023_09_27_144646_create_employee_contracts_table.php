@@ -17,6 +17,15 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id',26)->nullable();
+            $table->foreign('kabag_id')->references('id')->on('employees')->onDelete('set null');
+            $table->string('kabag_id',26)->nullable();
+            $table->foreign('supervisor_id')->references('id')->on('employees')->onDelete('set null');
+            $table->string('supervisor_id',26)->nullable();
+            $table->foreign('manager_id')->references('id')->on('employees')->onDelete('set null');
+            $table->string('manager_id',26)->nullable();
+            $table->foreignId('department_id')->nullable()->constrained('mdepartments')->nullOnDelete();
+            $table->foreignId('unit_id')->nullable()->constrained('munits')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('mpositions')->nullOnDelete();
             $table->string('transaction_number',32)->nullable();
             $table->dateTime('start_at')->nullable();
             $table->dateTime('end_at')->nullable();
@@ -33,10 +42,6 @@ return new class extends Migration
             $table->decimal('vot2', 18, 0)->nullable();
             $table->decimal('vot3', 18, 0)->nullable();
             $table->decimal('vot4', 18, 0)->nullable();
-            $table->foreignId('unit_id')->nullable()->constrained('munits')->nullOnDelete();
-            $table->foreignId('position_id')->nullable()->constrained('mpositions')->nullOnDelete();
-            $table->foreign('manager_id')->references('id')->on('employees')->onDelete('set null');
-            $table->string('manager_id',26)->nullable();
             $table->timestamps();
         });
     }

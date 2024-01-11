@@ -14,10 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->foreign('shift_group_id')->references('id')->on('shift_groups')->onDelete('set null');
-            $table->string('shift_group_id',26)->nullable();
             $table->foreign('kabag_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('kabag_id',26)->nullable();
+            $table->foreign('supervisor_id')->references('id')->on('employees')->onDelete('set null');
+            $table->string('supervisor_id',26)->nullable();
+            $table->foreign('manager_id')->references('id')->on('employees')->onDelete('set null');
+            $table->string('manager_id',26)->nullable();
         });
     }
 
@@ -29,7 +31,12 @@ return new class extends Migration
     public function down()
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->dropColumn(['shift_group_id', 'kabag_id']);
+            $table->dropForeign(['kabag_id']);
+            $table->dropForeign(['supervisor_id']);
+            $table->dropForeign(['manager_id']);
+            $table->dropColumn('kabag_id');
+            $table->dropColumn('supervisor_id');
+            $table->dropColumn('manager_id');
         });
     }
 };

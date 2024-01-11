@@ -15,15 +15,18 @@ class OvertimeStatusSeeder extends Seeder
      */
     public function run()
     {
-        OvertimeStatus::create(['name' => 'PENDING']);
-        OvertimeStatus::create(['name' => 'APPROVAL KABAG']);
-        OvertimeStatus::create(['name' => 'APPROVAL SUPERVISOR']);
-        OvertimeStatus::create(['name' => 'APPROVAL MANAGER']);
-        OvertimeStatus::create(['name' => 'APPROVAL HRD']);
-        OvertimeStatus::create(['name' => 'REJECTED KABAG']);
-        OvertimeStatus::create(['name' => 'REJECTED SUPERVISOR']);
-        OvertimeStatus::create(['name' => 'REJECTED MANAGER']);
-        OvertimeStatus::create(['name' => 'REJECTED HRD']);
-        OvertimeStatus::create(['name' => 'CANCEL']);
+        $overtimeStatuses = [
+            ['name' => 'PENDING'],
+            ['name' => 'APPROVAL KABAG'],
+            ['name' => 'APPROVAL SUPERVISOR'],
+            ['name' => 'APPROVAL MANAGER'],
+            ['name' => 'APPROVAL HRD'],
+            ['name' => 'REJECTED KABAG'],
+            ['name' => 'REJECTED SUPERVISOR'],
+            ['name' => 'REJECTED MANAGER'],
+            ['name' => 'REJECTED HRD'],
+            ['name' => 'CANCEL'],
+        ];
+        OvertimeStatus::insert($overtimeStatuses);
     }
 }

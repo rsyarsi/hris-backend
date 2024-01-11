@@ -25,6 +25,7 @@ class ShiftSchedule extends Model
         'time_in',
         'time_out',
         'late_note',
+        'leave_id',
         'shift_exchange_id',
         'user_exchange_id',
         'user_exchange_at',
@@ -37,7 +38,6 @@ class ShiftSchedule extends Model
         'holiday',
         'night',
         'national_holiday',
-        'leave_id',
         'absen_type',
     ];
 

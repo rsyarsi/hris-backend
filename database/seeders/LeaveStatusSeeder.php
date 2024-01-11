@@ -15,15 +15,18 @@ class LeaveStatusSeeder extends Seeder
      */
     public function run()
     {
-        LeaveStatus::create(['name' => 'PENDING']);
-        LeaveStatus::create(['name' => 'APPROVAL KABAG']);
-        LeaveStatus::create(['name' => 'APPROVAL SUPERVISOR']);
-        LeaveStatus::create(['name' => 'APPROVAL MANAGER']);
-        LeaveStatus::create(['name' => 'APPROVAL HRD']);
-        LeaveStatus::create(['name' => 'REJECTED KABAG']);
-        LeaveStatus::create(['name' => 'REJECTED SUPERVISOR']);
-        LeaveStatus::create(['name' => 'REJECTED MANAGER']);
-        LeaveStatus::create(['name' => 'REJECTED HRD']);
-        LeaveStatus::create(['name' => 'CANCEL']);
+        $leaveStatuses = [
+            ['name' => 'PENDING'],
+            ['name' => 'APPROVAL KABAG'],
+            ['name' => 'APPROVAL SUPERVISOR'],
+            ['name' => 'APPROVAL MANAGER'],
+            ['name' => 'APPROVAL HRD'],
+            ['name' => 'REJECTED KABAG'],
+            ['name' => 'REJECTED SUPERVISOR'],
+            ['name' => 'REJECTED MANAGER'],
+            ['name' => 'REJECTED HRD'],
+            ['name' => 'CANCEL'],
+        ];
+        LeaveStatus::insert($leaveStatuses);
     }
 }

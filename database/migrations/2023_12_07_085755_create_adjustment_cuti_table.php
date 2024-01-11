@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('quantity_adjustment')->nullable();
             $table->integer('quantity_akhir')->nullable();
             $table->string('year', 5)->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

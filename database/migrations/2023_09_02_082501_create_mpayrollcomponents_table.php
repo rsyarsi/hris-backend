@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('shift_schedule_exchanges', function (Blueprint $table) {
-            $table->string('notes')->nullable();
+        Schema::create('mpayrollcomponents', function (Blueprint $table) {
+            $table->id();
+            $table->string('name',150);
+            $table->tinyInteger('active')->default('1');
+            $table->string('group_component_payroll')->nullable();
+            $table->integer('order')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('shift_schedule_exchanges', function (Blueprint $table) {
-            $table->dropColumn(['notes']);
-        });
+        Schema::dropIfExists('mpayrollcomponents');
     }
 };

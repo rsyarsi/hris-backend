@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -14,7 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('payroll_employees', function (Blueprint $table) {
-            $table->uuid('id')->primary()->defaultRaw('uuid_generate_v4()');
+            $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->string('employee_name')->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id', 26)->nullable();
@@ -66,6 +67,13 @@ return new class extends Migration
             $table->decimal('zakat', 18, 0)->nullable();
             $table->decimal('salary_after_zakat', 18, 0)->nullable();
             $table->string('period_payroll', 50)->nullable();
+            $table->decimal('thr', 18, 2)->nullable();
+            $table->decimal('liability_employee_foods', 18, 2)->nullable();
+            $table->decimal('liability_employee_absens', 18, 2)->nullable();
+            $table->string('notes')->nullable();
+            $table->string('file_name')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_url')->nullable();
             $table->timestamps();
         });
     }

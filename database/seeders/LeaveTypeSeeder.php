@@ -15,14 +15,21 @@ class LeaveTypeSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            LeaveType::create([
-                'name' => 'LEAVE TYPE ' . $i,
-                'is_salary_deduction' => 0,
-                'active' => 0,
-                'day' => 0,
-                'upload_photo' => 0,
-            ]);
-        }
+        $leaveTypes = [
+            ['name' => 'CUTI TAHUNAN', 'active' => 1],
+            ['name' => 'SAKIT', 'active' => 1],
+            ['name' => 'IZIN TERLAMBAT', 'active' => 1],
+            ['name' => 'IZIN PULANG AWAL', 'active' => 1],
+            ['name' => 'IZIN (DINAS LUAR)', 'active' => 1],
+            ['name' => 'CUTI MELAHIRKAN', 'active' => 1],
+            ['name' => 'CUTI KEGUGURAN', 'active' => 1],
+            ['name' => 'CUTI HAJI', 'active' => 1],
+            ['name' => 'CUTI UMROH', 'active' => 1],
+            ['name' => 'CUTI MENIKAH', 'active' => 1],
+            ['name' => 'CUTI ANAK LAHIR', 'active' => 1],
+            ['name' => 'CUTI DUKA', 'active' => 1],
+            ['name' => 'CUTI KHITANAN ANAK', 'active' => 1],
+        ];
+        LeaveType::insert($leaveTypes);
     }
 }

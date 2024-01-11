@@ -29,6 +29,8 @@ return new class extends Migration
             $table->tinyInteger('active')->nullable();
             $table->foreignId('user_created_id')->constrained('users')->nullOnDelete();
             $table->foreignId('user_updated_id')->constrained('users')->nullOnDelete();
+            $table->smallInteger('libur')->nullable();
+            $table->smallInteger('on_call')->nullable();
             $table->timestamps();
         });
     }

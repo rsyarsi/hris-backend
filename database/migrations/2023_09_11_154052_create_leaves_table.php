@@ -23,6 +23,11 @@ return new class extends Migration
             $table->timestamp('to_date')->nullable();
             $table->integer('duration')->nullable();
             $table->text('note')->nullable();
+            $table->integer('quantity_cuti_awal')->nullable();
+            $table->integer('sisa_cuti')->nullable();
+            $table->string('file_url')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_disk')->nullable();
             $table->timestamps();
         });
     }

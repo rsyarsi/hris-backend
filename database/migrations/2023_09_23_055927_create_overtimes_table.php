@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('note')->nullable();
             $table->foreignId('overtime_status_id')->nullable()->constrained('overtime_statuses')->nullOnDelete();
             $table->decimal('amount', 18, 2)->nullable();
-            $table->enum('type', ['HARI-KERJA', 'HARI-LIBUR'])->nullable();
+            $table->string('type')->nullable();
             $table->timestamp('from_date')->nullable();
             $table->timestamp('to_date')->nullable();
             $table->decimal('duration', 18, 2)->nullable();

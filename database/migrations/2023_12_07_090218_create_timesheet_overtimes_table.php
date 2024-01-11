@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -14,7 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('timesheet_overtimes', function (Blueprint $table) {
-            $table->uuid('id')->primary()->defaultRaw('uuid_generate_v4()');
+            $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id', 26)->nullable();
             $table->string('employee_name')->nullable();

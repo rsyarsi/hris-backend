@@ -15,11 +15,11 @@ class ContractTypeSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 3; $i++) {
-            ContractType::create([
-                'name' => 'CONTRACT TYPE ' . $i,
-                'active' => rand(0, 1),
-            ]);
-        }
+        $contractTypes = [
+            ['name' => 'PKWT', 'active' => 1],
+            ['name' => 'PKWT 2', 'active' => 1],
+            ['name' => 'PKWT 3', 'active' => 1],
+        ];
+        ContractType::insert($contractTypes);
     }
 }

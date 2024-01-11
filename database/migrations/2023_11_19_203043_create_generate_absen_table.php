@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -14,9 +15,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('generate_absen', function (Blueprint $table) {
-            $table->ulid('id')->primary();
+            $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->string('period', 50)->nullable();
-            $table->date('date')->nullable();
             $table->string('day', 50)->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id', 26)->nullable();
@@ -60,6 +60,11 @@ return new class extends Migration
             $table->integer('lock')->nullable();
             $table->string('gp_in', 50)->nullable();
             $table->string('gp_out', 50)->nullable();
+            $table->string('employment_id', 100)->nullable();
+            $table->string('overtime_type', 100)->nullable();
+            $table->date('date')->nullable();
+            $table->string('type')->nullable();
+            $table->tinyInteger('overtime_hours')->nullable();
             $table->timestamps();
         });
     }
