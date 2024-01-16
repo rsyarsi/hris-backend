@@ -631,6 +631,55 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
     public function shiftScheduleEmployeeDate($employeeId, $date)
     {
         $shiftSchedul = $this->model
+                            ->with([
+                                'employee' => function ($query) {
+                                    $query->select('id', 'name', 'employment_number');
+                                },
+                                'shift' => function ($query) {
+                                    $query->select(
+                                        'id',
+                                        'shift_group_id',
+                                        'code',
+                                        'name',
+                                        'in_time',
+                                        'out_time',
+                                        'finger_in_less',
+                                        'finger_in_more',
+                                        'finger_out_less',
+                                        'finger_out_more',
+                                        'night_shift',
+                                        'active',
+                                        'user_created_id',
+                                        'user_updated_id',
+                                    )->with('shiftGroup:id,name');
+                                },
+                                'shiftExchange' => function ($query) {
+                                    $query->select($this->fieldShiftScheduleExchange);
+                                },
+                                'userExchange' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userCreate' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userUpdate' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'userSetup' => function ($query) {
+                                    $query->select('id', 'name');
+                                },
+                                'leave' => function ($query) {
+                                    $query->select(
+                                        'employee_id',
+                                        'leave_type_id',
+                                        'from_date',
+                                        'to_date',
+                                        'duration',
+                                        'note',
+                                        'leave_status_id',
+                                    );
+                                },
+                            ])
                             ->where('employee_id', $employeeId)
                             ->where('date', $date)
                             ->first($this->field);
