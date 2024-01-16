@@ -22,6 +22,7 @@ class EmployeeService implements EmployeeServiceInterface
     public function store(array $data)
     {
         $data['name'] = $this->formatTextTitle($data['name']);
+        $data['religion_id'] = 1;
         return $this->repository->store($data);
     }
 

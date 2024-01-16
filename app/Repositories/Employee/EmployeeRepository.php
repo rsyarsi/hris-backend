@@ -92,7 +92,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('employment_number', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)

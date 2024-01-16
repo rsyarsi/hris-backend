@@ -34,20 +34,48 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string',
+            'username' => 'required|string|max:255',
             'password' => 'required|string|min:6',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            // return response()->json($validator->errors(), 422);
+            return response()->json([
+                'message' => 'Validation Errors!',
+                'success' => false,
+                'code' => 422,
+                'data' => $validator->errors()
+            ]);
         }
-        if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+
+        $credentials = $validator->validated();
+
+        if (! $token = Auth::attempt($credentials)) {
+            // return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'message' => 'Unauthorized!',
+                'success' => false,
+                'code' => 201,
+                'data' => []
+            ]);
+        }
+
+        // Check if the user is active
+        $user = Auth::user();
+        if ($user && $user->active !== 1) {
+            // return response()->json(['error' => 'Account not active'], 401);
+            return response()->json([
+                'message' => 'Account not active!',
+                'success' => false,
+                'code' => 201,
+                'data' => []
+            ]);
         }
         return $this->createNewToken($token);
     }
-
     public function loginMobileApps(Request $request)
     {
         $validator = Validator::make($request->all(), [

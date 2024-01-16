@@ -34,7 +34,6 @@ class EmployeeRequest extends FormRequest
             'birth_place' => 'required|string|max:50',
             'birth_date' => 'required|date',
             'marital_status_id' => 'required|exists:mmaritalstatuses,id',
-            'religion_id' => 'required|exists:mreligions,id',
             'blood_type' => 'nullable|string|max:15',
             'tax_identify_number' => 'nullable|string|max:150',
             'email' => [

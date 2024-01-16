@@ -24,7 +24,8 @@ class UserRepository implements UserRepositoryInterface
         'supervisor',
         'pegawai',
         'kabag',
-        'staff'
+        'staff',
+        'active',
     ];
 
     public function __construct(User $model)

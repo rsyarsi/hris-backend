@@ -46,6 +46,7 @@ class UserRequest extends FormRequest
             'ip' => 'nullable|string|max:255',
             'role' => 'nullable|exists:roles,name',
             'employee_id' => 'nullable|exists:employees,id',
+            'active' => 'nullable|in:1,0',
         ];
     }
 
