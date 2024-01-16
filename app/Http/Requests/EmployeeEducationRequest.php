@@ -29,9 +29,9 @@ class EmployeeEducationRequest extends FormRequest
             'education_id' => 'required|exists:meducations,id',
             'institution_name' => 'required|string|max:255',
             'major' => 'nullable|string|max:255',
-            'started_year' => 'required|digits_between:1,10',
+            'started_year' => 'nullable|digits_between:1,10',
             'ended_year' => 'nullable|digits_between:1,10',
-            'is_passed' => 'required|integer',
+            'is_passed' => 'nullable|integer',
             'verified_at' => 'nullable|date',
         ];
     }
