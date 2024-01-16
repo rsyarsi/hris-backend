@@ -82,11 +82,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name', 'email');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name', 'email')->with([
+                                $query->select('id', 'name', 'email', 'username', 'firebase_id', 'active')->with([
                                     'roles:id,name',
                                     'roles.permissions:id,name',
                                 ]);
-                            }
+                            },
                         ])
                         ->select($this->field);
         if ($search !== null) {
@@ -153,7 +153,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name', 'email', 'user_id')->with('user:id,email,username,firebase_id');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name', 'email', 'username', 'firebase_id')->with([
+                                $query->select('id', 'name', 'email', 'username', 'firebase_id', 'active')->with([
                                     'roles:id,name',
                                     'roles.permissions:id,name',
                                 ]);
@@ -368,11 +368,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name', 'email');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name')->with([
+                                $query->select('id', 'name', 'email', 'username', 'firebase_id', 'active')->with([
                                     'roles:id,name',
                                     'roles.permissions:id,name',
                                 ]);
-                            }
+                            },
                         ])
                         ->select($this->field);
         if ($search !== null) {
@@ -576,7 +576,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name', 'email');
                             },
                             'user' => function ($query) {
-                                $query->select('id', 'name', 'email')->with([
+                                $query->select('id', 'name', 'email', 'username', 'firebase_id', 'active')->with([
                                     'roles:id,name',
                                     'roles.permissions:id,name',
                                 ]);
