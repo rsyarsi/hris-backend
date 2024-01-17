@@ -29,7 +29,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $active)
     {
         $query = $this->model
                         ->with([
