@@ -45,7 +45,7 @@ class ShiftScheduleController extends Controller
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $shiftSchedules = $this->shiftScheduleService->shiftScheduleSubordinate($perPage, $search, $startDate, $endDate);
-            return $this->success('Shift Schedule Subordinate retrieved successfully', $shiftSchedules);
+            return $this->success('Shift Schedule Employee Subordinate retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
