@@ -187,6 +187,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('multiple-shift-schedules', 'storeMultiple')->name('multiple-shift-schedules');
             // route for import shift schedule
             Route::post('import-shift-schedule', 'importShiftSchedule')->name('import-shift-schedule');
+            // route for shift schedules subordinate
+            Route::get('shift-schedules-subordinate', 'shiftScheduleSubordinate')->name('shift-schedules-subordinate');
         });
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
