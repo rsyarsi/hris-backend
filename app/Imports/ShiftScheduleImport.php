@@ -38,7 +38,7 @@ class ShiftScheduleImport implements ToModel, WithStartRow
         // shift group
         $shiftGroupId = $employee->shift_group_id;
         $shift = Shift::where('shift_group_id', $shiftGroupId)
-                        ->where('code', $shiftCode)
+                        ->where('code', Str::upper($shiftCode))
                         ->first();
 
         $dateCarbon = Carbon::parse($date);
