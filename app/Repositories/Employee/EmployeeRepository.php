@@ -89,6 +89,10 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             },
                         ])
                         ->select($this->field);
+        if ($active == true) {
+            // If $active is true, filter by null resign_at
+            $query->whereNull('resigned_at');
+        }
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
