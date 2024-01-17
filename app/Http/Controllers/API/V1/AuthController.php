@@ -58,7 +58,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Unauthorized!',
                 'success' => false,
-                'code' => 201,
+                'code' => 401,
                 'data' => []
             ]);
         }
@@ -70,7 +70,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Account not active!',
                 'success' => false,
-                'code' => 201,
+                'code' => 401,
                 'data' => []
             ]);
         }
@@ -99,7 +99,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Username atau password salah, Login gagal!',
                 'success' => false,
-                'code' => 201,
+                'code' => 401,
                 'data' => []
             ]);
         }
@@ -118,6 +118,17 @@ class AuthController extends Controller
             Auth::logout();
             return response()->json([
                 'message' => 'User telah login di perangkat lain, silahkan hubungi HRD!',
+                'success' => false,
+                'code' => 401,
+                'data' => []
+            ]);
+        }
+
+        // Check if the user is active
+        if ($user && $user->active !== 1) {
+            // return response()->json(['error' => 'Account not active'], 401);
+            return response()->json([
+                'message' => 'Account not active!',
                 'success' => false,
                 'code' => 401,
                 'data' => []
