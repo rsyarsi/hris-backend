@@ -54,7 +54,7 @@ class UserController extends Controller
 
             // update user_id in the table employee
             $employeeId = $request->input('employee_id');
-            $dataEmployee['user_id'] = $user->id;
+            $dataEmployee = $user->id;
             $this->employeeService->updateUserId($employeeId, $dataEmployee);
 
             // asign role to user
