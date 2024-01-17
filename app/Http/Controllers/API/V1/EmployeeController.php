@@ -27,7 +27,8 @@ class EmployeeController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $employees = $this->employeeService->index($perPage, $search);
+            $active = $request->input('active');
+            $employees = $this->employeeService->index($perPage, $search, $active);
             return $this->success('Employees retrieved successfully', $employees);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

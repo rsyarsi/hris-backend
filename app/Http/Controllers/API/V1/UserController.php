@@ -98,18 +98,15 @@ class UserController extends Controller
             if (!$user) {
                 return $this->error('User not found', 404);
             }
-
             // update user_id in the table employee
             $employeeId = $request->input('employee_id');
-            $dataEmployee['user_id'] = $user->id;
+            $dataEmployee = $user->id;
             $this->employeeService->updateUserId($employeeId, $dataEmployee);
-
             // asign role to user
             $roles = $request->input('role');
             if ($roles) {
                 $user->syncRoles($roles); // Use syncRoles to sync the roles
             }
-
             return $this->success('User updated successfully', $user, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

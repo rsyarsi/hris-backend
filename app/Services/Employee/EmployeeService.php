@@ -14,9 +14,9 @@ class EmployeeService implements EmployeeServiceInterface
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search)
+    public function index($perPage, $search, $active)
     {
-        return $this->repository->index($perPage, $search);
+        return $this->repository->index($perPage, $search, $active);
     }
 
     public function store(array $data)
