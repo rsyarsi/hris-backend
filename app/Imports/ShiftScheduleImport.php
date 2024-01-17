@@ -24,31 +24,26 @@ class ShiftScheduleImport implements ToModel, WithStartRow
         $createdUserId = auth()->id();
         $setupUserId = auth()->id();
         $date = $row[3];
-
         $shiftCode = $row[1];
-        // $shift = Shift::where('code', $shiftCode)->first();
-
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
-
         if (!$employee) {
             return; // reject the request if employee not found
         }
-
         // shift group
         $shiftGroupId = $employee->shift_group_id;
+        if (!$shiftGroupId) {
+            return; // reject the request if shiftGroupId
+        }
         $shift = Shift::where('shift_group_id', $shiftGroupId)
                         ->where('code', Str::upper($shiftCode))
                         ->first();
-
         $dateCarbon = Carbon::parse($date);
-
         $existingEntryGenerateAbsen = GenerateAbsen::where([
             'employee_id' => $employee->id,
             'shift_id' => $shift->id,
             'date' => $date,
         ])->first();
-
         // If the entry exists, skip it
         if ($existingEntryGenerateAbsen) {
             return null; // Skip this row
@@ -119,7 +114,8 @@ class ShiftScheduleImport implements ToModel, WithStartRow
             'setup_at' => now(), // You can customize the setup_at value
             'period' => $row[2],
             'leave_note' => null,
-            'holiday' => $row[4],
+            'holiday' => $shift->libur,
+            // 'holiday' => $row[4],
             'night' => $shift->night_shift,
             'national_holiday' => $row[5],
         ]);

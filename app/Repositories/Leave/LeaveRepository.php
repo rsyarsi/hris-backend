@@ -199,11 +199,11 @@ class LeaveRepository implements LeaveRepositoryInterface
                 $registrationIds[] = $employee->supervisor->user->firebase_id;
             }
         }
-        if($employee->kabag_id != null ){
-            if($employee->kabag->user != null){
-                $registrationIds[] = $employee->kabag->user->firebase_id;
-            }
-        }
+        // if($employee->kabag_id != null ){
+        //     if($employee->kabag->user != null){
+        //         $registrationIds[] = $employee->kabag->user->firebase_id;
+        //     }
+        // }
         if($employee->manager_id != null ){
             if($employee->manager->user != null){
                 $registrationIds[] = $employee->manager->user->firebase_id;
@@ -302,11 +302,11 @@ class LeaveRepository implements LeaveRepositoryInterface
                 $registrationIds[] = $employee->supervisor->user->firebase_id;
             }
         }
-        if($employee->kabag_id != null ){
-            if($employee->kabag->user != null){
-                $registrationIds[] = $employee->kabag->user->firebase_id;
-            }
-        }
+        // if($employee->kabag_id != null ){
+        //     if($employee->kabag->user != null){
+        //         $registrationIds[] = $employee->kabag->user->firebase_id;
+        //     }
+        // }
         if($employee->manager_id != null ){
             if($employee->manager->user != null){
                 $registrationIds[] = $employee->manager->user->firebase_id;
