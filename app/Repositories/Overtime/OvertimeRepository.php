@@ -191,6 +191,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'comment' => $data['note'],
+            'libur' => $data['libur'],
         ];
         $this->overtimeHistoryService->store($historyData);
         // send firebase notification
