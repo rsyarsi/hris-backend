@@ -211,4 +211,8 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         return $results;
     }
 
+    public function slipGajiMobile($id)
+    {
+        return $this->repository->slipGajiMobile($id);
+    }
 }

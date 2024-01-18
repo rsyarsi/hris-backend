@@ -232,10 +232,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('execute-generate-payroll', 'executeStoredProcedure')->name('execute-generate-payroll');
             // route for print slip gaji
             Route::get('print-slip-gaji/{id}', 'printSlipGaji')->name('print-slip-gaji');
-            // route for send-slip-gaji
+            // route for send slip gaji
             Route::post('send-slip-gaji/{id}', 'sendSlipGaji')->name('send-slip-gaji');
-            // route for send-slip-gaji
+            // route for send slip gaji period
             Route::post('send-slip-gaji-period', 'sendSlipGajiPeriod')->name('send-slip-gaji-period');
+            // route for slip gaji mobile
+            Route::post('slip-gaji-mobile', 'slipGajiMobile')->name('slip-gaji-mobile');
         });
         // route for pph
         Route::resource('pph', PphController::class)->parameters(['pph' => 'pph']);

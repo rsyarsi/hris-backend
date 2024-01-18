@@ -14,4 +14,5 @@ interface GeneratePayrollServiceInterface
     public function generatePayrollEmployee($perPage, $search, $employeeId);
     public function sendSlipGaji($id);
     public function sendSlipGajiPeriod($period);
+    public function slipGajiMobile($id);
 }

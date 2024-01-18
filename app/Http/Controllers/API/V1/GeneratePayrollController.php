@@ -176,4 +176,15 @@ class GeneratePayrollController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function slipGajiMobile(Request $request)
+    {
+        try {
+            $id = $request->input('id');
+            $generatepayrolls = $this->generatePayrollService->slipGajiMobile($id);
+            return $this->success('Slip Gaji Berhasil diambil!', [$generatepayrolls]);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
