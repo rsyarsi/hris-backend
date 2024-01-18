@@ -85,6 +85,9 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                         'employeeTo' => function ($query) {
                             $query->select('id', 'name', 'employment_number');
                         },
+                        'exchangeEmployee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
                         'shiftScheduleRequest' => function ($query) {
                             $query->select($this->fieldShiftSchedule);
                         },
@@ -205,6 +208,9 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                                             $query->select('id', 'name', 'employment_number');
                                         },
                                         'employeeTo' => function ($query) {
+                                            $query->select('id', 'name', 'employment_number');
+                                        },
+                                        'exchangeEmployee' => function ($query) {
                                             $query->select('id', 'name', 'employment_number');
                                         },
                                         'shiftScheduleRequest' => function ($query) {

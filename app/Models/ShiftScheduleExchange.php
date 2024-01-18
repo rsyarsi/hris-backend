@@ -58,6 +58,11 @@ class ShiftScheduleExchange extends Model
         return $this->belongsTo(Employee::class, 'to_employee_id', 'id');
     }
 
+    public function exchangeEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'exchange_employee_id', 'id');
+    }
+
     public function shiftScheduleRequest()
     {
         return $this->belongsTo(ShiftSchedule::class, 'shift_schedule_request_id', 'id');
