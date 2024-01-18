@@ -17,6 +17,7 @@ class OvertimeHistoryRepository implements OvertimeHistoryRepositoryInterface
         'user_id',
         'user_agent',
         'comment',
+        'active',
     ];
 
     public function __construct(OvertimeHistory $model)

@@ -24,6 +24,7 @@ class OvertimeHistory extends Model
         'ip_address',
         'user_agent',
         'comment',
+        'active',
     ];
 
     public function overtime()

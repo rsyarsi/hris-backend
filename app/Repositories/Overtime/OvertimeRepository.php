@@ -30,6 +30,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         'type',
         'to_date',
         'duration',
+        'active',
     ];
 
     public function __construct(
@@ -66,6 +67,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                 'ip_address',
                                 'user_agent',
                                 'comment',
+                                'active',
                             );
                         },
                     ])
@@ -115,6 +117,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'comment' => $data['note'],
+            'active' => $data['active'],
         ];
         $this->overtimeHistoryService->store($historyData);
         // send firebase notification

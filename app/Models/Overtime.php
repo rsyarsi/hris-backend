@@ -27,6 +27,7 @@ class Overtime extends Model
         'type',
         'to_date',
         'duration',
+        'active',
     ];
 
     public function employee()
