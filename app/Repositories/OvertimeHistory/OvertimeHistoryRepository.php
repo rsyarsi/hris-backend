@@ -41,6 +41,7 @@ class OvertimeHistoryRepository implements OvertimeHistoryRepositoryInterface
                                     'type',
                                     'to_date',
                                     'duration',
+                                    'active',
                                 );
                             },
                             'user' => function ($query) {
@@ -64,12 +65,15 @@ class OvertimeHistoryRepository implements OvertimeHistoryRepositoryInterface
                                         $query->select(
                                             'id',
                                             'employee_id',
-                                            'overtime_type_id',
+                                            'task',
+                                            'note',
+                                            'overtime_status_id',
                                             'from_date',
+                                            'amount',
+                                            'type',
                                             'to_date',
                                             'duration',
-                                            'note',
-                                            'overtime_status_id'
+                                            'active',
                                         );
                                     },
                                     'user' => function ($query) {

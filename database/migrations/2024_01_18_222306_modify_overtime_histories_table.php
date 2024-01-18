@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('overtime_histories', function (Blueprint $table) {
-            $table->tinyInteger('active')->nullable();
+            $table->tinyInteger('active')->nullable()->default(0);
         });
     }
 

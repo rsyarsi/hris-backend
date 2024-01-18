@@ -105,10 +105,10 @@ class OvertimeController extends Controller
 
     public function overtimeEmployeeMobile(Request $request)
     {
+        $employeeId = $request->input('employment_id');
+        $overtimes = $this->overtimeService->overtimeEmployeeMobile($employeeId);
+        return $this->success('Overtime where employee retrieved successfully', $overtimes);
         try {
-            $employeeId = $request->input('employment_id');
-            $overtimes = $this->overtimeService->overtimeEmployeeMobile($employeeId);
-            return $this->success('Overtime where employee retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -183,24 +183,24 @@ class OvertimeController extends Controller
 
     public function overtimeEmployeeToday(Request $request)
     {
+        $employeeId = $request->input('employment_id');
+        $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
+        if ($overtime) {
+            return response()->json([
+                'message' => 'Overtime Karyawan hari ini berhasil di ambil!',
+                'success' => 'true',
+                'code' => 200,
+                'data' => [$overtime],
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Karyawan tidak ditemukan atau tidak memiliki jadwal overtime hari ini.',
+                'success' => 'false',
+                'code' => 404,
+                'data' => null,
+            ]);
+        }
         try {
-            $employeeId = $request->input('employment_id');
-            $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
-            if ($overtime) {
-                return response()->json([
-                    'message' => 'Overtime Karyawan hari ini berhasil di ambil!',
-                    'success' => 'true',
-                    'code' => 200,
-                    'data' => [$overtime],
-                ]);
-            } else {
-                return response()->json([
-                    'message' => 'Karyawan tidak ditemukan atau tidak memiliki jadwal overtime hari ini.',
-                    'success' => 'false',
-                    'code' => 404,
-                    'data' => null,
-                ]);
-            }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
