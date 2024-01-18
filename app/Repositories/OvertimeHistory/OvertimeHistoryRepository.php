@@ -17,7 +17,7 @@ class OvertimeHistoryRepository implements OvertimeHistoryRepositoryInterface
         'user_id',
         'user_agent',
         'comment',
-        'active',
+        'libur',
     ];
 
     public function __construct(OvertimeHistory $model)
@@ -41,7 +41,7 @@ class OvertimeHistoryRepository implements OvertimeHistoryRepositoryInterface
                                     'type',
                                     'to_date',
                                     'duration',
-                                    'active',
+                                    'libur',
                                 );
                             },
                             'user' => function ($query) {
@@ -73,7 +73,7 @@ class OvertimeHistoryRepository implements OvertimeHistoryRepositoryInterface
                                             'type',
                                             'to_date',
                                             'duration',
-                                            'active',
+                                            'libur',
                                         );
                                     },
                                     'user' => function ($query) {

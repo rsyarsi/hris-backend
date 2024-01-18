@@ -30,7 +30,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         'type',
         'to_date',
         'duration',
-        'active',
+        'libur',
     ];
 
     public function __construct(
@@ -67,7 +67,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                 'ip_address',
                                 'user_agent',
                                 'comment',
-                                'active',
+                                'libur',
                             );
                         },
                     ])
@@ -117,7 +117,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'comment' => $data['note'],
-            'active' => $data['active'],
+            'libur' => $data['libur'],
         ];
         $this->overtimeHistoryService->store($historyData);
         // send firebase notification
@@ -171,7 +171,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                     'ip_address',
                                     'user_agent',
                                     'comment',
-                                    'active',
+                                    'libur',
                                 );
                             },
                         ])
@@ -282,7 +282,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                             DB::raw("COALESCE(TO_CHAR(overtimes.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
                             DB::raw("COALESCE(overtimes.amount::text, '') as amount"),
                             DB::raw("COALESCE(overtimes.type, '') as type"),
-                            DB::raw("COALESCE(overtimes.active::text, '') as active"),
+                            DB::raw("COALESCE(overtimes.libur::text, '') as libur"),
                             DB::raw("COALESCE(overtimes.duration::text, '') as duration"),
                             DB::raw("COALESCE(TO_CHAR(overtimes.created_at, 'YYYY-MM-DD'), '') as tglinput"),
                             DB::raw("COALESCE(employees.name, '') as employee_name"),
@@ -355,7 +355,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         'overtimes.type',
                         'overtimes.to_date',
                         'overtimes.duration',
-                        'overtimes.active',
+                        'overtimes.libur',
                         'employees.name as employee_name',
                         'overtime_statuses.name as overtime_status_name',
                     ])
@@ -433,7 +433,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'comment' => $overtime->note,
-                'active' => $overtime->active,
+                'libur' => $overtime->libur,
             ];
             $this->overtimeHistoryService->store($historyData);
             $typeSend = 'Overtime Update';
@@ -468,7 +468,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                             DB::raw("COALESCE(TO_CHAR(overtimes.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
                             DB::raw("COALESCE(overtimes.amount::text, '') as amount"),
                             DB::raw("COALESCE(overtimes.type, '') as type"),
-                            DB::raw("COALESCE(overtimes.active::text, '') as active"),
+                            DB::raw("COALESCE(overtimes.libur::text, '') as libur"),
                             DB::raw("COALESCE(overtimes.duration::text, '') as duration"),
                             DB::raw("COALESCE(employees.name, '') as employee_name"),
                             DB::raw("COALESCE(overtime_statuses.name, '') as overtime_status_name"),

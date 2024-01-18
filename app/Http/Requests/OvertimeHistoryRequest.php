@@ -31,7 +31,7 @@ class OvertimeHistoryRequest extends FormRequest
             'ip_address' => 'nullable|max:45',
             'user_agent' => 'nullable',
             'comment' => 'nullable',
-            'active' => 'required|in:0,1',
+            'libur' => 'nullable|in:0,1',
         ];
     }
 

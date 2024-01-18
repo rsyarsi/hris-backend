@@ -38,7 +38,7 @@ class OvertimeRequest extends FormRequest
                             new DateSmallerThan('to_date')
                         ],
             'to_date' => 'required|date',
-            'active' => 'required|in:0,1',
+            'libur' => 'required|in:0,1',
         ];
 
         if ($this->isMethod('post')) {
