@@ -3,7 +3,7 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\{Employee, Leave, ShiftSchedule};
+use App\Models\{Employee, Leave, ShiftSchedule, User};
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
@@ -141,6 +141,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
+        $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
         $leave = $this->model->create($data);
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
@@ -199,16 +200,27 @@ class LeaveRepository implements LeaveRepositoryInterface
                 $registrationIds[] = $employee->supervisor->user->firebase_id;
             }
         }
-        // if($employee->kabag_id != null ){
-        //     if($employee->kabag->user != null){
-        //         $registrationIds[] = $employee->kabag->user->firebase_id;
-        //     }
-        // }
+
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
+        }
+
         if($employee->manager_id != null ){
             if($employee->manager->user != null){
                 $registrationIds[] = $employee->manager->user->firebase_id;
             }
         }
+
+        // notif ke HRD
+        $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
+        foreach ($employeeHrd as $key ) {
+            # code...
+           $firebaseIdx = $key;
+        }
+        // dd($firebaseIdx->firebase_id);
+        $registrationIds[] =$firebaseIdx->firebase_id;
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
             $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
@@ -656,6 +668,14 @@ class LeaveRepository implements LeaveRepositoryInterface
             if($employee->user != null){
                 $registrationIds[] = $employee->user->firebase_id;
             }
+                        // notif ke HRDs
+            $employeeHrd = User::where('hrd','1')->get();
+            foreach ($employeeHrd as $key ) {
+                # code...
+                $firebaseIdx = $key;
+            }
+            $registrationIds[] =$firebaseIdx->firebase_id;
+            
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
@@ -731,6 +751,14 @@ class LeaveRepository implements LeaveRepositoryInterface
             if($employee->user != null){
                 $registrationIds[] = $employee->user->firebase_id;
             }
+
+            // notif ke HRDs
+            $employeeHrd = User::where('hrd','1')->get();
+            foreach ($employeeHrd as $key ) {
+                # code...
+                $firebaseIdx = $key;
+            }
+        $registrationIds[] =$firebaseIdx->firebase_id;
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);

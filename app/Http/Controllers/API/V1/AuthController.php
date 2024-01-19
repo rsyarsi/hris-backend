@@ -48,7 +48,7 @@ class AuthController extends Controller
                 'success' => false,
                 'code' => 422,
                 'data' => $validator->errors()
-            ]);
+            ], 422);
         }
 
         $credentials = $validator->validated();
@@ -58,9 +58,9 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Unauthorized!',
                 'success' => false,
-                'code' => 401,
-                'data' => []
-            ]);
+                'code' => 422,
+                'data' => ['username' => ['Username or Password Invalid!']]
+            ], 422);
         }
 
         // Check if the user is active
@@ -70,9 +70,9 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Account not active!',
                 'success' => false,
-                'code' => 401,
-                'data' => []
-            ]);
+                'code' => 422,
+                'data' => ['username' => ['Account not active!']]
+            ], 422);
         }
         return $this->createNewToken($token);
     }
