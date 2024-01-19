@@ -40,6 +40,9 @@ class UniqueLeaveDateRange implements Rule
                     })
                     ->where('leave_status_id', 10)
                     ->orWhere('leave_status_id', 9)
+                    ->orWhere('leave_status_id', 8)
+                    ->orWhere('leave_status_id', 7)
+                    ->orWhere('leave_status_id', 6)
                     ->exists();
     }
 
