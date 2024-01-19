@@ -26,13 +26,13 @@ class UserService implements UserServiceInterface
 
         // Define the roles mapping
         $rolesMapping = [
-            'administrator' => 'administrator',
-            'hrd' => 'hrd',
-            'manager' => 'manager',
-            'supervisor' => 'supervisor',
-            'employee' => 'pegawai', // Assuming you have a 'pegawai' role
-            'kabag' => 'kabag',
-            'staff' => 'staff',
+            'ADMINISTRATOR' => 'administrator',
+            'HRD' => 'hrd',
+            'MANAGER' => 'manager',
+            'SUPERVISOR' => 'supervisor',
+            'EMPLOYEE' => 'pegawai', // Assuming you have a 'pegawai' role
+            'KABAG' => 'kabag',
+            'STAFF' => 'staff',
         ];
 
         // Loop through the roles and set the corresponding values in the $data array
@@ -59,13 +59,13 @@ class UserService implements UserServiceInterface
 
         // Define the roles mapping
         $rolesMapping = [
-            'administrator' => 'administrator',
-            'hrd' => 'hrd',
-            'manager' => 'manager',
-            'supervisor' => 'supervisor',
-            'employee' => 'pegawai', // Assuming you have a 'pegawai' role
-            'kabag' => 'kabag',
-            'staff' => 'staff',
+            'ADMINISTRATOR' => 'administrator',
+            'HRD' => 'hrd',
+            'MANAGER' => 'manager',
+            'SUPERVISOR' => 'supervisor',
+            'EMPLOYEE' => 'pegawai', // Assuming you have a 'pegawai' role
+            'KABAG' => 'kabag',
+            'STAFF' => 'staff',
         ];
 
         // Initialize all fields to 0
