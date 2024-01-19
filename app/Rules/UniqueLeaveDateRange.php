@@ -38,6 +38,8 @@ class UniqueLeaveDateRange implements Rule
                         $query->whereBetween('from_date', [$fromDate, $toDate])
                                 ->orWhereBetween('to_date', [$fromDate, $toDate]);
                     })
+                    ->where('leave_status_id', 10)
+                    ->orWhere('leave_status_id', 9)
                     ->exists();
     }
 
