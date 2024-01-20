@@ -69,7 +69,7 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->overtimeHrdMobile();
     }
 
-    public function overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate)
+    public function overtimeSupervisorOrManager($perPage, $search, $overtimeStatus, $startDate, $endDate)
     {
         $user = auth()->user();
         $allowedRoles = [
@@ -86,7 +86,7 @@ class OvertimeService implements OvertimeServiceInterface
         ];
 
         if ($user->hasAnyRole($allowedRoles)) {
-            return $this->repository->overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);
+            return $this->repository->overtimeSupervisorOrManager($perPage, $search, $overtimeStatus, $startDate, $endDate);
         }
         return null;
     }

@@ -68,52 +68,52 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function index($perPage, $search = null)
     {
         $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'leaveStatus' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveHistory' => function ($query) {
-                            $query->select(
-                                'id',
-                                'leave_id',
-                                'description',
-                                'ip_address',
-                                'user_id',
-                                'user_agent',
-                                'comment',
-                            );
-                        },
-                        'shiftSchedule' => function ($query) {
-                            $query->select(
-                                'employee_id',
-                                'shift_id',
-                                'date',
-                                'time_in',
-                                'time_out',
-                                'late_note',
-                                'shift_exchange_id',
-                                'user_exchange_id',
-                                'user_exchange_at',
-                                'created_user_id',
-                                'updated_user_id',
-                                'setup_user_id',
-                                'setup_at',
-                                'period',
-                                'leave_note',
-                                'holiday',
-                                'night',
-                                'national_holiday',
-                                'leave_id'
-                            );
-                        },
-                    ])
-                    ->select($this->field);
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'leaveType' => function ($query) {
+                                $query->select('id', 'name', 'is_salary_deduction', 'active');
+                            },
+                            'leaveStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'leaveHistory' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'leave_id',
+                                    'description',
+                                    'ip_address',
+                                    'user_id',
+                                    'user_agent',
+                                    'comment',
+                                );
+                            },
+                            'shiftSchedule' => function ($query) {
+                                $query->select(
+                                    'employee_id',
+                                    'shift_id',
+                                    'date',
+                                    'time_in',
+                                    'time_out',
+                                    'late_note',
+                                    'shift_exchange_id',
+                                    'user_exchange_id',
+                                    'user_exchange_at',
+                                    'created_user_id',
+                                    'updated_user_id',
+                                    'setup_user_id',
+                                    'setup_at',
+                                    'period',
+                                    'leave_note',
+                                    'holiday',
+                                    'night',
+                                    'national_holiday',
+                                    'leave_id'
+                                );
+                            },
+                        ])
+                        ->select($this->field);
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
@@ -239,7 +239,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $leave = $this->model
                         ->with([
                             'employee' => function ($query) {
-                                $query->select('id', 'name');
+                                $query->select('id', 'name', 'employment_number');
                             },
                             'leaveType' => function ($query) {
                                 $query->select('id', 'name', 'is_salary_deduction', 'active');
@@ -354,29 +354,29 @@ class LeaveRepository implements LeaveRepositoryInterface
             return [];
         }
         $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'leaveStatus' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveHistory' => function ($query) {
-                            $query->select(
-                                'id',
-                                'leave_id',
-                                'description',
-                                'ip_address',
-                                'user_id',
-                                'user_agent',
-                                'comment',
-                            );
-                        }
-                    ])
-                    ->select($this->field);
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'leaveType' => function ($query) {
+                                $query->select('id', 'name', 'is_salary_deduction', 'active');
+                            },
+                            'leaveStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'leaveHistory' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'leave_id',
+                                    'description',
+                                    'ip_address',
+                                    'user_id',
+                                    'user_agent',
+                                    'comment',
+                                );
+                            }
+                        ])
+                        ->select($this->field);
         $query->where('employee_id', $user->employee->id);
         if ($leaveStatus) {
             $query->where('leave_status_id', $leaveStatus);
@@ -458,7 +458,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 ->get();
     }
 
-    public function leaveSupervisorOrManager($perPage, $leaveStatus = null, $startDate = null, $endDate = null)
+    public function leaveSupervisorOrManager($perPage, $search, $leaveStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -472,29 +472,29 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     ->pluck('id');
 
         $query = $this->model
-            ->with([
-                'employee' => function ($query) {
-                    $query->select('id', 'name');
-                },
-                'leaveType' => function ($query) {
-                    $query->select('id', 'name', 'is_salary_deduction', 'active');
-                },
-                'leaveStatus' => function ($query) {
-                    $query->select('id', 'name');
-                },
-                'leaveHistory' => function ($query) {
-                    $query->select(
-                        'id',
-                        'leave_id',
-                        'description',
-                        'ip_address',
-                        'user_id',
-                        'user_agent',
-                        'comment'
-                    );
-                }
-            ])
-            ->select($this->field);
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'leaveType' => function ($query) {
+                                $query->select('id', 'name', 'is_salary_deduction', 'active');
+                            },
+                            'leaveStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'leaveHistory' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'leave_id',
+                                    'description',
+                                    'ip_address',
+                                    'user_id',
+                                    'user_agent',
+                                    'comment'
+                                );
+                            }
+                        ])
+                        ->select($this->field);
 
         // Filter leave data for supervised or managed employees
         $query->whereIn('employee_id', $subordinateIds);
@@ -508,7 +508,15 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($endDate) {
             $query->whereDate('from_date', '<=', $endDate);
         }
-
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
         return $query->paginate($perPage);
     }
 
@@ -558,7 +566,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'leaveType' => function ($query) {
                             $query->select('id', 'name', 'is_salary_deduction', 'active');

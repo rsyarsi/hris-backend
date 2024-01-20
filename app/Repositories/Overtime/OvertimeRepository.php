@@ -53,7 +53,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
@@ -266,7 +266,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
@@ -347,7 +347,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return $overtime ? $overtime : $overtime = null;
     }
 
-    public function overtimeSupervisorOrManager($perPage, $overtimeStatus = null, $startDate = null, $endDate = null)
+    public function overtimeSupervisorOrManager($perPage, $search, $overtimeStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
         if (!$user->employee) {
@@ -362,7 +362,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
@@ -381,6 +381,15 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         }
         if ($endDate) {
             $query->whereDate('from_date', '<=', $endDate);
+        }
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
         }
         return $query->paginate($perPage);
     }
@@ -418,7 +427,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name');
+                            $query->select('id', 'name', 'employment_number');
                         },
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');

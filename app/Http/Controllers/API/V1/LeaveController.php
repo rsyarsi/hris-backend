@@ -127,10 +127,11 @@ class LeaveController extends Controller
     {
         try {
             $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
             $leaveStatus = $request->input('leave_status');
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
-            $leaves = $this->leaveService->leaveSupervisorOrManager($perPage, $leaveStatus, $startDate, $endDate);
+            $leaves = $this->leaveService->leaveSupervisorOrManager($perPage, $search, $leaveStatus, $startDate, $endDate);
             return $this->success('Leave where manager/supervisor/kabag retrieved successfully', $leaves);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

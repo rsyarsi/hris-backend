@@ -111,7 +111,7 @@ class LeaveService implements LeaveServiceInterface
         return $this->repository->leaveHrdMobile();
     }
 
-    public function leaveSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate)
+    public function leaveSupervisorOrManager($perPage, $search, $overtimeStatus, $startDate, $endDate)
     {
         $user = auth()->user();
         $allowedRoles = [

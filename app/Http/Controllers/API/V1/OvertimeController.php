@@ -128,10 +128,11 @@ class OvertimeController extends Controller
     {
         try {
             $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
             $overtimeStatus = $request->input('overtime_status');
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
-            $overtimes = $this->overtimeService->overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);
+            $overtimes = $this->overtimeService->overtimeSupervisorOrManager($perPage, $search, $overtimeStatus, $startDate, $endDate);
             return $this->success('Overtime where manager/supervisor/kabag login retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

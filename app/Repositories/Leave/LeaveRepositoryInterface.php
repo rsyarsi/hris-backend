@@ -11,7 +11,7 @@ Interface LeaveRepositoryInterface
     public function leaveEmployee($perPage, $leaveStatus, $startDate, $endDate);
     public function leaveEmployeeMobile($employeeId);
     public function leaveHrdMobile();
-    public function leaveSupervisorOrManager($perPage, $leaveStatus, $startDate, $endDate);
+    public function leaveSupervisorOrManager($perPage, $search, $leaveStatus, $startDate, $endDate);
     public function leaveStatus($perPage, $search, $overtimeStatus);
     public function updateStatus($id, array $data);
     public function updateStatusMobile($leaveId, $leaveStatusId);
