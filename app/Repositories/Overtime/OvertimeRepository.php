@@ -367,6 +367,18 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
                         },
+                        'overtimeHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'overtime_id',
+                                'user_id',
+                                'description',
+                                'ip_address',
+                                'user_agent',
+                                'comment',
+                                'libur',
+                            );
+                        },
                     ])
                     ->select($this->field);
 
@@ -374,7 +386,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $query->whereIn('employee_id', $subordinateIds);
 
         if ($overtimeStatus) {
-            $query->where('overtime_status_id', $overtimeStatus);
+            $query->whereIn('overtime_status_id', $overtimeStatus);
         }
         if ($startDate) {
             $query->whereDate('from_date', '>=', $startDate);
@@ -438,13 +450,14 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
         }
 
         if ($overtimeStatus) {
-            $query->where('overtime_status_id', $overtimeStatus);
+            $query->whereIn('overtime_status_id', $overtimeStatus);
         }
         return $query->paginate($perPage);
     }

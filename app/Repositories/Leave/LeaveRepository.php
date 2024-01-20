@@ -498,9 +498,8 @@ class LeaveRepository implements LeaveRepositoryInterface
 
         // Filter leave data for supervised or managed employees
         $query->whereIn('employee_id', $subordinateIds);
-
         if ($leaveStatus) {
-            $query->where('leave_status_id', $leaveStatus);
+            $query->whereIn('leave_status_id', $leaveStatus);
         }
         if ($startDate) {
             $query->whereDate('from_date', '>=', $startDate);
@@ -587,17 +586,17 @@ class LeaveRepository implements LeaveRepositoryInterface
                         }
                     ])
                     ->select($this->field);
+        if ($leaveStatus) {
+            $query->whereIn('leave_status_id', $leaveStatus);
+        }
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
                             ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->where('name', 'like', '%' . $search . '%');
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
-        }
-
-        if ($leaveStatus) {
-            $query->where('leave_status_id', $leaveStatus);
         }
         return $query->paginate($perPage);
     }
