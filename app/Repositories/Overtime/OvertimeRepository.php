@@ -93,7 +93,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         if (!$checkShiftSchedule) {
             return [
                 'message' => 'Validation Error!',
-                'success' => false,
+                'error' => true,
                 'code' => 422,
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
@@ -101,7 +101,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         if ($checkShiftSchedule->leave_id !== null) {
             return [
                 'message' => 'Validation Error!',
-                'success' => false,
+                'error' => true,
                 'code' => 422,
                 'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
             ];
@@ -127,14 +127,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
         $registrationIds[] = $getHakAkses->firebase_id;
 
-                    // notif ke HRDs
-                    $employeeHrd = User::where('hrd','1')->get();
-                    foreach ($employeeHrd as $key ) {
-                        # code...
-                        $firebaseIdx = $key;
-                    }
-
-
+        // notif ke HRDs
+        $employeeHrd = User::where('hrd','1')->get();
+        foreach ($employeeHrd as $key ) {
+            # code...
+            $firebaseIdx = $key;
+        }
 
         // if($employee->supervisor != null){
         //     if($employee->supervisor->user != null){
@@ -160,7 +158,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
         return [
             'message' => 'Overtime created successfully',
-            'success' => true,
+            'error' => false,
             'code' => 201,
             'data' => [$overtime]
         ];

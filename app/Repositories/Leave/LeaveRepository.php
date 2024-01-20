@@ -136,7 +136,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
             return [
                 'message' => 'Validation Error',
-                'success' => false,
+                'error' => true,
                 'code' => 422,
                 'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
@@ -228,7 +228,7 @@ class LeaveRepository implements LeaveRepositoryInterface
 
         return [
             'message' => 'Leave created successfully',
-            'success' => true,
+            'error' => false,
             'code' => 201,
             'data' => [$leave]
         ];
