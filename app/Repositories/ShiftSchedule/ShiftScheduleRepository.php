@@ -555,7 +555,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->leftJoin('shift_schedules', DB::raw("CAST(overtimes.from_date AS DATE)"), '=', 'shift_schedules.date', 'overtimes.employee_id','=','shift_schedules.employee_id')
                     ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
                     ->where('shift_schedules.employee_id', $employee->id)
-                    ->where('overtimes.overtime_status_id', '5')
                     ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)");
                     // union all here
         $shiftschedule = DB::table('shift_schedules')

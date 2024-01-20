@@ -324,8 +324,6 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function overtimeHrdMobile()
     {
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
         $overtime = DB::table('overtimes')
                         ->select([
                             DB::raw("COALESCE(overtimes.id, '') as id"),
@@ -346,7 +344,6 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
                         ->leftJoin('overtime_statuses', 'overtimes.overtime_status_id', '=', 'overtime_statuses.id')
                         ->whereIn('overtimes.overtime_status_id', [1, 2, 3, 4])
-                        ->whereBetween('overtimes.from_date', [$startOfMonth, $endOfMonth])
                         ->orderBy('overtimes.from_date', 'DESC')
                         ->get();
         return $overtime ? $overtime : $overtime = null;
