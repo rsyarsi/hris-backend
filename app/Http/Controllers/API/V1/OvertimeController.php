@@ -114,6 +114,16 @@ class OvertimeController extends Controller
         }
     }
 
+    public function overtimeHrdMobile(Request $request)
+    {
+        try {
+            $overtimes = $this->overtimeService->overtimeHrdMobile();
+            return $this->success('Overtimes HRD retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function overtimeSupervisorOrManager(Request $request)
     {
         try {

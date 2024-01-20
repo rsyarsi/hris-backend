@@ -396,39 +396,6 @@ class LeaveRepository implements LeaveRepositoryInterface
         if (!$employee) {
             return [];
         }
-        // $leave = DB::table('leaves')
-        //             ->select([
-        //                 'leaves.id',
-        //                 'leaves.employee_id',
-        //                 DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
-        //                 DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
-        //                 DB::raw("COALESCE(leaves.duration::text, '') as duration"),
-        //                 DB::raw("COALESCE(leaves.note, '') as note"),
-        //                 'employees.name as employee_name',
-        //                 'leave_types.id as leave_type_id',
-        //                 'leave_types.name as leave_type_name',
-        //                 DB::raw("COALESCE(leave_types.is_salary_deduction::text, '') as is_salary_deduction"),
-        //                 'leave_statuses.name as overtime_status_name',
-        //                 DB::raw("JSON_AGG(
-        //                     JSON_BUILD_OBJECT(
-        //                         'id', leave_histories.id,
-        //                         'leave_id', leave_histories.leave_id,
-        //                         'description', leave_histories.description,
-        //                         'ip_address', leave_histories.ip_address,
-        //                         'user_id', leave_histories.user_id,
-        //                         'user_agent', leave_histories.user_agent,
-        //                         'comment', leave_histories.comment
-        //                     )
-        //                 ) as leave_history"),
-        //             ])
-        //             ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
-        //             ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
-        //             ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-        //             ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
-        //             ->where('leaves.employee_id', $employee->id)
-        //             ->orderBy('leaves.from_date', 'ASC')
-        //             ->groupBy('leaves.id', 'leaves.employee_id', 'leaves.from_date', 'leaves.to_date', 'leaves.duration', 'leaves.note', 'employees.name', 'leave_types.id', 'leave_types.name', 'leave_types.is_salary_deduction', 'leave_statuses.name')
-        //             ->get();
 
         $leave = DB::table('leaves')
                     ->select([
@@ -447,6 +414,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                         DB::raw("COALESCE(leave_types.id::text, '') as leave_type_id"),
                         DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
                         DB::raw("COALESCE(leave_types.is_salary_deduction::text, '') as is_salary_deduction"),
+                        DB::raw("COALESCE(leaves.leave_status_id::text, '') as leave_status_id"),
                         DB::raw("COALESCE(leave_statuses.name, '') as overtime_status_name"),
                         // DB::raw("COALESCE(leave_histories.description, '') as history_description"),
                     ])
@@ -459,6 +427,42 @@ class LeaveRepository implements LeaveRepositoryInterface
                     // ->groupBy('leaves.id', 'leaves.employee_id', 'leaves.from_date', 'leaves.to_date', 'leaves.duration', 'leaves.note', 'employees.name', 'leave_types.id', 'leave_types.name', 'leave_types.is_salary_deduction', 'leave_statuses.name', 'leave_histories.description')
                     ->get();
         return $leave ? $leave : $leave = null;
+    }
+
+    public function leaveHrdMobile()
+    {
+        return DB::table('leaves')
+                ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+                ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+                ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+                // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
+                ->select([
+                    'leaves.id',
+                    'leaves.employee_id',
+                    'leaves.leave_type_id',
+                    'leaves.from_date',
+                    'leaves.to_date',
+                    'leaves.duration',
+                    'leaves.note',
+                    'leaves.leave_status_id',
+                    'leaves.quantity_cuti_awal',
+                    'leaves.sisa_cuti',
+                    'leaves.file_url',
+                    'leaves.file_path',
+                    'leaves.file_disk',
+                    'employees.name as employee_name',
+                    'leave_types.name as leave_type_name',
+                    'leave_statuses.name as leave_status_name',
+                    // 'leave_histories.id as leave_history_id',
+                    // 'leave_histories.description as leave_histories_description',
+                    // 'leave_histories.ip_address as leave_histories_ip_address',
+                    // 'leave_histories.user_id as leave_histories_user_id',
+                    // 'leave_histories.user_agent as leave_histories_user_agent',
+                    // 'leave_histories.comment as leave_histories_comment',
+                ])
+                ->whereIn('leave_status_id', [1, 2, 3, 4])
+                ->orderBy('from_date', 'DESC')
+                ->get();
     }
 
     public function leaveSupervisorOrManager($perPage, $leaveStatus = null, $startDate = null, $endDate = null)

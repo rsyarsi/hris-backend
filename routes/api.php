@@ -307,6 +307,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::get('leave-where-employee', 'leaveEmployee')->name('leave-where-employee');
         // route for leave where employee mobile
         Route::post('leave-employee-mobile', 'leaveEmployeeMobile')->name('leave-employee-mobile');
+        // route for leave hrd mobile
+        Route::post('leave-hrd-mobile', 'leaveHrdMobile')->name('leave-hrd-mobile');
         // route for leave where supervisor or manager login
         Route::get('leave-supervisor-manager', 'leaveSupervisorOrManager')->name('leave-supervisor-manager');
         // route for leave where supervisor or manager mobile
@@ -331,6 +333,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::get('overtime-where-employee', 'overtimeEmployee')->name('overtime-where-employee');
         // route for overtime overtime where employee mobile (1 month)
         Route::post('overtime-employee-mobile', 'overtimeEmployeeMobile')->name('overtime-employee-mobile');
+        // route for overtime hrd mobile
+        Route::post('overtime-hrd-mobile', 'overtimeHrdMobile')->name('overtime-hrd-mobile');
         // route for overtime where employee today
         Route::post('overtime-employee-today', 'overtimeEmployeeToday')->name('overtime-employee-today');
         // route for Overtime where supervisor or manager login

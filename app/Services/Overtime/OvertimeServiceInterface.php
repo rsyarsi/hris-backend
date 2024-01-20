@@ -10,6 +10,7 @@ interface OvertimeServiceInterface
     public function destroy($id);
     public function overtimeEmployee($perPage, $overtimeStatus, $startDate, $endDate);
     public function overtimeEmployeeMobile($employeeId);
+    public function overtimeHrdMobile();
     public function overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate);
     public function overtimeStatus($perPage, $search, $overtimeStatus);
     public function updateStatus($id, $newStatusId);

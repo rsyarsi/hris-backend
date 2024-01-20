@@ -107,7 +107,17 @@ class LeaveController extends Controller
         try {
             $employeeId = $request->input('employment_id');
             $leaves = $this->leaveService->leaveEmployeeMobile($employeeId);
-            return $this->success('Leave where status retrieved successfully', $leaves);
+            return $this->success('Leave where employee retrieved successfully', $leaves);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function leaveHrdMobile(Request $request)
+    {
+        try {
+            $leaves = $this->leaveService->leaveHrdMobile();
+            return $this->success('Leave HRD retrieved successfully', $leaves);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

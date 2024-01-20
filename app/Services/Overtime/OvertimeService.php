@@ -64,6 +64,11 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->overtimeEmployeeMobile($employeeId);
     }
 
+    public function overtimeHrdMobile()
+    {
+        return $this->repository->overtimeHrdMobile();
+    }
+
     public function overtimeSupervisorOrManager($perPage, $overtimeStatus, $startDate, $endDate)
     {
         $user = auth()->user();

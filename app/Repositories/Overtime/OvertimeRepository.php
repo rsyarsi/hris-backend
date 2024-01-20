@@ -106,7 +106,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
             ];
         }
-            
+
         $overtime = $this->model->create($data);
         $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
         // save to table overtime history
@@ -135,7 +135,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                     }
 
 
-        
+
         // if($employee->supervisor != null){
         //     if($employee->supervisor->user != null){
         //         $registrationIds[] = $employee->supervisor->user->firebase_id;
@@ -322,6 +322,36 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return $overtime ? $overtime : $overtime = null;
     }
 
+    public function overtimeHrdMobile()
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        $overtime = DB::table('overtimes')
+                        ->select([
+                            DB::raw("COALESCE(overtimes.id, '') as id"),
+                            DB::raw("COALESCE(overtimes.employee_id, '') as employee_id"),
+                            DB::raw("COALESCE(overtimes.task, '') as task"),
+                            DB::raw("COALESCE(overtimes.note, '') as note"),
+                            DB::raw("COALESCE(overtimes.overtime_status_id::text, '') as overtime_status_id"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
+                            DB::raw("COALESCE(overtimes.amount::text, '') as amount"),
+                            DB::raw("COALESCE(overtimes.type, '') as type"),
+                            DB::raw("COALESCE(overtimes.libur::text, '') as libur"),
+                            DB::raw("COALESCE(overtimes.duration::text, '') as duration"),
+                            DB::raw("COALESCE(TO_CHAR(overtimes.created_at, 'YYYY-MM-DD'), '') as tglinput"),
+                            DB::raw("COALESCE(employees.name, '') as employee_name"),
+                            DB::raw("COALESCE(overtime_statuses.name, '') as overtime_status_name"),
+                        ])
+                        ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
+                        ->leftJoin('overtime_statuses', 'overtimes.overtime_status_id', '=', 'overtime_statuses.id')
+                        ->whereIn('overtimes.overtime_status_id', [1, 2, 3, 4])
+                        ->whereBetween('overtimes.from_date', [$startOfMonth, $endOfMonth])
+                        ->orderBy('overtimes.from_date', 'DESC')
+                        ->get();
+        return $overtime ? $overtime : $overtime = null;
+    }
+
     public function overtimeSupervisorOrManager($perPage, $overtimeStatus = null, $startDate = null, $endDate = null)
     {
         $user = auth()->user();
@@ -437,7 +467,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 $registrationIds[] = $employee->user->firebase_id;
             }
 
-        
+
                     // notif ke HRDs
                     $employeeHrd = User::where('hrd','1')->get();
                     foreach ($employeeHrd as $key ) {
@@ -475,7 +505,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             if($employee->user != null){
                 $registrationIds[] = $employee->user->firebase_id;
             }
-         
+
                     // notif ke HRDs
                     $employeeHrd = User::where('hrd','1')->get();
                     foreach ($employeeHrd as $key ) {

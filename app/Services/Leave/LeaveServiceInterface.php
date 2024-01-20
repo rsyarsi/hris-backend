@@ -10,6 +10,7 @@ interface LeaveServiceInterface
     public function destroy($id);
     public function leaveEmployee($perPage, $leaveStatus, $startDate, $endDate);
     public function leaveEmployeeMobile($employeeId);
+    public function leaveHrdMobile();
     public function leaveSupervisorOrManager($perPage, $leaveStatus, $startDate, $endDate);
     public function leaveSupervisorOrManagerMobile($employeeId);
     public function leaveStatus($perPage, $search, $leaveStatus);
