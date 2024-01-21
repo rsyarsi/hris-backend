@@ -7,6 +7,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,7 +54,9 @@ class AuthController extends Controller
 
         $credentials = $validator->validated();
 
-        if (! $token = Auth::attempt($credentials)) {
+        if (! $token = Auth::attempt($credentials, [
+            'exp' => Carbon::now()->addYears(100)->timestamp,
+        ])) {
             // return response()->json(['error' => 'Unauthorized'], 401);
             return response()->json([
                 'message' => 'Unauthorized!',
@@ -76,6 +79,7 @@ class AuthController extends Controller
         }
         return $this->createNewToken($token);
     }
+
     public function loginMobileApps(Request $request)
     {
         $validator = Validator::make($request->all(), [
