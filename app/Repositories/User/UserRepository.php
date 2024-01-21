@@ -191,7 +191,7 @@ class UserRepository implements UserRepositoryInterface
                 'message' => 'Old password is incorrect!',
                 'error' => true,
                 'code' => 200,
-                'data' => ['Old password is incorrect!'],
+                'data' => 'Old password is incorrect!',
             ];
         }
 
@@ -201,7 +201,7 @@ class UserRepository implements UserRepositoryInterface
                 'message' => 'New password must be at least 6 characters long!',
                 'error' => true,
                 'code' => 200,
-                'data' => ['New password must be at least 6 characters long!'],
+                'data' => 'New password must be at least 6 characters long!',
             ];
         }
 
@@ -213,7 +213,7 @@ class UserRepository implements UserRepositoryInterface
             'message' => 'Password updated successfully!',
             'error' => true,
             'code' => 200,
-            'data' => ['Password updated successfully!'],
+            'data' => 'Password updated successfully!',
         ];
     }
 
