@@ -75,9 +75,9 @@ class ShiftScheduleImport implements ToModel, WithStartRow
             return null; // Skip this row
         }
 
-        if (!$shift) {
-            return;
-        }
+        // if (!$shift) {
+        //     return;
+        // }
 
         // Check if the entry already exists in the shift_schedules table
         $existingEntry = ShiftSchedule::where([
