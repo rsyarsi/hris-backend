@@ -641,4 +641,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                         ->where('resigned_at', null);
         return $query->select($this->field)->get();
     }
+
+    public function employeeNonShift()
+    {
+        return $this->model->whereNull('resigned_at')
+                            ->where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
+                            ->get(['id', 'name', 'employment_number', 'shift_group_id']);
+    }
 }

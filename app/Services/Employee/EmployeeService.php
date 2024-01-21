@@ -101,4 +101,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeSubordinateMobile($employeeId);
     }
+
+    public function employeeNonShift()
+    {
+        return $this->repository->employeeNonShift();
+    }
 }

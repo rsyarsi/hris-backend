@@ -154,4 +154,14 @@ class EmployeeController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function employeeNonShift(Request $request)
+    {
+        try {
+            $employees = $this->employeeService->employeeNonShift();
+            return $this->success('Employees Non Shift retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

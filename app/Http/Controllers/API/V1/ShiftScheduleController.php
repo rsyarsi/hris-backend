@@ -10,6 +10,7 @@ use App\Imports\ShiftScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Http\Requests\{ShiftScheduleRequest, ImportShiftScheduleRequest};
+use Illuminate\Support\Facades\Log;
 
 class ShiftScheduleController extends Controller
 {
@@ -169,10 +170,10 @@ class ShiftScheduleController extends Controller
 
     public function storeMultiple(ShiftScheduleRequest $request)
     {
+        $data = $request->validated();
+        $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
+        return $this->success('Shift schedule created successfully', $shiftSchedule, 201);
         try {
-            $data = $request->validated();
-            $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
-            return $this->success('Shift schedule created successfully', $shiftSchedule, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -192,5 +193,17 @@ class ShiftScheduleController extends Controller
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function generateShiftScheduleNonShift()
+    {
+        $shiftSchedule = $this->shiftScheduleService->generateShiftScheduleNonShift();
+        return response()->json([
+            'message' => $shiftSchedule['message'],
+            'success' => $shiftSchedule['success'],
+            'code' => $shiftSchedule['code'],
+            'data' => $shiftSchedule['data'],
+        ]);
+        Log::log('Generate Abesen Non Shift successfully!');
     }
 }

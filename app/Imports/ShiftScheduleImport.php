@@ -4,7 +4,7 @@ namespace App\Imports;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use App\Models\{Shift, Employee, GenerateAbsen, ShiftGroup, ShiftSchedule};
+use App\Models\{Shift, Employee, GenerateAbsen, ShiftSchedule};
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
 
@@ -21,8 +21,6 @@ class ShiftScheduleImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        $createdUserId = auth()->id();
-        $setupUserId = auth()->id();
         $date = $row[3];
         $shiftCode = $row[1];
         $employeeNumber = $row[0];
@@ -75,10 +73,6 @@ class ShiftScheduleImport implements ToModel, WithStartRow
             return null; // Skip this row
         }
 
-        // if (!$shift) {
-        //     return;
-        // }
-
         // Check if the entry already exists in the shift_schedules table
         $existingEntry = ShiftSchedule::where([
             'employee_id' => $employee->id,
@@ -108,9 +102,9 @@ class ShiftScheduleImport implements ToModel, WithStartRow
             'shift_exchange_id' => null,
             'user_exchange_id' => null,
             'user_exchange_at' => null,
-            'created_user_id' => $createdUserId,
+            'created_user_id' => auth()->id(),
             'updated_user_id' => null, // You may need to set this as per your requirements
-            'setup_user_id' => $setupUserId,
+            'setup_user_id' => auth()->id(),
             'setup_at' => now(), // You can customize the setup_at value
             'period' => $row[2],
             'leave_note' => null,

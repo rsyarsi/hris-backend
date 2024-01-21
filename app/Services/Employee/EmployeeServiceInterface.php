@@ -19,4 +19,5 @@ interface EmployeeServiceInterface
     public function employeeActive($perPage, $search);
     public function employeeSubordinate($perPage, $search);
     public function employeeSubordinateMobile($employeeId);
+    public function employeeNonShift();
 }

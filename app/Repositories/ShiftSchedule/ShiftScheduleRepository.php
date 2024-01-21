@@ -2,18 +2,18 @@
 
 namespace App\Repositories\ShiftSchedule;
 
-use Carbon\Carbon;
-use App\Models\Shift;
-use App\Models\Employee;
-use App\Models\GenerateAbsen;
-use App\Models\ShiftGroup;
-use App\Models\ShiftSchedule;
+use Carbon\{Carbon, CarbonPeriod};
+use Illuminate\Support\Str;
+use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Facades\DB;
+use App\Services\Employee\EmployeeServiceInterface;
+use App\Models\{Shift, ShiftSchedule, Employee, GenerateAbsen};
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
 
 class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 {
     private $model;
+    private $employeeService;
     private $field =
     [
         'id',
@@ -70,9 +70,10 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'cancel',
     ];
 
-    public function __construct(ShiftSchedule $model)
+    public function __construct(ShiftSchedule $model, EmployeeServiceInterface $employeeService)
     {
         $this->model = $model;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null)
@@ -793,5 +794,89 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         $data['user_exchange_id'] = $data['user_exchange_id'];
         $data['user_exchange_at'] = now();
         return $shiftSchedule->update($data);
+    }
+
+    public function generateShiftScheduleNonShift()
+    {
+        $employees = $this->employeeService->employeeNonShift();
+        $shift = Shift::where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
+                        ->where('code', 'N')
+                        ->first();
+
+        foreach ($employees as $employee) {
+            // Get the current month's start and end dates
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
+            // Loop through each date in the month
+            foreach (CarbonPeriod::create($startDate, $endDate) as $date) {
+                // Check if a record already exists for this employee and date
+                $existingRecord = ShiftSchedule::where('employee_id', $employee->id)
+                                                ->where('date', $date->format('Y-m-d'))
+                                                ->first();
+                if (!$existingRecord){
+                    $ulid = Ulid::generate(); // Generate a ULID
+                    $shiftScheduleData = [
+                        'id' => Str::lower($ulid),
+                        'employee_id' => $employee->id,
+                        'shift_id' => $shift->id,
+                        'date' => $date->format('Y-m-d'),
+                        'time_in' => $date->format('Y-m-d') . ' ' . $shift->in_time,
+                        'time_out' => $date->format('Y-m-d') . ' '. $shift->out_time,
+                        'late_note' => null,
+                        'shift_exchange_id' => null,
+                        'user_exchange_id' => null,
+                        'user_exchange_at' => null,
+                        'created_user_id' => null,
+                        'updated_user_id' => null,
+                        'setup_user_id' => null,
+                        'setup_at' => now(),
+                        'period' => $startDate->format('Y-m'),
+                        'leave_note' => null,
+                        'holiday' => $date->isSunday() ?? 0,
+                        'night' => 0,
+                        'national_holiday' => 0,
+                    ];
+                    $this->model->create($shiftScheduleData);
+
+                    $existingEntryGenerateAbsen = GenerateAbsen::where([
+                        'employee_id' => $employee->id,
+                        'shift_id' => $shift->id,
+                        'date' => $date,
+                    ])->first();
+
+                    if ($existingEntryGenerateAbsen) {
+                        return null; // Skip this row
+                    } else if ($date->isSunday()) { // if sunday
+                        $data['period'] = $startDate->format('Y-m');
+                        $data['date'] = $date->format('Y-m-d');
+                        $data['day'] = $date->format('l');
+                        $data['employee_id'] = $employee->id;
+                        $data['employment_id'] = $employee->employment_number;
+                        $data['shift_id'] = $shift->id;
+                        $data['date_in_at'] = $date->format('Y-m-d');
+                        $data['time_in_at'] = '';
+                        $data['date_out_at'] = $date->format('Y-m-d');
+                        $data['time_out_at'] = '';
+                        $data['schedule_date_in_at'] = $date->format('Y-m-d');
+                        $data['schedule_time_in_at'] = '';
+                        $data['schedule_date_out_at'] = $date->format('Y-m-d');
+                        $data['schedule_time_out_at'] = '';
+                        $data['holiday'] = 1;
+                        $data['night'] = 0;
+                        $data['national_holiday'] = 0;
+                        $data['type'] = '';
+                        $data['function'] = '';
+                        $data['note'] = 'LIBUR';
+                        GenerateAbsen::create($data);
+                    }
+                }
+            }
+        }
+        return [
+            'message' => 'Generate Abesen Non Shift successfully!',
+            'success' => 'true',
+            'code' => 200,
+            'data' => 'Generate Abesen Non Shift successfully!',
+        ];
     }
 }

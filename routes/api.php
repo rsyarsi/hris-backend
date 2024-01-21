@@ -133,6 +133,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('employee-subordinate', 'employeeSubordinate')->name('employee-subordinate');
             // route for employee where spv/kabag/manager yang login mobile
             Route::post('employee-subordinate-mobile', 'employeeSubordinateMobile')->name('employee-subordinate-mobile');
+            // route for employee where employee non shift
+            Route::post('employee-non-shift', 'employeeNonShift')->name('employee-non-shift');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
@@ -187,6 +189,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('shift-schedules-where-employee', 'shiftScheduleEmployee')->name('shift-schedules-where-employee');
             // route for multiple shift schedule
             Route::post('multiple-shift-schedules', 'storeMultiple')->name('multiple-shift-schedules');
+            // route for generate shift schedule non shift
+            Route::post('generate-shift-schedule-non-shift', 'generateShiftScheduleNonShift')->name('generate-shift-schedule-non-shift');
             // route for import shift schedule
             Route::post('import-shift-schedule', 'importShiftSchedule')->name('import-shift-schedule');
             // route for shift schedules subordinate

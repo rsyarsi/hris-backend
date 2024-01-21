@@ -18,4 +18,5 @@ Interface ShiftScheduleRepositoryInterface
     public function shiftScheduleEmployeeMobile($employeeId);
     public function shiftScheduleEmployeeDate($employeeId, $date);
     public function updateShiftScheduleExchage($data);
+    public function generateShiftScheduleNonShift();
 }
