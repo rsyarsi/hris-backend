@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
+use App\Rules\UniqueShiftScheduleExchangeDateRange;
 
 class ShiftScheduleExchangeRequest extends FormRequest
 {
@@ -23,7 +25,7 @@ class ShiftScheduleExchangeRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'shift_exchange_type' => 'nullable|max:50',
             'employe_requested_id' => 'nullable|exists:employees,id',
             'shift_schedule_date_requested' => 'nullable|date',
@@ -36,5 +38,26 @@ class ShiftScheduleExchangeRequest extends FormRequest
             'cancel' => 'nullable|integer',
             'notes' => 'nullable|string|max:255',
         ];
+
+        if ($this->isMethod('post')) {
+            $rules['shift_schedule_date_requested'] = new UniqueShiftScheduleExchangeDateRange();
+        }
+
+        return $rules;
+    }
+
+    protected function failedValidation($validator)
+    {
+        $response = [
+            'message' => 'Validation error',
+            'error' => true,
+            'code' => 422,
+            'data' => $validator->errors(),
+        ];
+
+        throw new ValidationException(
+            $validator,
+            response()->json($response, 422)
+        );
     }
 }

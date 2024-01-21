@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
