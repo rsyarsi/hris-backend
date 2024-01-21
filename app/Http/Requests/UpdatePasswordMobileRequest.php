@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class UmpRequest extends FormRequest
+class UpdatePasswordMobileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,9 @@ class UmpRequest extends FormRequest
     public function rules()
     {
         return [
-            'year' => 'nullable|string|max:5',
-            'nominal' => 'nullable|integer',
+            'employee_id' => 'required|exists:employees,id',
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:6',
         ];
     }
 

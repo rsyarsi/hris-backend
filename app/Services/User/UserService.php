@@ -97,4 +97,9 @@ class UserService implements UserServiceInterface
     {
         return bcrypt($data);
     }
+
+    public function updatePasswordMobile($data)
+    {
+        return $this->repository->updatePasswordMobile($data);
+    }
 }

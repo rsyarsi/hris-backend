@@ -79,6 +79,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master users
         Route::resource('users', UserController::class)->parameters(['users' => 'user']);
         Route::controller(UserController::class)->group(function () {
+            // route for update password mobile
+            Route::post('/update-password-mobile', 'updatePasswordMobile')->name('update-password-mobile');
             // route for asign role to user
             Route::post('/users/{user}/roles', 'assignRole')->name('users.roles');
             // route for remove role from user

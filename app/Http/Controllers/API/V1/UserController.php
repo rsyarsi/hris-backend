@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Role\RoleServiceInterface;
 use App\Services\User\UserServiceInterface;
 use App\Services\Permission\PermissionServiceInterface;
-use App\Http\Requests\{UserRequest, GivePermissionRequest, AssignRoleRequest};
+use App\Http\Requests\{UserRequest, GivePermissionRequest, AssignRoleRequest, UpdatePasswordMobileRequest};
 use App\Services\Employee\EmployeeServiceInterface;
 
 class UserController extends Controller
@@ -72,6 +72,22 @@ class UserController extends Controller
                 }
             }
             return $this->success('User created successfully', $user, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updatePasswordMobile(UpdatePasswordMobileRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $user = $this->userService->updatePasswordMobile($data);
+            return response()->json([
+                'message' => $user['message'],
+                'error' => $user['error'],
+                'code' => $user['code'],
+                'data' => $user['data']
+            ], $user['code']);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

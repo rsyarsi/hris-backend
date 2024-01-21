@@ -4,11 +4,13 @@ namespace App\Repositories\User;
 
 use App\Models\User;
 use App\Repositories\User\UserRepositoryInterface;
-
+use App\Services\Employee\EmployeeServiceInterface;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
     private $model;
+    private $employeeService;
     private $field = [
         'id',
         'name',
@@ -28,9 +30,10 @@ class UserRepository implements UserRepositoryInterface
         'active',
     ];
 
-    public function __construct(User $model)
+    public function __construct(User $model, EmployeeServiceInterface $employeeService)
     {
         $this->model = $model;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search = null)
@@ -175,4 +178,43 @@ class UserRepository implements UserRepositoryInterface
         }
         return null;
     }
+
+    public function updatePasswordMobile($data)
+    {
+        $employeeId = $data['employee_id'];
+        $employee = $this->employeeService->show($employeeId);
+        $user = User::where('id', $employee->user_id)->first();
+
+        // Validate the old password
+        if (!Hash::check($data['old_password'], $user->password)) {
+            return [
+                'message' => 'Old password is incorrect!',
+                'error' => true,
+                'code' => 200,
+                'data' => ['Old password is incorrect!'],
+            ];
+        }
+
+        // Validate the new password (you can add more validation rules if needed)
+        if (strlen($data['new_password']) < 6) {
+            return [
+                'message' => 'New password must be at least 6 characters long!',
+                'error' => true,
+                'code' => 200,
+                'data' => ['New password must be at least 6 characters long!'],
+            ];
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($data['new_password']);
+        $user->save();
+
+        return [
+            'message' => 'Password updated successfully!',
+            'error' => true,
+            'code' => 200,
+            'data' => ['Password updated successfully!'],
+        ];
+    }
+
 }
