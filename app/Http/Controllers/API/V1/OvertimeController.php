@@ -39,7 +39,7 @@ class OvertimeController extends Controller
             $overtime = $this->overtimeService->store($data);
             return response()->json([
                 'message' => $overtime['message'],
-                'success' => $overtime['success'],
+                'error' => $overtime['error'],
                 'code' => $overtime['code'],
                 'data' => $overtime['data']
             ], $overtime['code']);

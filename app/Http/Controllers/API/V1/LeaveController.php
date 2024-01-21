@@ -39,7 +39,7 @@ class LeaveController extends Controller
             $leave = $this->leaveService->store($data);
             return response()->json([
                 'message' => $leave['message'],
-                'success' => $leave['success'],
+                'error' => $leave['error'],
                 'code' => $leave['code'],
                 'data' => $leave['data']
             ], $leave['code']);

@@ -225,7 +225,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('generate-payroll', GeneratePayrollController::class)->parameters(['generate-payroll' => 'generate-payroll']);
         Route::controller(GeneratePayrollController::class)->group(function () {
             // route for generate payroll mobile
-            Route::get('generate-payroll-mobile', 'indexMobile')->name('generate-payroll-mobile');
+            Route::post('generate-payroll-mobile', 'indexMobile')->name('generate-payroll-mobile');
             // route for generate payroll employee
             Route::get('generate-payroll-employee', 'generatePayrollEmployee')->name('generate-payroll-employee');
             // route for execute generate payroll
@@ -309,7 +309,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('leave-employee-mobile', 'leaveEmployeeMobile')->name('leave-employee-mobile');
         // route for leave hrd mobile
         Route::get('leave-hrd-mobile', 'leaveHrdMobile')->name('leave-hrd-mobile');
-        // route for leave where supervisor or manager login
+        // route for leave where supervisor or manager logingenerate-payroll-mobile
         Route::get('leave-supervisor-manager', 'leaveSupervisorOrManager')->name('leave-supervisor-manager');
         // route for leave where supervisor or manager mobile
         Route::post('leave-supervisor-manager-mobile', 'leaveSupervisorOrManagerMobile')->name('leave-supervisor-manager-mobile');
