@@ -49,6 +49,23 @@ class OvertimeController extends Controller
         }
     }
 
+    public function overtimeCreateMobile(OvertimeRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $overtime = $this->overtimeService->overtimeCreateMobile($data);
+            return response()->json([
+                'message' => $overtime['message'],
+                'error' => $overtime['error'],
+                'code' => $overtime['code'],
+                'data' => $overtime['data']
+            ], $overtime['code']);
+            // return $this->success('Overtime created successfully', $overtime, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function show($id)
     {
         try {

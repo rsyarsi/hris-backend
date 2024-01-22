@@ -49,6 +49,34 @@ class LeaveService implements LeaveServiceInterface
         return $this->repository->store($data);
     }
 
+    public function leaveCreateMobile(array $data)
+    {
+        $leaveType = $data['leave_type_id'];
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $durationInMinutes = $fromDate->diffInMinutes($toDate);
+        $data['duration'] = $durationInMinutes;
+        $data['leave_status_id'] = $data['leave_status_id'];
+
+        if ($leaveType == 2) {
+            $file = $data['file'];
+            if ($file && $file->isValid()) {
+                // Upload the file to AWS S3 storage
+                $filePath = $file->store('hrd/leaves', 's3');
+                // Make the file public by setting ACL to 'public-read'
+                Storage::disk('s3')->setVisibility($filePath, 'public');
+                $fileUrl = Storage::disk('s3')->url($filePath);
+            } else {
+                $filePath = null;
+                $fileUrl = null;
+            }
+            $data['file_path'] = $filePath;
+            $data['file_url'] = $fileUrl;
+            $data['file_disk'] = 's3';
+        }
+        return $this->repository->leaveCreateMobile($data);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);

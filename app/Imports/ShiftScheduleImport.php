@@ -2,18 +2,51 @@
 
 namespace App\Imports;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Rules\ShiftCodeExists;
 use Symfony\Component\Uid\Ulid;
 use App\Models\{Shift, Employee, GenerateAbsen, ShiftSchedule};
-use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
+use Maatwebsite\Excel\Concerns\{Importable, ToModel, WithStartRow, WithValidation};
 
-class ShiftScheduleImport implements ToModel, WithStartRow
+class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
 {
+    use Importable;
+
     public function startRow(): int
     {
         return 2;
     }
+
+    public function rules(): array
+    {
+        return [
+            '0' => 'required|exists:employees,employment_number',
+            '1' => 'required|exists:shifts,code',
+            '2' => 'required|date_format:Y-m',
+            '3' => 'required|date_format:Y-m-d',
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            '0.exists' => 'Karyawan tidak ditemukan :attribute.',
+            '1.exists' => 'Shift tidak ditemukan :attribute.',
+        ];
+    }
+
+    function check($employeeNumber, $shiftCode)
+    {
+        $employee = Employee::where('employment_number', $employeeNumber)->first();
+        $shift = Shift::where('shift_group_id', $employee->shift_group_id)
+                        ->where('code', $shiftCode)
+                        ->exists();
+        if ($shift) {
+            return 'Shift Tidak ditemukan!.';
+        }
+    }
+
     /**
     * @param array $row
     *
@@ -21,6 +54,13 @@ class ShiftScheduleImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
+        // $employee = Employee::where('employment_number', $row[0])->first();
+        // $shift = Shift::where('shift_group_id', $employee->shift_group_id)
+        //                 ->where('code', $row[1])
+        //                 ->exists();
+        // if (!$shift) {
+        //     return;
+        // }
         $date = $row[3];
         $shiftCode = $row[1];
         $employeeNumber = $row[0];
@@ -36,6 +76,10 @@ class ShiftScheduleImport implements ToModel, WithStartRow
         $shift = Shift::where('shift_group_id', $shiftGroupId)
                         ->where('code', Str::upper($shiftCode))
                         ->first();
+                        // dd($shift);
+        if (!$shift) {
+            return null;
+        }
         $dateCarbon = Carbon::parse($date);
         $existingEntryGenerateAbsen = GenerateAbsen::where([
             'employee_id' => $employee->id,

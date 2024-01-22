@@ -198,10 +198,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         });
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
-        // Route::controller(ShiftScheduleController::class)->group(function () {
-        //     // route for shift schedules where employee today
-        //     Route::post('shift-schedules-employee-today', 'shiftScheduleEmployeeToday')->name('shift-schedules-employee-today');
-        // });
+        Route::controller(ShiftScheduleExchangeController::class)->group(function () {
+            // route for shift schedules where employee today
+            Route::post('shift-schedules-exchanges-create-mobile', 'createMobile')->name('shift-schedules-exchanges-create-mobile');
+        });
         // route for master log fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
         Route::controller(LogFingerController::class)->group(function () {
@@ -327,6 +327,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('leave-update-statuses-mobile', 'updateStatusMobile')->name('leave-update-statuses-mobile');
         // route for get data sisa cuti, if select type cuti tahunan
         Route::post('leave-sisa', 'leaveSisa')->name('leave-sisa');
+        // route for mobile
+        Route::post('leave-create-mobile', 'leaveCreateMobile')->name('leave-create-mobile');
     });
     // route for leave histories
     Route::resource('leave-histories', LeaveHistoryController::class);
@@ -353,6 +355,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('overtime-update-statuses/{id}', 'updateStatus')->name('overtime-update-statuses');
         // route for overtime update status mobile
         Route::post('overtime-update-statuses-mobile', 'updateStatusMobile')->name('overtime-update-statuses-mobile');
+        // route for mobile
+        Route::post('overtime-create-mobile', 'overtimeCreateMobile')->name('overtime-create-mobile');
     });
     // route for overtime histories
     Route::resource('overtime-histories', OvertimeHistoryController::class);

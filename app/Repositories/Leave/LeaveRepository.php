@@ -234,6 +234,114 @@ class LeaveRepository implements LeaveRepositoryInterface
         ];
     }
 
+    public function leaveCreateMobile(array $data)
+    {
+        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
+                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                    ->exists();
+        if (!$checkShiftSchedule) {
+            // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+            return [
+                'message' => 'Validation Error',
+                'error' => true,
+                'code' => 422,
+                'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
+            ];
+        }
+        $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
+        $leave = $this->model->create($data);
+        $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
+        $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+        $historyData = [
+            'leave_id' => $leave->id,
+            'user_id' => auth()->id(),
+            'description' => 'LEAVE STATUS '. $leaveStatus->name,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'comment' => $data['note'],
+        ];
+        $this->leaveHistory->store($historyData);
+        // update shift schedule if exists in the table shift_schedules
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = $leave->employee_id;
+        $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+
+        // catatan cuti
+        if ($data['leave_type_id'] == 1 || $data['leave_type_id'] == 6) {
+            $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
+            if ($catatanCutiLatest === null) {
+                $quantityAkhirCatatan = 12;
+            } else {
+                $quantityAkhirCatatan = $catatanCutiLatest->quantity_akhir;
+            }
+            $quantityOut = $fromDate->diffInDays($toDate);
+            $quantityOut = $quantityOut == 0 ? 1 : ($quantityOut + 1);
+            $quantityAkhir = (int)$quantityAkhirCatatan - (int)$quantityOut;
+            $catatanCutiData = [
+                'adjustment_cuti_id' => null,
+                'leave_id' => $leave->id,
+                'employee_id' => $leave->employee_id,
+                'quantity_awal' => $quantityAkhirCatatan,
+                'quantity_akhir' => $quantityAkhir,
+                'quantity_in' => 0,
+                'quantity_out' => $quantityOut,
+                'type' => 'LEAVE',
+                'description' => $leaveType->name,
+                'batal' => 0,
+            ];
+            $this->catatanCutiService->store($catatanCutiData);
+            $updateLeave = [
+                'quantity_cuti_awal' => $quantityAkhirCatatan,
+                'sisa_cuti' => $quantityAkhir,
+            ];
+            $leave->update($updateLeave);
+        }
+
+        // firebase
+        $typeSend = 'Leaves';
+        $employee = $this->employeeService->show($leave->employee_id);
+        $registrationIds = [];
+        if($employee->supervisor != null){
+            if($employee->supervisor->user != null){
+                $registrationIds[] = $employee->supervisor->user->firebase_id;
+            }
+        }
+
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
+        }
+
+        if($employee->manager_id != null ){
+            if($employee->manager->user != null){
+                $registrationIds[] = $employee->manager->user->firebase_id;
+            }
+        }
+
+        // notif ke HRD
+        $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
+        foreach ($employeeHrd as $key ) {
+            # code...
+           $firebaseIdx = $key;
+        }
+        // dd($firebaseIdx->firebase_id);
+        $registrationIds[] =$firebaseIdx->firebase_id;
+        // Check if there are valid registration IDs before sending the notification
+        if (!empty($registrationIds)) {
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+        }
+
+        return [
+            'message' => 'Leave created successfully',
+            'error' => false,
+            'code' => 201,
+            'data' => [$leave]
+        ];
+    }
+
     public function show($id)
     {
         $leave = $this->model

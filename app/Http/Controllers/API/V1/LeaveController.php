@@ -48,6 +48,22 @@ class LeaveController extends Controller
         }
     }
 
+    public function leaveCreateMobile(LeaveRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $leave = $this->leaveService->leaveCreateMobile($data);
+            return response()->json([
+                'message' => $leave['message'],
+                'error' => $leave['error'],
+                'code' => $leave['code'],
+                'data' => $leave['data']
+            ], $leave['code']);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function show($id)
     {
         try {

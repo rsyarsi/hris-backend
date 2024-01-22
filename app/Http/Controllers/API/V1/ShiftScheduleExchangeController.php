@@ -51,6 +51,23 @@ class ShiftScheduleExchangeController extends Controller
         }
     }
 
+    public function createMobile(ShiftScheduleExchangeRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            $shiftSchedulesExchange = $this->shiftScheduleExchangeService->createMobile($data);
+            return response()->json([
+                'message' => $shiftSchedulesExchange['message'],
+                'success' => $shiftSchedulesExchange['success'],
+                'code' => $shiftSchedulesExchange['code'],
+                'data' => $shiftSchedulesExchange['data']
+            ], $shiftSchedulesExchange['code']);
+            // return $this->success('Shift schedule exchange created successfully', $shiftSchedulesExchange, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function show($id)
     {
         try {

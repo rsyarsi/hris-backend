@@ -32,6 +32,18 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->store($data);
     }
 
+    public function overtimeCreateMobile(array $data)
+    {
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $durationInHours = $fromDate->floatDiffInHours($toDate);
+        $roundedDuration = round($durationInHours, 2);
+        $hours = floor($roundedDuration);
+        $minutes = ($roundedDuration - $hours) * 60;
+        $data['duration'] = sprintf('%02d.%02d', $hours, $minutes);
+        return $this->repository->overtimeCreateMobile($data);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);

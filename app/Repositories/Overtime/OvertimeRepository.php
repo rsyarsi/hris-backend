@@ -125,6 +125,87 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $registrationIds = [];
         $employee = $this->employeeService->show($overtime->employee_id);
         $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
+        // return $getHakAkses;
+        $registrationIds[] = $getHakAkses->firebase_id;
+
+        // notif ke HRDs
+        $employeeHrd = User::where('hrd','1')->get();
+        foreach ($employeeHrd as $key ) {
+            # code...
+            $firebaseIdx = $key;
+        }
+
+        // if($employee->supervisor != null){
+        //     if($employee->supervisor->user != null){
+        //         $registrationIds[] = $employee->supervisor->user->firebase_id;
+        //     }
+        // }
+        if($employee->kabag_id != null ){
+            if($employee->kabag->user != null){
+                $registrationIds[] = $employee->kabag->user->firebase_id;
+            }
+        }
+        if($employee->manager_id != null ){
+            if($employee->manager->user != null){
+                $registrationIds[] = $employee->manager->user->firebase_id;
+            }
+        }
+
+
+        // Check if there are valid registration IDs before sending the notification
+        if (!empty($registrationIds)) {
+            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+        }
+
+        return [
+            'message' => 'Overtime created successfully',
+            'error' => false,
+            'code' => 201,
+            'data' => [$overtime]
+        ];
+    }
+
+    public function overtimeCreateMobile(array $data)
+    {
+        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
+                                            ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                            ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                            ->first();
+        if (!$checkShiftSchedule) {
+            return [
+                'message' => 'Validation Error!',
+                'error' => true,
+                'code' => 422,
+                'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
+            ];
+        }
+        if ($checkShiftSchedule->leave_id !== null) {
+            return [
+                'message' => 'Validation Error!',
+                'error' => true,
+                'code' => 422,
+                'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
+            ];
+        }
+
+        $overtime = $this->model->create($data);
+        $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
+        // save to table overtime history
+        $historyData = [
+            'overtime_id' => $overtime->id,
+            'user_id' => auth()->id(),
+            'description' => 'OVERTIME STATUS '. $overtimeStatus->name,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'comment' => $data['note'],
+            'libur' => $data['libur'],
+        ];
+        $this->overtimeHistoryService->store($historyData);
+        // send firebase notification
+        $typeSend = 'Overtime';
+        $registrationIds = [];
+        $employee = $this->employeeService->show($overtime->employee_id);
+        $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
         $registrationIds[] = $getHakAkses->firebase_id;
 
         // notif ke HRDs
