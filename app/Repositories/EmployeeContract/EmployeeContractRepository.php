@@ -132,7 +132,11 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
             } else {
                 $dataContract['employment_number'] = $employee->employment_number;
             }
-            $dataContract['started_at'] = $data['start_at'] ?? null;
+            if ($employee->started_at == null) {
+                $dataContract['started_at'] = $data['start_at'] ?? null;
+            } else {
+                $dataContract['started_at'] = $employee->started_at;
+            }
             $dataContract['unit_id'] = $data['unit_id'] ?? null;
             $dataContract['position_id'] = $data['position_id'] ?? null;
             $dataContract['department_id'] = $data['department_id'] ?? null;
