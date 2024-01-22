@@ -2,6 +2,7 @@
 namespace App\Services\ShiftSchedule;
 
 use Carbon\Carbon;
+use App\Models\Shift;
 use Illuminate\Support\Str;
 use App\Models\GenerateAbsen;
 use Symfony\Component\Uid\Ulid;
@@ -112,9 +113,13 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
                 $timeOut = $date->copy()->addDay()->format('Y-m-d') . ' ' . $shift->out_time;
             }
 
+            $shiftLibur = Shift::where('shift_group_id', $employee->shift_group_id)
+                                ->where('code', 'L')
+                                ->orWhere('name', 'LIBUR')
+                                ->first();
             $existingEntryGenerateAbsen = GenerateAbsen::where([
                 'employee_id' => $data['employee_id'],
-                'shift_id' => $shift->id,
+                'shift_id' => $shiftLibur->id,
                 'date' => $date,
             ])->first();
 
@@ -126,7 +131,7 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
                 $data['day'] = $date->format('l');
                 $data['employee_id'] = $data['employee_id'];
                 $data['employment_id'] = $employee->employment_number;
-                $data['shift_id'] = $shift->id;
+                $data['shift_id'] = $shiftLibur->id;
                 $data['date_in_at'] = $date->format('Y-m-d');
                 $data['time_in_at'] = '';
                 $data['date_out_at'] = $date->format('Y-m-d');
@@ -161,7 +166,7 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
                 'setup_at' => now(), // You can customize the setup_at value
                 'period' => $data['period'],
                 'leave_note' => null,
-                'holiday' => $data['holiday'],
+                'holiday' => $date->isSunday() ? 1 : 0,
                 'night' => $shiftId ? $shift->night_shift : null,
                 'national_holiday' => $data['national_holiday'],
             ];

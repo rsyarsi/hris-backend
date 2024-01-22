@@ -222,10 +222,9 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             $existingRecordAbsen = $this->model
                                         ->where('employee_id', $employeeId)
                                         ->where('date', $date)
-                                        ->orWhere('date_out_at', $date)
+                                        // ->orWhere('date_out_at', $date)
                                         ->where('type', 'ABSEN')
                                         ->first();
-
             if ($type == 'ABSEN' && $function == 'IN') {
                 if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
                     $existingRecordAbsen->update([
@@ -238,13 +237,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         'message' => 'Absen Masuk Berhasil!',
                         'data' => [$existingRecordAbsen]
                     ];
-                } elseif ($existingRecordAbsen && $existingRecordAbsen->time_in_at !== null) {
+                } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at !== null) {
                     return [
                         'message' => 'Anda Sudah Absen Masuk!',
-                        'data' => []
+                        'data' => [$existingRecordAbsen]
                     ];
-                }
-                else { // Create a new record
+                } else { // Create a new record
                     $data['time_out_at'] = null;
                     $data['note'] = "BELUM ABSEN PULANG";
                     return [

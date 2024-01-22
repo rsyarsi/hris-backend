@@ -83,12 +83,12 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $shiftScheduleId = $data['Id_schedule']; // nip karyawan
         $shiftSchedule = $this->shiftScheduleService->show($shiftScheduleId);
         // check if leaves in shift schedule
-        if ($shiftSchedule->leave_id !== null) {
-            return [
-                'message' => 'Terdapat data leaves di shift schedule, hubungi atasan!',
-                'data' => []
-            ];
-        }
+        // if ($shiftSchedule->leave_id !== null) {
+        //     return [
+        //         'message' => 'Terdapat data leaves di shift schedule, hubungi atasan!',
+        //         'data' => []
+        //     ];
+        // }
         $timeInScheduleCarbon = Carbon::parse($shiftSchedule->time_in);
         // Calculate the start of the allowed range (1 hour before $timeInSchedule)
         $allowedStartTime = $timeInScheduleCarbon->copy()->subHour();
