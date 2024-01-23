@@ -5,13 +5,11 @@ namespace App\Repositories\ShiftScheduleExchange;
 use App\Models\ShiftSchedule;
 use App\Models\ShiftScheduleExchange;
 use App\Repositories\ShiftScheduleExchange\ShiftScheduleExchangeRepositoryInterface;
-use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use Carbon\Carbon;
 
 class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepositoryInterface
 {
     private $model;
-    private $shiftScheduleService;
     private $field = [
         'id',
         'employe_requested_id',
@@ -66,13 +64,9 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
         'absen_type',
     ];
 
-    public function __construct(
-        ShiftScheduleExchange $model,
-        ShiftScheduleServiceInterface $shiftScheduleService
-    )
+    public function __construct(ShiftScheduleExchange $model)
     {
         $this->model = $model;
-        $this->shiftScheduleService = $shiftScheduleService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null)
@@ -268,7 +262,6 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                 ]);
         }
 
-        // return $shiftScheduleExchange;
         return [
             'message' => 'Shift schedule exchange created successfully',
             'success' => true,

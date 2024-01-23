@@ -6,6 +6,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShiftScheduleExchangeRequest;
+use App\Rules\UniqueShiftScheduleExchangeDateRange;
 use App\Services\ShiftScheduleExchange\ShiftScheduleExchangeServiceInterface;
 
 class ShiftScheduleExchangeController extends Controller
@@ -51,18 +52,32 @@ class ShiftScheduleExchangeController extends Controller
         }
     }
 
-    public function createMobile(ShiftScheduleExchangeRequest $request)
+    public function createMobile(Request $request)
     {
         try {
-            $data = $request->validated();
-            $shiftSchedulesExchange = $this->shiftScheduleExchangeService->createMobile($data);
+            $rules = [
+                'shift_exchange_type' => 'nullable|max:50',
+                'employe_requested_id' => 'nullable|exists:employees,id',
+                'shift_schedule_date_requested' => 'nullable|date',
+                'to_employee_id' => 'nullable|exists:employees,id',
+                'to_shift_schedule_date' => 'nullable|date',
+                'exchange_employee_id' => 'nullable|exists:employees,id',
+                'exchange_date' => 'nullable|date',
+                'date_created' => 'nullable|date',
+                'date_updated' => 'nullable|date',
+                'cancel' => 'nullable|integer',
+                'notes' => 'nullable|string|max:255',
+            ];
+            if ($request->isMethod('post')) {
+                $rules['shift_schedule_date_requested'] = new UniqueShiftScheduleExchangeDateRange();
+            }
+            $shiftSchedulesExchange = $this->shiftScheduleExchangeService->createMobile($request->all());
             return response()->json([
                 'message' => $shiftSchedulesExchange['message'],
                 'success' => $shiftSchedulesExchange['success'],
                 'code' => $shiftSchedulesExchange['code'],
                 'data' => $shiftSchedulesExchange['data']
             ], $shiftSchedulesExchange['code']);
-            // return $this->success('Shift schedule exchange created successfully', $shiftSchedulesExchange, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

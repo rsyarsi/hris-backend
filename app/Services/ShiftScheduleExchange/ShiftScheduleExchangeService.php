@@ -185,7 +185,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             return [
                 'message' => 'Validation Error!',
                 'success' => false,
-                'code' => 422,
+                'code' => 201,
                 'data' => [
                         'shift_schedule_date_requested' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']
                     ]
@@ -195,7 +195,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
         //     return [
         //         'message' => 'Validation Error!',
         //         'success' => false,
-        //         'code' => 422,
+        //         'code' => 200,
         //         'data' => [$shiftScheduleRequested]
         //     ];
         // }
@@ -238,7 +238,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
                     return [
                         'message' => 'Validation Error!',
                         'success' => false,
-                        'code' => 422,
+                        'code' => 201,
                         'data' => [
                                 'to_shift_schedule_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']
                             ]
@@ -262,7 +262,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
                     return [
                         'message' => 'Validation Error!',
                         'success' => false,
-                        'code' => 422,
+                        'code' => 201,
                         'data' => [
                                 'exchange_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']
                             ]

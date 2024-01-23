@@ -199,8 +199,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
         Route::controller(ShiftScheduleExchangeController::class)->group(function () {
-            // route for shift schedules where employee today
-            Route::post('shift-schedules-exchanges-create-mobile', 'createMobile')->name('shift-schedules-exchanges-create-mobile');
+            // route for shift schedules exchange mobile
+            Route::post('shift-schedule-exchange-create-mobile', 'createMobile')->name('shift-schedule-exchange-create-mobile');
         });
         // route for master log fingers
         Route::resource('log-fingers', LogFingerController::class)->parameters(['log-fingers' => 'log_finger']);
