@@ -33,6 +33,7 @@ class Shift extends Model
         'user_updated_id',
         'libur',
         'on_call',
+        'lepas_dinas',
     ];
 
     public function shiftGroup()

@@ -189,7 +189,7 @@ class UserRepository implements UserRepositoryInterface
         if (!Hash::check($data['old_password'], $user->password)) {
             return [
                 'message' => 'Old password is incorrect!',
-                'error' => true,
+                'success' => false,
                 'code' => 200,
                 'data' => 'Old password is incorrect!',
             ];
@@ -199,7 +199,7 @@ class UserRepository implements UserRepositoryInterface
         if (strlen($data['new_password']) < 6) {
             return [
                 'message' => 'New password must be at least 6 characters long!',
-                'error' => true,
+                'success' => false,
                 'code' => 200,
                 'data' => 'New password must be at least 6 characters long!',
             ];
@@ -211,7 +211,7 @@ class UserRepository implements UserRepositoryInterface
 
         return [
             'message' => 'Password updated successfully!',
-            'error' => true,
+            'success' => true,
             'code' => 200,
             'data' => 'Password updated successfully!',
         ];

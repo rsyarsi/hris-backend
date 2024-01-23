@@ -5,11 +5,12 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Services\Role\RoleServiceInterface;
 use App\Services\User\UserServiceInterface;
+use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Permission\PermissionServiceInterface;
 use App\Http\Requests\{UserRequest, GivePermissionRequest, AssignRoleRequest, UpdatePasswordMobileRequest};
-use App\Services\Employee\EmployeeServiceInterface;
 
 class UserController extends Controller
 {
@@ -77,14 +78,27 @@ class UserController extends Controller
         }
     }
 
-    public function updatePasswordMobile(UpdatePasswordMobileRequest $request)
+    public function updatePasswordMobile(Request $request)
     {
         try {
-            $data = $request->validated();
-            $user = $this->userService->updatePasswordMobile($data);
+            $rules = [
+                'employee_id' => 'required|exists:employees,id',
+                'old_password' => 'required|string',
+                'new_password' => 'required|string|min:6',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'success' => false,
+                    'code' => 200, // Use a more appropriate HTTP status code
+                    'data' => $validator->errors(),
+                ], 200);
+            }
+            $user = $this->userService->updatePasswordMobile($request->all());
             return response()->json([
                 'message' => $user['message'],
-                'error' => $user['error'],
+                'success' => $user['success'],
                 'code' => $user['code'],
                 'data' => $user['data']
             ], $user['code']);

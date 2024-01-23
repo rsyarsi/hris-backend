@@ -39,6 +39,7 @@ class ShiftRequest extends FormRequest
             'active' => 'nullable|integer',
             'libur' => 'nullable|integer',
             'on_call' => 'nullable|integer',
+            'lepas_dinas' => 'nullable|in:0,1',
         ];
     }
 
