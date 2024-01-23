@@ -174,16 +174,16 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         if (!$checkShiftSchedule) {
             return [
                 'message' => 'Validation Error!',
-                'error' => true,
-                'code' => 422,
+                'success' => false,
+                'code' => 201,
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
         if ($checkShiftSchedule->leave_id !== null) {
             return [
                 'message' => 'Validation Error!',
-                'error' => true,
-                'code' => 422,
+                'success' => false,
+                'code' => 201,
                 'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
             ];
         }
@@ -231,7 +231,6 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             }
         }
 
-
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
             $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
@@ -239,7 +238,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
         return [
             'message' => 'Overtime created successfully',
-            'error' => false,
+            'success' => true,
             'code' => 201,
             'data' => [$overtime]
         ];

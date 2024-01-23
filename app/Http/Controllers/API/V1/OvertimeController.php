@@ -4,9 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Rules\DateSmallerThan;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{OvertimeRequest, OvertimeNewStatusRequest};
+use App\Rules\UniqueOvertimeDateRange;
+use Illuminate\Support\Facades\Validator;
 use App\Services\Overtime\OvertimeServiceInterface;
+use App\Http\Requests\{OvertimeRequest, OvertimeNewStatusRequest};
 
 class OvertimeController extends Controller
 {
@@ -52,11 +55,38 @@ class OvertimeController extends Controller
     public function overtimeCreateMobile(OvertimeRequest $request)
     {
         try {
-            $data = $request->validated();
-            $overtime = $this->overtimeService->overtimeCreateMobile($data);
+            $rules = [
+                'employee_id' => 'required|exists:employees,id',
+                'task' => 'required|max:255',
+                'note' => 'required|max:255',
+                'overtime_status_id' => 'required|exists:overtime_statuses,id',
+                'amount' => 'required|max:18',
+                'type' => 'required|string|max:255',
+                'from_date' => [
+                                'required',
+                                'date',
+                                new DateSmallerThan('to_date')
+                            ],
+                'to_date' => 'required|date',
+                'libur' => 'required|in:0,1',
+            ];
+            if ($request->isMethod('post')) {
+                $rules['from_date'][] = new UniqueOvertimeDateRange();
+            }
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'success' => false,
+                    'code' => 200, // Use a more appropriate HTTP status code
+                    'data' => $validator->errors(),
+                ], 200);
+            }
+
+            $overtime = $this->overtimeService->overtimeCreateMobile($request->all());
             return response()->json([
                 'message' => $overtime['message'],
-                'error' => $overtime['error'],
+                'success' => $overtime['success'],
                 'code' => $overtime['code'],
                 'data' => $overtime['data']
             ], $overtime['code']);
