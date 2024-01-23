@@ -4,8 +4,11 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Rules\DateSmallerThan;
 use App\Http\Requests\LeaveRequest;
+use App\Rules\UniqueLeaveDateRange;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\LeaveNewStatusRequest;
 use App\Services\Leave\LeaveServiceInterface;
 
@@ -48,14 +51,44 @@ class LeaveController extends Controller
         }
     }
 
-    public function leaveCreateMobile(LeaveRequest $request)
+    public function leaveCreateMobile(Request $request)
     {
         try {
-            $data = $request->validated();
-            $leave = $this->leaveService->leaveCreateMobile($data);
+            $rules = [
+                'employee_id' => 'required|exists:employees,id',
+                'leave_type_id' => 'required|exists:leave_types,id',
+                'leave_status_id' => 'required|exists:leave_statuses,id',
+                'from_date' => [
+                    'required',
+                    'date',
+                    new DateSmallerThan('to_date'),
+                ],
+                'to_date' => 'required|date',
+                'note' => 'required',
+                'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048',
+            ];
+            // Add a condition based on the value of Type
+            $leaveTypeId = (int) $request->input('leave_type_id');
+            // Add a condition based on the value of Type
+            if ($leaveTypeId === 2) {
+                $rules['file'] = 'required|mimes:jpeg,png,jpg,gif,pdf|max:5048';
+            } else {
+                $rules['file'] = 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048';
+            }
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'success' => false,
+                    'code' => 200, // Use a more appropriate HTTP status code
+                    'data' => $validator->errors(),
+                ], 200);
+            }
+
+            $leave = $this->leaveService->leaveCreateMobile($request->all());
             return response()->json([
                 'message' => $leave['message'],
-                'error' => $leave['error'],
+                'success' => $leave['success'],
                 'code' => $leave['code'],
                 'data' => $leave['data']
             ], $leave['code']);
