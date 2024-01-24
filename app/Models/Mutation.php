@@ -25,6 +25,7 @@ class Mutation extends Model
         'date',
         'note',
         'no_sk',
+        'department_id',
         'shift_group_id',
         'kabag_id',
         'supervisor_id',
@@ -54,6 +55,11 @@ class Mutation extends Model
     public function shiftGroup()
     {
         return $this->belongsTo(ShiftGroup::class, 'shift_group_id', 'id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id', 'id');
     }
 
     public function userCreated()

@@ -22,6 +22,7 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
         'date',
         'note',
         'no_sk',
+        'department_id',
         'shift_group_id',
         'kabag_id',
         'supervisor_id',
@@ -43,6 +44,9 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
                     ->with([
                         'employee' => function ($query) {
                             $query->select('id', 'name', 'employment_number');
+                        },
+                        'department' => function ($query) {
+                            $query->select('id', 'name');
                         },
                         'shiftGroup' => function ($query) {
                             $query->select('id', 'name');
@@ -85,6 +89,7 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
     {
         $promotionDemotion = $this->model->create($data);
         $dataEmployee['position_id'] = $promotionDemotion->after_position_id;
+        $dataEmployee['department_id'] = $promotionDemotion->department_id;
         $dataEmployee['shift_group_id'] = $promotionDemotion->shift_group_id;
         $dataEmployee['kabag_id'] = $promotionDemotion->kabag_id;
         $dataEmployee['supervisor_id'] = $promotionDemotion->supervisor_id;
@@ -99,6 +104,9 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
                         ->with([
                             'employee' => function ($query) {
                                 $query->select('id', 'name', 'employment_number');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
                             },
                             'shiftGroup' => function ($query) {
                                 $query->select('id', 'name');
@@ -136,6 +144,7 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
         if ($promotionDemotion) {
             $promotionDemotion->update($data);
             $dataEmployee['position_id'] = $promotionDemotion->after_position_id;
+            $dataEmployee['department_id'] = $promotionDemotion->department_id;
             $dataEmployee['shift_group_id'] = $promotionDemotion->shift_group_id;
             $dataEmployee['kabag_id'] = $promotionDemotion->kabag_id;
             $dataEmployee['supervisor_id'] = $promotionDemotion->supervisor_id;

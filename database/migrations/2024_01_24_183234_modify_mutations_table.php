@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('mutations', function (Blueprint $table) {
+            $table->foreignId('department_id')->nullable()->constrained('mdepartments')->nullOnDelete();
             $table->foreign('shift_group_id')->references('id')->on('shift_groups')->onDelete('set null');
             $table->string('shift_group_id',26)->nullable();
             $table->foreign('kabag_id')->references('id')->on('employees')->onDelete('set null');
@@ -33,10 +34,12 @@ return new class extends Migration
     public function down()
     {
         Schema::table('mutations', function (Blueprint $table) {
+            $table->dropForeign(['department_id']);
             $table->dropForeign(['shift_group_id']);
             $table->dropForeign(['kabag_id']);
             $table->dropForeign(['supervisor_id']);
             $table->dropForeign(['manager_id']);
+            $table->dropColumn('department_id');
             $table->dropColumn('shift_group_id');
             $table->dropColumn('kabag_id');
             $table->dropColumn('supervisor_id');

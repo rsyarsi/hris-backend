@@ -477,6 +477,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         if ($employee) {
             $employee->update([
                 'unit_id' => $data['after_unit_id'],
+                'department_id' => $data['department_id'],
                 'shift_group_id' => $data['shift_group_id'],
                 'kabag_id' => $data['kabag_id'],
                 'supervisor_id' => $data['supervisor_id'],
@@ -493,6 +494,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         if ($employee) {
             $employee->update([
                 'position_id' => $data['position_id'],
+                'department_id' => $data['department_id'],
                 'shift_group_id' => $data['shift_group_id'],
                 'kabag_id' => $data['kabag_id'],
                 'supervisor_id' => $data['supervisor_id'],

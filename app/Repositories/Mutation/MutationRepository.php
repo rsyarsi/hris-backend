@@ -19,6 +19,7 @@ class MutationRepository implements MutationRepositoryInterface
         'date',
         'note',
         'no_sk',
+        'department_id',
         'shift_group_id',
         'kabag_id',
         'supervisor_id',
@@ -40,6 +41,9 @@ class MutationRepository implements MutationRepositoryInterface
                     ->with([
                         'employee' => function ($query) {
                             $query->select('id', 'name', 'employment_number');
+                        },
+                        'department' => function ($query) {
+                            $query->select('id', 'name');
                         },
                         'shiftGroup' => function ($query) {
                             $query->select('id', 'name');
@@ -79,6 +83,7 @@ class MutationRepository implements MutationRepositoryInterface
     {
         $mutation = $this->model->create($data);
         $dataEmployee['after_unit_id'] = $mutation->after_unit_id;
+        $dataEmployee['department_id'] = $mutation->department_id;
         $dataEmployee['shift_group_id'] = $mutation->shift_group_id;
         $dataEmployee['kabag_id'] = $mutation->kabag_id;
         $dataEmployee['supervisor_id'] = $mutation->supervisor_id;
@@ -93,6 +98,9 @@ class MutationRepository implements MutationRepositoryInterface
                         ->with([
                             'employee' => function ($query) {
                                 $query->select('id', 'name', 'employment_number');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
                             },
                             'shiftGroup' => function ($query) {
                                 $query->select('id', 'name');
@@ -127,6 +135,7 @@ class MutationRepository implements MutationRepositoryInterface
         if ($mutation) {
             $mutation->update($data);
             $dataEmployee['after_unit_id'] = $mutation->after_unit_id;
+            $dataEmployee['department_id'] = $mutation->department_id;
             $dataEmployee['shift_group_id'] = $mutation->shift_group_id;
             $dataEmployee['kabag_id'] = $mutation->kabag_id;
             $dataEmployee['supervisor_id'] = $mutation->supervisor_id;
