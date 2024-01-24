@@ -22,6 +22,10 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
         'date',
         'note',
         'no_sk',
+        'shift_group_id',
+        'kabag_id',
+        'supervisor_id',
+        'manager_id',
     ];
 
     public function __construct(
@@ -38,6 +42,18 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'shiftGroup' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'kabag' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'supervisor' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'manager' => function ($query) {
                             $query->select('id', 'name', 'employment_number');
                         },
                         'userCreated' => function ($query) {
@@ -68,7 +84,12 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
     public function store(array $data)
     {
         $promotionDemotion = $this->model->create($data);
-        $this->employeeService->updatePositionId($promotionDemotion->employee_id, $promotionDemotion->after_position_id);
+        $dataEmployee['position_id'] = $promotionDemotion->after_position_id;
+        $dataEmployee['shift_group_id'] = $promotionDemotion->shift_group_id;
+        $dataEmployee['kabag_id'] = $promotionDemotion->kabag_id;
+        $dataEmployee['supervisor_id'] = $promotionDemotion->supervisor_id;
+        $dataEmployee['manager_id'] = $promotionDemotion->manager_id;
+        $this->employeeService->updatePositionId($promotionDemotion->employee_id, $dataEmployee);
         return $promotionDemotion;
     }
 
@@ -77,6 +98,18 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
         $promotionDemotion = $this->model
                         ->with([
                             'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'shiftGroup' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'manager' => function ($query) {
                                 $query->select('id', 'name', 'employment_number');
                             },
                             'userCreated' => function ($query) {
@@ -102,7 +135,12 @@ class PromotionDemotionRepository implements PromotionDemotionRepositoryInterfac
         $promotionDemotion = $this->model->find($id);
         if ($promotionDemotion) {
             $promotionDemotion->update($data);
-            $this->employeeService->updatePositionId($promotionDemotion->employee_id, $promotionDemotion->after_position_id);
+            $dataEmployee['position_id'] = $promotionDemotion->after_position_id;
+            $dataEmployee['shift_group_id'] = $promotionDemotion->shift_group_id;
+            $dataEmployee['kabag_id'] = $promotionDemotion->kabag_id;
+            $dataEmployee['supervisor_id'] = $promotionDemotion->supervisor_id;
+            $dataEmployee['manager_id'] = $promotionDemotion->manager_id;
+            $this->employeeService->updatePositionId($promotionDemotion->employee_id, $dataEmployee);
             return $promotionDemotion;
         }
         return null;

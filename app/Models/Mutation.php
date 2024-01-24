@@ -25,11 +25,35 @@ class Mutation extends Model
         'date',
         'note',
         'no_sk',
+        'shift_group_id',
+        'kabag_id',
+        'supervisor_id',
+        'manager_id',
     ];
 
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'id');
+    }
+
+    public function kabag()
+    {
+        return $this->belongsTo(Employee::class, 'kabag_id', 'id');
+    }
+
+    public function supervisor()
+    {
+        return $this->belongsTo(Employee::class, 'supervisor_id', 'id');
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(Employee::class, 'manager_id', 'id');
+    }
+
+    public function shiftGroup()
+    {
+        return $this->belongsTo(ShiftGroup::class, 'shift_group_id', 'id');
     }
 
     public function userCreated()

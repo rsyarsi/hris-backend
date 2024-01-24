@@ -12,8 +12,8 @@ Interface EmployeeRepositoryInterface
     public function employeeEndContract($perPage, $search);
     public function updateEmployeeContract($id, array $data);
     public function updateUserId($id, array $data);
-    public function updateUnitId($id, $data);
-    public function updatePositionId($id, $data);
+    public function updateUnitId($id, array $data);
+    public function updatePositionId($id, array $data);
     public function employeeWherePin($pin);
     public function employeeWhereEmployeeNumber($employeeNumber);
     public function employeeActive($perPage, $search);

@@ -473,7 +473,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update([
-                'unit_id' => $data,
+                'unit_id' => $data['after_unit_id'],
+                'shift_group_id' => $data['shift_group_id'],
+                'kabag_id' => $data['kabag_id'],
+                'supervisor_id' => $data['supervisor_id'],
+                'manager_id' => $data['manager_id'],
             ]);
             return $employee;
         }
@@ -485,7 +489,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update([
-                'position_id' => $data,
+                'position_id' => $data['position_id'],
+                'shift_group_id' => $data['shift_group_id'],
+                'kabag_id' => $data['kabag_id'],
+                'supervisor_id' => $data['supervisor_id'],
+                'manager_id' => $data['manager_id'],
             ]);
             return $employee;
         }

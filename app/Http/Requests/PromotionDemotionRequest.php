@@ -33,6 +33,10 @@ class PromotionDemotionRequest extends FormRequest
             'date' => 'nullable|date',
             'note' => 'nullable|string|max:255',
             'no_sk' => 'nullable|string|max:255',
+            'shift_group_id' => 'nullable|exists:shift_groups,id',
+            'kabag_id' => 'nullable|exists:employees,id',
+            'supervisor_id' => 'nullable|exists:employees,id',
+            'manager_id' => 'nullable|exists:employees,id',
         ];
     }
 

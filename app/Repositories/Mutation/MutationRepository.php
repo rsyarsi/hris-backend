@@ -19,6 +19,10 @@ class MutationRepository implements MutationRepositoryInterface
         'date',
         'note',
         'no_sk',
+        'shift_group_id',
+        'kabag_id',
+        'supervisor_id',
+        'manager_id',
     ];
 
     public function __construct(
@@ -35,6 +39,18 @@ class MutationRepository implements MutationRepositoryInterface
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'shiftGroup' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'kabag' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'supervisor' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'manager' => function ($query) {
                             $query->select('id', 'name', 'employment_number');
                         },
                         'userCreated' => function ($query) {
@@ -62,7 +78,12 @@ class MutationRepository implements MutationRepositoryInterface
     public function store(array $data)
     {
         $mutation = $this->model->create($data);
-        $this->employeeService->updateUnitId($mutation->employee_id, $mutation->after_unit_id);
+        $dataEmployee['after_unit_id'] = $mutation->after_unit_id;
+        $dataEmployee['shift_group_id'] = $mutation->shift_group_id;
+        $dataEmployee['kabag_id'] = $mutation->kabag_id;
+        $dataEmployee['supervisor_id'] = $mutation->supervisor_id;
+        $dataEmployee['manager_id'] = $mutation->manager_id;
+        $this->employeeService->updateUnitId($mutation->employee_id, $dataEmployee);
         return $mutation;
     }
 
@@ -71,6 +92,18 @@ class MutationRepository implements MutationRepositoryInterface
         $mutation = $this->model
                         ->with([
                             'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'shiftGroup' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'manager' => function ($query) {
                                 $query->select('id', 'name', 'employment_number');
                             },
                             'userCreated' => function ($query) {
@@ -93,7 +126,12 @@ class MutationRepository implements MutationRepositoryInterface
         $mutation = $this->model->find($id);
         if ($mutation) {
             $mutation->update($data);
-            $this->employeeService->updateUnitId($mutation->employee_id, $mutation->after_unit_id);
+            $dataEmployee['after_unit_id'] = $mutation->after_unit_id;
+            $dataEmployee['shift_group_id'] = $mutation->shift_group_id;
+            $dataEmployee['kabag_id'] = $mutation->kabag_id;
+            $dataEmployee['supervisor_id'] = $mutation->supervisor_id;
+            $dataEmployee['manager_id'] = $mutation->manager_id;
+            $this->employeeService->updateUnitId($mutation->employee_id, $dataEmployee);
             return $mutation;
         }
         return null;
