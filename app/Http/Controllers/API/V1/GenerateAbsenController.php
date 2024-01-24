@@ -36,6 +36,16 @@ class GenerateAbsenController extends Controller
         }
     }
 
+    public function generateAbsenEmployee($employeeId)
+    {
+        try {
+            $generateabsens = $this->generateAbsenService->generateAbsenEmployee($employeeId);
+            return $this->success('Generate Absens employee retrieved successfully', $generateabsens);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function monitoringAbsen(Request $request)
     {
         try {

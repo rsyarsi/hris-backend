@@ -220,6 +220,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for generate absen
         Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate-absen']);
         Route::controller(GenerateAbsenController::class)->group(function () {
+            // route for generate absen employee_id
+            Route::get('generate-absen-employee/{employee_id}', 'generateAbsenEmployee')->name('generate-absen-employee');
             // route for monitoring absen (absen yang tidak lengkap)
             Route::get('monitoring-absen', 'monitoringAbsen')->name('monitoring-absen');
             // route for execute generate absen

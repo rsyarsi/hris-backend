@@ -86,6 +86,42 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         return $query->paginate($perPage);
     }
 
+    public function generateAbsenEmployee($employeeId)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                        },
+                        'shift' => function ($query) {
+                            $query->select(
+                                'id',
+                                'code',
+                                'name',
+                                'in_time',
+                                'out_time',
+                                'finger_in_less',
+                                'finger_in_more',
+                                'finger_out_less',
+                                'finger_out_more',
+                                'night_shift',
+                            );
+                        },
+                        'leave' => function ($query) {
+                            $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                        },
+                        'leaveType' => function ($query) {
+                            $query->select('id', 'name', 'is_salary_deduction', 'active');
+                        },
+                        'user' => function ($query) {
+                            $query->select('id', 'name', 'email');
+                        },
+                    ])
+                    ->select($this->field)
+                    ->where('employee_id', $employeeId);
+        return $query->orderBy('date', 'DESC')->get();
+    }
+
     public function monitoringAbsen($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
@@ -169,6 +205,29 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                                 ->with([
                                     'employee' => function ($query) {
                                         $query->select('id', 'name', 'email', 'employment_number');
+                                    },
+                                    'shift' => function ($query) {
+                                        $query->select(
+                                            'id',
+                                            'code',
+                                            'name',
+                                            'in_time',
+                                            'out_time',
+                                            'finger_in_less',
+                                            'finger_in_more',
+                                            'finger_out_less',
+                                            'finger_out_more',
+                                            'night_shift',
+                                        );
+                                    },
+                                    'leave' => function ($query) {
+                                        $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                                    },
+                                    'leaveType' => function ($query) {
+                                        $query->select('id', 'name', 'is_salary_deduction', 'active');
+                                    },
+                                    'user' => function ($query) {
+                                        $query->select('id', 'name', 'email');
                                     },
                                 ])
                                 ->where('id', $id)

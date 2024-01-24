@@ -34,6 +34,11 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         return $this->repository->index($perPage, $search, $period_1, $period_2, $unit);
     }
 
+    public function generateAbsenEmployee($employeeId)
+    {
+        return $this->repository->generateAbsenEmployee($employeeId);
+    }
+
     public function monitoringAbsen($perPage, $search, $period_1, $period_2, $unit)
     {
         return $this->repository->monitoringAbsen($perPage, $search, $period_1, $period_2, $unit);
