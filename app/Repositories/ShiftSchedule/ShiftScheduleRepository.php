@@ -447,8 +447,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         if (!$employee) {
             return [];
         }
+        
         $datwa = Carbon::now()->toDateString();
-
         // check shift group id apakah Non Shift atau tidak
         $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
         // check di table shift schedule exists ?
@@ -496,7 +496,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             $dataGenerateAbsen['employment_id'] = $employeeId;
             GenerateAbsen::create($dataGenerateAbsen);
         }
-
         $lembur = DB::table('overtimes')
                     ->select([
                         DB::raw("COALESCE(shift_schedules.id, '') as id"),
@@ -553,8 +552,12 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         DB::raw("'SPL' AS schedule_type"),
                         DB::raw("overtimes.id as overtime_id")
                     ])
-                    ->leftJoin('shift_schedules', DB::raw("CAST(overtimes.from_date AS DATE)"), '=', 'shift_schedules.date', 'overtimes.employee_id','=','shift_schedules.employee_id')
-                    ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
+                    ->leftJoin('shift_schedules', function ($join) use ($datwa) {
+                        $join->on('overtimes.employee_id', '=', 'shift_schedules.employee_id')
+                            ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)")
+                            ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)");
+                    })
+                    ->join('employees', 'shift_schedules.employee_id', '=', 'employees.id')
                     ->where('shift_schedules.employee_id', $employee->id)
                     ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)");
                     // union all here

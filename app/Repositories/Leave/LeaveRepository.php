@@ -243,7 +243,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         if (!$checkShiftSchedule) {
             // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
             return [
-                'message' => 'Validation Error',
+                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
                 'success' => false,
                 'code' => 201,
                 'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]

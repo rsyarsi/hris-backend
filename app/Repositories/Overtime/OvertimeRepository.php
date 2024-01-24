@@ -173,7 +173,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                             ->first();
         if (!$checkShiftSchedule) {
             return [
-                'message' => 'Validation Error!',
+                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
                 'success' => false,
                 'code' => 201,
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
@@ -181,7 +181,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         }
         if ($checkShiftSchedule->leave_id !== null) {
             return [
-                'message' => 'Validation Error!',
+                'message' => 'Data Shift Schedule sudah tercatat cuti!',
                 'success' => false,
                 'code' => 201,
                 'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]

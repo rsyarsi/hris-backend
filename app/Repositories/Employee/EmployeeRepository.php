@@ -3,7 +3,7 @@
 namespace App\Repositories\Employee;
 
 use Carbon\Carbon;
-use App\Models\Employee;
+use App\Models\{Employee, User};
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 
 
@@ -304,6 +304,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update($data);
+            if ($employee->resigned_at !== null) {
+                User::where('id', $employee->user_id)->update(['active' => 0]);
+            }
             return $employee;
         }
         return null;
@@ -390,11 +393,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
     public function employeeEndContract($perPage, $search = null)
     {
         $today = Carbon::now()->toDateString();
-        $twoWeeksLater = Carbon::now()->addWeeks(2)->toDateString();
+        $weeksLater = Carbon::now()->addWeeks(8)->toDateString();
 
         $query = $this->model
             ->with([
-                'contract' => function ($query) use ($today, $twoWeeksLater) {
+                'contract' => function ($query) use ($today, $weeksLater) {
                     $query->select(
                         'id',
                         'employee_id',
@@ -422,11 +425,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                     ])->latest()->first();
                 }
             ])
-            ->select($this->field)
-            ->whereHas('contract', function ($contractQuery) use ($today, $twoWeeksLater) {
-                $contractQuery->where('end_at', '<=', $today)
-                                ->orWhereBetween('end_at', [$today, $twoWeeksLater])->latest();
-            });
+            ->select($this->field);
+            // ->whereHas('contract', function ($contractQuery) use ($today, $weeksLater) {
+            //     $contractQuery->where('end_at', '<=', $today)
+            //                     ->orWhereBetween('end_at', [$today, $weeksLater])->latest();
+            // });
 
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
