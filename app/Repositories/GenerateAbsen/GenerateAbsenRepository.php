@@ -119,7 +119,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     ])
                     ->select($this->field)
                     ->where('employee_id', $employeeId);
-        return $query->orderBy('date', 'DESC')->get();
+        return $query->orderBy('date', 'DESC')->paginate();
     }
 
     public function monitoringAbsen($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
