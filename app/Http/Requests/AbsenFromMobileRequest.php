@@ -49,13 +49,13 @@ class AbsenFromMobileRequest extends FormRequest
         $response = [
             'message' => 'Validation Error, please check your data!',
             'success' => false,
-            'code' => 422,
+            'code' => 200,
             'data' => [],
         ];
 
         throw new ValidationException(
             $validator,
-            response()->json($response, 422)
+            response()->json($response, 200)
         );
     }
 }
