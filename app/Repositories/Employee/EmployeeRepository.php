@@ -91,7 +91,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                         ->select($this->field);
         if ($active == true) {
             // If $active is true, filter by null resign_at
-            $query->whereNull('resigned_at');
+            $query->where('resigned_at', '>', Carbon::now());
         }
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
@@ -657,7 +657,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 
     public function employeeNonShift()
     {
-        return $this->model->whereNull('resigned_at')
+        return $this->model->where('resigned_at', '>', Carbon::now())
                             ->where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
                             ->get(['id', 'name', 'employment_number', 'shift_group_id']);
     }
