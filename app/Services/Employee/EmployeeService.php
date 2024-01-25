@@ -23,6 +23,7 @@ class EmployeeService implements EmployeeServiceInterface
     {
         $data['name'] = $this->formatTextTitle($data['name']);
         $data['religion_id'] = 1;
+        $data['resigned_at'] = '3000-01-01 00:00:00';
         return $this->repository->store($data);
     }
 
