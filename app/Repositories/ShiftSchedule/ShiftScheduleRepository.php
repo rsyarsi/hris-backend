@@ -478,7 +478,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             $dataShiftSchedule['night'] = 0;
             $dataShiftSchedule['national_holiday'] = 0;
             $dataShiftSchedule['absen_type'] = 'ABSEN';
-            $this->model->create($dataShiftSchedule);
+            $createSdhiftSchedule = $this->model->create($dataShiftSchedule);
             // insert data ke generate absen
             $dataGenerateAbsen['period'] = now()->format('Y-m');
             $dataGenerateAbsen['date'] = $datwa;
@@ -494,6 +494,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             $dataGenerateAbsen['night'] = 0;
             $dataGenerateAbsen['national_holiday'] = 0;
             $dataGenerateAbsen['employment_id'] = $employeeId;
+            $dataGenerateAbsen['shift_schedule_id'] = $createSdhiftSchedule->id;
+            $dataGenerateAbsen['type'] = $createSdhiftSchedule->absen_type;
             GenerateAbsen::create($dataGenerateAbsen);
         }
         $lembur = DB::table('overtimes')

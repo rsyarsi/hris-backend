@@ -303,11 +303,16 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         // ABSEN
         if ($type == 'ABSEN') {
             $existingRecordAbsen = $this->model
+                                        ->where('shift_schedule_id', $idSchedule)
                                         ->where('employee_id', $employeeId)
-                                        ->where('date', $date)
+                                        // ->where('date', $date)
                                         // ->orWhere('date_out_at', $date)
                                         ->where('type', 'ABSEN')
                                         ->first();
+            // return [
+            //     'message' => 'data ketemu!',
+            //     'data' => [$existingRecordAbsen]
+            // ];
             if ($function == 'IN') {
                 if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
                     $existingRecordAbsen->update([
