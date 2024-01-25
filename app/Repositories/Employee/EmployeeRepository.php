@@ -93,6 +93,12 @@ class EmployeeRepository implements EmployeeRepositoryInterface
             // If $active is true, filter by null resign_at
             $query->where('resigned_at', '>', Carbon::now());
         }
+
+        if (\is_bool($active) && $active === false) {
+            // If $active is true, filter by null resign_at
+            $query->where('resigned_at', '<=', Carbon::now());
+        }
+
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
