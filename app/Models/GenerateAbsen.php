@@ -25,7 +25,7 @@ class GenerateAbsen extends Model
         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
         'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4', 'manual', 'user_manual_id',
         'input_manual_at', 'lock', 'gp_in', 'gp_out', 'employment_id', 'overtime_type', 'type',
-        'overtime_hours'
+        'overtime_hours', 'shift_schedule_id'
     ];
 
     public function employee()
@@ -36,6 +36,11 @@ class GenerateAbsen extends Model
     public function shift()
     {
         return $this->belongsTo(Shift::class, 'shift_id', 'id');
+    }
+
+    public function shiftSchedule()
+    {
+        return $this->belongsTo(ShiftSchedule::class, 'shift_schedule_id', 'id');
     }
 
     public function leave()

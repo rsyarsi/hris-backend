@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use App\Rules\ShiftCodeExists;
 use Symfony\Component\Uid\Ulid;
 use App\Models\{Shift, Employee, GenerateAbsen, ShiftSchedule};
 use Maatwebsite\Excel\Concerns\{Importable, ToModel, WithStartRow, WithValidation};

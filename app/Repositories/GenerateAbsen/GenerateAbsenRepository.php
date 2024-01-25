@@ -10,7 +10,6 @@ use App\Services\Overtime\OvertimeServiceInterface;
 class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 {
     private $model;
-    private $overtimeService;
     private $field =
     [
         'id', 'period', 'date', 'day', 'employee_id', 'shift_id', 'date_in_at', 'time_in_at',
@@ -20,13 +19,45 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
         'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4', 'manual', 'user_manual_id',
-        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type'
+        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type', 'shift_schedule_id'
+    ];
+    private $fieldShift = [
+        'id',
+        'code',
+        'name',
+        'in_time',
+        'out_time',
+        'finger_in_less',
+        'finger_in_more',
+        'finger_out_less',
+        'finger_out_more',
+        'night_shift',
+    ];
+    private $fieldShiftSchedule = [
+        'id',
+        'employee_id',
+        'shift_id',
+        'date',
+        'time_in',
+        'time_out',
+        'late_note',
+        'leave_id',
+        'shift_exchange_id',
+        'user_exchange_id',
+        'user_exchange_at',
+        'created_user_id',
+        'updated_user_id',
+        'setup_user_id',
+        'setup_at',
+        'period',
+        'leave_note',
+        'holiday',
+        'night',
     ];
 
-    public function __construct(GenerateAbsen $model, OvertimeServiceInterface $overtimeService)
+    public function __construct(GenerateAbsen $model)
     {
         $this->model = $model;
-        $this->overtimeService = $overtimeService;
     }
 
     public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
@@ -38,16 +69,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         },
                         'shift' => function ($query) {
                             $query->select(
-                                'id',
-                                'code',
-                                'name',
-                                'in_time',
-                                'out_time',
-                                'finger_in_less',
-                                'finger_in_more',
-                                'finger_out_less',
-                                'finger_out_more',
-                                'night_shift',
+                                $this->fieldShift
+                            );
+                        },
+                        'shiftSchedule' => function ($query) {
+                            $query->select(
+                                $this->fieldShiftSchedule
                             );
                         },
                         'leave' => function ($query) {
@@ -208,16 +235,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                                     },
                                     'shift' => function ($query) {
                                         $query->select(
-                                            'id',
-                                            'code',
-                                            'name',
-                                            'in_time',
-                                            'out_time',
-                                            'finger_in_less',
-                                            'finger_in_more',
-                                            'finger_out_less',
-                                            'finger_out_more',
-                                            'night_shift',
+                                            $this->fieldShift
+                                        );
+                                    },
+                                    'shiftSchedule' => function ($query) {
+                                        $query->select(
+                                            $this->fieldShiftSchedule
                                         );
                                     },
                                     'leave' => function ($query) {
@@ -265,6 +288,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 
     public function absenFromMobile(array $data)
     {
+        $idSchedule = $data['Id_schedule'];
         $employeeId = $data['employee_id'];
         $date = $data['date'];
         $type = $data['type']; // ABSEN / SPL(SURAT PERINTAH LEMBUR)
@@ -284,7 +308,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                                         // ->orWhere('date_out_at', $date)
                                         ->where('type', 'ABSEN')
                                         ->first();
-            if ($type == 'ABSEN' && $function == 'IN') {
+            if ($function == 'IN') {
                 if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
                     $existingRecordAbsen->update([
                         'date_in_at' => $data['date_in_at'],
@@ -304,6 +328,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                 } else { // Create a new record
                     $data['time_out_at'] = null;
                     $data['note'] = "BELUM ABSEN PULANG";
+                    $data['shift_schedule_id'] = $idSchedule;
                     return [
                         'message' => 'Absen Masuk Berhasil!',
                         'data' => [$this->model->create($data)]
@@ -311,29 +336,37 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                 }
             }
 
-            if ($type == 'ABSEN' && $function == 'OUT') {
-                if ($existingRecordAbsen) {
-                    if ($existingRecordAbsen->time_out_at !== null) {
+            if ($function == 'OUT') {
+                $existingRecordAbsenOut = $this->model
+                                                ->where('shift_schedule_id', $idSchedule)
+                                                ->where('type', 'ABSEN')
+                                                ->first();
+                    // return [
+                    //     'message' => 'data ketemu!',
+                    //     'data' => [$existingRecordAbsenOut]
+                    // ];
+                if ($existingRecordAbsenOut) {
+                    if ($existingRecordAbsenOut->time_out_at !== null) {
                         return [
                             'message' => 'Anda Sudah Absen Keluar!',
-                            'data' => []
+                            'data' => [$existingRecordAbsenOut]
                         ];
                     } else { // Check if a record exists for the employee and date
                         $timeOutAt = $data['time_out_at'];
-                        $scheduleTimeOutAt = $existingRecordAbsen->schedule_time_out_at;
+                        $scheduleTimeOutAt = $existingRecordAbsenOut->schedule_time_out_at;
                         $pa = null; //pa = pulang awal
                         if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
                             $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
                         }
-                        $existingRecordAbsen->update([
+                        $existingRecordAbsenOut->update([
                             'time_out_at' => $data['time_out_at'],
-                            'date_out_at' => $data['date_out_at'],
+                            'date_out_at' => now(),
                             'pa' => $pa,
-                            'note' => $pa == null && $existingRecordAbsen->telat == null ? '' : 'WARNING',
+                            'note' => $pa == null && $existingRecordAbsenOut->telat == null ? '' : 'WARNING',
                         ]);
                         return [
                             'message' => 'Absen Keluar Berhasil!',
-                            'data' => [$existingRecordAbsen]
+                            'data' => [$existingRecordAbsenOut]
                         ];
                     }
                 } else {
