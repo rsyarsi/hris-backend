@@ -40,7 +40,8 @@ class UserController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $users = $this->userService->index($perPage, $search);
+            $active = $request->input('active');
+            $users = $this->userService->index($perPage, $search, $active);
             return $this->success('Users retrieved successfully', $users);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

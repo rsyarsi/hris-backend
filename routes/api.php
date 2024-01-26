@@ -159,6 +159,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('count-employee-legalities-ended', 'countEmployeeLegalitiesEnded')->name('count-employee-legalities-ended');
             // route for employee legalities ended
             Route::get('employee-legalities-ended', 'employeeLegalitiesEnded')->name('employee-legalities-ended');
+            // route for import employee legality
+            Route::post('import-employee-legality', 'importEmployeeLegality')->name('import-employee-legality');
         });
         // route for master employee families
         Route::resource('employee-families', EmployeeFamilyController::class);

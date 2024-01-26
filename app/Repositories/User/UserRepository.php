@@ -36,8 +36,9 @@ class UserRepository implements UserRepositoryInterface
         $this->employeeService = $employeeService;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $active = true)
     {
+        $status = $active == true ? 1 : 0;
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
@@ -92,9 +93,10 @@ class UserRepository implements UserRepositoryInterface
                     ])
                     ->select($this->field);
         if ($search !== null) {
-            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                    ->orWhere('email', 'LIKE', "%{$search}%");
         }
-        return $query->orderBy('id', 'ASC')->paginate($perPage);
+        return $query->where('active', $status)->orderBy('id', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)

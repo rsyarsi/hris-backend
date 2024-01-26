@@ -5,7 +5,10 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\EmployeeLegalityImport;
 use App\Http\Requests\EmployeeLegalityRequest;
+use App\Http\Requests\ImportEmployeeLegalityRequest;
 use App\Services\EmployeeLegality\EmployeeLegalityServiceInterface;
 
 class EmployeeLegalityController extends Controller
@@ -100,6 +103,16 @@ class EmployeeLegalityController extends Controller
         try {
             $employees = $this->employeeLegalityService->countEmployeeLegalitiesEnded();
             return $this->success('Employees count legality ended retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function importEmployeeLegality(ImportEmployeeLegalityRequest $request)
+    {
+        try {
+            $import = Excel::import(new EmployeeLegalityImport, request()->file('file'));
+            return $this->success('Employee Legality imported successfully!', $import, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

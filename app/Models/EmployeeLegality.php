@@ -25,6 +25,7 @@ class EmployeeLegality extends Model
         'file_url',
         'file_path',
         'file_disk',
+        'no_str'
     ];
 
     public function employee()
