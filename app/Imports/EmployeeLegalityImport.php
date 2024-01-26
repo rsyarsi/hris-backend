@@ -46,11 +46,9 @@ class EmployeeLegalityImport implements ToModel, WithStartRow, WithValidation
         $employeeNumber = $row[0];
         $dateStart = $row[2];
         $dateEnd = $row[3];
+
         $dateStart = Carbon::createFromFormat('d-m-Y', $row[2])->format('Y-m-d');
-        // Set the locale to English for proper month parsing
-        Carbon::setLocale('id');
-        $dateEnd = Carbon::parse($row[3])->format('Y-m-d');
-        // $dateEnd = Carbon::createFromFormat('d F Y', $row[3])->format('Y-m-d');
+        $dateEnd = $this->convertIndonesianDateToEnglishFormat($row[3]);
 
         $employee = Employee::where('employment_number', $employeeNumber)->first();
         if (!$employee) {
@@ -66,5 +64,27 @@ class EmployeeLegalityImport implements ToModel, WithStartRow, WithValidation
             'ended_at' => $dateEnd,
             'no_str' => $row[4],
         ]);
+    }
+
+    private function convertIndonesianDateToEnglishFormat($indonesianDate)
+    {
+        $monthTranslations = [
+            'Januari' => 'January',
+            'Februari' => 'February',
+            'Maret' => 'March',
+            'April' => 'April',
+            'Mei' => 'May',
+            'Juni' => 'June',
+            'Juli' => 'July',
+            'Agustus' => 'August',
+            'September' => 'September',
+            'Oktober' => 'October',
+            'November' => 'November',
+            'Desember' => 'December',
+        ];
+
+        $englishDate = str_replace(array_keys($monthTranslations), $monthTranslations, $indonesianDate);
+
+        return Carbon::parse($englishDate)->format('Y-m-d');
     }
 }
