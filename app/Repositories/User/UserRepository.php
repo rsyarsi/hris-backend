@@ -96,7 +96,8 @@ class UserRepository implements UserRepositoryInterface
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
                     ->orWhere('email', 'LIKE', "%{$search}%");
         }
-        return $query->where('active', $status)->orderBy('id', 'ASC')->paginate($perPage);
+        // ->where('active', $status)
+        return $query->orderBy('id', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)

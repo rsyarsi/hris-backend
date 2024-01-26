@@ -89,18 +89,18 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             },
                         ])
                         ->select($this->field);
-        if ($active == true) {
-            // If $active is true, filter by null resign_at
-            $query->where('resigned_at', '>', Carbon::now());
-        }
 
-        if (\is_bool($active) && $active === false) {
-            // If $active is true, filter by null resign_at
-            $query->where('resigned_at', '<=', Carbon::now());
-        }
+        // if (\is_bool($active) && $active === false) {
+        //     // If $active is true, filter by null resign_at
+        //     $query->where('resigned_at', '<=', Carbon::now());
+        // }
 
         if ($search !== null) {
-            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+            $query->where(function ($query) use ($search) {
+                $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                    ->orWhere('employment_number', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            });
         }
         return $query->orderBy('employment_number', 'ASC')->paginate($perPage);
     }
@@ -310,9 +310,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update($data);
-            if ($employee->resigned_at !== null) {
-                User::where('id', $employee->user_id)->update(['active' => 0]);
-            }
+            // if ($employee->resigned_at < Carbon::now()) {
+            //     User::where('id', $employee->user_id)->update(['active' => 0]);
+            // }
             return $employee;
         }
         return null;
@@ -635,8 +635,8 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             $query->where('supervisor_id', $user->employee->id)
                                 ->orWhere('manager_id', $user->employee->id)
                                 ->orWhere('kabag_id', $user->employee->id);
-                        })
-                        ->where('resigned_at', null);
+                        });
+                        // ->where('resigned_at', null);
         if ($search !== null) {
             $query->where(function ($query) use ($search) {
                 $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
@@ -658,12 +658,13 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 ->orWhere('kabag_id', $user->id);
                         })
                         ->where('resigned_at', null);
+                        // ->where('resigned_at', '<=', Carbon::now());
         return $query->select($this->field)->get();
     }
 
     public function employeeNonShift()
     {
-        return $this->model->where('resigned_at', '>', Carbon::now())
+        return $this->model->where('resigned_at', null)
                             ->where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
                             ->get(['id', 'name', 'employment_number', 'shift_group_id']);
     }

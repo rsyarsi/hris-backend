@@ -160,7 +160,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 ->orWhere('manager_id', $user->employee->id)
                                 ->orWhere('kabag_id', $user->employee->id);
                         })
-                        ->whereNull('resigned_at')
+                        // ->whereNull('resigned_at')
                         ->get();
         $employeeIds = []; // Collect employee IDs in an array
         foreach ($queryEmployee as $item) {

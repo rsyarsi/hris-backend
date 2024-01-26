@@ -42,49 +42,52 @@ class EmployeeLegalityImport implements ToModel, WithStartRow, WithValidation
     * @return \Illuminate\Database\Eloquent\Model|null
     */
     public function model(array $row)
-    {
-        $employeeNumber = $row[0];
-        $dateStart = $row[2];
-        $dateEnd = $row[3];
+{
+    $employeeNumber = $row[0];
+    Carbon::setLocale('id');
+    $dateStart = $this->convertIndonesianDateToEnglishFormat($row[2])->format('Y-m-d');
+    $dateEnd = $this->convertIndonesianDateToEnglishFormat($row[3])->format('Y-m-d');
 
-        $dateStart = Carbon::createFromFormat('d-m-Y', $row[2])->format('Y-m-d');
-        $dateEnd = $this->convertIndonesianDateToEnglishFormat($row[3]);
-
-        $employee = Employee::where('employment_number', $employeeNumber)->first();
-        if (!$employee) {
-            return; // reject the request if employee not found
-        }
-
-        $ulid = Ulid::generate(); // Generate a ULID
-        return new EmployeeLegality([
-            'id' => Str::lower($ulid),
-            'employee_id' => $employee->id,
-            'legality_type_id' => $row[1],
-            'started_at' => $dateStart,
-            'ended_at' => $dateEnd,
-            'no_str' => $row[4],
-        ]);
+    $employee = Employee::where('employment_number', $employeeNumber)->first();
+    if (!$employee) {
+        return; // reject the request if employee not found
     }
 
-    private function convertIndonesianDateToEnglishFormat($indonesianDate)
-    {
-        $monthTranslations = [
-            'Januari' => 'January',
-            'Februari' => 'February',
-            'Maret' => 'March',
-            'April' => 'April',
-            'Mei' => 'May',
-            'Juni' => 'June',
-            'Juli' => 'July',
-            'Agustus' => 'August',
-            'September' => 'September',
-            'Oktober' => 'October',
-            'November' => 'November',
-            'Desember' => 'December',
-        ];
+    $ulid = Ulid::generate(); // Generate a ULID
+    return new EmployeeLegality([
+        'id' => Str::lower($ulid),
+        'employee_id' => $employee->id,
+        'legality_type_id' => $row[1],
+        'started_at' => $dateStart,
+        'ended_at' => $dateEnd,
+        'no_str' => $row[4],
+    ]);
+}
 
-        $englishDate = str_replace(array_keys($monthTranslations), $monthTranslations, $indonesianDate);
+private function convertIndonesianDateToEnglishFormat($indonesianDate)
+{
+    // Map Indonesian month names to English month names
+    $monthTranslations = [
+        'Januari' => 'January',
+        'Februari' => 'February',
+        'Maret' => 'March',
+        'April' => 'April',
+        'Mei' => 'May',
+        'Juni' => 'June',
+        'Juli' => 'July',
+        'Agustus' => 'August',
+        'September' => 'September',
+        'Oktober' => 'October',
+        'November' => 'November',
+        'Desember' => 'December',
+    ];
 
-        return Carbon::parse($englishDate)->format('Y-m-d');
+    // Replace Indonesian month names with English month names
+    foreach ($monthTranslations as $indonesianMonth => $englishMonth) {
+        $indonesianDate = str_replace($indonesianMonth, $englishMonth, $indonesianDate);
     }
+
+    // Parse the date with Carbon
+    return Carbon::parse($indonesianDate);
+}
 }

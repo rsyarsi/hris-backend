@@ -19,6 +19,7 @@ class EmployeeLegalityRepository implements EmployeeLegalityRepositoryInterface
         'file_url',
         'file_path',
         'file_disk',
+        'no_str'
     ];
 
     public function __construct(EmployeeLegality $model)
