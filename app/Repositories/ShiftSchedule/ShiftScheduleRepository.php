@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Facades\DB;
+use App\Services\Shift\ShiftServiceInterface;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Models\{Shift, ShiftSchedule, Employee, GenerateAbsen};
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
@@ -14,6 +15,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 {
     private $model;
     private $employeeService;
+    private $shiftService;
     private $field =
     [
         'id',
@@ -36,7 +38,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'night',
         'national_holiday',
         'leave_id',
-        'absen_type'
+        'absen_type',
+        'import'
     ];
     private $fieldShiftScheduleExchange =
     [
@@ -70,10 +73,15 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         'cancel',
     ];
 
-    public function __construct(ShiftSchedule $model, EmployeeServiceInterface $employeeService)
+    public function __construct(
+        ShiftSchedule $model,
+        EmployeeServiceInterface $employeeService,
+        ShiftServiceInterface $shiftService,
+    )
     {
         $this->model = $model;
         $this->employeeService = $employeeService;
+        $this->shiftService = $shiftService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null)
@@ -394,7 +402,83 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 
     public function storeMultiple(array $data)
     {
-        return $this->model->insert($data);
+        // employee
+        $employee = $this->employeeService->show($data['employee_id']);
+        // Parse the start_date and end_date
+        $startDate = Carbon::parse($data['start_date']);
+        $endDate = Carbon::parse($data['end_date']);
+        $shiftSchedules = [];
+
+        $shiftLibur = Shift::where('shift_group_id', $employee->shift_group_id)
+                            ->where('code', 'L')
+                            ->orWhere('name', 'LIBUR')
+                            ->first();
+
+        // Loop through the date range
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $ulid = Ulid::generate(); // Generate a ULID
+            $shiftScheduleData = [
+                'id' => Str::lower($ulid),
+                'employee_id' => $data['employee_id'],
+                'shift_id' => null,
+                'date' => $date->format('Y-m-d'),
+                'time_in' => null,
+                'time_out' => null,
+                'late_note' => null,
+                'shift_exchange_id' => null,
+                'user_exchange_id' => null,
+                'user_exchange_at' => null,
+                'created_user_id' => auth()->id(),
+                'updated_user_id' => null, // You may need to set this as per your requirements
+                'setup_user_id' => auth()->id(),
+                'setup_at' => now(), // You can customize the setup_at value
+                'period' => $data['period'],
+                'leave_note' => null,
+                'holiday' => $date->isWeekend() ? 1 : 0,
+                'night' => null,
+                'national_holiday' => $data['national_holiday'],
+                'absen_type' => 'ABSEN',
+                'import' => 0,
+            ];
+
+            // Save the ShiftSchedule and get the instance
+            $shiftSchedule = $this->model->create($shiftScheduleData);
+
+            $existingEntryGenerateAbsen = GenerateAbsen::where([
+                'employee_id' => $data['employee_id'],
+                'shift_id' => $shiftLibur->id,
+                'date' => $date,
+            ])->first();
+            if ($existingEntryGenerateAbsen) {
+                return null; // Skip this row
+            } else if ($date->isWeekend()) { // if sunday
+                $data['period'] = $data['period'];
+                $data['date'] = $date->format('Y-m-d');
+                $data['day'] = $date->format('l');
+                $data['employee_id'] = $data['employee_id'];
+                $data['employment_id'] = $employee->employment_number;
+                $data['shift_id'] = $shiftLibur->id;
+                $data['date_in_at'] = $date->format('Y-m-d');
+                $data['time_in_at'] = '';
+                $data['date_out_at'] = $date->format('Y-m-d');
+                $data['time_out_at'] = '';
+                $data['schedule_date_in_at'] = $date->format('Y-m-d');
+                $data['schedule_time_in_at'] = '';
+                $data['schedule_date_out_at'] = $date->format('Y-m-d');
+                $data['schedule_time_out_at'] = '';
+                $data['holiday'] = 1;
+                $data['night'] = 0;
+                $data['national_holiday'] = 0;
+                $data['type'] = '';
+                $data['function'] = '';
+                $data['note'] = 'LIBUR';
+                $data['type'] = 'ABSEN';
+                $data['shift_schedule_id'] = $shiftSchedule->id;
+                GenerateAbsen::create($data);
+            }
+            $shiftSchedules[] = $shiftSchedule; // Append the created instance to the array
+        }
+        return $shiftSchedules;
     }
 
     public function updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leaveId, $leaveNote)
@@ -478,6 +562,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             $dataShiftSchedule['night'] = 0;
             $dataShiftSchedule['national_holiday'] = 0;
             $dataShiftSchedule['absen_type'] = 'ABSEN';
+            $dataShiftSchedule['import'] = 0;
             $createSdhiftSchedule = $this->model->create($dataShiftSchedule);
             // insert data ke generate absen
             $dataGenerateAbsen['period'] = now()->format('Y-m');
@@ -850,7 +935,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 
                 if ($existingEntryGenerateAbsen) {
                     return null; // Skip this row
-                } else if ($date->isSaturday() || $date->isSunday()) { // if sunday
+                } else if ($date->isWeekend()) { // if sunday
                     $data['period'] = $date->format('Y-m');
                     $data['date'] = $date->format('Y-m-d');
                     $data['day'] = $date->format('l');

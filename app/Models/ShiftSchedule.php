@@ -39,6 +39,7 @@ class ShiftSchedule extends Model
         'night',
         'national_holiday',
         'absen_type',
+        'import',
     ];
 
     public function employee()

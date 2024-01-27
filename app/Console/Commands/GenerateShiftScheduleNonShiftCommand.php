@@ -73,6 +73,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                     'holiday' => $date->isSunday() ?? 0,
                     'night' => 0,
                     'national_holiday' => 0,
+                    'import' => 0,
                     'absen_type' => 'ABSEN',
                 ];
                 $shiftScheduleCreate = ShiftSchedule::create($shiftScheduleData);
@@ -106,6 +107,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                     $data['type'] = '';
                     $data['function'] = '';
                     $data['note'] = 'LIBUR';
+                    $data['type'] = 'ABSEN';
                     $data['shift_schedule_id'] = $shiftScheduleCreate->id;
                     GenerateAbsen::create($data);
                 }

@@ -171,7 +171,7 @@ class ShiftScheduleController extends Controller
     {
         $data = $request->validated();
         $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
-        return $this->success('Shift schedule created successfully', $shiftSchedule, 201);
+        return $this->success('Shift schedule multiple created successfully', $shiftSchedule, 201);
         try {
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
