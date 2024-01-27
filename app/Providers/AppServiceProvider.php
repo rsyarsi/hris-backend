@@ -63,6 +63,7 @@ use App\Services\ShiftScheduleExchange\{ShiftScheduleExchangeService, ShiftSched
 use App\Services\SuratPeringatan\{SuratPeringatanService, SuratPeringatanServiceInterface};
 use App\Services\PromotionDemotion\{PromotionDemotionService, PromotionDemotionServiceInterface};
 use App\Services\Mutation\{MutationService, MutationServiceInterface};
+use App\Services\Pengembalian\{PengembalianService, PengembalianServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -125,6 +126,7 @@ use App\Repositories\ShiftScheduleExchange\{ShiftScheduleExchangeRepository, Shi
 use App\Repositories\SuratPeringatan\{SuratPeringatanRepository, SuratPeringatanRepositoryInterface};
 use App\Repositories\PromotionDemotion\{PromotionDemotionRepository, PromotionDemotionRepositoryInterface};
 use App\Repositories\Mutation\{MutationRepository, MutationRepositoryInterface};
+use App\Repositories\Pengembalian\{PengembalianRepository, PengembalianRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -374,6 +376,10 @@ class AppServiceProvider extends ServiceProvider
         // Mutation
         $this->app->bind(MutationRepositoryInterface::class, MutationRepository::class);
         $this->app->bind(MutationServiceInterface::class, MutationService::class);
+
+        // Pengembalian
+        $this->app->bind(PengembalianRepositoryInterface::class, PengembalianRepository::class);
+        $this->app->bind(PengembalianServiceInterface::class, PengembalianService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

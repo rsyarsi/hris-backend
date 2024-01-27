@@ -90,10 +90,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                         ])
                         ->select($this->field);
 
-        // if (\is_bool($active) && $active === false) {
-        //     // If $active is true, filter by null resign_at
-        //     $query->where('resigned_at', '<=', Carbon::now());
-        // }
+        if ($active === true) {
+            $query->where('resigned_at', '>=', Carbon::now()->toDateString());
+        }
 
         if ($search !== null) {
             $query->where(function ($query) use ($search) {
@@ -310,7 +309,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update($data);
-            // if ($employee->resigned_at < Carbon::now()) {
+            // if ($employee->resigned_at , '>=', Carbon::now()->toDateString()) {
             //     User::where('id', $employee->user_id)->update(['active' => 0]);
             // }
             return $employee;
@@ -391,9 +390,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
-        return $query
-        ->whereNull('employment_number')
-        ->paginate($perPage);
+        return $query->whereNull('employment_number')->paginate($perPage);
     }
 
     public function employeeEndContract($perPage, $search = null)
@@ -544,10 +541,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 
     public function employeeActive($perPage, $search = null)
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->toDateString();
         $query = $this->model
                         ->where('started_at', '!=', null)
-                        // ->where('resigned_at', '=', null)
                         ->where('employment_number', '!=', null)
                         ->with([
                             'identityType' => function ($query) {
@@ -613,15 +609,14 @@ class EmployeeRepository implements EmployeeRepositoryInterface
             $query->where(function ($query) use ($now) {
                 $query->where('started_at', '<=', $now)
                     ->where(function ($query) use ($now) {
-                        $query->where('resigned_at', '>=', $now)
-                            ->orWhere('resigned_at', '=', null);
+                        $query->where('resigned_at', '>=', $now);
                     });
             });
         });
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('name', 'ASC')->paginate($perPage);
     }
 
     public function employeeSubordinate($perPage, $search = null)
@@ -635,8 +630,8 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             $query->where('supervisor_id', $user->employee->id)
                                 ->orWhere('manager_id', $user->employee->id)
                                 ->orWhere('kabag_id', $user->employee->id);
-                        });
-                        // ->where('resigned_at', null);
+                        })
+                        ->where('resigned_at', '>=', Carbon::now()->toDateString());
         if ($search !== null) {
             $query->where(function ($query) use ($search) {
                 $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
@@ -657,14 +652,13 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 ->orWhere('manager_id', $user->id)
                                 ->orWhere('kabag_id', $user->id);
                         })
-                        ->where('resigned_at', null);
-                        // ->where('resigned_at', '<=', Carbon::now());
+                        ->where('resigned_at', '>=', Carbon::now()->toDateString());
         return $query->select($this->field)->get();
     }
 
     public function employeeNonShift()
     {
-        return $this->model->where('resigned_at', null)
+        return $this->model->where('resigned_at', '>=', Carbon::now()->toDateString())
                             ->where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
                             ->get(['id', 'name', 'employment_number', 'shift_group_id']);
     }

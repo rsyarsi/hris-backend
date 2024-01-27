@@ -835,12 +835,12 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     'setup_at' => now(),
                     'period' => $date->format('Y-m'),
                     'leave_note' => null,
-                    'holiday' => $date->isSunday() ?? 0,
+                    'holiday' => $date->isWeekend() ?? 0,
                     'night' => 0,
                     'national_holiday' => 0,
                     'absen_type' => 'ABSEN',
                 ];
-                $this->model->create($shiftScheduleData);
+                $shiftScheduleCreate = $this->model->create($shiftScheduleData);
 
                 $existingEntryGenerateAbsen = GenerateAbsen::where([
                     'employee_id' => $employee->id,
@@ -850,7 +850,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 
                 if ($existingEntryGenerateAbsen) {
                     return null; // Skip this row
-                } else if ($date->isSunday()) { // if sunday
+                } else if ($date->isSaturday() || $date->isSunday()) { // if sunday
                     $data['period'] = $date->format('Y-m');
                     $data['date'] = $date->format('Y-m-d');
                     $data['day'] = $date->format('l');
@@ -871,6 +871,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     $data['type'] = '';
                     $data['function'] = '';
                     $data['note'] = 'LIBUR';
+                    $data['shift_schedule_id'] = $shiftScheduleCreate->id;
                     GenerateAbsen::create($data);
                 }
             }

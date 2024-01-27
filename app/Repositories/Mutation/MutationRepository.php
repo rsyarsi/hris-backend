@@ -164,6 +164,35 @@ class MutationRepository implements MutationRepositoryInterface
         }
         $employeeId = $user->employee->id;
         $query = $this->model
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'shiftGroup' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'manager' => function ($query) {
+                                $query->select('id', 'name', 'employment_number');
+                            },
+                            'userCreated' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'unitBefore' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'unitAfter' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                        ])
                         ->select($this->field)
                         ->where(function ($query) use ($search) {
                             $query->where('date', 'like', "%{$search}%");

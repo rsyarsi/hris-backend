@@ -110,13 +110,13 @@ class AuthController extends Controller
 
         $user = auth()->user();
 
-        if ($user->user_device_id == null) {
-            // Store or update device information
-            $user->updateDeviceInfo(
-                $request->input('user_device_id'),
-                $request->input('firebase_id'),
-            );
-        }
+        $user->updateDeviceInfo(
+            $request->input('user_device_id'),
+            $request->input('firebase_id'),
+        );
+        // if ($user->user_device_id == null) {
+        //     // Store or update device information
+        // }
 
         if ($user->user_device_id !== $request->input('user_device_id')) {
             Auth::logout();
