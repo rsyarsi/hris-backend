@@ -309,8 +309,17 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                                         // ->orWhere('date_out_at', $date)
                                         ->where('type', 'ABSEN')
                                         ->first();
+                                        // return [
+                                        //     'message' => 'data ketemu!',
+                                        //     'data' => [$existingRecordAbsen]
+                                        // ];
             if ($function == 'IN') {
-                if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
+                if ($existingRecordAbsen && $existingRecordAbsen->note == "TIDAK ABSEN MASUK") { // CASE TIDAK ABSEN MASUK
+                    return [
+                        'message' => 'ANDA TIDAK BISA ABSEN MASUK!',
+                        'data' => [$existingRecordAbsen]
+                    ];
+                } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
                     $existingRecordAbsen->update([
                         'date_in_at' => $data['date_in_at'],
                         'time_in_at' => $data['time_in_at'],
@@ -371,9 +380,18 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         ];
                     }
                 } else {
+                    // return [
+                    //     'message' => 'Anda Belum Absen/Data not found',
+                    //     'data' => []
+                    // ];
+                    $data['date_in_at'] = null;
+                    $data['time_in_at'] = null;
+                    $data['time_out_at'] = $data['time_out_at'];
+                    $data['note'] = "TIDAK ABSEN MASUK";
+                    $data['shift_schedule_id'] = $idSchedule;
                     return [
-                        'message' => 'Anda Belum Absen/Data not found',
-                        'data' => []
+                        'message' => 'Absen Out Berhasil!',
+                        'data' => [$this->model->create($data)]
                     ];
                 }
             }
