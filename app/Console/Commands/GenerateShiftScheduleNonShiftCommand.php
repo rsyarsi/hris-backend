@@ -70,7 +70,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                     'setup_at' => now(),
                     'period' => $date->format('Y-m'),
                     'leave_note' => null,
-                    'holiday' => $date->isSunday() ?? 0,
+                    'holiday' => $date->isWeekend() ?? 0,
                     'night' => 0,
                     'national_holiday' => 0,
                     'import' => 0,
