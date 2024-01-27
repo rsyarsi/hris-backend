@@ -45,6 +45,7 @@ class PengembalianImport implements ToModel, WithStartRow
             'employee_id' => $employee->id,
             'amount' => $row[1],
             'payroll_period' => $row[2],
+            'user_created_id' => auth()->id(),
         ]);
     }
 }
