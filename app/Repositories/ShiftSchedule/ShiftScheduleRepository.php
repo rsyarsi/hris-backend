@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 use Illuminate\Support\Facades\DB;
-use App\Services\Shift\ShiftServiceInterface;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Models\{Shift, ShiftSchedule, Employee, GenerateAbsen};
 use App\Repositories\ShiftSchedule\ShiftScheduleRepositoryInterface;
@@ -15,7 +14,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 {
     private $model;
     private $employeeService;
-    private $shiftService;
     private $field =
     [
         'id',
@@ -76,12 +74,10 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
     public function __construct(
         ShiftSchedule $model,
         EmployeeServiceInterface $employeeService,
-        ShiftServiceInterface $shiftService,
     )
     {
         $this->model = $model;
         $this->employeeService = $employeeService;
-        $this->shiftService = $shiftService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null)

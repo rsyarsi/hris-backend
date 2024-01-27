@@ -87,6 +87,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                     'roles.permissions:id,name',
                                 ]);
                             },
+                            'contract' => function ($query) {
+                                $query->select('id', 'employee_id', 'transaction_number', 'start_at', 'end_at')->with([
+                                    'employeeContractDetail:id,employee_contract_id,nominal',
+                                ]);
+                            }
                         ])
                         ->select($this->field);
 
@@ -617,6 +622,20 @@ class EmployeeRepository implements EmployeeRepositoryInterface
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
         return $query->orderBy('name', 'ASC')->paginate($perPage);
+    }
+
+    public function employeeHaveContractDetail()
+    {
+        $query = $this->model
+                        ->with([
+                            'contract' => function ($query) {
+                                $query->select('id', 'employee_id', 'transaction_number', 'start_at', 'end_at', 'hour_per_day')->with([
+                                    'employeeContractDetail:id,employee_contract_id,nominal',
+                                ])->latest();
+                            }
+                        ])
+                        ->select($this->field);
+        return $query->get();
     }
 
     public function employeeSubordinate($perPage, $search = null)

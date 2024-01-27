@@ -106,7 +106,6 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                     $data['holiday'] = 1;
                     $data['night'] = 0;
                     $data['national_holiday'] = 0;
-                    $data['type'] = '';
                     $data['function'] = '';
                     $data['note'] = 'LIBUR';
                     $data['type'] = 'ABSEN';

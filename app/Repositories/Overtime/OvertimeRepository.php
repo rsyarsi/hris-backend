@@ -3,14 +3,15 @@
 namespace App\Repositories\Overtime;
 
 use Carbon\Carbon;
+use App\Models\GenerateAbsen;
 use App\Models\ShiftSchedule;
 use Illuminate\Support\Facades\DB;
 use App\Models\{Employee, Overtime, User};
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
-use App\Services\OvertimeHistory\OvertimeHistoryServiceInterface;
 use App\Services\OvertimeStatus\OvertimeStatusServiceInterface;
+use App\Services\OvertimeHistory\OvertimeHistoryServiceInterface;
 
 class OvertimeRepository implements OvertimeRepositoryInterface
 {
@@ -120,6 +121,40 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             'libur' => $data['libur'],
         ];
         $this->overtimeHistoryService->store($historyData);
+        // generate absen if type dinas luar
+        if ($data['type'] == "DINAS LUAR" || $data['type'] == "DINAS-LUAR" || $data['type'] == "dinas luar" || $data['type'] == "dinas-luar") {
+            $fromDateParse = Carbon::parse($data['from_date']);
+            $toDateParse = Carbon::parse($data['to_date']);
+            // employee
+            $employee = Employee::where('id', $data['employee_id'])->first(['id', 'name', 'employment_number', 'shift_group_id']);
+            // shift_schedule
+            $shiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
+                                    ->where('date', $fromDateParse->toDateString())
+                                    ->first();
+
+            $data['period'] = $fromDateParse->format('Y-m');
+            $data['date'] = $fromDateParse->toDateString();
+            $data['day'] = $fromDateParse->format('l');
+            $data['employee_id'] = $data['employee_id'];
+            $data['employment_id'] = $employee->employment_number;
+            $data['shift_id'] = $shiftSchedule->shift_id;
+            $data['date_in_at'] = $fromDateParse->toDateString();
+            $data['time_in_at'] = $fromDateParse->toTimeString();
+            $data['date_out_at'] = $toDateParse->toDateString();
+            $data['time_out_at'] = $toDateParse->toTimeString();
+            $data['schedule_date_in_at'] = $shiftSchedule->date;
+            $data['schedule_time_in_at'] = Carbon::parse($shiftSchedule->time_in)->toTimeString();
+            $data['schedule_date_out_at'] = $shiftSchedule->date;
+            $data['schedule_time_out_at'] = Carbon::parse($shiftSchedule->time_out)->toTimeString();
+            $data['holiday'] = $shiftSchedule->holiday;
+            $data['night'] = $shiftSchedule->night;
+            $data['national_holiday'] = $shiftSchedule->national_holiday;
+            $data['function'] = '';
+            $data['note'] = '';
+            $data['type'] = 'SPL';
+            $data['shift_schedule_id'] = $shiftSchedule->id;
+            GenerateAbsen::create($data);
+        }
         // send firebase notification
         $typeSend = 'Overtime';
         $registrationIds = [];
