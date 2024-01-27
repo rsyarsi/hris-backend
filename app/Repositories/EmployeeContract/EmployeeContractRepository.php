@@ -158,6 +158,8 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                 $value['employee_contract_id'] = $createdData->id;
                 $value['nominal'] = 0;
                 $value['active'] = 0;
+                $value['created_at'] = now();
+                $value['updated_at'] = now();
                 $this->contractDetailService->storeMultiple($value);
             }
         }

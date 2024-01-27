@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Repositories\TimesheetOvertime\TimesheetOvertimeRepositoryInterface;
 
-
 class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterface
 {
     private $model;
