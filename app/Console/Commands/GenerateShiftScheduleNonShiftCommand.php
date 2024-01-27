@@ -36,7 +36,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
      */
     public function handle()
     {
-        $employees = Employee::where('resigned_at', '>', Carbon::now())
+        $employees = Employee::where('resigned_at', '>=', Carbon::now())
                             ->where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
                             ->get(['id', 'name', 'employment_number', 'shift_group_id']);
         $shift = Shift::where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
@@ -51,6 +51,8 @@ class GenerateShiftScheduleNonShiftCommand extends Command
             $existingRecord = ShiftSchedule::where('employee_id', $employee->id)
                                             ->where('date', $date->format('Y-m-d'))
                                             ->first();
+            $timeIn = $date->isWeekend() ? '00:00:00' : $shift->in_time;
+            $timeOut = $date->isWeekend() ? '00:00:00' : $shift->out_time;
             if (!$existingRecord){
                 $ulid = Ulid::generate(); // Generate a ULID
                 $shiftScheduleData = [
@@ -58,8 +60,8 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                     'employee_id' => $employee->id,
                     'shift_id' => $shift->id,
                     'date' => $date->format('Y-m-d'),
-                    'time_in' => $date->format('Y-m-d') . ' ' . $shift->in_time,
-                    'time_out' => $date->format('Y-m-d') . ' '. $shift->out_time,
+                    'time_in' => $date->format('Y-m-d') . ' ' . $timeIn,
+                    'time_out' => $date->format('Y-m-d') . ' ' . $timeOut,
                     'late_note' => null,
                     'shift_exchange_id' => null,
                     'user_exchange_id' => null,
