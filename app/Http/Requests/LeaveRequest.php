@@ -49,9 +49,9 @@ class LeaveRequest extends FormRequest
             $rules['file'] = 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048';
         }
 
-        if ($this->isMethod('post')) {
-            $rules['from_date'][] = new UniqueLeaveDateRange();
-        }
+        // if ($this->isMethod('post')) {
+        //     $rules['from_date'][] = new UniqueLeaveDateRange();
+        // }
 
         return $rules;
     }

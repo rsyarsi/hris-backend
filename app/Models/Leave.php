@@ -30,6 +30,8 @@ class Leave extends Model
         'file_url',
         'file_path',
         'file_disk',
+        'shift_awal_id',
+        'shift_schedule_id',
     ];
 
     public function employee()
@@ -54,7 +56,12 @@ class Leave extends Model
 
     public function shiftSchedule()
     {
-        return $this->hasMany(ShiftSchedule::class, 'leave_id');
+        return $this->belongsTo(ShiftSchedule::class, 'shift_schedule_id', 'id');
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class, 'shift_awal_id', 'id');
     }
 
     // public function leaveApproval()

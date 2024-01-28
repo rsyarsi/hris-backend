@@ -27,6 +27,7 @@ return new class extends Migration
     {
         Schema::table('employee_legalities', function (Blueprint $table) {
             $table->dropForeign(['no_str']);
+            $table->dropColumn('no_str');
         });
     }
 };

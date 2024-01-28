@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories\CatatanCuti;
 
-Interface CatatanCutiRepositoryInterface {
-
+Interface CatatanCutiRepositoryInterface
+{
     public function index($perPage, $search);
     public function catatanCutiEmployee($perPage, $search, $employeeId);
     public function catatanCutiEmployeeLatest($employeeId);

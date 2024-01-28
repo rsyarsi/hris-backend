@@ -36,13 +36,13 @@ class UniqueLeaveDateRange implements Rule
         return !Leave::where('employee_id', $employeeId)
                     ->where(function ($query) use ($fromDate, $toDate) {
                         $query->whereBetween('from_date', [$fromDate, $toDate])
-                                ->orWhereBetween('to_date', [$fromDate, $toDate]);
+                                ->orWhereBetween('to_date', [$fromDate, $toDate])
+                                ->where('leave_status_id', 10)
+                                ->orWhere('leave_status_id', 9)
+                                ->orWhere('leave_status_id', 8)
+                                ->orWhere('leave_status_id', 7)
+                                ->orWhere('leave_status_id', 6);
                     })
-                    ->where('leave_status_id', 10)
-                    ->orWhere('leave_status_id', 9)
-                    ->orWhere('leave_status_id', 8)
-                    ->orWhere('leave_status_id', 7)
-                    ->orWhere('leave_status_id', 6)
                     ->exists();
     }
 

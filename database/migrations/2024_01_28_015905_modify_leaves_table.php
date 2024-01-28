@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('generate_absen', function (Blueprint $table) {
+        Schema::table('leaves', function (Blueprint $table) {
+            $table->foreign('shift_awal_id')->references('id')->on('shifts')->onDelete('set null');
+            $table->string('shift_awal_id', 26)->nullable();
             $table->foreign('shift_schedule_id')->references('id')->on('shift_schedules')->onDelete('set null');
-            $table->string('shift_schedule_id',26)->nullable();
+            $table->string('shift_schedule_id', 26)->nullable();
         });
     }
 
@@ -26,7 +28,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('generate_absen', function (Blueprint $table) {
+        Schema::table('leaves', function (Blueprint $table) {
+            $table->dropForeign(['shift_awal_id']);
+            $table->dropColumn('shift_awal_id');
             $table->dropForeign(['shift_schedule_id']);
             $table->dropColumn('shift_schedule_id');
         });

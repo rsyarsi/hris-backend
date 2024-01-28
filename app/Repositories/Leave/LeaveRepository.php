@@ -3,7 +3,7 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\{Employee, Leave, ShiftSchedule, User};
+use App\Models\{CatatanCuti, Employee, Leave, ShiftSchedule, User};
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
@@ -40,6 +40,8 @@ class LeaveRepository implements LeaveRepositoryInterface
         'file_url',
         'file_path',
         'file_disk',
+        'shift_awal_id',
+        'shift_schedule_id',
     ];
 
     public function __construct(
@@ -91,6 +93,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                             },
                             'shiftSchedule' => function ($query) {
                                 $query->select(
+                                    'id',
                                     'employee_id',
                                     'shift_id',
                                     'date',
@@ -112,6 +115,15 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     'leave_id'
                                 );
                             },
+                            'shift' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'code',
+                                    'name',
+                                    'in_time',
+                                    'out_time',
+                                );
+                            },
                         ])
                         ->select($this->field);
         if ($search) {
@@ -131,9 +143,15 @@ class LeaveRepository implements LeaveRepositoryInterface
         $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
                                     ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
                                     ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                    ->exists();
+                                    ->first();
+                                    // return $checkShiftSchedule;
+                                    // return [
+                                    //     'message' => 'Validation Error',
+                                    //     'error' => true,
+                                    //     'code' => 422,
+                                    //     'data' => $checkShiftSchedule
+                                    // ];
         if (!$checkShiftSchedule) {
-            // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
             return [
                 'message' => 'Validation Error',
                 'error' => true,
@@ -141,10 +159,14 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
-        $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
+        $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
+        $data['shift_awal_id'] = $checkShiftSchedule->shift_id;
+        $data['shift_schedule_id'] = $checkShiftSchedule->id;
+        // create leave
         $leave = $this->model->create($data);
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+        // create leave history
         $historyData = [
             'leave_id' => $leave->id,
             'user_id' => auth()->id(),
@@ -161,7 +183,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
 
         // catatan cuti
-        if ($data['leave_type_id'] == 1 || $data['leave_type_id'] == 6) {
+        if ($data['leave_type_id'] == 1) {
             $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
             if ($catatanCutiLatest === null) {
                 $quantityAkhirCatatan = 12;
@@ -214,7 +236,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         }
 
         // notif ke HRD
-        $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
+        $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
         foreach ($employeeHrd as $key ) {
             # code...
            $firebaseIdx = $key;
@@ -225,7 +247,6 @@ class LeaveRepository implements LeaveRepositoryInterface
         if (!empty($registrationIds)) {
             $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
         }
-
         return [
             'message' => 'Leave created successfully',
             'error' => false,
@@ -269,7 +290,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
 
         // catatan cuti
-        if ($data['leave_type_id'] == 1 || $data['leave_type_id'] == 6) {
+        if ($data['leave_type_id'] == 1) {
             $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
             if ($catatanCutiLatest === null) {
                 $quantityAkhirCatatan = 12;
@@ -368,6 +389,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                             },
                             'shiftSchedule' => function ($query) {
                                 $query->select(
+                                    'id',
                                     'employee_id',
                                     'shift_id',
                                     'date',
@@ -387,6 +409,15 @@ class LeaveRepository implements LeaveRepositoryInterface
                                     'night',
                                     'national_holiday',
                                     'leave_id'
+                                );
+                            },
+                            'shift' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'code',
+                                    'name',
+                                    'in_time',
+                                    'out_time',
                                 );
                             },
                         ])
@@ -757,7 +788,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             $this->leaveHistory->store($historyData);
 
             // update data batal catatan cuti
-            if (($leave->leave_type_id == 6 || $leave->leave_type_id == 1) && $status == 8) {
+            if ($leave->leave_type_id == 1 && $status == 10) {
                 $leave->update([
                     'quantity_cuti_awal' => 0,
                     'sisa_cuti' => 0
@@ -768,9 +799,15 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 'leave_id' => null,
                                 'leave_note' => null
                             ]);
-
+                $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
+                            ->latest()
+                            ->first();
                 // update catatan cuti
-                $this->catatanCutiService->updateStatus($leave->id, ['batal' => 1]);
+                $catatanCuti->update([
+                    'quantity_akhir' => $catatanCuti->quantity_awal,
+                    'quantity_out' => 1,
+                    'batal' => 1
+                ]);
             }
 
             // firebase
@@ -841,7 +878,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             $this->leaveHistory->store($historyData);
 
             // update data batal catatan cuti
-            if (($leave->leave_type_id == 6 || $leave->leave_type_id == 1) && $leaveStatusId == 8) {
+            if ($leave->leave_type_id == 1 && $leaveStatusId == 8) {
                 $leave->update([
                     'quantity_cuti_awal' => 0,
                     'sisa_cuti' => 0
