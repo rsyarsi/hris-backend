@@ -681,4 +681,81 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             ->where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
                             ->get(['id', 'name', 'employment_number', 'shift_group_id']);
     }
+
+    public function employeeResigned($perPage, $search = null)
+    {
+        $query = $this->model
+                        ->with([
+                            'identityType' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'sex' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'maritalStatus' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'religion' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'province' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'city' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'district' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'village' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'statusEmployment' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'position' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'unit' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'department' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'shiftGroup' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'manager' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'supervisor' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'kabag' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                            'user' => function ($query) {
+                                $query->select('id', 'name', 'email', 'username', 'firebase_id', 'active')->with([
+                                    'roles:id,name',
+                                    'roles.permissions:id,name',
+                                ]);
+                            },
+                            'contract' => function ($query) {
+                                $query->select('id', 'employee_id', 'transaction_number', 'start_at', 'end_at')->with([
+                                    'employeeContractDetail:id,employee_contract_id,nominal',
+                                ]);
+                            }
+                        ])
+                        ->select($this->field)
+                        ->where('resigned_at', '<=', Carbon::now()->toDateString());
+
+        if ($search !== null) {
+            $query->where(function ($query) use ($search) {
+                $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                    ->orWhere('employment_number', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+        return $query->orderBy('employment_number', 'ASC')->paginate($perPage);
+    }
 }

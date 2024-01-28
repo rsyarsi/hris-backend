@@ -21,4 +21,5 @@ interface EmployeeServiceInterface
     public function employeeSubordinateMobile($employeeId);
     public function employeeNonShift();
     public function employeeHaveContractDetail();
+    public function employeeResigned($perPage, $search);
 }

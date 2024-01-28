@@ -112,4 +112,10 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeHaveContractDetail();
     }
+
+    public function employeeResigned($perPage, $search)
+    {
+        return $this->repository->employeeResigned($perPage, $search);
+    }
+
 }
