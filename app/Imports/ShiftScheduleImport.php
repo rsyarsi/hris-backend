@@ -35,17 +35,6 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
         ];
     }
 
-    function check($employeeNumber, $shiftCode)
-    {
-        $employee = Employee::where('employment_number', $employeeNumber)->first();
-        $shift = Shift::where('shift_group_id', $employee->shift_group_id)
-                        ->where('code', $shiftCode)
-                        ->exists();
-        if ($shift) {
-            return 'Shift Tidak ditemukan!.';
-        }
-    }
-
     /**
     * @param array $row
     *

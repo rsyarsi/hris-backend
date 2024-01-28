@@ -529,6 +529,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         }
 
         $datwa = Carbon::now()->toDateString();
+        // $datwa = '2024-01-23';
         // check shift group id apakah Non Shift atau tidak
         $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
         // check di table shift schedule exists ?

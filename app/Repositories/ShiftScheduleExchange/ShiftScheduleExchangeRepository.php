@@ -2,8 +2,7 @@
 
 namespace App\Repositories\ShiftScheduleExchange;
 
-use App\Models\ShiftSchedule;
-use App\Models\ShiftScheduleExchange;
+use App\Models\{Shift, ShiftSchedule, ShiftScheduleExchange};
 use App\Repositories\ShiftScheduleExchange\ShiftScheduleExchangeRepositoryInterface;
 use Carbon\Carbon;
 
@@ -39,6 +38,9 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
         'user_created_id',
         'user_updated_id',
         'cancel',
+        'shift_awal_request_id',
+        'to_shift_awal_id',
+        'exchange_shift_awal_id',
     ];
     private $fieldShiftSchedule = [
         'id',
@@ -96,6 +98,15 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                         },
                         'userUpdated' => function ($query) {
                             $query->select('id', 'name', 'email');
+                        },
+                        'shiftAwalRequest' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'exchangeShiftTo' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'exchangeShiftAwal' => function ($query) {
+                            $query->select('id', 'name');
                         },
                     ])
                     ->select($this->field);
@@ -298,6 +309,15 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
                                         'userUpdated' => function ($query) {
                                             $query->select('id', 'name', 'email');
                                         },
+                                        'shiftAwalRequest' => function ($query) {
+                                            $query->select('id', 'name');
+                                        },
+                                        'exchangeShiftTo' => function ($query) {
+                                            $query->select('id', 'name');
+                                        },
+                                        'exchangeShiftAwal' => function ($query) {
+                                            $query->select('id', 'name');
+                                        },
                                     ])
                                     ->where('id', $id)
                                     ->first($this->field);
@@ -307,12 +327,58 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
     public function update($id, $data)
     {
         $shiftscheduleexchange = $this->model->find($id);
+        // return $shiftscheduleexchange;
         if ($shiftscheduleexchange) {
-            // ShiftSchedule::where('id', $shiftScheduleExchange->to_shift_schedule_id)
-            //             ->update([
-            //                 'shift_exchange_id' => null,
-            //                 'user_exchange_id' => null,
-            //             ]);
+            if ($data['cancel'] == 1 && $shiftscheduleexchange->shift_exchange_type == "LIBUR") {
+                $shiftRequest = Shift::where('id', $shiftscheduleexchange->shift_awal_request_id)->first();
+                ShiftSchedule::where('id', $shiftscheduleexchange->shift_schedule_request_id)
+                            ->update([
+                                'shift_id' => $shiftscheduleexchange->shift_awal_request_id,
+                                'time_in' => $shiftscheduleexchange->shift_schedule_date_requested.' '.$shiftRequest->in_time,
+                                'time_out' => $shiftscheduleexchange->shift_schedule_date_requested.' '.$shiftRequest->out_time,
+                                'shift_exchange_id' => null,
+                                'user_exchange_id' => null,
+                                'user_exchange_at' => null,
+                            ]);
+            } else if ($data['cancel'] == 1 && $shiftscheduleexchange->shift_exchange_type == "TUKAR SHIFT") {
+                // request
+                $shiftRequest = Shift::where('id', $shiftscheduleexchange->shift_awal_request_id)->first();
+                ShiftSchedule::where('id', $shiftscheduleexchange->shift_schedule_request_id)
+                            ->update([
+                                'shift_id' => $shiftscheduleexchange->shift_awal_request_id,
+                                'time_in' => $shiftscheduleexchange->shift_schedule_date_requested.' '.$shiftRequest->in_time,
+                                'time_out' => $shiftscheduleexchange->shift_schedule_date_requested.' '.$shiftRequest->out_time,
+                                'shift_exchange_id' => null,
+                                'user_exchange_id' => null,
+                                'user_exchange_at' => null,
+                            ]);
+                // to
+                if ($shiftscheduleexchange->to_shift_awal_id !== null) {
+                    $shiftTo = Shift::where('id', $shiftscheduleexchange->to_shift_awal_id)->first();
+                    ShiftSchedule::where('id', $shiftscheduleexchange->to_shift_schedule_id)
+                                ->update([
+                                    'shift_id' => $shiftscheduleexchange->to_shift_awal_id,
+                                    'time_in' => $shiftscheduleexchange->to_shift_schedule_date.' '.$shiftTo->in_time,
+                                    'time_out' => $shiftscheduleexchange->to_shift_schedule_date.' '.$shiftTo->out_time,
+                                    'shift_exchange_id' => null,
+                                    'user_exchange_id' => null,
+                                    'user_exchange_at' => null,
+                                ]);
+                }
+                if ($shiftscheduleexchange->exchange_shift_awal_id !== null) {
+                    // exchange
+                    $shiftExchange = Shift::where('id', $shiftscheduleexchange->exchange_shift_awal_id)->first();
+                    ShiftSchedule::where('id', $shiftscheduleexchange->exchange_shift_schedule_id)
+                                ->update([
+                                    'shift_id' => $shiftscheduleexchange->exchange_shift_awal_id,
+                                    'time_in' => $shiftscheduleexchange->exchange_date.' '.$shiftExchange->in_time,
+                                    'time_out' => $shiftscheduleexchange->exchange_date.' '.$shiftExchange->out_time,
+                                    'shift_exchange_id' => null,
+                                    'user_exchange_id' => null,
+                                    'user_exchange_at' => null,
+                                ]);
+                }
+            }
             $shiftscheduleexchange->update($data);
             return $shiftscheduleexchange;
         }

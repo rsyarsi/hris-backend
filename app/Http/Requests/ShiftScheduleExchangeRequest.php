@@ -26,7 +26,7 @@ class ShiftScheduleExchangeRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'shift_exchange_type' => 'nullable|max:50',
+            'shift_exchange_type' => 'nullable|in:TUKAR SHIFT,LIBUR',
             'employe_requested_id' => 'nullable|exists:employees,id',
             'shift_schedule_date_requested' => 'nullable|date',
             'to_employee_id' => 'nullable|exists:employees,id',

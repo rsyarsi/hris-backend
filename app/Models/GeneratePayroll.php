@@ -29,8 +29,24 @@ class GeneratePayroll extends Model
         'liability_employee_potongan', 'liability_employee_jht', 'liability_employee_jp', 'liability_employee_bpjskesehatan',
         'liability_employee_pph21', 'liability_employee_total', 'salary_total', 'salary_total_before_zakat',
         'zakat', 'salary_after_zakat', 'period_payroll', 'thr', 'liability_employee_foods', 'liability_employee_absens',
-        'notes', 'file_name', 'file_path', 'file_url'
+        'notes', 'file_name', 'file_path', 'file_url', 'created_at', 'updated_at',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            dd($model->getAttributes());
+            $model->created_at = now();
+            $model->updated_at = now();
+        });
+
+        self::updating(function ($model) {
+            dd($model->getAttributes());
+            $model->updated_at = now();
+        });
+    }
 
     public function employee()
     {

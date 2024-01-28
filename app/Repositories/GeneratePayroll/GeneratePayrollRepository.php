@@ -3,17 +3,15 @@
 namespace App\Repositories\GeneratePayroll;
 
 use Carbon\Carbon;
+use App\Models\Employee;
 use App\Models\GeneratePayroll;
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
-use App\Services\Deduction\DeductionServiceInterface;
 use App\Repositories\GeneratePayroll\GeneratePayrollRepositoryInterface;
 
 class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
 {
     private $model;
-    private $employeeService;
-    private $deductionService;
     private $field =
     [
         'id', 'employee_name', 'employee_id', 'employeement_id', 'employee_email', 'employee_status',
@@ -32,15 +30,9 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
         'notes', 'file_name', 'file_path', 'file_url'
     ];
 
-    public function __construct(
-        GeneratePayroll $model,
-        EmployeeServiceInterface $employeeService,
-        DeductionServiceInterface $deductionService,
-    )
+    public function __construct(GeneratePayroll $model)
     {
         $this->model = $model;
-        $this->employeeService = $employeeService;
-        $this->deductionService = $deductionService;
     }
 
     public function index($perPage, $search = null, $unit = null, $period = null)
@@ -139,7 +131,7 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
 
         return $query->get();
     }
-    
+
     public function slipGajiMobile($id)
     {
         $currentYear = now()->year;
@@ -257,9 +249,13 @@ class GeneratePayrollRepository implements GeneratePayrollRepositoryInterface
     {
         $periodeAbsen = Carbon::parse($periodeAbsen);
         $periodePayroll = Carbon::parse($periodePayroll);
-        $employees = $this->employeeService->employeeActive(999999999, null);
-        $now = Carbon::now();
+        // $employees = $this->employeeService->employeeActive(999999999, null);
+        $employees = Employee::whereNot('name', 'ADMINISTRATOR')
+                            ->where('resigned_at', '>=', Carbon::now()->toDateString())
+                            ->orderBy('name', 'ASC')
+                            ->get();
 
+        $now = Carbon::now();
         foreach ($employees as $item) {
             $result = DB::select('CALL generatepayroll(?, ?, ?, ?, ?)', [
                 (string)$item->id,

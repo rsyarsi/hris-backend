@@ -54,6 +54,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
 
         // shift schedule service
         $shiftScheduleRequested = $this->shiftScheduleService->shiftScheduleEmployeeDate($employeRequestedId, $shiftScheduleDateRequested);
+
         if (!$shiftScheduleRequested) {
             return [
                 'message' => 'Validation Error!',
@@ -64,16 +65,9 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
                     ]
             ];
         }
-        // if (!$shiftScheduleRequested) {
-        //     return [
-        //         'message' => 'Validation Error!',
-        //         'success' => false,
-        //         'code' => 422,
-        //         'data' => [$shiftScheduleRequested]
-        //     ];
-        // }
         $data['shift_schedule_request_id'] = $shiftScheduleRequested->id;
         $data['shift_id_request'] = $shiftScheduleRequested->shift->id ?? null;
+        $data['shift_id'] = $shiftScheduleRequested->shift_id ?? null;
 
         if ($shiftExchangeType == "LIBUR") {
             $data['shift_id_request'] = $shiftLibur->id;
@@ -97,12 +91,16 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
             $data['exchange_shift_schedule_name'] = null;
             $data['exchange_shift_schedule_time_from'] = null;
             $data['exchange_shift_schedule_time_end'] = null;
+            $data['shift_awal_request_id'] = $shiftScheduleRequested->shift_id;
+            $data['to_shift_awal_id'] = null;
+            $data['exchange_shift_awal_id'] = null;
         } else {
             $data['shift_id_request'] = $shiftScheduleRequested->shift->id;
             $data['shift_schedule_code_requested'] = $shiftScheduleRequested->shift->code;
             $data['shift_schedule_name_requested'] = $shiftScheduleRequested->shift->name;
             $data['shift_schedule_time_from_requested'] = $shiftScheduleRequested->time_in;
             $data['shift_schedule_time_end_requested'] = $shiftScheduleRequested->time_out;
+            $data['shift_awal_request_id'] = $shiftScheduleRequested->shift_id;
 
             // to
             if ($data['to_employee_id'] !== null && $employeRequestedId == $data['to_employee_id']) {
@@ -126,6 +124,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
                 $data['to_shift_schedule_name'] = $shiftScheduleTo->shift->name;
                 $data['to_shift_schedule_time_from'] = $shiftScheduleTo->time_in;
                 $data['to_shift_schedule_time_end'] = $shiftScheduleTo->time_out;
+                $data['to_shift_awal_id'] = $shiftScheduleTo->shift_id;
             }
 
             // exchange
@@ -148,6 +147,7 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
                 $data['exchange_shift_schedule_name'] = $shiftScheduleExchange->shift->name;
                 $data['exchange_shift_schedule_time_from'] = $shiftScheduleExchange->time_in;
                 $data['exchange_shift_schedule_time_end'] = $shiftScheduleExchange->time_out;
+                $data['exchange_shift_awal_id'] = $shiftScheduleExchange->shift_id;
             }
         }
 

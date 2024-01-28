@@ -164,4 +164,14 @@ class EmployeeController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function employeeHaveContractDetail(Request $request)
+    {
+        try {
+            $employees = $this->employeeService->employeeHaveContractDetail();
+            return $this->success('Employees Have Contract retrieved successfully', $employees);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\TimesheetOvertime;
 
+use App\Models\Employee;
 use Carbon\Carbon;
 use App\Models\TimesheetOvertime;
 use Illuminate\Support\Facades\DB;
@@ -116,21 +117,62 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
 
     public function executeStoredProcedure($periodeAbsenStart, $periodeAbsenEnd)
     {
-        $employees = $this->employeeService->employeeActive(999999999, null);
         $now = Carbon::now();
-        // return $employees;
+        $periodGaji = Carbon::parse($periodeAbsenEnd);
+        $employees = Employee::with('contract')->with([
+            'contract' => function ($query) {
+                $query->select('id', 'employee_id', 'transaction_number', 'start_at', 'end_at', 'hour_per_day', 'created_at')->with([
+                    'employeeContractDetail:id,employee_contract_id,nominal,created_at',
+                ])->orderBy('start_at', 'ASC');
+            }
+        ])
+        ->whereNot('name', 'ADMINISTRATOR')
+        ->where('resigned_at', '>=', Carbon::now()->toDateString())
+        ->orderBy('name', 'ASC')
+        ->get();
+        $message = 'Execute Success!';
         foreach ($employees as $item) {
-            $result = DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
-                        $now->toDateString(),
-                        $periodeAbsenStart->toDateString(),
-                        $periodeAbsenEnd->toDateString(),
-                        $item->id,
-                        $periodeAbsenStart->format('Y-m')
-                    ]);
+            // Check if the employee has a contract
+            if (count($item->contract) > 0 && count($item->contract->first()->employeeContractDetail) > 0) {
+                foreach ($item->contract as $contract) {
+                    // echo $contract->hour_per_day.',';
+                    if ($contract->employeeContractDetail !== null) {
+                        foreach ($contract->employeeContractDetail as $employeeContractDetail) {
+                            // echo $employeeContractDetail->id.',';
+                        }
+                    } else {
+                        $message = 'Execute Gagal di kontrak detail';
+                    }
+                }
+            } else {
+                $message = 'Execute gagal, di kontrak';
+            }
         }
-        if ($result) {
-            return $result;
+
+        if ($message !== '') {
+            return $message;
         }
-        return null;
+        // If all employees pass the validation, proceed with stored procedures
+        foreach ($employees as $item) {
+            DB::select('CALL generatetempovertimes(?, ?, ?, ?, ?, ?)', [
+                $now->toDateString(),
+                $periodeAbsenStart,
+                $periodeAbsenEnd,
+                $item->id,
+                $periodGaji->format('Y-m'),
+                // '2024-01',
+                $item->contract['0']->hour_per_day,
+            ]);
+
+            DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
+                $now->toDateString(),
+                $periodeAbsenStart,
+                $periodeAbsenEnd,
+                $item->id,
+                $periodGaji->format('Y-m')
+                // '2024-01',
+            ]);
+        }
+        return $message;
     }
 }

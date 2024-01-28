@@ -59,8 +59,9 @@ class TimesheetOvertimeService implements TimesheetOvertimeServiceInterface
 
     public function executeStoredProcedure($periodeAbsenStart, $periodeAbsenEnd)
     {
-        $periodeAbsenStart = Carbon::parse($periodeAbsenStart.'-20'); // value 2023-11
-        $periodeAbsenEnd = Carbon::parse($periodeAbsenEnd.'-21'); // value 2023-12
+        Carbon::setlocale('id');
+        $periodeAbsenStart = Carbon::parse($periodeAbsenStart.'-20')->toDateString(); // value 2023-11-01
+        $periodeAbsenEnd = Carbon::parse($periodeAbsenEnd.'-21')->toDateString(); // value 2023-12-01
         return $this->repository->executeStoredProcedure($periodeAbsenStart, $periodeAbsenEnd);
     }
 }

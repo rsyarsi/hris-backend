@@ -89,6 +89,6 @@ class EmployeeContract extends Model
 
     public function employeeContractDetail()
     {
-        return $this->hasMany(EmployeeContractDetail::class, 'employee_contract_id');
+        return $this->hasMany(EmployeeContractDetail::class, 'employee_contract_id', 'id');
     }
 }

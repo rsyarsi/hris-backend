@@ -46,6 +46,9 @@ class ShiftScheduleExchange extends Model
         'user_updated_id',
         'cancel',
         'notes',
+        'shift_awal_request_id',
+        'to_shift_awal_id',
+        'exchange_shift_awal_id',
     ];
 
     public function employeeRequest()
@@ -86,5 +89,20 @@ class ShiftScheduleExchange extends Model
     public function userUpdated()
     {
         return $this->belongsTo(User::class, 'user_updated_id', 'id');
+    }
+
+    public function shiftAwalRequest()
+    {
+        return $this->belongsTo(Shift::class, 'shift_awal_request_id', 'id');
+    }
+
+    public function exchangeShiftTo()
+    {
+        return $this->belongsTo(Shift::class, 'to_shift_awal_id', 'id');
+    }
+
+    public function exchangeShiftAwal()
+    {
+        return $this->belongsTo(Shift::class, 'exchange_shift_awal_id', 'id');
     }
 }

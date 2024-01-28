@@ -135,6 +135,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('employee-subordinate-mobile', 'employeeSubordinateMobile')->name('employee-subordinate-mobile');
             // route for employee where employee non shift
             Route::post('employee-non-shift', 'employeeNonShift')->name('employee-non-shift');
+            // route for employee employee have contract
+            Route::post('employee-have-contract', 'employeeHaveContract')->name('employee-have-contract');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);

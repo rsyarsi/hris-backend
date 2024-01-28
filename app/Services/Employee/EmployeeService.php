@@ -107,4 +107,9 @@ class EmployeeService implements EmployeeServiceInterface
     {
         return $this->repository->employeeNonShift();
     }
+
+    public function employeeHaveContractDetail()
+    {
+        return $this->repository->employeeHaveContractDetail();
+    }
 }
