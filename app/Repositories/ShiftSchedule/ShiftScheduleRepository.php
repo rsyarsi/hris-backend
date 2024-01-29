@@ -528,8 +528,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             return [];
         }
 
-        $datwa = Carbon::now()->toDateString();
-        // $datwa = '2024-01-23';
+        // $datwa = Carbon::now()->toDateString();
+        $datwa = '2024-01-23';
         // check shift group id apakah Non Shift atau tidak
         $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
         // check di table shift schedule exists ?
@@ -604,14 +604,14 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         DB::raw("'0' as national_holiday"),
                         DB::raw("'-' as leave_id"),
                         DB::raw("COALESCE(employees.name, '') as employee_name"),
-                        DB::raw("'' as generate_absen_id"),
-                        DB::raw("'' as generate_absen_period"),
-                        DB::raw("'' as generate_absen_date"),
-                        DB::raw("'' as generate_absen_type"),
-                        DB::raw("'' as generate_absen_time_in_at"),
-                        DB::raw("'' as generate_absen_time_out_at"),
-                        DB::raw("'' as generate_absen_telat"),
-                        DB::raw("'' as generate_absen_pa"),
+                        DB::raw("COALESCE(generate_absen.id::text, '') as generate_absen_id"),
+                        DB::raw("COALESCE(generate_absen.period, '') as generate_absen_period"),
+                        DB::raw("COALESCE(TO_CHAR(generate_absen.date, 'YYYY-MM-DD'), '') as generate_absen_date"),
+                        DB::raw("COALESCE(generate_absen.type, '') as generate_absen_type"),
+                        DB::raw("COALESCE(generate_absen.time_in_at, '') as generate_absen_time_in_at"),
+                        DB::raw("COALESCE(generate_absen.time_out_at, '') as generate_absen_time_out_at"),
+                        DB::raw("COALESCE(generate_absen.telat::text, '') as generate_absen_telat"),
+                        DB::raw("COALESCE(generate_absen.pa::text, '') as generate_absen_pa"),
                         DB::raw("'' as shift_group_id"),
                         DB::raw("'' as shift_code"),
                         DB::raw("COALESCE(overtimes.type, '') as shift_name"),
@@ -636,14 +636,18 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         DB::raw("'SPL' AS schedule_type"),
                         DB::raw("overtimes.id as overtime_id")
                     ])
+                    ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
+                    ->leftJoin('generate_absen', function ($join) use ($datwa) {
+                        $join->on('overtimes.employee_id', '=', 'generate_absen.employee_id')
+                            ->where(DB::raw("CAST(overtimes.from_date AS DATE)"), '=', DB::raw("CAST(generate_absen.date_in_at AS DATE)"))
+                            ->where('generate_absen.type', 'SPL');
+                    })
                     ->leftJoin('shift_schedules', function ($join) use ($datwa) {
                         $join->on('overtimes.employee_id', '=', 'shift_schedules.employee_id')
                             ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)")
                             ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)");
                     })
-                    ->join('employees', 'shift_schedules.employee_id', '=', 'employees.id')
-                    ->where('shift_schedules.employee_id', $employee->id)
-                    ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)");
+                    ->where('shift_schedules.employee_id', $employee->id);
                     // union all here
         $shiftschedule = DB::table('shift_schedules')
                     ->select([
@@ -702,17 +706,16 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         DB::raw("'' as overtime_id")
                     ])
                     ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
-                    // ->leftJoin('generate_absen', 'shift_schedules.date', '=', 'generate_absen.date','shift_schedules.employee_id','=','generate_absen.employee_id')
-                    ->leftJoin('generate_absen', function ($join) use ($employee) {
+                    ->leftJoin('generate_absen', function ($join) {
                         $join->on('shift_schedules.employee_id', '=', 'generate_absen.employee_id')
-                            ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"));
+                            ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"))
+                            ->where('generate_absen.type', 'ABSEN');
                     })
                     ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
                     ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id' ,'shift_schedules.employee_id','=','leaves.employee_id')
                     ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                     ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
                     ->where('shift_schedules.employee_id', $employee->id)
-                    // ->where(DB::raw("TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD')"), $datwa)
                     ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)")
                     ->unionAll($lembur)
                     ->orderBy('date', 'ASC')
@@ -736,8 +739,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 DB::raw("COALESCE(shift_schedules.shift_id, '') as shift_id"),
                                 DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'YYYY-MM-DD'), '') as date"),
                                 DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'TMDay'), '') as day_name"),
-                                DB::raw("COALESCE(TO_CHAR(shift_schedules.time_in, 'YYYY-MM-DD HH24:MI:SS'), '') as time_in"),
-                                DB::raw("COALESCE(TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD HH24:MI:SS'), '') as time_out"),
+                                DB::raw("COALESCE(generate_absen.time_in_at, '') as time_in"),
+                                DB::raw("COALESCE(generate_absen.time_out_at, '') as time_out"),
                                 DB::raw("COALESCE(shift_schedules.late_note, '') as late_note"),
                                 DB::raw("COALESCE(shift_schedules.shift_exchange_id, '') as shift_exchange_id"),
                                 DB::raw("COALESCE(shift_schedules.user_exchange_id::text, '') as user_exchange_id"),
@@ -752,7 +755,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 DB::raw("COALESCE(shift_schedules.night::text, '') as night"),
                                 DB::raw("COALESCE(shift_schedules.national_holiday::text, '') as national_holiday"),
                                 DB::raw("COALESCE(shift_schedules.leave_id::text, '') as leave_id"),
-                                // DB::raw("COALESCE(employees.id, '') as employee_id"),
                                 DB::raw("COALESCE(employees.name, '') as employee_name"),
                                 DB::raw("COALESCE(generate_absen.id::text, '') as generate_absen_id"),
                                 DB::raw("COALESCE(generate_absen.period, '') as generate_absen_period"),
@@ -762,7 +764,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 DB::raw("COALESCE(generate_absen.time_out_at, '') as generate_absen_time_out_at"),
                                 DB::raw("COALESCE(generate_absen.telat::text, '') as generate_absen_telat"),
                                 DB::raw("COALESCE(generate_absen.pa::text, '') as generate_absen_pa"),
-                                // DB::raw("COALESCE(shifts.id::text, '') as shift_id"),
                                 DB::raw("COALESCE(shifts.shift_group_id::text, '') as shift_group_id"),
                                 DB::raw("COALESCE(shifts.code, '') as shift_code"),
                                 DB::raw("COALESCE(shifts.name, '') as shift_name"),
@@ -786,15 +787,11 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
                                 DB::raw("COALESCE(leave_statuses.name, '') as leave_status_name"),
                             ])
-
                             ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
-                            // ->leftJoin('generate_absen', function ($join) use ($employee) {
-                            //     $join->on('generate_absen.date', '=', 'shift_schedules.date')
-                            //          ->where('shift_schedules.employee_id', '=', 'generate_absen.employee_id');
-                            // })
-                            ->leftJoin('generate_absen', function ($join) use ($employee) {
+                            ->leftJoin('generate_absen', function ($join) {
                                 $join->on('shift_schedules.employee_id', '=', 'generate_absen.employee_id')
-                                    ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"));
+                                    ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"))
+                                    ->whereIn('generate_absen.type', ['ABSEN','SPL']);
                             })
                             ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
                             ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')
