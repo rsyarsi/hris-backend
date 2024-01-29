@@ -6,6 +6,7 @@ Interface GenerateAbsenRepositoryInterface
     public function index($perPage, $search, $period_1, $period_2, $unit);
     public function generateAbsenEmployee($employeeId);
     public function monitoringAbsen($perPage, $search, $period_1, $period_2, $unit);
+    public function generateAbsenSubordinate($perPage, $search, $period_1, $period_2, $unit);
     public function store(array $data);
     public function show($id);
     public function findDate($date, $employeeId);

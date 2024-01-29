@@ -230,6 +230,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('generate-absen-employee/{employee_id}', 'generateAbsenEmployee')->name('generate-absen-employee');
             // route for monitoring absen (absen yang tidak lengkap)
             Route::get('monitoring-absen', 'monitoringAbsen')->name('monitoring-absen');
+            // route for monitoring absen (absen yang tidak lengkap)
+            Route::get('generate-absen-subordinate', 'generateAbsenSubordinate')->name('generate-absen-subordinate');
             // route for execute generate absen
             Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
             // route for absen from mobile

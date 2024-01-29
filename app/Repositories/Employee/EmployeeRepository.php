@@ -653,7 +653,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                         ->where('resigned_at', '>=', Carbon::now()->toDateString());
         if ($search !== null) {
             $query->where(function ($query) use ($search) {
-                $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
+                $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                    ->orWhere('employment_number', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
             });
         }
         return $query->select($this->field)->paginate($perPage);

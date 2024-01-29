@@ -3,9 +3,10 @@
 namespace App\Repositories\GenerateAbsen;
 
 use Carbon\Carbon;
+use App\Models\Employee;
 use App\Models\GenerateAbsen;
-use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 use App\Services\Overtime\OvertimeServiceInterface;
+use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 
 class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 {
@@ -182,11 +183,11 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             ])
             ->select($this->field);
 
-        // Additional conditions
-        $query->where(function ($subquery) {
-            $subquery->whereNull('leave_id')
-                ->orWhere('leave_id', '');
-        })
+            // Additional conditions
+            $query->where(function ($subquery) {
+                $subquery->whereNull('leave_id')
+                    ->orWhere('leave_id', '');
+            })
             ->where(function ($subquery) {
                 $subquery->whereNull('holiday')
                     ->orWhere('holiday', 0);
@@ -196,10 +197,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $timeQuery->whereNull('time_in_at')
                         ->whereNull('time_out_at');
                 })
-                    ->orWhere(function ($timeQuery) {
-                        $timeQuery->whereNotNull('time_in_at')
-                            ->whereNull('time_out_at');
-                    });
+                ->orWhere(function ($timeQuery) {
+                    $timeQuery->whereNotNull('time_in_at')
+                        ->whereNull('time_out_at');
+                });
             });
 
         // Period conditions
@@ -215,6 +216,158 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($unit) {
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
                 $employeeQuery->where('unit_id', $unit);
+            });
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    public function generateAbsenSubordinate($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $queryEmployee = Employee::where(function ($q) use ($user) {
+                            $q->where('supervisor_id', $user->employee->id)
+                                ->orWhere('manager_id', $user->employee->id)
+                                ->orWhere('kabag_id', $user->employee->id);
+                        })
+                        ->get();
+        $employeeIds = []; // Collect employee IDs in an array
+        foreach ($queryEmployee as $item) {
+            $employeeIds[] = $item->id;
+        }
+        $query = $this->model
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                        'finger_in_less',
+                        'finger_in_more',
+                        'finger_out_less',
+                        'finger_out_more',
+                        'night_shift',
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->whereIn('employee_id', $employeeIds)
+            ->select($this->field);
+
+        // Period conditions
+        if ($period_1 && $period_2) {
+            $query->whereBetween('date', [$period_1, $period_2]);
+        } elseif ($period_1) {
+            $query->where('date', $period_1);
+        } elseif ($period_2) {
+            $query->where('date', $period_2);
+        }
+
+        // Unit condition
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
+        }
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    public function generateAbsenSubordinateMobile($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $queryEmployee = Employee::where(function ($q) use ($user) {
+                            $q->where('supervisor_id', $user->employee->id)
+                                ->orWhere('manager_id', $user->employee->id)
+                                ->orWhere('kabag_id', $user->employee->id);
+                        })
+                        ->get();
+        $employeeIds = []; // Collect employee IDs in an array
+        foreach ($queryEmployee as $item) {
+            $employeeIds[] = $item->id;
+        }
+        $query = $this->model
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                        'finger_in_less',
+                        'finger_in_more',
+                        'finger_out_less',
+                        'finger_out_more',
+                        'night_shift',
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->whereIn('employee_id', $employeeIds)
+            ->select($this->field);
+
+        // Period conditions
+        if ($period_1 && $period_2) {
+            $query->whereBetween('date', [$period_1, $period_2]);
+        } elseif ($period_1) {
+            $query->where('date', $period_1);
+        } elseif ($period_2) {
+            $query->where('date', $period_2);
+        }
+
+        // Unit condition
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
+        }
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
             });
         }
 
