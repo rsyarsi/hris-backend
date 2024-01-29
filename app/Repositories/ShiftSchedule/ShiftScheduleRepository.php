@@ -794,7 +794,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             // })
                             ->leftJoin('generate_absen', function ($join) use ($employee) {
                                 $join->on('shift_schedules.employee_id', '=', 'generate_absen.employee_id')
-                                     ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"));
+                                    ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"));
                             })
                             ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
                             ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')

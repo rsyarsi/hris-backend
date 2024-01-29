@@ -76,6 +76,21 @@ class GenerateAbsenController extends Controller
         }
     }
 
+    public function generateAbsenSubordinateMobile(Request $request)
+    {
+        try {
+            $employmentId = $request->input('Employment_id');
+            $search = $request->input('search');
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $unit = $request->input('unit');
+            $generateabsens = $this->generateAbsenService->generateAbsenSubordinateMobile($employmentId, $search, $period_1, $period_2, $unit);
+            return $this->success('Absens Subordinate Mobile retrieved successfully', $generateabsens);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function store(GenerateAbsenRequest $request)
     {
         try {

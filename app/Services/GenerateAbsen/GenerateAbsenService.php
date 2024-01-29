@@ -49,6 +49,11 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         return $this->repository->generateAbsenSubordinate($perPage, $search, $period_1, $period_2, $unit);
     }
 
+    public function generateAbsenSubordinateMobile($employeeId, $search, $period_1, $period_2, $unit)
+    {
+        return $this->repository->generateAbsenSubordinateMobile($employeeId, $search, $period_1, $period_2, $unit);
+    }
+
     public function store(array $data)
     {
         $data['user_manual_id'] = auth()->id();

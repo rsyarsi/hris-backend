@@ -298,16 +298,16 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         return $query->paginate($perPage);
     }
 
-    public function generateAbsenSubordinateMobile($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
+    public function generateAbsenSubordinateMobile($employeeId, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
-        $user = auth()->user();
-        if (!$user->employee) {
+        $employee = Employee::where('employment_number', $employeeId)->first();
+        if (!$employee) {
             return [];
         }
-        $queryEmployee = Employee::where(function ($q) use ($user) {
-                            $q->where('supervisor_id', $user->employee->id)
-                                ->orWhere('manager_id', $user->employee->id)
-                                ->orWhere('kabag_id', $user->employee->id);
+        $queryEmployee = Employee::where(function ($q) use ($employee) {
+                            $q->where('supervisor_id', $employee->id)
+                                ->orWhere('manager_id', $employee->id)
+                                ->orWhere('kabag_id', $employee->id);
                         })
                         ->get();
         $employeeIds = []; // Collect employee IDs in an array
@@ -315,36 +315,36 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             $employeeIds[] = $item->id;
         }
         $query = $this->model
-            ->with([
-                'employee' => function ($query) {
-                    $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
-                },
-                'shift' => function ($query) {
-                    $query->select(
-                        'id',
-                        'code',
-                        'name',
-                        'in_time',
-                        'out_time',
-                        'finger_in_less',
-                        'finger_in_more',
-                        'finger_out_less',
-                        'finger_out_more',
-                        'night_shift',
-                    );
-                },
-                'leave' => function ($query) {
-                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                },
-                'leaveType' => function ($query) {
-                    $query->select('id', 'name', 'is_salary_deduction', 'active');
-                },
-                'user' => function ($query) {
-                    $query->select('id', 'name', 'email');
-                },
-            ])
-            ->whereIn('employee_id', $employeeIds)
-            ->select($this->field);
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                            },
+                            'shift' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'code',
+                                    'name',
+                                    'in_time',
+                                    'out_time',
+                                    'finger_in_less',
+                                    'finger_in_more',
+                                    'finger_out_less',
+                                    'finger_out_more',
+                                    'night_shift',
+                                );
+                            },
+                            'leave' => function ($query) {
+                                $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                            },
+                            'leaveType' => function ($query) {
+                                $query->select('id', 'name', 'is_salary_deduction', 'active');
+                            },
+                            'user' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                        ])
+                        ->whereIn('employee_id', $employeeIds)
+                        ->select($this->field);
 
         // Period conditions
         if ($period_1 && $period_2) {
@@ -371,7 +371,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             });
         }
 
-        return $query->paginate($perPage);
+        return $query->get();
     }
 
     public function store(array $data)

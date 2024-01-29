@@ -3,10 +3,8 @@
 namespace App\Repositories\Overtime;
 
 use Carbon\Carbon;
-use App\Models\GenerateAbsen;
-use App\Models\ShiftSchedule;
 use Illuminate\Support\Facades\DB;
-use App\Models\{Employee, Overtime, User};
+use App\Models\{Employee, Overtime, User, ShiftSchedule, GenerateAbsen};
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Overtime\OvertimeRepositoryInterface;

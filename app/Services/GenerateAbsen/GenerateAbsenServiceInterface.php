@@ -6,6 +6,7 @@ interface GenerateAbsenServiceInterface
     public function index($perPage, $search, $period_1, $period_2, $unit);
     public function monitoringAbsen($perPage, $search, $period_1, $period_2, $unit);
     public function generateAbsenSubordinate($perPage, $search, $period_1, $period_2, $unit);
+    public function generateAbsenSubordinateMobile($employeeId, $search, $period_1, $period_2, $unit);
     public function generateAbsenEmployee($employeeId);
     public function store(array $data);
     public function show($id);
