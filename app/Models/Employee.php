@@ -65,6 +65,9 @@ class Employee extends Model
         'bpjs_number',
         'bpjstk_number',
         'status_employee',
+        'file_url',
+        'file_path',
+        'file_disk',
     ];
 
     public function identityType()

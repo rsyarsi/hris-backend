@@ -89,6 +89,6 @@ class ShiftSchedule extends Model
 
     public function overtime()
     {
-        return $this->belongsTo(Overtime::class, 'date', DB::raw("DATE(from_date)"));
+        return $this->hasMany(Overtime::class, 'from_date', 'date');
     }
 }

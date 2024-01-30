@@ -8,6 +8,7 @@ use App\Imports\EmployeeImport;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\EmployeeRequest;
+use App\Http\Requests\UploadPhotoRequest;
 use App\Services\Employee\EmployeeServiceInterface;
 
 class EmployeeController extends Controller
@@ -41,6 +42,17 @@ class EmployeeController extends Controller
             $data = $request->validated();
             $employee = $this->employeeService->store($data);
             return $this->success('Employee created successfully', $employee, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function employeeUploadPhoto(UploadPhotoRequest $request, $id)
+    {
+        try {
+            $data = $request->validated();
+            $employee = $this->employeeService->employeeUploadPhoto($id, $data);
+            return $this->success('Photo Uploaded successfully', $employee, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

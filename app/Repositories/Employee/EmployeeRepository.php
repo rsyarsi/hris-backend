@@ -21,7 +21,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         'current_home_phone_number', 'current_home_phone_country', 'status_employment_id', 'position_id',
         'unit_id', 'department_id', 'started_at', 'employment_number', 'resigned_at', 'user_id', 'supervisor_id',
         'manager_id', 'pin', 'shift_group_id', 'kabag_id', 'rekening_number', 'status_employee', 'bpjs_number',
-        'bpjstk_number'
+        'bpjstk_number', 'file_url', 'file_path', 'file_disk',
     ];
 
     public function __construct(Employee $model)
@@ -310,6 +310,19 @@ class EmployeeRepository implements EmployeeRepositoryInterface
     }
 
     public function update($id, $data)
+    {
+        $employee = $this->model->find($id);
+        if ($employee) {
+            $employee->update($data);
+            // if ($employee->resigned_at , '>=', Carbon::now()->toDateString()) {
+            //     User::where('id', $employee->user_id)->update(['active' => 0]);
+            // }
+            return $employee;
+        }
+        return null;
+    }
+
+    public function employeeUploadPhoto($id, $data)
     {
         $employee = $this->model->find($id);
         if ($employee) {

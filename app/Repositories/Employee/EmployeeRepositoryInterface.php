@@ -7,6 +7,7 @@ Interface EmployeeRepositoryInterface
     public function store(array $data);
     public function show($id);
     public function update($id, array $data);
+    public function employeeUploadPhoto($id, array $data);
     public function destroy($id);
     public function employeeNumberNull($perPage, $search);
     public function employeeEndContract($perPage, $search);

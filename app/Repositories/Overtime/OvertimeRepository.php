@@ -4,7 +4,7 @@ namespace App\Repositories\Overtime;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Models\{Employee, Overtime, User, ShiftSchedule, GenerateAbsen};
+use App\Models\{Employee, Overtime, User, ShiftSchedule, GenerateAbsen, OvertimeHistory};
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Overtime\OvertimeRepositoryInterface;
@@ -85,11 +85,40 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function store(array $data)
     {
-        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
-                                            ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                            ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                            ->first();
-        if (!$checkShiftSchedule) {
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = $data['employee_id'];
+        // validate special case employee non shift
+        $employee = DB::table('employees')->where('id', $employeeId)->first();
+        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+        $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
+                                    ->where('code', 'N')
+                                    ->orWhere('name', 'NON SHIFT')
+                                    ->first();
+        $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
+                                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                ->first();
+        if ($employee->shift_group_id == $nonShiftGroupId && !$checkShiftSchedule) {
+            // insert data ke table shift schedule
+            $dataShiftSchedule['employee_id'] = $employee->id;
+            $dataShiftSchedule['shift_id'] = $shift->id;
+            $dataShiftSchedule['date'] = $fromDate->toDateString();
+            $dataShiftSchedule['created_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_at'] = now();
+            $dataShiftSchedule['time_in'] = $fromDate->toDateString() . ' ' . $shift->in_time;
+            $dataShiftSchedule['time_out'] = $toDate->toDateString() . ' ' . $shift->out_time;
+            $dataShiftSchedule['period'] = now()->format('Y-m');
+            $dataShiftSchedule['holiday'] = 0;
+            $dataShiftSchedule['night'] = 0;
+            $dataShiftSchedule['national_holiday'] = 0;
+            $dataShiftSchedule['absen_type'] = 'ABSEN';
+            $dataShiftSchedule['import'] = 0;
+            $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
+        }
+
+        if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
                 'message' => 'Validation Error!',
                 'error' => true,
@@ -202,14 +231,43 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
     public function overtimeCreateMobile(array $data)
     {
-        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
-                                            ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                            ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                            ->first();
-        if (!$checkShiftSchedule) {
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = $data['employee_id'];
+        // validate special case employee non shift
+        $employee = DB::table('employees')->where('id', $employeeId)->first();
+        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+        $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
+                                    ->where('code', 'N')
+                                    ->orWhere('name', 'NON SHIFT')
+                                    ->first();
+        $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
+                                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                ->first();
+        if ($employee->shift_group_id == $nonShiftGroupId && !$checkShiftSchedule) {
+            // insert data ke table shift schedule
+            $dataShiftSchedule['employee_id'] = $employee->id;
+            $dataShiftSchedule['shift_id'] = $shift->id;
+            $dataShiftSchedule['date'] = $fromDate->toDateString();
+            $dataShiftSchedule['created_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_at'] = now();
+            $dataShiftSchedule['time_in'] = $fromDate->toDateString() . ' ' . $shift->in_time;
+            $dataShiftSchedule['time_out'] = $toDate->toDateString() . ' ' . $shift->out_time;
+            $dataShiftSchedule['period'] = now()->format('Y-m');
+            $dataShiftSchedule['holiday'] = 0;
+            $dataShiftSchedule['night'] = 0;
+            $dataShiftSchedule['national_holiday'] = 0;
+            $dataShiftSchedule['absen_type'] = 'ABSEN';
+            $dataShiftSchedule['import'] = 0;
+            $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
+        }
+
+        if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
-                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
-                'success' => false,
+                'message' => 'Validation Error!',
+                'success' => true,
                 'code' => 201,
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
@@ -236,6 +294,41 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             'libur' => $data['libur'],
         ];
         $this->overtimeHistoryService->store($historyData);
+        if ($data['type'] == "DINAS LUAR" || $data['type'] == "DINAS-LUAR" || $data['type'] == "dinas luar" || $data['type'] == "dinas-luar") {
+            $fromDateParse = Carbon::parse($data['from_date']);
+            $toDateParse = Carbon::parse($data['to_date']);
+            // employee
+            $employee = Employee::where('id', $data['employee_id'])->first(['id', 'name', 'employment_number', 'shift_group_id']);
+            // shift_schedule
+            $shiftSchedule = ShiftSchedule::where('employee_id', $employeeId)
+                                    ->where('date', $fromDateParse->toDateString())
+                                    ->first();
+
+            $data['period'] = $fromDateParse->format('Y-m');
+            $data['date'] = $fromDateParse->toDateString();
+            $data['day'] = $fromDateParse->format('l');
+            $data['employee_id'] = $data['employee_id'];
+            $data['employment_id'] = $employee->employment_number;
+            $data['shift_id'] = $shiftSchedule->shift_id;
+            $data['date_in_at'] = $fromDateParse->toDateString();
+            $data['time_in_at'] = $fromDateParse->toTimeString();
+            $data['date_out_at'] = $toDateParse->toDateString();
+            $data['time_out_at'] = $toDateParse->toTimeString();
+            $data['schedule_date_in_at'] = $shiftSchedule->date;
+            $data['schedule_time_in_at'] = Carbon::parse($shiftSchedule->time_in)->toTimeString();
+            $data['schedule_date_out_at'] = $shiftSchedule->date;
+            $data['schedule_time_out_at'] = Carbon::parse($shiftSchedule->time_out)->toTimeString();
+            $data['holiday'] = $shiftSchedule->holiday;
+            $data['night'] = $shiftSchedule->night;
+            $data['national_holiday'] = $shiftSchedule->national_holiday;
+            $data['function'] = '';
+            $data['note'] = '';
+            $data['type'] = 'SPL';
+            $data['overtime_type'] = $data['type'];
+            $data['overtime_hours'] = $data['duration'];
+            $data['shift_schedule_id'] = $shiftSchedule->id;
+            GenerateAbsen::create($data);
+        }
         // send firebase notification
         $typeSend = 'Overtime';
         $registrationIds = [];
@@ -592,20 +685,26 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 'comment' => $overtime->note,
             ];
             $this->overtimeHistoryService->store($historyData);
+            // delete overtime if employee non shift if batal
+            // if ($overtime->leave_type_id == 1 && $data['overtime_status_id'] == 10) {
+            //     $employee = $this->employeeService->show($overtime->employee_id);
+            //     // update Shift Schedule if shift, delete if non shift
+            //     ShiftSchedule::where('leave_id', $overtime->id)->delete();
+            //     OvertimeHistory::where('leave_id', $overtime->id)->delete();
+            //     $overtime->delete();
+            // }
             $typeSend = 'Overtime Update';
             $employee = $this->employeeService->show($overtime->employee_id);
             $registrationIds = [];
             if($employee->user != null){
                 $registrationIds[] = $employee->user->firebase_id;
             }
-
-
-                    // notif ke HRDs
-                    $employeeHrd = User::where('hrd','1')->get();
-                    foreach ($employeeHrd as $key ) {
-                        # code...
-                        $firebaseIdx = $key;
-                    }
+            // notif ke HRDs
+            $employeeHrd = User::where('hrd','1')->get();
+            foreach ($employeeHrd as $key ) {
+                # code...
+                $firebaseIdx = $key;
+            }
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
@@ -638,12 +737,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 $registrationIds[] = $employee->user->firebase_id;
             }
 
-                    // notif ke HRDs
-                    $employeeHrd = User::where('hrd','1')->get();
-                    foreach ($employeeHrd as $key ) {
-                        # code...
-                        $firebaseIdx = $key;
-                    }
+            // notif ke HRDs
+            $employeeHrd = User::where('hrd','1')->get();
+            foreach ($employeeHrd as $key ) {
+                # code...
+                $firebaseIdx = $key;
+            }
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);

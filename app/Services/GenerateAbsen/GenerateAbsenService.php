@@ -109,15 +109,15 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $allowedStartTime = $timeInScheduleCarbon->copy()->subHour();
         // Calculate the end of the allowed range (scheduled time)
         $allowedEndTime = $timeInScheduleCarbon->copy();
-        if ($function == 'IN') {
-            $result = ($jam->gte($allowedStartTime) && $jam->lte($allowedEndTime) || $jam->gt($allowedEndTime)) ? 'yes' : 'no';
-            if ($result === 'no') {
-                return [
-                    'message' => 'Absen Hanya boleh 1 jam sebelum jadwal!',
-                    'data' => []
-                ];
-            }
-        }
+        // if ($function == 'IN') {
+        //     $result = ($jam->gte($allowedStartTime) && $jam->lte($allowedEndTime) || $jam->gt($allowedEndTime)) ? 'yes' : 'no';
+        //     if ($result === 'no') {
+        //         return [
+        //             'message' => 'Absen Hanya boleh 1 jam sebelum jadwal!',
+        //             'data' => []
+        //         ];
+        //     }
+        // }
         $timeInSchedule = Carbon::parse($shiftSchedule->time_in);
         $timeOutSchedule = Carbon::parse($shiftSchedule->time_out);
         $data['period'] = $currentDate->format('Y-m');

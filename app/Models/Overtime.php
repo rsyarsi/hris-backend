@@ -44,4 +44,9 @@ class Overtime extends Model
     {
         return $this->hasMany(OvertimeHistory::class, 'overtime_id');
     }
+
+    public function shiftSchedule()
+    {
+        return $this->belongsTo(ShiftSchedule::class, 'from_date', 'date');
+    }
 }

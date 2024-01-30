@@ -2,6 +2,7 @@
 namespace App\Services\Employee;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 
@@ -25,6 +26,27 @@ class EmployeeService implements EmployeeServiceInterface
         $data['religion_id'] = 1;
         $data['resigned_at'] = '3000-01-01 00:00:00';
         return $this->repository->store($data);
+    }
+
+    public function employeeUploadPhoto($id, $data)
+    {
+        $file = $data['file'];
+        if ($file && $file->isValid()) {
+            // Upload the file to AWS S3 storage
+            $filePath = $file->store('hrd/employees/photo', 's3');
+            // Make the file public by setting ACL to 'public-read'
+            Storage::disk('s3')->setVisibility($filePath, 'public');
+            $fileUrl = Storage::disk('s3')->url($filePath);
+        } else {
+            $filePath = null;
+            $fileUrl = null;
+        }
+        $data = [
+            'file_path' => $filePath,
+            'file_url' => $fileUrl,
+            'file_disk' => 's3',
+        ];
+        return $this->repository->employeeUploadPhoto($id, $data);
     }
 
     public function show($id)

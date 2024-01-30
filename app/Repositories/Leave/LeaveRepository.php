@@ -3,7 +3,7 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\{CatatanCuti, Employee, Leave, ShiftSchedule, User};
+use App\Models\{CatatanCuti, Employee, Leave, LeaveHistory, ShiftSchedule, User};
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
@@ -140,23 +140,44 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function store(array $data)
     {
-        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
-                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = $data['employee_id'];
+        // validate special case employee non shift
+        $employee = DB::table('employees')->where('id', $employeeId)->first();
+        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+        $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
+                                    ->where('code', 'N')
+                                    ->orWhere('name', 'NON SHIFT')
                                     ->first();
-                                    // return $checkShiftSchedule;
-                                    // return [
-                                    //     'message' => 'Validation Error',
-                                    //     'error' => true,
-                                    //     'code' => 422,
-                                    //     'data' => $checkShiftSchedule
-                                    // ];
-        if (!$checkShiftSchedule) {
+        $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
+                                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                ->first();
+        if ($employee->shift_group_id == $nonShiftGroupId && !$checkShiftSchedule) {
+            // insert data ke table shift schedule
+            $dataShiftSchedule['employee_id'] = $employee->id;
+            $dataShiftSchedule['shift_id'] = $shift->id;
+            $dataShiftSchedule['date'] = $fromDate->toDateString();
+            $dataShiftSchedule['created_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_at'] = now();
+            $dataShiftSchedule['time_in'] = $fromDate->toDateString() . ' ' . $shift->in_time;
+            $dataShiftSchedule['time_out'] = $toDate->toDateString() . ' ' . $shift->out_time;
+            $dataShiftSchedule['period'] = now()->format('Y-m');
+            $dataShiftSchedule['holiday'] = 0;
+            $dataShiftSchedule['night'] = 0;
+            $dataShiftSchedule['national_holiday'] = 0;
+            $dataShiftSchedule['absen_type'] = 'ABSEN';
+            $dataShiftSchedule['import'] = 0;
+            $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
+        }
+        if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
                 'message' => 'Validation Error',
                 'error' => true,
                 'code' => 422,
-                'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
+                'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
         $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
@@ -164,6 +185,18 @@ class LeaveRepository implements LeaveRepositoryInterface
         $data['shift_schedule_id'] = $checkShiftSchedule->id;
         // create leave
         $leave = $this->model->create($data);
+        // Update shift schedule if it exists
+        if ($checkShiftSchedule) {
+            $checkShiftScheduleModel = ShiftSchedule::find($checkShiftSchedule->id);
+
+            // Make sure the shift schedule model is found
+            if ($checkShiftScheduleModel) {
+                $checkShiftScheduleModel->update([
+                    'leave_id' => $leave->id,
+                    'leave_note' => $leave->note,
+                ]);
+            }
+        }
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
         // create leave history
@@ -257,19 +290,47 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function leaveCreateMobile(array $data)
     {
-        $checkShiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
-                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                    ->exists();
-        if (!$checkShiftSchedule) {
-            // return 'Data Shift Schedule belum ada, silahkan hubungi atasan';
+        $fromDate = Carbon::parse($data['from_date']);
+        $toDate = Carbon::parse($data['to_date']);
+        $employeeId = $data['employee_id'];
+        // validate special case employee non shift
+        $employee = DB::table('employees')->where('id', $employeeId)->first();
+        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+        $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
+                                    ->where('code', 'N')
+                                    ->orWhere('name', 'NON SHIFT')
+                                    ->first();
+        $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
+                                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                                ->first();
+        if ($employee->shift_group_id == $nonShiftGroupId && !$checkShiftSchedule) {
+            // insert data ke table shift schedule
+            $dataShiftSchedule['employee_id'] = $employee->id;
+            $dataShiftSchedule['shift_id'] = $shift->id;
+            $dataShiftSchedule['date'] = $fromDate->toDateString();
+            $dataShiftSchedule['created_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_user_id'] = auth()->id();
+            $dataShiftSchedule['setup_at'] = now();
+            $dataShiftSchedule['time_in'] = $fromDate->toDateString() . ' ' . $shift->in_time;
+            $dataShiftSchedule['time_out'] = $toDate->toDateString() . ' ' . $shift->out_time;
+            $dataShiftSchedule['period'] = now()->format('Y-m');
+            $dataShiftSchedule['holiday'] = 0;
+            $dataShiftSchedule['night'] = 0;
+            $dataShiftSchedule['national_holiday'] = 0;
+            $dataShiftSchedule['absen_type'] = 'ABSEN';
+            $dataShiftSchedule['import'] = 0;
+            $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
+        }
+        if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
                 'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
                 'success' => false,
                 'code' => 201,
-                'data' => ['leave_type_id' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
+                'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
+
         $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
         $leave = $this->model->create($data);
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
@@ -789,25 +850,32 @@ class LeaveRepository implements LeaveRepositoryInterface
 
             // update data batal catatan cuti
             if ($leave->leave_type_id == 1 && $status == 10) {
-                $leave->update([
-                    'quantity_cuti_awal' => 0,
-                    'sisa_cuti' => 0
-                ]);
-                // update shift schedule
-                ShiftSchedule::where('leave_id', $leave->id)
-                            ->update([
-                                'leave_id' => null,
-                                'leave_note' => null
-                            ]);
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
-                            ->latest()
-                            ->first();
+                                            ->latest()
+                                            ->first();
                 // update catatan cuti
                 $catatanCuti->update([
                     'quantity_akhir' => $catatanCuti->quantity_awal,
-                    'quantity_out' => 1,
+                    'quantity_out' => 0,
                     'batal' => 1
                 ]);
+                $employee = $this->employeeService->show($leave->employee_id);
+                // update Shift Schedule if shift, delete if non shift
+                if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
+                    ShiftSchedule::where('leave_id', $leave->id)->delete();
+                    LeaveHistory::where('leave_id', $leave->id)->delete();
+                    $leave->delete();
+                } else {
+                    $leave->update([
+                        'quantity_cuti_awal' => 0,
+                        'sisa_cuti' => 0
+                    ]);
+                    ShiftSchedule::where('leave_id', $leave->id)
+                                ->update([
+                                    'leave_id' => null,
+                                    'leave_note' => null
+                                ]);
+                }
             }
 
             // firebase
@@ -878,19 +946,33 @@ class LeaveRepository implements LeaveRepositoryInterface
             $this->leaveHistory->store($historyData);
 
             // update data batal catatan cuti
-            if ($leave->leave_type_id == 1 && $leaveStatusId == 8) {
-                $leave->update([
-                    'quantity_cuti_awal' => 0,
-                    'sisa_cuti' => 0
-                ]);
-                // update shift schedule
-                ShiftSchedule::where('leave_id', $leave->id)
-                            ->update([
-                                'leave_id' => null,
-                                'leave_note' => null
-                            ]);
+            if ($leave->leave_type_id == 1 && $leaveStatusId == 10) {
+                $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
+                                            ->latest()
+                                            ->first();
                 // update catatan cuti
-                $this->catatanCutiService->updateStatus($leave->id, ['batal' => 1]);
+                $catatanCuti->update([
+                    'quantity_akhir' => $catatanCuti->quantity_awal,
+                    'quantity_out' => 0,
+                    'batal' => 1
+                ]);
+                $employee = $this->employeeService->show($leave->employee_id);
+                // update Shift Schedule if shift, delete if non shift
+                if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
+                    ShiftSchedule::where('leave_id', $leave->id)->delete();
+                    LeaveHistory::where('leave_id', $leave->id)->delete();
+                    $leave->delete();
+                } else {
+                    $leave->update([
+                        'quantity_cuti_awal' => 0,
+                        'sisa_cuti' => 0
+                    ]);
+                    ShiftSchedule::where('leave_id', $leave->id)
+                                ->update([
+                                    'leave_id' => null,
+                                    'leave_note' => null
+                                ]);
+                }
             }
 
             // firebase

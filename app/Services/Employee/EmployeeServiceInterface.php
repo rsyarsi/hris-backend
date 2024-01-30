@@ -5,6 +5,7 @@ interface EmployeeServiceInterface
 {
     public function index($perPage, $search, $active);
     public function store(array $data);
+    public function employeeUploadPhoto($id, $data);
     public function show($id);
     public function update($id, array $data);
     public function destroy($id);
