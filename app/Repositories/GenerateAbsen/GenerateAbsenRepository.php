@@ -570,6 +570,8 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $data['time_out_at'] = null;
                     $data['overtime_out_at'] = null;
                     $data['shift_schedule_id'] = $idSchedule;
+                    $data['overtime_hours'] = $data['duration_overtime'];
+                    $data['overtime_type'] = $data['overtime_type'];
                     return [
                         'message' => 'Absen Masuk Overtime Berhasil!',
                         'data' => [

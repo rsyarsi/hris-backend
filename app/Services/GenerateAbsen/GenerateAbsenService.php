@@ -155,6 +155,7 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
             $data['from_date_overtime'] = $overtime->from_date ?? null;
             $data['to_date_overtime'] = $overtime->to_date ?? null;
             $data['duration_overtime'] = $overtime->duration ?? null;
+            $data['overtime_type'] = $overtime->type ?? null;
         }
         return $this->repository->absenFromMobile($data);
     }

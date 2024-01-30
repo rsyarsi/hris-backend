@@ -150,6 +150,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $data['function'] = '';
             $data['note'] = '';
             $data['type'] = 'SPL';
+            $data['overtime_type'] = $data['type'];
+            $data['overtime_hours'] = $data['duration'];
             $data['shift_schedule_id'] = $shiftSchedule->id;
             GenerateAbsen::create($data);
         }
