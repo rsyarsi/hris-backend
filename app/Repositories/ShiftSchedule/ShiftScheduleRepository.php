@@ -877,7 +877,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         return $shiftschedule;
     }
 
-
     public function shiftScheduleEmployeeDate($employeeId, $date)
     {
         $shiftSchedul = $this->model
@@ -963,8 +962,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
 
         foreach ($employees as $employee) {
             // Get the current month's start and end dates
-            // $date = Carbon::now();
-            $date = Carbon::parse('2024-01-28');
+            $date = Carbon::now();
+            // $date = Carbon::parse('2024-01-28');
             // Check if a record already exists for this employee and date
             $existingRecord = ShiftSchedule::where('employee_id', $employee->id)
                                             ->where('date', $date->format('Y-m-d'))
