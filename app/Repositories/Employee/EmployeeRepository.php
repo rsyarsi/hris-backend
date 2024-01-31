@@ -327,12 +327,29 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         $employee = $this->model->find($id);
         if ($employee) {
             $employee->update($data);
-            // if ($employee->resigned_at , '>=', Carbon::now()->toDateString()) {
-            //     User::where('id', $employee->user_id)->update(['active' => 0]);
-            // }
             return $employee;
         }
         return null;
+    }
+
+    public function employeeUploadPhotoMobile($data)
+    {
+        $employee = $this->model->where('id', $data['employee_id'])->first();
+        if ($employee) {
+            $employee->update($data);
+            return [
+                'message' => 'Photo Uploaded successfully!',
+                'success' => false,
+                'code' => 201,
+                'data' => [$employee]
+            ];
+        }
+        return [
+            'message' => 'Photo Gagal Terupload!',
+            'success' => false,
+            'code' => 201,
+            'data' => ['file' => ['Gagal Terupload!']]
+        ];
     }
 
     public function destroy($id)

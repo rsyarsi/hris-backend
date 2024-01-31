@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\EmployeeRequest;
 use App\Http\Requests\UploadPhotoRequest;
+use Illuminate\Support\Facades\Validator;
 use App\Services\Employee\EmployeeServiceInterface;
 
 class EmployeeController extends Controller
@@ -53,6 +54,34 @@ class EmployeeController extends Controller
             $data = $request->validated();
             $employee = $this->employeeService->employeeUploadPhoto($id, $data);
             return $this->success('Photo Uploaded successfully', $employee, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function employeeUploadPhotoMobile(Request $request)
+    {
+        try {
+            $rules = [
+                'employee_id' => 'required|exists:employees,id',
+                'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'success' => false,
+                    'code' => 200, // Use a more appropriate HTTP status code
+                    'data' => $validator->errors(),
+                ], 200);
+            }
+            $employee = $this->employeeService->employeeUploadPhotoMobile($request->all());
+            return response()->json([
+                'message' => $employee['message'],
+                'success' => $employee['success'],
+                'code' => $employee['code'],
+                'data' => $employee['data']
+            ], $employee['code']);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

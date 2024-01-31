@@ -49,6 +49,28 @@ class EmployeeService implements EmployeeServiceInterface
         return $this->repository->employeeUploadPhoto($id, $data);
     }
 
+    public function employeeUploadPhotoMobile($data)
+    {
+        $file = $data['file'];
+        if ($file && $file->isValid()) {
+            // Upload the file to AWS S3 storage
+            $filePath = $file->store('hrd/employees/photo', 's3');
+            // Make the file public by setting ACL to 'public-read'
+            Storage::disk('s3')->setVisibility($filePath, 'public');
+            $fileUrl = Storage::disk('s3')->url($filePath);
+        } else {
+            $filePath = null;
+            $fileUrl = null;
+        }
+        $data = [
+            'employee_id' => $data['employee_id'],
+            'file_path' => $filePath,
+            'file_url' => $fileUrl,
+            'file_disk' => 's3',
+        ];
+        return $this->repository->employeeUploadPhotoMobile($data);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);
