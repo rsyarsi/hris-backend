@@ -72,7 +72,7 @@ class EmployeeController extends Controller
                     'message' => 'Validation Error',
                     'success' => false,
                     'code' => 200, // Use a more appropriate HTTP status code
-                    'data' => $validator->errors(),
+                    'data' => 'Validation Error, Please check your data!',
                 ], 200);
             }
             $employee = $this->employeeService->employeeUploadPhotoMobile($request->all());
