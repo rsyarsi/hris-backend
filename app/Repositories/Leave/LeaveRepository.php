@@ -271,8 +271,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         // notif ke HRD
         $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
         foreach ($employeeHrd as $key ) {
-            # code...
-           $firebaseIdx = $key;
+            $firebaseIdx = $key;
         }
         // dd($firebaseIdx->firebase_id);
         $registrationIds[] =$firebaseIdx->firebase_id;
@@ -283,7 +282,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         return [
             'message' => 'Leave created successfully',
             'error' => false,
-            'code' => 201,
+            'code' => 200,
             'data' => [$leave]
         ];
     }
@@ -326,7 +325,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             return [
                 'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
                 'success' => false,
-                'code' => 201,
+                'code' => 200,
                 'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
@@ -419,7 +418,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         return [
             'message' => 'Leave created from mobile successfully',
             'success' => true,
-            'code' => 201,
+            'code' => 200,
             'data' => [$leave]
         ];
     }

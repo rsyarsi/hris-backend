@@ -143,6 +143,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('employee-upload-photo/{employeeId}', 'employeeUploadPhoto')->name('employee-upload-photo');
             // route for employee upload photo mobile
             Route::post('employee-upload-photo-mobile', 'employeeUploadPhotoMobile')->name('employee-upload-photo-mobile');
+            // route for employee profile mobile
+            Route::post('employee-profile-mobile', 'employeeProfileMobile')->name('employee-profile-mobile');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);

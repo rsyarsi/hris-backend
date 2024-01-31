@@ -224,7 +224,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return [
             'message' => 'Overtime created successfully',
             'error' => false,
-            'code' => 201,
+            'code' => 200,
             'data' => [$overtime]
         ];
     }
@@ -268,7 +268,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             return [
                 'message' => 'Validation Error!',
                 'success' => true,
-                'code' => 201,
+                'code' => 200,
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
@@ -276,7 +276,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             return [
                 'message' => 'Data Shift Schedule sudah tercatat cuti!',
                 'success' => false,
-                'code' => 201,
+                'code' => 200,
                 'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
             ];
         }
@@ -367,7 +367,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return [
             'message' => 'Overtime created successfully',
             'success' => true,
-            'code' => 201,
+            'code' => 200,
             'data' => [$overtime]
         ];
     }

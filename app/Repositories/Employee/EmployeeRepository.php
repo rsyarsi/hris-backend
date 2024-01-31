@@ -4,6 +4,7 @@ namespace App\Repositories\Employee;
 
 use Carbon\Carbon;
 use App\Models\{Employee, User};
+use Illuminate\Support\Facades\DB;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 
 
@@ -114,8 +115,43 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function show($id)
+    public function employeeProfileMobile($employeeId)
     {
+        $employee = DB::table('employees')
+                        ->select(
+                            'employees.id as employee_id', 
+                            'employees.employment_number as nik', 
+                            'employees.name as employee_name', 
+                            'employees.birth_date as tanggal_lahir', 
+                            'employees.started_at as tanggal_masuk',
+                            // 'employees.started_at as lama_kerja',
+                            DB::raw('EXTRACT(DAY FROM AGE(current_date, employees.started_at)) as lama_kerja'),
+                            'employees.file_url as photo',
+                            'munits.name as unit_name',
+                            'msexs.name as jenis_kelamin'
+                        )
+                        ->leftJoin('munits', 'employees.unit_id', '=', 'munits.id')
+                        ->leftJoin('msexs', 'employees.sex_id', '=', 'msexs.id')
+                        ->where('employees.id', $employeeId)
+                        ->first();
+        if ($employee) {
+            return [
+                'message' => 'Employee Retrieved Successfully!',
+                'success' => true,
+                'code' => 200,
+                'data' => [$employee]
+            ];
+        }
+        return [
+            'message' => 'Employee Retrieved Successfully!',
+            'success' => false,
+            'code' => 200, 
+            'data' => ''
+        ];
+    }
+
+    public function show($id)
+    { 
         $employee = $this->model
                         ->with([
                             'identityType' => function ($query) {
@@ -340,15 +376,15 @@ class EmployeeRepository implements EmployeeRepositoryInterface
             return [
                 'message' => 'Photo Uploaded successfully!',
                 'success' => true,
-                'code' => 201,
+                'code' => 200,
                 'data' => [$employee]
             ];
         }
         return [
             'message' => 'Photo Gagal Terupload!',
             'success' => false,
-            'code' => 201, 
-            'data' => ['file' => ['Gagal Terupload!']]
+            'code' => 200, 
+            'data' => 'Gagal Terupload!'
         ];
     }
 

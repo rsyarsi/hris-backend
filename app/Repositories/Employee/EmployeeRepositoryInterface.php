@@ -9,6 +9,7 @@ Interface EmployeeRepositoryInterface
     public function update($id, array $data);
     public function employeeUploadPhoto($id, array $data);
     public function employeeUploadPhotoMobile(array $data);
+    public function employeeProfileMobile($employeeId);
     public function destroy($id);
     public function employeeNumberNull($perPage, $search);
     public function employeeEndContract($perPage, $search);

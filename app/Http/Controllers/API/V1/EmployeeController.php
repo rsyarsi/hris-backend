@@ -37,6 +37,34 @@ class EmployeeController extends Controller
         }
     }
 
+    public function employeeProfileMobile(Request $request)
+    {
+        $rules = [
+            'employee_id' => 'required|exists:employees,id',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'success' => false,
+                'code' => 200, // Use a more appropriate HTTP status code
+                'data' => 'Validation Error, Please check your data!',
+            ], 200);
+        }
+        $employeeId = $request->input('employee_id');
+        $employee = $this->employeeService->employeeProfileMobile($employeeId);
+        return response()->json([
+            'message' => $employee['message'],
+            'success' => $employee['success'],
+            'code' => $employee['code'],
+            'data' => $employee['data']
+        ], $employee['code']);
+        try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function store(EmployeeRequest $request)
     {
         try {

@@ -52,7 +52,7 @@ class OvertimeController extends Controller
         }
     }
 
-    public function overtimeCreateMobile(OvertimeRequest $request)
+    public function overtimeCreateMobile(Request $request)
     {
         try {
             $rules = [
@@ -74,15 +74,15 @@ class OvertimeController extends Controller
                 $rules['from_date'][] = new UniqueOvertimeDateRange();
             }
             $validator = Validator::make($request->all(), $rules);
+            $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
             if ($validator->fails()) {
                 return response()->json([
                     'message' => 'Validation Error',
                     'success' => false,
                     'code' => 200, // Use a more appropriate HTTP status code
-                    'data' => $validator->errors(),
+                    'data' => $errorMessages,
                 ], 200);
             }
-
             $overtime = $this->overtimeService->overtimeCreateMobile($request->all());
             return response()->json([
                 'message' => $overtime['message'],
@@ -233,7 +233,7 @@ class OvertimeController extends Controller
             if (!$overtime) {
                 return $this->error('Overtime not found', 404);
             }
-            return $this->success('Overtime status updated successfully', [$overtime], 201);
+            return $this->success('Overtime status updated successfully', [$overtime], 200);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

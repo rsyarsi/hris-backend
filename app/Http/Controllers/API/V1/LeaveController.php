@@ -77,11 +77,12 @@ class LeaveController extends Controller
             }
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
+                $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
                 return response()->json([
                     'message' => 'Validation Error',
                     'success' => false,
                     'code' => 200, // Use a more appropriate HTTP status code
-                    'data' => $validator->errors(),
+                    'data' => $errorMessages,
                 ], 200);
             }
 
@@ -234,7 +235,7 @@ class LeaveController extends Controller
             if (!$leave) {
                 return $this->error('Leave not found', 404);
             }
-            return $this->success('Leave status updated successfully', [$leave], 201);
+            return $this->success('Leave status updated successfully', [$leave], 200);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -248,7 +249,7 @@ class LeaveController extends Controller
             if (!$leave) {
                 return $this->error('Leave not found', 404);
             }
-            return $this->success('Sisa Cuti retrieved successfully', $leave, 201);
+            return $this->success('Sisa Cuti retrieved successfully', $leave, 200);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

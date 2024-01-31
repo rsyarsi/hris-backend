@@ -71,6 +71,11 @@ class EmployeeService implements EmployeeServiceInterface
         return $this->repository->employeeUploadPhotoMobile($data);
     }
 
+    public function employeeProfileMobile($employeeId)
+    {
+        return $this->repository->employeeProfileMobile($employeeId);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);
