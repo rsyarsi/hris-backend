@@ -123,7 +123,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'User telah login di perangkat lain, silahkan hubungi HRD!',
                 'success' => false,
-                'code' => 401,
+                'code' => 200,
                 'data' => []
             ]);
         }
@@ -134,7 +134,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Account not active!',
                 'success' => false,
-                'code' => 401,
+                'code' => 200,
                 'data' => []
             ]);
         }
