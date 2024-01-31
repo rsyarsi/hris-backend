@@ -119,7 +119,7 @@ class AuthController extends Controller
         // }
 
         if ($user->user_device_id !== $request->input('user_device_id')) {
-            Auth::logout();
+            // Auth::logout();
             return response()->json([
                 'message' => 'User telah login di perangkat lain, silahkan hubungi HRD!',
                 'success' => false,
