@@ -339,7 +339,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
             $employee->update($data);
             return [
                 'message' => 'Photo Uploaded successfully!',
-                'success' => false,
+                'success' => true,
                 'code' => 201,
                 'data' => [$employee]
             ];
@@ -347,7 +347,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         return [
             'message' => 'Photo Gagal Terupload!',
             'success' => false,
-            'code' => 201,
+            'code' => 201, 
             'data' => ['file' => ['Gagal Terupload!']]
         ];
     }
