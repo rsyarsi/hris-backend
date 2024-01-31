@@ -123,7 +123,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master employees
         Route::resource('employees', EmployeeController::class)->parameters(['employees' => 'employee']);
         Route::controller(EmployeeController::class)->group(function () {
-            // route for employee active(resigned_at = null)
+            // route for employee active
             Route::get('employee-active', 'employeeActive')->name('employee-active');
             // route for employee number null(employee before have contract)
             Route::get('employee-number-null', 'employeeNumberNull')->name('employee-number-null');
@@ -147,6 +147,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('employee-upload-photo-mobile', 'employeeUploadPhotoMobile')->name('employee-upload-photo-mobile');
             // route for employee profile mobile
             Route::post('employee-profile-mobile', 'employeeProfileMobile')->name('employee-profile-mobile');
+            // route for check active employee mobile
+            Route::post('check-active-employee-mobile', 'checkActiveEmployeeMobile')->name('check-active-employee-mobile');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);

@@ -167,4 +167,8 @@ class EmployeeService implements EmployeeServiceInterface
         return $this->repository->employeeResigned($perPage, $search);
     }
 
+    public function checkActiveEmployeeMobile($employeeId)
+    {
+        return $this->repository->checkActiveEmployeeMobile($employeeId);
+    }
 }

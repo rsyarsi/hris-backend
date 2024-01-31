@@ -25,4 +25,5 @@ Interface EmployeeRepositoryInterface
     public function employeeNonShift();
     public function employeeHaveContractDetail();
     public function employeeResigned($perPage, $search);
+    public function checkActiveEmployeeMobile($employeeId);
 }

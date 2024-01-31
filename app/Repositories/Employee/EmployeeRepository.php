@@ -826,4 +826,26 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         }
         return $query->orderBy('employment_number', 'ASC')->paginate($perPage);
     }
+
+    public function checkActiveEmployeeMobile($employeeId)
+    {
+        $employee = $this->model->where('id', $employeeId)->first();
+        if ($employee->resigned_at <= Carbon::now()->toDateString()) {
+            $user = User::where('id', $employee->user_id)->first();
+            $user->active = 0;
+            $user->save();
+            return [
+                'message' => 'Account Non Active!',
+                'success' => true,
+                'code' => 200,
+                'data' => 'Account Non Active!',
+            ];
+        }
+        return [
+            'message' => 'Account Active!',
+            'success' => true,
+            'code' => 200,
+            'data' => 'Account Active!',
+        ];
+    }
 }
