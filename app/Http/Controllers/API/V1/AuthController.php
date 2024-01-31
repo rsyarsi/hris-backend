@@ -109,24 +109,30 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-
-        $user->updateDeviceInfo(
-            $request->input('user_device_id'),
-            $request->input('firebase_id'),
-        );
+       // dd($user->user_device_id == null);
+       
         // if ($user->user_device_id == null) {
         //     // Store or update device information
         // }
-
-        if ($user->user_device_id !== $request->input('user_device_id')) {
-            // Auth::logout();
-            return response()->json([
-                'message' => 'User telah login di perangkat lain, silahkan hubungi HRD!',
-                'success' => false,
-                'code' => 200,
-                'data' => []
-            ]);
+            
+         
+        if($user->user_device_id == null){
+            $user->updateDeviceInfo(
+                $request->input('user_device_id'),
+                $request->input('firebase_id'),
+            );
+        }else{
+            if ($user->user_device_id !== $request->input('user_device_id')) {
+                // Auth::logout();
+                return response()->json([
+                    'message' => 'User telah login di perangkat lain, silahkan hubungi HRD!',
+                    'success' => false,
+                    'code' => 200,
+                    'data' => []
+                ]);
+            } 
         }
+        
 
         // Check if the user is active
         if ($user && $user->active !== 1) {
