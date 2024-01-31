@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\LoginLog;
 
 
 class AuthController extends Controller
@@ -77,6 +78,13 @@ class AuthController extends Controller
                 'data' => ['username' => ['Account not active!']]
             ], 422);
         }
+        // Log the login event
+        $this->logLogin(
+            $user->id,
+            'WEB',
+            $request->ip(),
+            $request->userAgent()
+        );
         return $this->createNewToken($token);
     }
 
@@ -110,18 +118,18 @@ class AuthController extends Controller
 
         $user = auth()->user();
        // dd($user->user_device_id == null);
-       
+
         // if ($user->user_device_id == null) {
         //     // Store or update device information
         // }
-            
-         
+
+
         if($user->user_device_id == null){
             $user->updateDeviceInfo(
                 $request->input('user_device_id'),
                 $request->input('firebase_id'),
             );
-        }else{
+        } else {
             if ($user->user_device_id !== $request->input('user_device_id')) {
                 // Auth::logout();
                 return response()->json([
@@ -130,9 +138,8 @@ class AuthController extends Controller
                     'code' => 200,
                     'data' => []
                 ]);
-            } 
+            }
         }
-        
 
         // Check if the user is active
         if ($user && $user->active !== 1) {
@@ -144,7 +151,17 @@ class AuthController extends Controller
                 'data' => []
             ]);
         }
+        // Check if the user is active
+        if ($user && ($user->verified == null || $user->verified == 0)) {
+            $user->update(['verified' => 1]);
+        }
 
+        $this->logLogin(
+            $user->id,
+            'WEB',
+            $request->ip(),
+            $request->userAgent()
+        );
         // $this->createNewToken($token);
         return response()->json([
             'message' => 'Login From Mobile App Berhasil!',
@@ -200,9 +217,34 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout() {
+        $user = auth()->user();
+
+        // Find the last login log for the user
+        $lastLoginLog = LoginLog::where('user_id', $user->id)
+            ->whereNull('logout_time')
+            ->latest('login_time')
+            ->first();
+
+        if ($lastLoginLog) {
+            // Update the logout time for the last login log
+            $lastLoginLog->update(['logout_time' => now()]);
+        }
         auth()->logout();
         return $this->success('User Successfully Signed Out, Token Revoked!', []);
     }
+
+    // Add this function to log login events
+    protected function logLogin($userId, $loginType, $ipAddress, $userAgent)
+    {
+        LoginLog::create([
+            'user_id' => $userId,
+            'login_type' => $loginType,
+            'login_time' => now(),
+            'ip_address' => $ipAddress,
+            'user_agent' => $userAgent,
+        ]);
+    }
+
     /**
      * Refresh a token.
      *
