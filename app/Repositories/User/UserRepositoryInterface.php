@@ -9,4 +9,5 @@ Interface UserRepositoryInterface
     public function update($id, array $data);
     public function destroy($id);
     public function updatePasswordMobile($id);
+    public function termConditionVerified($id);
 }

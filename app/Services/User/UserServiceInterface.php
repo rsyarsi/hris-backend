@@ -9,4 +9,5 @@ interface UserServiceInterface
     public function update($id, array $data);
     public function destroy($id);
     public function updatePasswordMobile(array $data);
+    public function termConditionVerified(array $data);
 }

@@ -10,7 +10,7 @@ use App\Services\Role\RoleServiceInterface;
 use App\Services\User\UserServiceInterface;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Permission\PermissionServiceInterface;
-use App\Http\Requests\{UserRequest, GivePermissionRequest, AssignRoleRequest, UpdatePasswordMobileRequest};
+use App\Http\Requests\{UserRequest, GivePermissionRequest, AssignRoleRequest};
 
 class UserController extends Controller
 {
@@ -89,14 +89,44 @@ class UserController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
+                $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
                 return response()->json([
                     'message' => 'Validation Error',
                     'success' => false,
-                    'code' => 200, // Use a more appropriate HTTP status code
-                    'data' => $validator->errors(),
+                    'code' => 200,
+                    'data' => $errorMessages,
                 ], 200);
             }
             $user = $this->userService->updatePasswordMobile($request->all());
+            return response()->json([
+                'message' => $user['message'],
+                'success' => $user['success'],
+                'code' => $user['code'],
+                'data' => $user['data']
+            ], $user['code']);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function termConditionVerified(Request $request)
+    {
+        try {
+            $rules = [
+                'employee_id' => 'required|exists:employees,id',
+                'verified' => 'required|in:0,1',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'success' => false,
+                    'code' => 200,
+                    'data' => $errorMessages,
+                ], 200);
+            }
+            $user = $this->userService->termConditionVerified($request->all());
             return response()->json([
                 'message' => $user['message'],
                 'success' => $user['success'],

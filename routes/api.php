@@ -81,6 +81,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(UserController::class)->group(function () {
             // route for update password mobile
             Route::post('/update-password-mobile', 'updatePasswordMobile')->name('update-password-mobile');
+            // route for term condition verified
+            Route::post('/term-condition-verified', 'termConditionVerified')->name('term-condition-verified');
             // route for asign role to user
             Route::post('/users/{user}/roles', 'assignRole')->name('users.roles');
             // route for remove role from user

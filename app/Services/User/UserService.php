@@ -102,4 +102,9 @@ class UserService implements UserServiceInterface
     {
         return $this->repository->updatePasswordMobile($data);
     }
+
+    public function termConditionVerified($data)
+    {
+        return $this->repository->termConditionVerified($data);
+    }
 }

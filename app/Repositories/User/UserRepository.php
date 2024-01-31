@@ -2,6 +2,7 @@
 
 namespace App\Repositories\User;
 
+use App\Models\Employee;
 use App\Models\User;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Services\Employee\EmployeeServiceInterface;
@@ -220,4 +221,19 @@ class UserRepository implements UserRepositoryInterface
         ];
     }
 
+    public function termConditionVerified($data)
+    {
+        $employeeId = $data['employee_id'];
+        $employee = Employee::where('id', $employeeId)->first();
+        $user = User::where('id', $employee->user_id)->first();
+        // Update the user's verified after read the term & condition
+        $user->verified = 1;
+        $user->save();
+        return [
+            'message' => 'Account verified successfully!',
+            'success' => true,
+            'code' => 200,
+            'data' => 'Account verified successfully!',
+        ];
+    }
 }
