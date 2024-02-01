@@ -975,6 +975,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
                             ->where('shift_schedules.employee_id', $employee->id)
                             ->whereBetween('shift_schedules.date', [$startOfMonth, $endOfMonth])
+                            ->whereNotIn('leave_status_id', [6,7,8,9,10])
                             ->unionAll($lembur)
                             ->orderBy('date', 'ASC')
                             ->get();
