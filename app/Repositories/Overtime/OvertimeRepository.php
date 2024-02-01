@@ -524,6 +524,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         ->where('overtimes.employee_id', $employee->id)
                         ->whereBetween('overtimes.from_date', [$startOfMonth, $endOfMonth])
                         ->orderBy('overtimes.from_date', 'DESC')
+                        ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10])
                         ->get();
         return $overtime ? $overtime : $overtime = null;
     }

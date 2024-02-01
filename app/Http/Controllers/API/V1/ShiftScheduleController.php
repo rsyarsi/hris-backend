@@ -37,6 +37,19 @@ class ShiftScheduleController extends Controller
         }
     }
 
+    public function shiftScheduleKehadiranEmployee(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiranEmployee($perPage, $startDate, $endDate);
+        return $this->success('Shift Schedule & kehadiran retrieved successfully', $shiftSchedules);
+        try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function shiftScheduleSubordinate(Request $request)
     {
         try {
