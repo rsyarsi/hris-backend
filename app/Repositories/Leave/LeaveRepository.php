@@ -188,7 +188,6 @@ class LeaveRepository implements LeaveRepositoryInterface
         // Update shift schedule if it exists
         if ($checkShiftSchedule) {
             $checkShiftScheduleModel = ShiftSchedule::find($checkShiftSchedule->id);
-
             // Make sure the shift schedule model is found
             if ($checkShiftScheduleModel) {
                 $checkShiftScheduleModel->update([
@@ -214,7 +213,6 @@ class LeaveRepository implements LeaveRepositoryInterface
         $toDate = Carbon::parse($data['to_date']);
         $employeeId = $leave->employee_id;
         $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
-
         // catatan cuti
         if ($data['leave_type_id'] == 1) {
             $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);

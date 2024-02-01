@@ -290,6 +290,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                                 },
                                 'leave' => function ($query) {
                                     $query->select(
+                                        'id',
                                         'employee_id',
                                         'leave_type_id',
                                         'from_date',
@@ -735,77 +736,77 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10]);
                     // union all here
         $shiftschedule = DB::table('shift_schedules')
-                    ->select([
-                        DB::raw("COALESCE(shift_schedules.id, '') as id"),
-                        DB::raw("COALESCE(shift_schedules.employee_id, '') as employee_id"),
-                        DB::raw("COALESCE(shift_schedules.shift_id, '') as shift_id"),
-                        DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'YYYY-MM-DD'), '') as date"),
-                        DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'TMDay'), '') as day_name"),
-                        DB::raw("COALESCE(TO_CHAR(shift_schedules.time_in, 'YYYY-MM-DD HH24:MI:SS'), '') as time_in"),
-                        DB::raw("COALESCE(TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD HH24:MI:SS'), '') as time_out"),
-                        DB::raw("COALESCE(shift_schedules.late_note, '') as late_note"),
-                        DB::raw("COALESCE(shift_schedules.shift_exchange_id, '') as shift_exchange_id"),
-                        DB::raw("COALESCE(shift_schedules.user_exchange_id::text, '') as user_exchange_id"),
-                        DB::raw("COALESCE(TO_CHAR(shift_schedules.user_exchange_at, 'YYYY-MM-DD HH24:MI:SS'), '') as user_exchange_at"),
-                        DB::raw("COALESCE(shift_schedules.created_user_id::text, '') as created_user_id"),
-                        DB::raw("COALESCE(shift_schedules.updated_user_id::text, '') as updated_user_id"),
-                        DB::raw("COALESCE(shift_schedules.setup_user_id::text, '') as setup_user_id"),
-                        DB::raw("COALESCE(TO_CHAR(shift_schedules.setup_at, 'YYYY-MM-DD HH24:MI:SS'), '') as setup_at"),
-                        DB::raw("COALESCE(shift_schedules.period, '') as period"),
-                        DB::raw("COALESCE(shift_schedules.leave_note, '') as leave_note"),
-                        DB::raw("COALESCE(shift_schedules.holiday::text, '') as holiday"),
-                        DB::raw("COALESCE(shift_schedules.night::text, '') as night"),
-                        DB::raw("COALESCE(shift_schedules.national_holiday::text, '') as national_holiday"),
-                        DB::raw("COALESCE(employees.name, '') as employee_name"),
-                        DB::raw("COALESCE(generate_absen.id::text, '') as generate_absen_id"),
-                        DB::raw("COALESCE(generate_absen.period, '') as generate_absen_period"),
-                        DB::raw("COALESCE(TO_CHAR(generate_absen.date, 'YYYY-MM-DD'), '') as generate_absen_date"),
-                        DB::raw("COALESCE(generate_absen.type, '') as generate_absen_type"),
-                        DB::raw("COALESCE(generate_absen.time_in_at, '') as generate_absen_time_in_at"),
-                        DB::raw("COALESCE(generate_absen.time_out_at, '') as generate_absen_time_out_at"),
-                        DB::raw("COALESCE(generate_absen.telat::text, '') as generate_absen_telat"),
-                        DB::raw("COALESCE(generate_absen.pa::text, '') as generate_absen_pa"),
-                        DB::raw("COALESCE(shifts.shift_group_id::text, '') as shift_group_id"),
-                        DB::raw("COALESCE(shifts.code, '') as shift_code"),
-                        DB::raw("COALESCE(shifts.name, '') as shift_name"),
-                        DB::raw("COALESCE(shifts.in_time, '') as in_time"),
-                        DB::raw("COALESCE(shifts.out_time, '') as out_time"),
-                        DB::raw("COALESCE(shifts.finger_in_less::text, '') as finger_in_less"),
-                        DB::raw("COALESCE(shifts.finger_in_more::text, '') as finger_in_more"),
-                        DB::raw("COALESCE(shifts.finger_out_less::text, '') as finger_out_less"),
-                        DB::raw("COALESCE(shifts.finger_out_more::text, '') as finger_out_more"),
-                        DB::raw("COALESCE(shifts.user_created_id::text, '') as user_created_id"),
-                        DB::raw("COALESCE(shifts.user_updated_id::text, '') as user_updated_id"),
-                        DB::raw("COALESCE(shift_schedules.leave_id::text, '') as leave_id"),
-                        // DB::raw("COALESCE(leaves.id::text, '') as leave_id"),
-                        DB::raw("COALESCE(leaves.employee_id::text, '') as leave_employee_id"),
-                        DB::raw("COALESCE(leaves.leave_type_id::text, '') as leave_type_id"),
-                        DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD'), '') as leave_from_date"),
-                        DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD'), '') as leave_to_date"),
-                        DB::raw("COALESCE(leaves.duration::text, '') as leave_duration"),
-                        DB::raw("COALESCE(leaves.note, '') as leave_note"),
-                        DB::raw("COALESCE(leaves.leave_status_id::text, '') as leave_status_id"),
-                        DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
-                        DB::raw("COALESCE(leave_statuses.name, '') as leave_status_name"),
-                        DB::raw("'ABSEN' AS schedule_type"),
-                        DB::raw("'' as overtime_id")
-                    ])
-                    ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
-                    ->leftJoin('generate_absen', function ($join) {
-                        $join->on('shift_schedules.employee_id', '=', 'generate_absen.employee_id')
-                            ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"))
-                            ->where('generate_absen.type', 'ABSEN');
-                    })
-                    ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
-                    ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id' ,'shift_schedules.employee_id','=','leaves.employee_id')
-                    ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
-                    ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-                    // ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
-                    ->where('shift_schedules.employee_id', $employee->id)
-                    ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)")
-                    ->unionAll($lembur)
-                    ->orderBy('date', 'ASC')
-                    ->get();
+                            ->select([
+                                DB::raw("COALESCE(shift_schedules.id, '') as id"),
+                                DB::raw("COALESCE(shift_schedules.employee_id, '') as employee_id"),
+                                DB::raw("COALESCE(shift_schedules.shift_id, '') as shift_id"),
+                                DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'YYYY-MM-DD'), '') as date"),
+                                DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'TMDay'), '') as day_name"),
+                                DB::raw("COALESCE(TO_CHAR(shift_schedules.time_in, 'YYYY-MM-DD HH24:MI:SS'), '') as time_in"),
+                                DB::raw("COALESCE(TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD HH24:MI:SS'), '') as time_out"),
+                                DB::raw("COALESCE(shift_schedules.late_note, '') as late_note"),
+                                DB::raw("COALESCE(shift_schedules.shift_exchange_id, '') as shift_exchange_id"),
+                                DB::raw("COALESCE(shift_schedules.user_exchange_id::text, '') as user_exchange_id"),
+                                DB::raw("COALESCE(TO_CHAR(shift_schedules.user_exchange_at, 'YYYY-MM-DD HH24:MI:SS'), '') as user_exchange_at"),
+                                DB::raw("COALESCE(shift_schedules.created_user_id::text, '') as created_user_id"),
+                                DB::raw("COALESCE(shift_schedules.updated_user_id::text, '') as updated_user_id"),
+                                DB::raw("COALESCE(shift_schedules.setup_user_id::text, '') as setup_user_id"),
+                                DB::raw("COALESCE(TO_CHAR(shift_schedules.setup_at, 'YYYY-MM-DD HH24:MI:SS'), '') as setup_at"),
+                                DB::raw("COALESCE(shift_schedules.period, '') as period"),
+                                DB::raw("COALESCE(shift_schedules.leave_note, '') as leave_note"),
+                                DB::raw("COALESCE(shift_schedules.holiday::text, '') as holiday"),
+                                DB::raw("COALESCE(shift_schedules.night::text, '') as night"),
+                                DB::raw("COALESCE(shift_schedules.national_holiday::text, '') as national_holiday"),
+                                DB::raw("COALESCE(employees.name, '') as employee_name"),
+                                DB::raw("COALESCE(generate_absen.id::text, '') as generate_absen_id"),
+                                DB::raw("COALESCE(generate_absen.period, '') as generate_absen_period"),
+                                DB::raw("COALESCE(TO_CHAR(generate_absen.date, 'YYYY-MM-DD'), '') as generate_absen_date"),
+                                DB::raw("COALESCE(generate_absen.type, '') as generate_absen_type"),
+                                DB::raw("COALESCE(generate_absen.time_in_at, '') as generate_absen_time_in_at"),
+                                DB::raw("COALESCE(generate_absen.time_out_at, '') as generate_absen_time_out_at"),
+                                DB::raw("COALESCE(generate_absen.telat::text, '') as generate_absen_telat"),
+                                DB::raw("COALESCE(generate_absen.pa::text, '') as generate_absen_pa"),
+                                DB::raw("COALESCE(shifts.shift_group_id::text, '') as shift_group_id"),
+                                DB::raw("COALESCE(shifts.code, '') as shift_code"),
+                                DB::raw("COALESCE(shifts.name, '') as shift_name"),
+                                DB::raw("COALESCE(shifts.in_time, '') as in_time"),
+                                DB::raw("COALESCE(shifts.out_time, '') as out_time"),
+                                DB::raw("COALESCE(shifts.finger_in_less::text, '') as finger_in_less"),
+                                DB::raw("COALESCE(shifts.finger_in_more::text, '') as finger_in_more"),
+                                DB::raw("COALESCE(shifts.finger_out_less::text, '') as finger_out_less"),
+                                DB::raw("COALESCE(shifts.finger_out_more::text, '') as finger_out_more"),
+                                DB::raw("COALESCE(shifts.user_created_id::text, '') as user_created_id"),
+                                DB::raw("COALESCE(shifts.user_updated_id::text, '') as user_updated_id"),
+                                DB::raw("COALESCE(shift_schedules.leave_id::text, '') as leave_id"),
+                                // DB::raw("COALESCE(leaves.id::text, '') as leave_id"),
+                                DB::raw("COALESCE(leaves.employee_id::text, '') as leave_employee_id"),
+                                DB::raw("COALESCE(leaves.leave_type_id::text, '') as leave_type_id"),
+                                DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD'), '') as leave_from_date"),
+                                DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD'), '') as leave_to_date"),
+                                DB::raw("COALESCE(leaves.duration::text, '') as leave_duration"),
+                                DB::raw("COALESCE(leaves.note, '') as leave_note"),
+                                DB::raw("COALESCE(leaves.leave_status_id::text, '') as leave_status_id"),
+                                DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
+                                DB::raw("COALESCE(leave_statuses.name, '') as leave_status_name"),
+                                DB::raw("'ABSEN' AS schedule_type"),
+                                DB::raw("'' as overtime_id")
+                            ])
+                            ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
+                            ->leftJoin('generate_absen', function ($join) {
+                                $join->on('shift_schedules.employee_id', '=', 'generate_absen.employee_id')
+                                    ->where(DB::raw("CAST(shift_schedules.date AS DATE)"), '=', DB::raw("CAST(generate_absen.date AS DATE)"))
+                                    ->where('generate_absen.type', 'ABSEN');
+                            })
+                            ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
+                            ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id', 'shift_schedules.employee_id','=','leaves.employee_id')
+                            ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+                            ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+                            // ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
+                            ->where('shift_schedules.employee_id', $employee->id)
+                            ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)")
+                            ->unionAll($lembur)
+                            ->orderBy('date', 'ASC')
+                            ->get();
 
         return $shiftschedule ? $shiftschedule : $shiftschedule = null;
     }
