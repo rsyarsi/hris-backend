@@ -755,6 +755,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                     // 'leave_histories.comment as leave_histories_comment',
                 ])
                 ->whereIn('employee_id', $subordinateIds)
+                ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
                 ->orderBy('from_date', 'DESC')
                 ->get();
     }

@@ -36,7 +36,8 @@ class UniqueOvertimeDateRange implements Rule
         return !Overtime::where('employee_id', $employeeId)
                         ->where(function ($query) use ($fromDate, $toDate) {
                             $query->whereBetween('from_date', [$fromDate, $toDate])
-                                    ->orWhereBetween('to_date', [$fromDate, $toDate]);
+                                    ->orWhereBetween('to_date', [$fromDate, $toDate])
+                                    ->whereNotIn('overtime_status_id', [6,7,8,9,10]);
                         })
                         ->exists();
     }

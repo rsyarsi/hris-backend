@@ -639,6 +639,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         'overtime_statuses.name as overtime_status_name',
                     ])
                     ->whereIn('overtimes.employee_id', $subordinateIds)
+                    ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10])
                     ->get();
     }
 

@@ -731,7 +731,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)")
                             ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)");
                     })
-                    ->where('shift_schedules.employee_id', $employee->id);
+                    ->where('shift_schedules.employee_id', $employee->id)
+                    ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10]);
                     // union all here
         $shiftschedule = DB::table('shift_schedules')
                     ->select([
@@ -799,6 +800,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id' ,'shift_schedules.employee_id','=','leaves.employee_id')
                     ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                     ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+                    // ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
                     ->where('shift_schedules.employee_id', $employee->id)
                     ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)")
                     ->unionAll($lembur)
