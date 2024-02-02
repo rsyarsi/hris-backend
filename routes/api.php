@@ -213,8 +213,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('import-shift-schedule', 'importShiftSchedule')->name('import-shift-schedule');
             // route for shift schedules subordinate
             Route::get('shift-schedules-subordinate', 'shiftScheduleSubordinate')->name('shift-schedules-subordinate');
-            // route for shift schedules kehadiran employee
+            // route for shift schedules kehadiran admin
             Route::get('shift-schedules-kehadiran-employee', 'shiftScheduleKehadiranEmployee')->name('shift-schedules-kehadiran-employee');
+            // route for shift schedules kehadiran atasan login / subordinate
+            Route::get('shift-schedules-kehadiran-subordinate', 'shiftScheduleKehadiranSubordinate')->name('shift-schedules-kehadiran-subordinate');
+            // route for shift schedules kehadiran employee login
+            Route::get('shift-schedules-kehadiran', 'shiftScheduleKehadiran')->name('shift-schedules-kehadiran');
         });
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
