@@ -522,12 +522,12 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->exists();
     }
 
-    public function shiftScheduleKehadiranEmployee($perPage, $startDate = null, $endDate = null)
+    public function shiftScheduleKehadiranEmployee($employeeId, $perPage, $startDate = null, $endDate = null)
     {
-        $user = auth()->user();
-        if (!$user->employee) {
-            return [];
-        }
+        // $user = auth()->user();
+        // if (!$user->employee) {
+        //     return [];
+        // }
         $overtimes = DB::table('overtimes')
                         ->select([
                             'shift_schedules.id as shift_schedule_id',
@@ -569,7 +569,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             $join->on('overtimes.employee_id', '=', 'shift_schedules.employee_id')
                                 ->where(DB::raw("CAST(overtimes.from_date AS DATE)"), '=', DB::raw("CAST(shift_schedules.date AS DATE)"));
                         })
-                        ->where('overtimes.employee_id', $user->employee->id)
+                        ->where('overtimes.employee_id', $employeeId)
                         ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10]);
                         if ($startDate && $endDate) {
                             $overtimes->whereBetween(DB::raw("CAST(overtimes.from_date AS DATE)"), [$startDate, $endDate]);
@@ -615,7 +615,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')
                         ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                         ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-                        ->where('shift_schedules.employee_id', $user->employee->id)
+                        ->where('shift_schedules.employee_id', $employeeId)
                         ->unionAll($overtimes);
             if ($startDate && $endDate) {
                 $query->whereBetween('shift_schedules.date', [$startDate, $endDate]);
@@ -975,9 +975,9 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
                             ->where('shift_schedules.employee_id', $employee->id)
                             ->whereBetween('shift_schedules.date', [$startOfMonth, $endOfMonth])
-                            ->whereNotIn('leave_status_id', [6,7,8,9,10])
+                            // ->whereNotIn('leaves.leave_status_id', [6, 7, 8, 9, 10])
                             ->unionAll($lembur)
-                            ->orderBy('date', 'ASC')
+                            ->orderBy('date', 'DESC')
                             ->get();
         return $shiftschedule;
     }

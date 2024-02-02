@@ -4,7 +4,7 @@ namespace App\Repositories\ShiftSchedule;
 Interface ShiftScheduleRepositoryInterface
 {
     public function index($perPage, $search, $startDate, $endDate);
-    public function shiftScheduleKehadiranEmployee($perPage, $startDate, $endDate);
+    public function shiftScheduleKehadiranEmployee($employeeId, $perPage, $startDate, $endDate);
     public function shiftScheduleSubordinate($perPage, $search, $startDate, $endDate);
     public function store(array $data);
     public function show($id);
