@@ -213,28 +213,82 @@ class ShiftScheduleController extends Controller
 
     public function storeMultiple(ShiftScheduleRequest $request)
     {
-        $data = $request->validated();
-        $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
-        return $this->success('Shift schedule multiple created successfully', $shiftSchedule, 201);
         try {
+            $data = $request->validated();
+            $shiftSchedule = $this->shiftScheduleService->storeMultiple($data);
+            return $this->success('Shift schedule multiple created successfully', $shiftSchedule, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
+    // public function importShiftSchedule(ImportShiftScheduleRequest $request)
+    // {
+    //     try {
+    //         $importShiftSchedule = Excel::import(new ShiftScheduleImport, request()->file('file'));
+    //         return response()->json([
+    //             'message' => $importShiftSchedule['message'],
+    //             'success' => $importShiftSchedule['success'],
+    //             'code' => $importShiftSchedule['code'],
+    //             'data' => $importShiftSchedule['data']
+    //         ], $importShiftSchedule['code']);
+    //     } catch (\Exception $e) {
+    //         return $this->error($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // return $this->success('Shift schedule imported successfully!', $importShiftSchedule, 201);
+
     public function importShiftSchedule(ImportShiftScheduleRequest $request)
     {
         try {
-            $importShiftSchedule = Excel::import(new ShiftScheduleImport, request()->file('file'));
-            // return response()->json([
-            //     'message' => $importShiftSchedule['message'],
-            //     'success' => $importShiftSchedule['success'],
-            //     'code' => $importShiftSchedule['code'],
-            //     'data' => $importShiftSchedule['data']
-            // ], $importShiftSchedule['code']);
-            return $this->success('Shift schedule imported successfully!', $importShiftSchedule, 201);
+            $import = new ShiftScheduleImport();
+            $importShiftSchedule = Excel::import($import, request()->file('file'));
+
+            // Access the imported data
+            $importedData = $import->getImportedData();
+            // If the import is successful, you can return a success response
+            return response()->json([
+                'message' => 'Shift schedule imported successfully.',
+                'success' => true,
+                'code' => 200,
+                'data' => $importedData,
+            ], 200);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorData = [];
+            foreach ($failures as $failure) {
+                if ($failure->attribute() == '0') {
+                    $nameRow = 'KD_PGW';
+                } else if ($failure->attribute() == '1') {
+                    $nameRow = 'KD_SHIFT';
+                } else if ($failure->attribute() == '2') {
+                    $nameRow = 'PERIODE';
+                } else if ($failure->attribute() == '3') {
+                    $nameRow = 'TGL_SHIFT';
+                }
+                
+                $errorData[] = [
+                    'lokasi_row' => $failure->row(),
+                    'lokasi_column' => $nameRow,
+                    'errors' => $failure->errors(),
+                ];
+            }
+
+            return response()->json([
+                'message' => 'Error Saat Proses Import.',
+                'success' => false,
+                'code' => 422,
+                'data' => $errorData,
+            ], 422);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getCode());
+            // If there's any other exception
+            return response()->json([
+                'message' => 'Error Saat Proses Import.: ' . $e->getMessage(),
+                'success' => false,
+                'code' => $e->getCode(),
+                'data' => null,
+            ], $e->getCode());
         }
     }
 

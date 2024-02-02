@@ -437,7 +437,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                 'absen_type' => 'ABSEN',
                 'import' => 0,
             ];
-
             // Save the ShiftSchedule and get the instance
             $shiftSchedule = $this->model->create($shiftScheduleData);
 

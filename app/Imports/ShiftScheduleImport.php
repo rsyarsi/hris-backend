@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\{Importable, ToModel, WithStartRow, WithValidatio
 class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
 {
     use Importable;
-
+    protected $importedData = [];
     public function startRow(): int
     {
         return 2;
@@ -30,8 +30,8 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
     public function customValidationMessages()
     {
         return [
-            '0.exists' => 'Karyawan tidak ditemukan :attribute.',
-            '1.exists' => 'Shift tidak ditemukan :attribute.',
+            '0.exists' => 'Karyawan tidak ditemukan pada row :attribute.',
+            '1.exists' => 'Kode Shift tidak ditemukan pada row :attribute.',
         ];
     }
 
@@ -47,12 +47,12 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
         $employeeNumber = $row[0];
         $employee = Employee::where('employment_number', $employeeNumber)->first();
         if (!$employee) {
-            return; // reject the request if employee not found
+            return null; // reject the request if employee not found
         }
         // shift group
         $shiftGroupId = $employee->shift_group_id;
         if (!$shiftGroupId) {
-            return; // reject the request if shiftGroupId
+            return null; // reject the request if shiftGroupId = null
         }
         $shift = Shift::where('shift_group_id', $shiftGroupId)
                         ->where('code', Str::upper($shiftCode))
@@ -67,48 +67,46 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
         // Check if the entry already exists in the shift_schedules table
         $existingEntry = ShiftSchedule::where([
             'employee_id' => $employee->id,
-            'shift_id' => $shift->id,
             'date' => $date,
         ])->first();
-
-        // If the entry exists, skip it
-        if ($existingEntry) {
-            return null; // Skip this row
-        }
 
         $ulid = Ulid::generate(); // Generate a ULID
         $timeIn = Carbon::parse($date . ' ' . $shift->in_time);
         $timeOut = $shift->night_shift == 1
                         ? Carbon::parse($date . ' ' . $shift->out_time)->addDay()
                         : Carbon::parse($date . ' ' . $shift->out_time);
-        $shiftSchedule = ShiftSchedule::create([
-            'id' => Str::lower($ulid),
-            'employee_id' => $employee->id,
-            'shift_id' => $shift->id,
-            'date' => $date,
-            'time_in' => $timeIn,
-            'time_out' => $timeOut,
-            'late_note' => null,
-            'shift_exchange_id' => null,
-            'user_exchange_id' => null,
-            'user_exchange_at' => null,
-            'created_user_id' => auth()->id(),
-            'updated_user_id' => null, // You may need to set this as per your requirements
-            'setup_user_id' => auth()->id(),
-            'setup_at' => now(), // You can customize the setup_at value
-            'period' => $row[2],
-            'leave_note' => null,
-            'holiday' => $shift->libur,
-            'night' => $shift->night_shift,
-            'national_holiday' => $row[5],
-            'import' => 1,
-            'absen_type' => 'ABSEN',
-        ]);
+         // If the entry exists, skip it
+        if ($existingEntry) {
+            return null; // Skip this row
+        } else {
+            $shiftSchedule = ShiftSchedule::create([
+                'id' => Str::lower($ulid),
+                'employee_id' => $employee->id,
+                'shift_id' => $shift->id,
+                'date' => $date,
+                'time_in' => $timeIn,
+                'time_out' => $timeOut,
+                'late_note' => null,
+                'shift_exchange_id' => null,
+                'user_exchange_id' => null,
+                'user_exchange_at' => null,
+                'created_user_id' => auth()->id(),
+                'updated_user_id' => null, // You may need to set this as per your requirements
+                'setup_user_id' => auth()->id(),
+                'setup_at' => now(), // You can customize the setup_at value
+                'period' => $row[2],
+                'leave_note' => null,
+                'holiday' => $shift->libur,
+                'night' => $shift->night_shift,
+                'national_holiday' => $row[5],
+                'import' => 1,
+                'absen_type' => 'ABSEN',
+            ]);
+        }
 
         // save data to generate_absen
         $existingEntryGenerateAbsen = GenerateAbsen::where([
             'employee_id' => $employee->id,
-            'shift_id' => $shift->id,
             'date' => $date,
         ])->first();
 
@@ -140,6 +138,12 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
             $data['shift_schedule_id'] = $shiftSchedule->id;
             GenerateAbsen::create($data);
         }
+        $this->importedData[] = $shiftSchedule;
         return $shiftSchedule;
+    }
+
+    public function getImportedData()
+    {
+        return $this->importedData;
     }
 }
