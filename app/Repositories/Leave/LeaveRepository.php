@@ -3,7 +3,7 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\{CatatanCuti, Employee, Leave, LeaveHistory, ShiftSchedule, User};
+use App\Models\{CatatanCuti, Employee, GenerateAbsen, Leave, LeaveHistory, ShiftSchedule, User};
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
@@ -834,6 +834,13 @@ class LeaveRepository implements LeaveRepositoryInterface
                 $startDate->addDay(); // Move to the next day
             }
         }
+        // if ($status == 10) { // if batal HRD
+        //     $shiftScheduleUpdate = ShiftSchedule::where('leave_id', $id)->first();
+        //     $shiftScheduleUpdate->update([
+        //         'leave_id' => null,
+        //         'leave_note' => null,
+        //     ]);
+        // }
         if ($leave) {
             $leave->update(['leave_status_id' => $status]);
             $historyData = [
@@ -845,7 +852,13 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'comment' => $leave->note,
             ];
             $this->leaveHistory->store($historyData);
-
+            if ($status == 10) {
+                ShiftSchedule::where('leave_id', $leave->id)
+                            ->update([
+                                'leave_id' => null,
+                                'leave_note' => null
+                            ]);
+            }
             // update data batal catatan cuti
             if ($leave->leave_type_id == 1 && $status == 10) {
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
@@ -857,23 +870,18 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'quantity_out' => 0,
                     'batal' => 1
                 ]);
-                $employee = $this->employeeService->show($leave->employee_id);
+                // $employee = $this->employeeService->show($leave->employee_id);
                 // update Shift Schedule if shift, delete if non shift
-                if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
-                    ShiftSchedule::where('leave_id', $leave->id)->delete();
-                    LeaveHistory::where('leave_id', $leave->id)->delete();
-                    $leave->delete();
-                } else {
-                    $leave->update([
-                        'quantity_cuti_awal' => 0,
-                        'sisa_cuti' => 0
-                    ]);
-                    ShiftSchedule::where('leave_id', $leave->id)
-                                ->update([
-                                    'leave_id' => null,
-                                    'leave_note' => null
-                                ]);
-                }
+                // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
+                    
+                //     // LeaveHistory::where('leave_id', $leave->id)->delete();
+                //     // $leave->delete();
+                // } else {
+                $leave->update([
+                    'quantity_cuti_awal' => 0,
+                    'sisa_cuti' => 0
+                ]);
+                // }
             }
 
             // firebase
@@ -942,7 +950,13 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'comment' => $leave->note,
             ];
             $this->leaveHistory->store($historyData);
-
+            if ($leaveStatusId == 10) {
+                ShiftSchedule::where('leave_id', $leave->id)
+                            ->update([
+                                'leave_id' => null,
+                                'leave_note' => null
+                            ]);
+            }
             // update data batal catatan cuti
             if ($leave->leave_type_id == 1 && $leaveStatusId == 10) {
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
@@ -956,21 +970,16 @@ class LeaveRepository implements LeaveRepositoryInterface
                 ]);
                 $employee = $this->employeeService->show($leave->employee_id);
                 // update Shift Schedule if shift, delete if non shift
-                if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
-                    ShiftSchedule::where('leave_id', $leave->id)->delete();
-                    LeaveHistory::where('leave_id', $leave->id)->delete();
-                    $leave->delete();
-                } else {
-                    $leave->update([
-                        'quantity_cuti_awal' => 0,
-                        'sisa_cuti' => 0
-                    ]);
-                    ShiftSchedule::where('leave_id', $leave->id)
-                                ->update([
-                                    'leave_id' => null,
-                                    'leave_note' => null
-                                ]);
-                }
+                // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
+                //     ShiftSchedule::where('leave_id', $leave->id)->delete();
+                //     LeaveHistory::where('leave_id', $leave->id)->delete();
+                //     $leave->delete();
+                // } else {
+                $leave->update([
+                    'quantity_cuti_awal' => 0,
+                    'sisa_cuti' => 0
+                ]);
+                // }
             }
 
             // firebase
