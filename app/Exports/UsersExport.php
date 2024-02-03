@@ -13,7 +13,7 @@ class UsersExport implements FromView, ShouldAutoSize
     */
     public function view(): View
     {
-        return view('excel.export_user', [
+        return view('excel.user', [
             'items' => User::get()
                             ->sortBy(function($item) {
                                 return $item->name;

@@ -431,7 +431,8 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                 'setup_at' => now(), // You can customize the setup_at value
                 'period' => $data['period'],
                 'leave_note' => null,
-                'holiday' => $date->isWeekend() ? 1 : 0,
+                // 'holiday' => $date->isWeekend() ? 1 : 0,
+                'holiday' => null,
                 'night' => null,
                 'national_holiday' => $data['national_holiday'],
                 'absen_type' => 'ABSEN',
@@ -440,38 +441,39 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
             // Save the ShiftSchedule and get the instance
             $shiftSchedule = $this->model->create($shiftScheduleData);
 
-            $existingEntryGenerateAbsen = GenerateAbsen::where([
-                'employee_id' => $data['employee_id'],
-                'shift_id' => $shiftLibur->id,
-                'date' => $date,
-            ])->first();
-            if ($existingEntryGenerateAbsen) {
-                return null; // Skip this row
-            } else if ($date->isWeekend()) { // if sunday
-                $data['period'] = $data['period'];
-                $data['date'] = $date->format('Y-m-d');
-                $data['day'] = $date->format('l');
-                $data['employee_id'] = $data['employee_id'];
-                $data['employment_id'] = $employee->employment_number;
-                $data['shift_id'] = $shiftLibur->id;
-                $data['date_in_at'] = $date->format('Y-m-d');
-                $data['time_in_at'] = null;
-                $data['date_out_at'] = $date->format('Y-m-d');
-                $data['time_out_at'] = null;
-                $data['schedule_date_in_at'] = $date->format('Y-m-d');
-                $data['schedule_time_in_at'] = null;
-                $data['schedule_date_out_at'] = $date->format('Y-m-d');
-                $data['schedule_time_out_at'] = null;
-                $data['holiday'] = 1;
-                $data['night'] = 0;
-                $data['national_holiday'] = 0;
-                $data['type'] = null;
-                $data['function'] = null;
-                $data['note'] = 'LIBUR';
-                $data['type'] = 'ABSEN';
-                $data['shift_schedule_id'] = $shiftSchedule->id;
-                GenerateAbsen::create($data);
-            }
+            // $existingEntryGenerateAbsen = GenerateAbsen::where([
+            //     'employee_id' => $data['employee_id'],
+            //     'shift_id' => $shiftLibur->id,
+            //     'date' => $date,
+            // ])->first();
+            // if ($existingEntryGenerateAbsen) {
+            //     return null; // Skip this row
+            // }
+            // else if ($date->isWeekend()) { // if sunday
+            //     $data['period'] = $data['period'];
+            //     $data['date'] = $date->format('Y-m-d');
+            //     $data['day'] = $date->format('l');
+            //     $data['employee_id'] = $data['employee_id'];
+            //     $data['employment_id'] = $employee->employment_number;
+            //     $data['shift_id'] = $shiftLibur->id;
+            //     $data['date_in_at'] = $date->format('Y-m-d');
+            //     $data['time_in_at'] = null;
+            //     $data['date_out_at'] = $date->format('Y-m-d');
+            //     $data['time_out_at'] = null;
+            //     $data['schedule_date_in_at'] = $date->format('Y-m-d');
+            //     $data['schedule_time_in_at'] = null;
+            //     $data['schedule_date_out_at'] = $date->format('Y-m-d');
+            //     $data['schedule_time_out_at'] = null;
+            //     $data['holiday'] = 1;
+            //     $data['night'] = 0;
+            //     $data['national_holiday'] = 0;
+            //     $data['type'] = null;
+            //     $data['function'] = null;
+            //     $data['note'] = 'LIBUR';
+            //     $data['type'] = 'ABSEN';
+            //     $data['shift_schedule_id'] = $shiftSchedule->id;
+            //     GenerateAbsen::create($data);
+            // }
             $shiftSchedules[] = $shiftSchedule; // Append the created instance to the array
         }
         return $shiftSchedules;

@@ -58,6 +58,18 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                             'village' => function ($query) {
                                 $query->select('id', 'name');
                             },
+                            'currentProvince' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentCity' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentDistrict' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentVillage' => function ($query) {
+                                $query->select('id', 'name');
+                            },
                             'statusEmployment' => function ($query) {
                                 $query->select('id', 'name');
                             },
@@ -119,10 +131,10 @@ class EmployeeRepository implements EmployeeRepositoryInterface
     {
         $employee = DB::table('employees')
                         ->select(
-                            'employees.id as employee_id', 
-                            'employees.employment_number as nik', 
-                            'employees.name as employee_name', 
-                            'employees.birth_date as tanggal_lahir', 
+                            'employees.id as employee_id',
+                            'employees.employment_number as nik',
+                            'employees.name as employee_name',
+                            'employees.birth_date as tanggal_lahir',
                             'employees.started_at as tanggal_masuk',
                             // 'employees.started_at as lama_kerja',
                             DB::raw('EXTRACT(DAY FROM AGE(current_date, employees.started_at)) as lama_kerja'),
@@ -145,13 +157,13 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         return [
             'message' => 'Employee Retrieved Successfully!',
             'success' => false,
-            'code' => 200, 
+            'code' => 200,
             'data' => ''
         ];
     }
 
     public function show($id)
-    { 
+    {
         $employee = $this->model
                         ->with([
                             'identityType' => function ($query) {
@@ -176,6 +188,18 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'village' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentProvince' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentCity' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentDistrict' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentVillage' => function ($query) {
                                 $query->select('id', 'name');
                             },
                             'statusEmployment' => function ($query) {
@@ -383,7 +407,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         return [
             'message' => 'Photo Gagal Terupload!',
             'success' => false,
-            'code' => 200, 
+            'code' => 200,
             'data' => 'Gagal Terupload!'
         ];
     }
@@ -424,6 +448,18 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                                 $query->select('id', 'name');
                             },
                             'village' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentProvince' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentCity' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentDistrict' => function ($query) {
+                                $query->select('id', 'name');
+                            },
+                            'currentVillage' => function ($query) {
                                 $query->select('id', 'name');
                             },
                             'statusEmployment' => function ($query) {

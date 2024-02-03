@@ -110,6 +110,26 @@ class Employee extends Model
         return $this->belongsTo(Village::class, 'legal_village_id', 'id');
     }
 
+    public function currentProvince()
+    {
+        return $this->belongsTo(Province::class, 'current_province_id', 'id');
+    }
+
+    public function currentCity()
+    {
+        return $this->belongsTo(City::class, 'current_city_id', 'id');
+    }
+
+    public function currentDistrict()
+    {
+        return $this->belongsTo(District::class, 'current_district_id', 'id');
+    }
+
+    public function currentVillage()
+    {
+        return $this->belongsTo(Village::class, 'current_village_id', 'id');
+    }
+
     public function statusEmployment()
     {
         return $this->belongsTo(StatusEmployment::class, 'status_employment_id', 'id');

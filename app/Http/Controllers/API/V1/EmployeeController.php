@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use App\Exports\EmployeeExport;
 use App\Imports\EmployeeImport;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -279,6 +280,16 @@ class EmployeeController extends Controller
             'data' => $employee['data']
         ], $employee['code']);
         try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function export()
+    {
+        try {
+            $nameFile = 'data-employees-'.date("Y-m-d").'.xlsx';
+            return Excel::download(new EmployeeExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

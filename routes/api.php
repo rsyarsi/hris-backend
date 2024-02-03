@@ -151,6 +151,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('employee-profile-mobile', 'employeeProfileMobile')->name('employee-profile-mobile');
             // route for check active employee mobile
             Route::post('check-active-employee-mobile', 'checkActiveEmployeeMobile')->name('check-active-employee-mobile');
+            // route for employees user
+            Route::get('employee-export', 'export')->name('employee-export');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);

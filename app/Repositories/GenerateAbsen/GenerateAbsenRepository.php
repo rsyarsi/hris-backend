@@ -185,6 +185,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             // Additional conditions
             $query->where(function ($subquery) {
                 $subquery->whereNull('leave_id')
+                    ->orWhere('leave_id', null)
                     ->orWhere('leave_id', '');
             })
             ->where(function ($subquery) {
@@ -524,7 +525,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             'time_out_at' => $data['time_out_at'],
                             'date_out_at' => now(),
                             'pa' => $pa,
-                            'note' => $pa == null && $existingRecordAbsenOut->telat == null ? '' : 'WARNING',
+                            'note' => $pa == null && $existingRecordAbsenOut->telat == null ? null : 'WARNING',
                         ]);
                         return [
                             'message' => 'Absen Keluar Berhasil!',
@@ -607,7 +608,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $existingRecordSplOut->update([
                             'time_out_at' => $finalOvertimeOutAt,
                             'overtime_out_at' => $finalOvertimeOutAt,
-                            'note' => '',
+                            'note' => null,
                         ]);
                         return [
                             'message' => 'Absen Keluar Overtime Berhasil!',
