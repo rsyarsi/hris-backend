@@ -42,6 +42,9 @@ class GenerateShiftScheduleNonShiftCommand extends Command
         $shift = Shift::where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
                         ->where('code', 'N')
                         ->first();
+        $shiftLibur = Shift::where('shift_group_id', '01hfhe3aqcbw9r1fxvr2j2tb75')
+                        ->where('code', 'L')
+                        ->first();
 
         foreach ($employees as $employee) {
             // Get the current month's start and end dates
@@ -51,6 +54,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
             $existingRecord = ShiftSchedule::where('employee_id', $employee->id)
                                             ->where('date', $date->format('Y-m-d'))
                                             ->first();
+            $shiftId = $date->isWeekend() ? $shiftLibur->id : $shift->id;
             $timeIn = $date->isWeekend() ? '00:00:00' : $shift->in_time;
             $timeOut = $date->isWeekend() ? '00:00:00' : $shift->out_time;
             if (!$existingRecord){
@@ -58,7 +62,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                 $shiftScheduleData = [
                     'id' => Str::lower($ulid),
                     'employee_id' => $employee->id,
-                    'shift_id' => $shift->id,
+                    'shift_id' => $shiftId,
                     'date' => $date->format('Y-m-d'),
                     'time_in' => $date->format('Y-m-d') . ' ' . $timeIn,
                     'time_out' => $date->format('Y-m-d') . ' ' . $timeOut,
@@ -82,7 +86,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
 
                 $existingEntryGenerateAbsen = GenerateAbsen::where([
                     'employee_id' => $employee->id,
-                    'shift_id' => $shift->id,
+                    'shift_id' => $shiftId,
                     'date' => $date,
                 ])->first();
 
@@ -94,7 +98,7 @@ class GenerateShiftScheduleNonShiftCommand extends Command
                     $data['day'] = $date->format('l');
                     $data['employee_id'] = $employee->id;
                     $data['employment_id'] = $employee->employment_number;
-                    $data['shift_id'] = "L";
+                    $data['shift_id'] = $shiftId;
                     $data['date_in_at'] = $date->format('Y-m-d');
                     $data['time_in_at'] = null;
                     $data['date_out_at'] = $date->format('Y-m-d');
