@@ -6,14 +6,35 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 use App\Models\{Employee, Deduction};
-use Maatwebsite\Excel\Concerns\{ToModel, WithStartRow};
+use Maatwebsite\Excel\Concerns\{Importable, ToModel, WithStartRow, WithValidation};
 
 
-class DeductionImport implements ToModel, WithStartRow
+class DeductionImport implements ToModel, WithStartRow, WithValidation
 {
+    use Importable;
+    protected $importedData = [];
     public function startRow(): int
     {
         return 2;
+    }
+
+    public function rules(): array
+    {
+        return [
+            '0' => 'required|exists:employees,employment_number',
+            '1' => 'required|numeric',
+            '2' => 'required|max:255',
+            '3' => 'required|numeric',
+            '4' => 'required|date_format:Y-m',
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            '0.exists' => 'Karyawan tidak ditemukan pada row :attribute.',
+            '4.date_format' => 'Format tidak sesuai, contoh format yang benar 2024-01 pada row :attribute.',
+        ];
     }
 
     /**
@@ -43,7 +64,7 @@ class DeductionImport implements ToModel, WithStartRow
         // Loop through the tenor and create multiple entries
         for ($i = 1; $i <= $tenor; $i++) {
             $ulid = Ulid::generate(); // Generate a ULID
-            $deductions[] = new Deduction([
+            $deductions[] = Deduction::create([
                 'id' => Str::lower($ulid),
                 'employee_id' => $employee->id,
                 'nilai' => $row[1] / $tenor, // Divide the nilai by tenor
@@ -56,6 +77,12 @@ class DeductionImport implements ToModel, WithStartRow
             ]);
         }
 
+        $this->importedData[] = $deductions;
         return $deductions;
+    }
+
+    public function getImportedData()
+    {
+        return $this->importedData;
     }
 }
