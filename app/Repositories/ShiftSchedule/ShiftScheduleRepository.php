@@ -455,13 +455,13 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                 $data['employment_id'] = $employee->employment_number;
                 $data['shift_id'] = $shiftLibur->id;
                 $data['date_in_at'] = $date->format('Y-m-d');
-                $data['time_in_at'] = '';
+                $data['time_in_at'] = null;
                 $data['date_out_at'] = $date->format('Y-m-d');
-                $data['time_out_at'] = '';
+                $data['time_out_at'] = null;
                 $data['schedule_date_in_at'] = $date->format('Y-m-d');
-                $data['schedule_time_in_at'] = '';
+                $data['schedule_time_in_at'] = null;
                 $data['schedule_date_out_at'] = $date->format('Y-m-d');
-                $data['schedule_time_out_at'] = '';
+                $data['schedule_time_out_at'] = null;
                 $data['holiday'] = 1;
                 $data['night'] = 0;
                 $data['national_holiday'] = 0;

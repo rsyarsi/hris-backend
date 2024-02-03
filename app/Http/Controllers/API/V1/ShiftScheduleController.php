@@ -222,22 +222,6 @@ class ShiftScheduleController extends Controller
         }
     }
 
-    // public function importShiftSchedule(ImportShiftScheduleRequest $request)
-    // {
-    //     try {
-    //         $importShiftSchedule = Excel::import(new ShiftScheduleImport, request()->file('file'));
-    //         return response()->json([
-    //             'message' => $importShiftSchedule['message'],
-    //             'success' => $importShiftSchedule['success'],
-    //             'code' => $importShiftSchedule['code'],
-    //             'data' => $importShiftSchedule['data']
-    //         ], $importShiftSchedule['code']);
-    //     } catch (\Exception $e) {
-    //         return $this->error($e->getMessage(), $e->getCode());
-    //     }
-    // }
-    // return $this->success('Shift schedule imported successfully!', $importShiftSchedule, 201);
-
     public function importShiftSchedule(ImportShiftScheduleRequest $request)
     {
         try {
@@ -267,7 +251,7 @@ class ShiftScheduleController extends Controller
                 } else if ($failure->attribute() == '3') {
                     $nameRow = 'TGL_SHIFT';
                 }
-                
+
                 $errorData[] = [
                     'lokasi_row' => $failure->row(),
                     'lokasi_column' => $nameRow,

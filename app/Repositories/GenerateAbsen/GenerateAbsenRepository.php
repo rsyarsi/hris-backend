@@ -472,7 +472,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         'message' => 'ANDA TIDAK BISA ABSEN MASUK!',
                         'data' => [$existingRecordAbsen]
                     ];
-                } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
+                } else if ($existingRecordAbsen && ($existingRecordAbsen->time_in_at == null || $existingRecordAbsen->time_in_at == "")) { // update absen (NON SHIFT);
                     $existingRecordAbsen->update([
                         'date_in_at' => $data['date_in_at'],
                         'time_in_at' => $data['time_in_at'],
@@ -509,7 +509,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     //     'data' => [$existingRecordAbsenOut]
                     // ];
                 if ($existingRecordAbsenOut) {
-                    if ($existingRecordAbsenOut->time_out_at !== null) {
+                    if ($existingRecordAbsenOut->time_out_at !== null || $existingRecordAbsenOut->time_out_at == "") {
                         return [
                             'message' => 'Anda Sudah Absen Keluar!',
                             'data' => [$existingRecordAbsenOut]
