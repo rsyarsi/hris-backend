@@ -70,9 +70,9 @@ class OvertimeController extends Controller
                 'to_date' => 'required|date',
                 'libur' => 'required|in:0,1',
             ];
-            if ($request->isMethod('post')) {
-                $rules['from_date'][] = new UniqueOvertimeDateRange();
-            }
+            // if ($request->isMethod('post')) {
+            //     $rules['from_date'][] = new UniqueOvertimeDateRange();
+            // }
             $validator = Validator::make($request->all(), $rules);
             $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
             if ($validator->fails()) {

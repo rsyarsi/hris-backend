@@ -41,9 +41,9 @@ class OvertimeRequest extends FormRequest
             'libur' => 'required|in:0,1',
         ];
 
-        if ($this->isMethod('post')) {
-            $rules['from_date'][] = new UniqueOvertimeDateRange();
-        }
+        // if ($this->isMethod('post')) {
+        //     $rules['from_date'][] = new UniqueOvertimeDateRange();
+        // }
 
         return $rules;
     }
