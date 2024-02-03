@@ -303,7 +303,8 @@ class AuthController extends Controller
                     'resigned_at',
                     'user_id',
                     'supervisor_id',
-                    'manager_id'
+                    'manager_id',
+                    'file_url',
                 )->with([
                     'supervisor:id,name,email',
                     'manager:id,name,email',
