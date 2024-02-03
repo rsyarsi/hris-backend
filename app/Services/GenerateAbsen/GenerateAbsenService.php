@@ -150,7 +150,7 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
             $telat = Carbon::parse($dateJamMasuk)->diffInMinutes($timeInSchedule);
         }
         $data['telat'] = $telat;
-        $data['note'] = $telat == null ? '' : 'WARNING';
+        $data['note'] = $telat == null ? null : 'WARNING';
 
         // OVERTIME
         if ($type == 'SPL') {

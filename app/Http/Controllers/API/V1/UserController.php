@@ -283,9 +283,9 @@ class UserController extends Controller
 
     public function export()
     {
+        $name = 'data-users-'.date("Y-m-d").'.xlsx';
+        return Excel::download(new UsersExport, $name);
         try {
-            $name = 'data-users-'.date("Y-m-d").'.xlsx';
-            return Excel::download(new UsersExport, $name);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

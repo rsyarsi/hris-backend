@@ -5,7 +5,6 @@ namespace App\Repositories\GenerateAbsen;
 use Carbon\Carbon;
 use App\Models\Employee;
 use App\Models\GenerateAbsen;
-use App\Services\Overtime\OvertimeServiceInterface;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 
 class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface

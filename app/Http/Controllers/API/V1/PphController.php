@@ -100,10 +100,48 @@ class PphController extends Controller
     public function importPph(ImportPphRequest $request)
     {
         try {
-            Excel::import(new PphImport, request()->file('file'));
-            return $this->success('Pph imported successfully', [], 201);
+            $import = new PphImport();
+            $pph = Excel::import($import, request()->file('file'));
+            // Access the imported data
+            $importedData = $import->getImportedData();
+            // If the import is successful, you can return a success response
+            return response()->json([
+                'message' => 'Pph imported successfully!',
+                'success' => true,
+                'code' => 200,
+                'data' => $importedData,
+            ], 200);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorData = [];
+            foreach ($failures as $failure) {
+                if ($failure->attribute() == '0') {
+                    $nameRow = 'KD_PGW';
+                } else if ($failure->attribute() == '1') {
+                    $nameRow = 'NILAI';
+                } else if ($failure->attribute() == '2') {
+                    $nameRow = 'PERIODE_PAYROLL';
+                }
+                $errorData[] = [
+                    'lokasi_row' => $failure->row(),
+                    'lokasi_column' => $nameRow,
+                    'errors' => $failure->errors(),
+                ];
+            }
+            return response()->json([
+                'message' => 'Error Saat Proses Import.',
+                'success' => false,
+                'code' => 422,
+                'data' => $errorData,
+            ], 422);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getCode());
+            // If there's any other exception
+            return response()->json([
+                'message' => 'Error Saat Proses Import.: ' . $e->getMessage(),
+                'success' => false,
+                'code' => $e->getCode(),
+                'data' => null,
+            ], $e->getCode());
         }
     }
 }

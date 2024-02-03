@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use App\Imports\PengembalianImport;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\PengembalianRequest;
-use App\Http\Requests\ImportPengembalianRequest;
+use App\Http\Requests\{PengembalianRequest, ImportPengembalianRequest};
 use App\Services\Pengembalian\PengembalianServiceInterface;
 
 class PengembalianController extends Controller
@@ -101,10 +100,48 @@ class PengembalianController extends Controller
     public function importPengembalian(ImportPengembalianRequest $request)
     {
         try {
-            $import = Excel::import(new PengembalianImport, request()->file('file'));
-            return $this->success('Pengembalian imported successfully', $import, 201);
+            $import = new PengembalianImport();
+            $pengembalian = Excel::import($import, request()->file('file'));
+            // Access the imported data
+            $importedData = $import->getImportedData();
+            // If the import is successful, you can return a success response
+            return response()->json([
+                'message' => 'Pengembalian imported successfully!',
+                'success' => true,
+                'code' => 200,
+                'data' => $importedData,
+            ], 200);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorData = [];
+            foreach ($failures as $failure) {
+                if ($failure->attribute() == '0') {
+                    $nameRow = 'KD_PGW';
+                } else if ($failure->attribute() == '1') {
+                    $nameRow = 'NILAI';
+                } else if ($failure->attribute() == '2') {
+                    $nameRow = 'PERIODE_PAYROLL';
+                }
+                $errorData[] = [
+                    'lokasi_row' => $failure->row(),
+                    'lokasi_column' => $nameRow,
+                    'errors' => $failure->errors(),
+                ];
+            }
+            return response()->json([
+                'message' => 'Error Saat Proses Import.',
+                'success' => false,
+                'code' => 422,
+                'data' => $errorData,
+            ], 422);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getCode());
+            // If there's any other exception
+            return response()->json([
+                'message' => 'Error Saat Proses Import.: ' . $e->getMessage(),
+                'success' => false,
+                'code' => $e->getCode(),
+                'data' => null,
+            ], $e->getCode());
         }
     }
 }

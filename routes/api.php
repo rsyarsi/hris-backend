@@ -92,7 +92,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for revoke permission from user
             Route::delete('/users/{user}/permissions/{permission}', 'revokePermission')->name('users.permissions.revoke');
             // route for export user
-            Route::get('users-export', 'export')->name('users-export');
+            Route::get('users/export', 'export')->name('users/export');
         });
         // route for master units
         Route::resource('units', UnitController::class)->parameters(['units' => 'unit']);
