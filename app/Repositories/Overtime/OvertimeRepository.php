@@ -186,8 +186,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $data['holiday'] = $shiftSchedule->holiday;
             $data['night'] = $shiftSchedule->night;
             $data['national_holiday'] = $shiftSchedule->national_holiday;
-            $data['function'] = '';
-            $data['note'] = '';
+            $data['function'] = null;
+            $data['note'] = null;
             $data['type'] = 'SPL';
             $data['overtime_type'] = $data['type'];
             $data['overtime_hours'] = $data['duration'];
@@ -331,8 +331,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $data['holiday'] = $shiftSchedule->holiday;
             $data['night'] = $shiftSchedule->night;
             $data['national_holiday'] = $shiftSchedule->national_holiday;
-            $data['function'] = '';
-            $data['note'] = '';
+            $data['function'] = null;
+            $data['note'] = null;
             $data['type'] = 'SPL';
             $data['overtime_type'] = $data['type'];
             $data['overtime_hours'] = $data['duration'];
