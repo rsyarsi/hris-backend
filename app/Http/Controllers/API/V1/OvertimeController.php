@@ -204,7 +204,9 @@ class OvertimeController extends Controller
             $search = $request->input('search');
             $overtimeStatus = $request->input('overtime_status');
             $unit = $request->input('unit');
-            $overtimes = $this->overtimeService->overtimeStatus($perPage, $search, $overtimeStatus, $unit);
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $overtimes = $this->overtimeService->overtimeStatus($perPage, $search, $period_1, $period_2, $overtimeStatus, $unit);
             return $this->success('Overtime where status retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

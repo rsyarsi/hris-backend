@@ -206,7 +206,9 @@ class LeaveController extends Controller
             $search = $request->input('search');
             $leaveStatus = $request->input('leave_status');
             $unit = $request->input('unit');
-            $leaves = $this->leaveService->leaveStatus($perPage, $search, $leaveStatus, $unit);
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $leaves = $this->leaveService->leaveStatus($perPage, $search, $period_1, $period_2, $leaveStatus, $unit);
             return $this->success('Leave where status retrieved successfully', $leaves);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -255,5 +257,4 @@ class LeaveController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
-
 }

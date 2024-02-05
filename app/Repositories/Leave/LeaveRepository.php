@@ -758,7 +758,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 ->get();
     }
 
-    public function leaveStatus($perPage, $search = null, $leaveStatus = null, $unit)
+    public function leaveStatus($perPage, $search = null, $period_1 = null, $period_2 = null, $leaveStatus = null, $unit)
     {
         $query = $this->model
                     ->with([
@@ -800,6 +800,13 @@ class LeaveRepository implements LeaveRepositoryInterface
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
                 $employeeQuery->where('unit_id', $unit);
             });
+        }
+        if ($period_1) {
+            $query->where('from_date', '>=', $period_1);
+        }
+    
+        if ($period_2) {
+            $query->where('to_date', '<=', $period_2);
         }
         return $query->paginate($perPage);
     }
