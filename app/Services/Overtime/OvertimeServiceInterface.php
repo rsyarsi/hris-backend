@@ -13,7 +13,7 @@ interface OvertimeServiceInterface
     public function overtimeEmployeeMobile($employeeId);
     public function overtimeHrdMobile();
     public function overtimeSupervisorOrManager($perPage, $search, $overtimeStatus, $startDate, $endDate);
-    public function overtimeStatus($perPage, $search, $overtimeStatus);
+    public function overtimeStatus($perPage, $search, $overtimeStatus, $unit);
     public function updateStatus($id, $newStatusId);
     public function updateStatusMobile($overtimeId, $overtimeStatusId);
     public function overtimeEmployeeToday($employeeId);

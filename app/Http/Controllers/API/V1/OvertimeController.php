@@ -203,7 +203,8 @@ class OvertimeController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $overtimeStatus = $request->input('overtime_status');
-            $overtimes = $this->overtimeService->overtimeStatus($perPage, $search, $overtimeStatus);
+            $unit = $request->input('unit');
+            $overtimes = $this->overtimeService->overtimeStatus($perPage, $search, $overtimeStatus, $unit);
             return $this->success('Overtime where status retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

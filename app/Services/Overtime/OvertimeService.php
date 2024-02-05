@@ -103,10 +103,10 @@ class OvertimeService implements OvertimeServiceInterface
         return null;
     }
 
-    public function overtimeStatus($perPage, $search, $overtimeStatus)
+    public function overtimeStatus($perPage, $search, $overtimeStatus, $unit)
     {
         $search = Str::upper($search);
-        return $this->repository->overtimeStatus($perPage, $search, $overtimeStatus);
+        return $this->repository->overtimeStatus($perPage, $search, $overtimeStatus, $unit);
     }
 
     public function updateStatus($id, $data)

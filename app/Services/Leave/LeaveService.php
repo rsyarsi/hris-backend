@@ -166,10 +166,10 @@ class LeaveService implements LeaveServiceInterface
         return $this->repository->leaveSupervisorOrManagerMobile($employeeId);
     }
 
-    public function leaveStatus($perPage, $search, $leaveStatus)
+    public function leaveStatus($perPage, $search, $leaveStatus, $unit)
     {
         $search = Str::upper($search);
-        return $this->repository->leaveStatus($perPage, $search, $leaveStatus);
+        return $this->repository->leaveStatus($perPage, $search, $leaveStatus, $unit);
     }
 
     public function updateStatus($id, $data)

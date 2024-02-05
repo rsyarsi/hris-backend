@@ -758,12 +758,12 @@ class LeaveRepository implements LeaveRepositoryInterface
                 ->get();
     }
 
-    public function leaveStatus($perPage, $search = null, $leaveStatus = null)
+    public function leaveStatus($perPage, $search = null, $leaveStatus = null, $unit)
     {
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name', 'employment_number');
+                            $query->select('id', 'name', 'employment_number', 'unit_id');
                         },
                         'leaveType' => function ($query) {
                             $query->select('id', 'name', 'is_salary_deduction', 'active');
@@ -794,6 +794,11 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
                                                 ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
+            });
+        }
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
             });
         }
         return $query->paginate($perPage);

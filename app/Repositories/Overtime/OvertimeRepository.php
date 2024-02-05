@@ -654,12 +654,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                     ->get();
     }
 
-    public function overtimeStatus($perPage, $search = null, $overtimeStatus = null)
+    public function overtimeStatus($perPage, $search = null, $overtimeStatus = null, $unit = null)
     {
         $query = $this->model
                     ->with([
                         'employee' => function ($query) {
-                            $query->select('id', 'name', 'employment_number');
+                            $query->select('id', 'name', 'employment_number', 'unit_id');
                         },
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
@@ -678,6 +678,11 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
         if ($overtimeStatus) {
             $query->whereIn('overtime_status_id', $overtimeStatus);
+        }
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
         }
         return $query->paginate($perPage);
     }
