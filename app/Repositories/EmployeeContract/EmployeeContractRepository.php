@@ -256,10 +256,10 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
     public function countEmployeeEndContract()
     {
         $today = Carbon::now()->toDateString();
-        $twoWeeksLater = Carbon::now()->addWeeks(2)->toDateString();
+        $threeMonth = Carbon::now()->addMonth(3)->toDateString();
 
         $count = Employee::with([
-                                'contract' => function ($query) use ($today, $twoWeeksLater) {
+                                'contract' => function ($query) use ($today, $threeMonth) {
                                     $query->select(
                                         'id',
                                         'employee_id',
@@ -288,9 +288,10 @@ class EmployeeContractRepository implements EmployeeContractRepositoryInterface
                                 }
                             ])
                             ->select($this->field)
-                            ->whereHas('contract', function ($contractQuery) use ($today, $twoWeeksLater) {
+                            ->whereHas('contract', function ($contractQuery) use ($today, $threeMonth) {
                                 $contractQuery->where('end_at', '<=', $today)
-                                                ->orWhereBetween('end_at', [$today, $twoWeeksLater])->latest();
+                                                ->orWhereBetween('end_at', [$today, $threeMonth])
+                                                ->latest();
                             });
 
         return [
