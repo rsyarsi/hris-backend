@@ -45,7 +45,8 @@ class ShiftScheduleKehadiranExport implements FromView, ShouldAutoSize
                             DB::raw("'' as leave_status_name"),
                             DB::raw("COALESCE(overtimes.id, '') as overtime_id"),
                             DB::raw("COALESCE(overtimes.task, '') as overtime_task"),
-                            DB::raw("COALESCE(overtimes.note, '') as overtime_note")
+                            DB::raw("COALESCE(overtimes.note, '') as overtime_note"),
+                            DB::raw("'' as unit_name"),
                         ])
                         ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
                         ->leftJoin('generate_absen', function ($join) {
@@ -91,7 +92,8 @@ class ShiftScheduleKehadiranExport implements FromView, ShouldAutoSize
                         DB::raw("COALESCE(leave_statuses.name, '') as leave_status_name"),
                         DB::raw("'' as overtime_id"),
                         DB::raw("'' as overtime_task"),
-                        DB::raw("'' as overtime_note")
+                        DB::raw("'' as overtime_note"),
+                        DB::raw("COALESCE(munits.name, '') as unit_name"),
                     ])
                     ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
                     ->leftJoin('generate_absen', function ($join) {
@@ -103,6 +105,7 @@ class ShiftScheduleKehadiranExport implements FromView, ShouldAutoSize
                     ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')
                     ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                     ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+                    ->leftJoin('munits', 'employees.unit_id', '=', 'munits.id')
                     ->unionAll($overtimes)
                     ->whereBetween('shift_schedules.date', [$period1, $period2])
                     ->orderBy('shift_schedule_date', 'desc')

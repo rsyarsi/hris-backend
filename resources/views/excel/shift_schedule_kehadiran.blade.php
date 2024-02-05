@@ -3,6 +3,7 @@
         <tr>
             <th>No</th>
             <th>Nama</th>
+            <th>Unit</th>
             <th>Kode Shift</th>
             <th>Shift</th>
             <th>Tanggal</th>
@@ -24,6 +25,7 @@
         <tr>
             <td>{{ $i++ }}</td>
             <td>{{ $item->employee_name }}</td>
+            <td>{{ $item->unit_name }}</td>
             <td>{{ $item->shift_code }}</td>
             <td>{{ $item->shift_name }}</td>
             <td>{{ date("d-m-Y", strtotime($item->shift_schedule_date)) }}</td>
