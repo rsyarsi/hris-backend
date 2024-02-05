@@ -31,7 +31,14 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         'duration',
         'libur',
     ];
-
+    private $fieldGenerateAbsen = [
+        'id', 'period', 'date', 'day', 'employee_id', 'date_in_at', 'time_in_at',
+        'date_out_at', 'time_out_at', 'schedule_date_in_at', 'schedule_time_in_at',
+        'schedule_date_out_at', 'schedule_time_out_at', 'telat', 'pa', 'holiday',
+        'night', 'national_holiday', 'note', 'overtime_id', 'overtime_at', 'overtime_time_at',
+        'overtime_out_at', 'schedule_overtime_time_at', 'schedule_overtime_out_at', 'overtime_type',
+        'overtime_hours', 'shift_schedule_id'
+    ];
     public function __construct(
         Overtime $model,
         FirebaseServiceInterface $firebaseService,
@@ -68,6 +75,9 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                                 'comment',
                                 'libur',
                             );
+                        },
+                        'generateAbsen' => function ($query) {
+                            $query->select($this->fieldGenerateAbsen);
                         },
                     ])
                     ->select($this->field);

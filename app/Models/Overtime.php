@@ -49,4 +49,9 @@ class Overtime extends Model
     {
         return $this->belongsTo(ShiftSchedule::class, 'from_date', 'date');
     }
+
+    public function generateAbsen()
+    {
+        return $this->belongsTo(GenerateAbsen::class, 'id', 'overtime_id');
+    }
 }
