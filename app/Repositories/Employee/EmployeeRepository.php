@@ -503,11 +503,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
     public function employeeEndContract($perPage, $search = null)
     {
         $today = Carbon::now()->toDateString();
-        $weeksLater = Carbon::now()->addWeeks(8)->toDateString();
+        $threeMonth = Carbon::now()->addMonth(3)->toDateString();
 
         $query = $this->model
             ->with([
-                'contract' => function ($query) use ($today, $weeksLater) {
+                'contract' => function ($query) use ($today, $threeMonth) {
                     $query->select(
                         'id',
                         'employee_id',
@@ -536,9 +536,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                 }
             ])
             ->select($this->field);
-            // ->whereHas('contract', function ($contractQuery) use ($today, $weeksLater) {
+            // ->whereHas('contract', function ($contractQuery) use ($today, $threeMonth) {
             //     $contractQuery->where('end_at', '<=', $today)
-            //                     ->orWhereBetween('end_at', [$today, $weeksLater])->latest();
+            //                     ->orWhereBetween('end_at', [$today, $threeMonth])->latest();
             // });
 
         if ($search !== null) {
