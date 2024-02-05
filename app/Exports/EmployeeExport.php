@@ -8,9 +8,6 @@ use Maatwebsite\Excel\Concerns\{FromView, ShouldAutoSize};
 
 class EmployeeExport implements FromView, ShouldAutoSize
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
     public function view(): View
     {
         return view('excel.employee', [
@@ -82,10 +79,8 @@ class EmployeeExport implements FromView, ShouldAutoSize
                     ]);
                 }
             ])
-            ->get()
-            ->sortBy(function($item) {
-                return $item->name;
-            }),
+            ->orderBy('name', 'ASC')
+            ->get(),
             'i' => 1
         ]);
     }

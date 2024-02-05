@@ -92,7 +92,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for revoke permission from user
             Route::delete('/users/{user}/permissions/{permission}', 'revokePermission')->name('users.permissions.revoke');
             // route for export user
-            Route::get('users/export', 'export')->name('users/export');
+            Route::get('users-export', 'export')->name('users-export');
         });
         // route for master units
         Route::resource('units', UnitController::class)->parameters(['units' => 'unit']);
@@ -152,7 +152,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for check active employee mobile
             Route::post('check-active-employee-mobile', 'checkActiveEmployeeMobile')->name('check-active-employee-mobile');
             // route for employees user
-            Route::get('employee-export', 'export')->name('employee-export');
+            Route::get('employees-export', 'export')->name('employees-export');
         });
         // route for employee-contracts
         Route::resource('employee-contracts', EmployeeContractController::class)->parameters(['employee-contracts' => 'employee_contract']);
@@ -221,6 +221,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('shift-schedules-kehadiran-subordinate', 'shiftScheduleKehadiranSubordinate')->name('shift-schedules-kehadiran-subordinate');
             // route for shift schedules kehadiran employee login
             Route::get('shift-schedules-kehadiran', 'shiftScheduleKehadiran')->name('shift-schedules-kehadiran');
+            // route for export shift schedule kehadiran
+            Route::get('shift-schedules-kehadiran-export', 'exportKehadiran')->name('shift-schedules-kehadiran-export');
         });
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
