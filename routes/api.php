@@ -16,7 +16,8 @@ use App\Http\Controllers\API\V1\{
     ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
-    SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController
+    SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
+    InformationController
 };
 
 /*
@@ -344,6 +345,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for import pengembalian
             Route::post('import-pengembalian', 'importPengembalian')->name('import-pengembalian');
         });
+        // route for pengembalian
+        Route::resource('informations', InformationController::class)->parameters(['informations' => 'informations']);
     });
 });
 
