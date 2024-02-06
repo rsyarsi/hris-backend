@@ -15,9 +15,9 @@ class OvertimeService implements OvertimeServiceInterface
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search)
+    public function index($perPage, $search, $period_1, $period_2, $unit)
     {
-        return $this->repository->index($perPage, $search);
+        return $this->repository->index($perPage, $search, $period_1, $period_2, $unit);
     }
 
     public function store(array $data)

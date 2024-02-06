@@ -28,7 +28,10 @@ class OvertimeController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $overtimes = $this->overtimeService->index($perPage, $search);
+            $unit = $request->input('unit');
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $overtimes = $this->overtimeService->index($perPage, $search, $period_1, $period_2, $unit);
             return $this->success('Overtime retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

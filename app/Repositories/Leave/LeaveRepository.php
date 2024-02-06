@@ -67,12 +67,12 @@ class LeaveRepository implements LeaveRepositoryInterface
         $this->leaveTypeService = $leaveTypeService;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
                         ->with([
                             'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number');
+                                $query->select('id', 'name', 'employment_number', 'unit_id');
                             },
                             'leaveType' => function ($query) {
                                 $query->select('id', 'name', 'is_salary_deduction', 'active');
@@ -134,6 +134,17 @@ class LeaveRepository implements LeaveRepositoryInterface
                                                 ->orWhere('employment_number', 'like', '%' . $search . '%');
                             });
             });
+        }
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
+        }
+        if ($period_1) {
+            $query->whereDate('from_date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('to_date', '<=', $period_2);
         }
         return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
@@ -802,13 +813,12 @@ class LeaveRepository implements LeaveRepositoryInterface
             });
         }
         if ($period_1) {
-            $query->where('from_date', '>=', $period_1);
+            $query->whereDate('from_date', '>=', $period_1);
         }
-    
         if ($period_2) {
-            $query->where('to_date', '<=', $period_2);
+            $query->whereDate('to_date', '<=', $period_2);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
     public function updateStatus($id, $data)

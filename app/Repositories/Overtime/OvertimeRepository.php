@@ -54,7 +54,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $this->overtimeStatusService = $overtimeStatusService;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
                     ->with([
@@ -90,7 +90,18 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                             });
             });
         }
-        return $query->paginate($perPage);
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
+        }
+        if ($period_1) {
+            $query->whereDate('from_date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('to_date', '<=', $period_2);
+        }
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -664,6 +675,9 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         'overtimeStatus' => function ($query) {
                             $query->select('id', 'name');
                         },
+                        'generateAbsen' => function ($query) {
+                            $query->select($this->fieldGenerateAbsen);
+                        },
                     ])
                     ->select($this->field);
         if ($search) {
@@ -684,11 +698,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             });
         }
         if ($period_1) {
-            $query->whereDate('from_date', $period_1);
-        } elseif ($period_2) {
-            $query->whereDate('to_date', $period_2);
+            $query->whereDate('from_date', '>=', $period_1);
         }
-        return $query->paginate($perPage);
+        if ($period_2) {
+            $query->whereDate('to_date', '<=', $period_2);
+        }
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
     public function updateStatus($id, $data)
