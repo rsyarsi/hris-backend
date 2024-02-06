@@ -133,7 +133,7 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
         $data['shift_id'] = $shiftSchedule->shift->id;
         $data['date_in_at'] = $timeInSchedule->format('Y-m-d');
         $data['time_in_at'] = $jam->format('H:i:s');
-        $data['date_out_at'] = $timeOutSchedule->format('Y-m-d');
+        // $data['date_out_at'] = $timeOutSchedule->format('Y-m-d');
         $data['time_out_at'] = $jam->format('H:i:s');
         $data['schedule_date_in_at'] = $timeInSchedule->format('Y-m-d');
         $data['schedule_time_in_at'] = $timeInSchedule->format('H:i:s');

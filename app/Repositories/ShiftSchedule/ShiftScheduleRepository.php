@@ -939,7 +939,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         }
 
         $datwa = Carbon::now()->toDateString();
-        // $datwa = '2024-01-31';
+        // $datwa = '2024-02-05';
         // check shift group id apakah Non Shift atau tidak
         $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
         // check di table shift schedule exists ?
@@ -1032,7 +1032,6 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         DB::raw("'60' as finger_out_more"),
                         DB::raw("'1' as user_created_id"),
                         DB::raw("'1' as user_updated_id"),
-                        // DB::raw("'' as leave_id"),
                         DB::raw("'-' as leave_id"),
                         DB::raw("'' as leave_employee_id"),
                         DB::raw("'' as leave_type_id"),
@@ -1049,14 +1048,17 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     ->leftJoin('employees', 'overtimes.employee_id', '=', 'employees.id')
                     ->leftJoin('generate_absen', function ($join) use ($datwa) {
                         $join->on('overtimes.employee_id', '=', 'generate_absen.employee_id')
-                            ->where(DB::raw("CAST(overtimes.from_date AS DATE)"), '=', DB::raw("CAST(generate_absen.date_in_at AS DATE)"))
+                            // ->where(DB::raw("CAST(overtimes.from_date AS DATE)"), '=', DB::raw("CAST(generate_absen.date_in_at AS DATE)"))
+                            ->whereRaw('DATE(overtimes.from_date) = DATE(generate_absen.date_in_at)')
                             ->where('generate_absen.type', 'SPL');
                     })
                     ->leftJoin('shift_schedules', function ($join) use ($datwa) {
                         $join->on('overtimes.employee_id', '=', 'shift_schedules.employee_id')
-                            ->whereRaw("'$datwa' BETWEEN CAST(overtimes.from_date AS DATE) AND CAST(overtimes.to_date AS DATE)")
-                            ->whereRaw("'$datwa' BETWEEN CAST(shift_schedules.time_in AS DATE) AND CAST(shift_schedules.time_out AS DATE)");
+                            // ->whereRaw("'$datwa' BETWEEN DATE(overtimes.from_date) AND DATE(overtimes.to_date)")
+                            // ->whereRaw("'$datwa' BETWEEN DATE(shift_schedules.time_out) AND DATE(shift_schedules.time_in)")
+                            ->whereRaw("DATE(shift_schedules.date) = DATE(overtimes.from_date)");
                     })
+                    ->whereRaw("'$datwa' BETWEEN DATE(overtimes.from_date) AND DATE(overtimes.to_date)")
                     ->where('shift_schedules.employee_id', $employee->id)
                     ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10]);
                     // union all here

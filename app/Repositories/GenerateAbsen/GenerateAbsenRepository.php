@@ -476,6 +476,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $existingRecordAbsen->update([
                         'date_in_at' => $data['date_in_at'],
                         'time_in_at' => $data['time_in_at'],
+                        'date_out_at' => now(),
                         'telat' => $data['telat'],
                         'note' => $data['telat'] !== null ? 'WARNING' : 'BELUM ABSEN PULANG',
                     ]);
