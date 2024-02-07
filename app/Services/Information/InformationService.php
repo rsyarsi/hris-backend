@@ -2,6 +2,7 @@
 namespace App\Services\Information;
 
 use Spatie\Image\Image;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Information\InformationServiceInterface;
 use App\Repositories\Information\InformationRepositoryInterface;
@@ -47,6 +48,7 @@ class InformationService implements InformationServiceInterface
         }
         $data = [
             'user_id' => auth()->id(),
+            'name' => Str::upper($data['name']),
             'note' => $data['note'],
             'file_path' => $filePath,
             'file_url' => $fileUrl,
@@ -75,6 +77,7 @@ class InformationService implements InformationServiceInterface
         }
         $data = [
             'user_id' => auth()->id(),
+            'name' => Str::upper($data['name']),
             'note' => $data['note'],
             'file_path' => $filePath,
             'file_url' => $fileUrl,

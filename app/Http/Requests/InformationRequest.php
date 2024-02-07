@@ -25,6 +25,7 @@ class InformationRequest extends FormRequest
     public function rules()
     {
         return [
+            'name' => 'required|string|max:255',
             'note' => 'required|string',
             'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
         ];

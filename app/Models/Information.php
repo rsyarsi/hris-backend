@@ -18,6 +18,7 @@ class Information extends Model
 
     protected $fillable =
     [
+        'name',
         'note',
         'user_id',
         'file_url',

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('informations', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->string('name')->nullable();
             $table->text('note')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('file_url')->nullable();

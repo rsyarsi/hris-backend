@@ -8,19 +8,21 @@ use App\Repositories\Information\InformationRepositoryInterface;
 class InformationRepository implements InformationRepositoryInterface
 {
     private $model;
-    private $field = [
-        'id',
-        'user_id',
-        'file_url',
-        'file_path',
-        'file_disk',
-    ];
 
     public function __construct(Information $model)
     {
         $this->model = $model;
     }
 
+    private $field = [
+        'id',
+        'name',
+        'note',
+        'user_id',
+        'file_url',
+        'file_path',
+        'file_disk',
+    ];
     public function index($perPage, $search = null)
     {
         $query = $this->model
@@ -31,14 +33,9 @@ class InformationRepository implements InformationRepositoryInterface
                     ])
                     ->select($this->field);
         if ($search) {
-            $query->where(function ($subquery) use ($search) {
-                $subquery->orWhere('user', $search)
-                            ->orWhereHas('users', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
-                            });
-            });
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('created_at', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
