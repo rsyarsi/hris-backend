@@ -64,6 +64,7 @@ use App\Services\SuratPeringatan\{SuratPeringatanService, SuratPeringatanService
 use App\Services\PromotionDemotion\{PromotionDemotionService, PromotionDemotionServiceInterface};
 use App\Services\Mutation\{MutationService, MutationServiceInterface};
 use App\Services\Pengembalian\{PengembalianService, PengembalianServiceInterface};
+use App\Services\Information\{InformationService, InformationServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 
 use App\Repositories\Role\{RoleRepository, RoleRepositoryInterface};
@@ -127,6 +128,7 @@ use App\Repositories\SuratPeringatan\{SuratPeringatanRepository, SuratPeringatan
 use App\Repositories\PromotionDemotion\{PromotionDemotionRepository, PromotionDemotionRepositoryInterface};
 use App\Repositories\Mutation\{MutationRepository, MutationRepositoryInterface};
 use App\Repositories\Pengembalian\{PengembalianRepository, PengembalianRepositoryInterface};
+use App\Repositories\Information\{InformationRepository, InformationRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -380,6 +382,10 @@ class AppServiceProvider extends ServiceProvider
         // Pengembalian
         $this->app->bind(PengembalianRepositoryInterface::class, PengembalianRepository::class);
         $this->app->bind(PengembalianServiceInterface::class, PengembalianService::class);
+
+        // Information
+        $this->app->bind(InformationRepositoryInterface::class, InformationRepository::class);
+        $this->app->bind(InformationServiceInterface::class, InformationService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories\EmployeeLegality;
 
-Interface EmployeeLegalityRepositoryInterface{
-
+Interface EmployeeLegalityRepositoryInterface
+{
     public function index($perPage, $search);
     public function store(array $data);
     public function show($id);

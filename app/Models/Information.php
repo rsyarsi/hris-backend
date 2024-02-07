@@ -23,7 +23,6 @@ class Information extends Model
         'file_url',
         'file_path',
         'file_disk',
-        'started_at',
     ];
 
     public function user()

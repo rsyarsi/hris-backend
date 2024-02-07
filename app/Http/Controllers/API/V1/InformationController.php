@@ -6,6 +6,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InformationRequest;
+use App\Services\Information\InformationServiceInterface;
 
 class InformationController extends Controller
 {
@@ -25,7 +26,7 @@ class InformationController extends Controller
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
             $informations = $this->informationService->index($perPage, $search);
-            return $this->success('Employee Legalitys retrieved successfully', $informations);
+            return $this->success('Informations retrieved successfully', $informations);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -36,7 +37,7 @@ class InformationController extends Controller
         try {
             $data = $request->validated();
             $information = $this->informationService->store($data);
-            return $this->success('Employee Legality created successfully', $information, 201);
+            return $this->success('Information created successfully', $information, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -47,9 +48,9 @@ class InformationController extends Controller
         try {
             $information = $this->informationService->show($id);
             if (!$information) {
-                return $this->error('Employee Legality not found', 404);
+                return $this->error('Information not found', 404);
             }
-            return $this->success('Employee Legality retrieved successfully', $information);
+            return $this->success('Information retrieved successfully', $information);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -61,9 +62,9 @@ class InformationController extends Controller
             $data = $request->validated();
             $information = $this->informationService->update($id, $data);
             if (!$information) {
-                return $this->error('Employee Legality not found', 404);
+                return $this->error('Information not found', 404);
             }
-            return $this->success('Employee Legality updated successfully', $information, 201);
+            return $this->success('Information updated successfully', $information, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -74,9 +75,9 @@ class InformationController extends Controller
         try {
             $information = $this->informationService->destroy($id);
             if (!$information) {
-                return $this->error('Employee Legality not found', 404);
+                return $this->error('Information not found', 404);
             }
-            return $this->success('Employee Legality deleted successfully, id : '.$information->id, []);
+            return $this->success('Information deleted successfully, id : '.$information->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
