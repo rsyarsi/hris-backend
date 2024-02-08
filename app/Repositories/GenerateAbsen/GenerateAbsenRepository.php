@@ -152,56 +152,56 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     public function monitoringAbsen($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
-            ->with([
-                'employee' => function ($query) {
-                    $query->select('id', 'name', 'unit_id')->with('unit:id,name');
-                },
-                'shift' => function ($query) {
-                    $query->select(
-                        'id',
-                        'code',
-                        'name',
-                        'in_time',
-                        'out_time',
-                        'finger_in_less',
-                        'finger_in_more',
-                        'finger_out_less',
-                        'finger_out_more',
-                        'night_shift',
-                    );
-                },
-                'leave' => function ($query) {
-                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                },
-                'leaveType' => function ($query) {
-                    $query->select('id', 'name', 'is_salary_deduction', 'active');
-                },
-                'user' => function ($query) {
-                    $query->select('id', 'name', 'email');
-                },
-            ])
-            ->select($this->field);
+                        ->with([
+                            'employee' => function ($query) {
+                                $query->select('id', 'name', 'employment_number', 'unit_id')->with('unit:id,name');
+                            },
+                            'shift' => function ($query) {
+                                $query->select(
+                                    'id',
+                                    'code',
+                                    'name',
+                                    'in_time',
+                                    'out_time',
+                                    'finger_in_less',
+                                    'finger_in_more',
+                                    'finger_out_less',
+                                    'finger_out_more',
+                                    'night_shift',
+                                );
+                            },
+                            'leave' => function ($query) {
+                                $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                            },
+                            'leaveType' => function ($query) {
+                                $query->select('id', 'name', 'is_salary_deduction', 'active');
+                            },
+                            'user' => function ($query) {
+                                $query->select('id', 'name', 'email');
+                            },
+                        ])
+                        ->select($this->field);
 
-            // Additional conditions
-            $query->where(function ($subquery) {
-                $subquery->whereNull('leave_id')
-                    ->orWhere('leave_id', null)
-                    ->orWhere('leave_id', '');
-            })
-            ->where(function ($subquery) {
-                $subquery->whereNull('holiday')
-                    ->orWhere('holiday', 0);
-            })
-            ->where(function ($subquery) {
-                $subquery->where(function ($timeQuery) {
-                    $timeQuery->whereNull('time_in_at')
-                        ->whereNull('time_out_at');
-                })
-                ->orWhere(function ($timeQuery) {
-                    $timeQuery->whereNotNull('time_in_at')
-                        ->whereNull('time_out_at');
-                });
-            });
+                        // Additional conditions
+                        $query->where(function ($subquery) {
+                            $subquery->whereNull('leave_id')
+                                ->orWhere('leave_id', null)
+                                ->orWhere('leave_id', '');
+                        })
+                        ->where(function ($subquery) {
+                            $subquery->whereNull('holiday')
+                                ->orWhere('holiday', 0);
+                        })
+                        ->where(function ($subquery) {
+                            $subquery->where(function ($timeQuery) {
+                                $timeQuery->whereNull('time_in_at')
+                                    ->whereNull('time_out_at');
+                            })
+                            ->orWhere(function ($timeQuery) {
+                                $timeQuery->whereNotNull('time_in_at')
+                                    ->whereNull('time_out_at');
+                            });
+                        });
 
         // Period conditions
         if ($period_1 && $period_2) {
@@ -216,6 +216,16 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($unit) {
             $query->whereHas('employee', function ($employeeQuery) use ($unit) {
                 $employeeQuery->where('unit_id', $unit);
+            });
+        }
+
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
             });
         }
 
