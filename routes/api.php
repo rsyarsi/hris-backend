@@ -261,7 +261,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('execute-generate-absen', 'executeStoredProcedure')->name('execute-generate-absen');
             // route for absen from mobile
             Route::post('absen-from-mobile', 'absenFromMobile')->name('absen-from-mobile');
-            // route for monitoring absen (absen yang tidak lengkap)
+            // route for export monitoring absen (absen yang tidak lengkap)
             Route::get('monitoring-absen-export', 'exportMonitoringAbsen')->name('monitoring-absen-export');
         });
         // route for generate payroll
@@ -376,6 +376,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('leave-sisa', 'leaveSisa')->name('leave-sisa');
         // route for mobile
         Route::post('leave-create-mobile', 'leaveCreateMobile')->name('leave-create-mobile');
+        // route for export leaves
+        Route::get('export-leaves', 'exportLeave')->name('export-leaves');
     });
     // route for leave histories
     Route::resource('leave-histories', LeaveHistoryController::class);

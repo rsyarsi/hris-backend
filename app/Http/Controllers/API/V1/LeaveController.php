@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
+use App\Exports\LeaveExport;
 use Illuminate\Http\Request;
 use App\Rules\DateSmallerThan;
 use App\Http\Requests\LeaveRequest;
 use App\Rules\UniqueLeaveDateRange;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\LeaveNewStatusRequest;
 use App\Services\Leave\LeaveServiceInterface;
@@ -256,6 +258,18 @@ class LeaveController extends Controller
                 return $this->error('Leave not found', 404);
             }
             return $this->success('Sisa Cuti retrieved successfully', $leave, 200);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportLeave(Request $request)
+    {
+        try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $nameFile = 'data-monitoring-absen-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new LeaveExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

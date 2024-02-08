@@ -8,9 +8,6 @@ use Maatwebsite\Excel\Concerns\{FromView, ShouldAutoSize};
 
 class MonitoringAbsenExport implements FromView, ShouldAutoSize
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
     public function view(): View
     {
         $period1 = request()->input('period_1');
@@ -20,18 +17,7 @@ class MonitoringAbsenExport implements FromView, ShouldAutoSize
                                 $query->select('id', 'name', 'employment_number', 'unit_id');
                             },
                             'shift' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'code',
-                                    'name',
-                                    'in_time',
-                                    'out_time',
-                                    'finger_in_less',
-                                    'finger_in_more',
-                                    'finger_out_less',
-                                    'finger_out_more',
-                                    'night_shift',
-                                );
+                                $query->select('id', 'code', 'name', 'in_time', 'out_time');
                             },
                             'leave' => function ($query) {
                                 $query->select('id', 'from_date', 'to_date', 'duration', 'note');

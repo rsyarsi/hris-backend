@@ -11,8 +11,8 @@
             <th>Jadwal Pulang</th>
             <th>Presensi Masuk</th>
             <th>Presensi Pulang</th>
-            <th>Terlambat</th>
-            <th>Pulang Awal</th>
+            <th>Terlambat(Menit)</th>
+            <th>Pulang Awal(Menit)</th>
         </tr>
     </thead>
     <tbody>
