@@ -8,7 +8,6 @@
             <th>Sampai</th>
             <th>Durasi(Menit)</th>
             <th>Cuti Awal</th>
-            <th>Cuti Akhir</th>
             <th>Sisa Cuti</th>
             <th>Status</th>
             <th>File Url</th>
