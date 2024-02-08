@@ -6,8 +6,10 @@ use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Models\GenerateAbsen;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{AbsenFromMobileRequest, GenerateAbsenRequest};
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MonitoringAbsenExport;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
+use App\Http\Requests\{AbsenFromMobileRequest, GenerateAbsenRequest};
 
 class GenerateAbsenController extends Controller
 {
@@ -178,6 +180,18 @@ class GenerateAbsenController extends Controller
             ]);
         }
         try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportMonitoringAbsen(Request $request)
+    {
+        try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $nameFile = 'data-monitoring-absen-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new MonitoringAbsenExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

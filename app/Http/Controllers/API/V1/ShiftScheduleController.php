@@ -291,11 +291,11 @@ class ShiftScheduleController extends Controller
 
     public function exportKehadiran(Request $request)
     {
-        $period1 = $request->input('period_1');
-        $period2 = $request->input('period_2');
-        $nameFile = 'data-shift-schedule-kehadiran-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
-        return Excel::download(new ShiftScheduleKehadiranExport, $nameFile);
         try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $nameFile = 'data-shift-schedule-kehadiran-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new ShiftScheduleKehadiranExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

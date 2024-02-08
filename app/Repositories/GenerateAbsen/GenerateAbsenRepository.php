@@ -229,7 +229,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             });
         }
 
-        return $query->paginate($perPage);
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 
     public function generateAbsenSubordinate($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
@@ -305,7 +305,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             });
         }
 
-        return $query->paginate($perPage);
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 
     public function generateAbsenSubordinateMobile($employeeId, $search = null, $period_1 = null, $period_2 = null, $unit = null)
