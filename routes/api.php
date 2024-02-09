@@ -224,8 +224,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('shift-schedules-kehadiran', 'shiftScheduleKehadiran')->name('shift-schedules-kehadiran');
             // route for export shift schedule kehadiran
             Route::get('shift-schedules-kehadiran-export', 'exportKehadiran')->name('shift-schedules-kehadiran-export');
-            // route for shift schedules
-            Route::get('export-shift-schedules', 'exportshiftschedules')->name('export-shift-schedules');
+            // route for export shift schedules
+            Route::get('shift-schedules-export', 'exportshiftschedules')->name('shift-schedules-export');
         });
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
@@ -415,7 +415,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for mobile
         Route::post('overtime-create-mobile', 'overtimeCreateMobile')->name('overtime-create-mobile');
         // route for export overtimes
-        Route::get('overtimes-export', 'exportOvertime')->name('export-overtimes');
+        Route::get('overtimes-export', 'exportOvertime')->name('overtimes-export');
         // route for export leaves status
         Route::get('overtimes-status-export', 'exportOvertimeWhereStatus')->name('overtimes-status-export');
     });
