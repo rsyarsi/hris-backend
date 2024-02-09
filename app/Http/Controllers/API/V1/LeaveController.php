@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Traits\ResponseAPI;
-use App\Exports\LeaveExport;
+use App\Exports\{LeaveExport, LeaveWhereStatusExport};
 use Illuminate\Http\Request;
 use App\Rules\DateSmallerThan;
 use App\Http\Requests\LeaveRequest;
@@ -268,8 +268,21 @@ class LeaveController extends Controller
         try {
             $period1 = $request->input('period_1');
             $period2 = $request->input('period_2');
-            $nameFile = 'data-leave-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            $nameFile = 'data-ketidakhadiran-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
             return Excel::download(new LeaveExport, $nameFile);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportLeaveWhereStatus(Request $request)
+    {
+        try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $status = $request->input('status');
+            $nameFile = 'data-review-ketidakhadiran-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new LeaveWhereStatusExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

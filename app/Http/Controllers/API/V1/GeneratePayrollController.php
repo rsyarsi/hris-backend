@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\GeneratePayrollExport;
 use App\Services\GeneratePayroll\GeneratePayrollServiceInterface;
 use App\Http\Requests\{ExecuteGeneratePayrollRequest, GeneratePayrollRequest};
 
@@ -181,6 +183,17 @@ class GeneratePayrollController extends Controller
             $id = $request->input('id');
             $generatepayrolls = $this->generatePayrollService->slipGajiMobile($id);
             return $this->success('Slip Gaji Berhasil diambil!', [$generatepayrolls]);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function generatePayrollExport(Request $request)
+    {
+        try {
+            $period = $request->input('period');
+            $nameFile = 'data-payroll-'.$period.'.xlsx';
+            return Excel::download(new GeneratePayrollExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

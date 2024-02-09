@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Imports\ShiftScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ShiftScheduleKehadiranExport;
+use App\Exports\{ShiftScheduleKehadiranExport, ShiftScheduleExport};
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
 use App\Http\Requests\{ShiftScheduleRequest, ImportShiftScheduleRequest};
 
@@ -296,6 +296,18 @@ class ShiftScheduleController extends Controller
             $period2 = $request->input('period_2');
             $nameFile = 'data-shift-schedule-kehadiran-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
             return Excel::download(new ShiftScheduleKehadiranExport, $nameFile);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportshiftschedules(Request $request)
+    {
+        try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $nameFile = 'data-jadwal-shift-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new ShiftScheduleExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

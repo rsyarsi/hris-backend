@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Rules\DateSmallerThan;
+use App\Exports\{OvertimeExport, OvertimeWhereStatusExport};
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Rules\UniqueOvertimeDateRange;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Overtime\OvertimeServiceInterface;
@@ -247,24 +249,49 @@ class OvertimeController extends Controller
 
     public function overtimeEmployeeToday(Request $request)
     {
-        $employeeId = $request->input('employment_id');
-        $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
-        if ($overtime) {
-            return response()->json([
-                'message' => 'Overtime Karyawan hari ini berhasil di ambil!',
-                'success' => 'true',
-                'code' => 200,
-                'data' => [$overtime],
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Karyawan tidak ditemukan atau tidak memiliki jadwal overtime hari ini.',
-                'success' => 'false',
-                'code' => 404,
-                'data' => null,
-            ]);
-        }
         try {
+            $employeeId = $request->input('employment_id');
+            $overtime = $this->overtimeService->overtimeEmployeeToday($employeeId);
+            if ($overtime) {
+                return response()->json([
+                    'message' => 'Overtime Karyawan hari ini berhasil di ambil!',
+                    'success' => 'true',
+                    'code' => 200,
+                    'data' => [$overtime],
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Karyawan tidak ditemukan atau tidak memiliki jadwal overtime hari ini.',
+                    'success' => 'false',
+                    'code' => 404,
+                    'data' => null,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportOvertime(Request $request)
+    {
+        try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $nameFile = 'data-overtime-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new OvertimeExport, $nameFile);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportOvertimeWhereStatus(Request $request)
+    {
+        try {
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $status = $request->input('status');
+            $nameFile = 'data-review-overtime-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new OvertimeWhereStatusExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -224,6 +224,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('shift-schedules-kehadiran', 'shiftScheduleKehadiran')->name('shift-schedules-kehadiran');
             // route for export shift schedule kehadiran
             Route::get('shift-schedules-kehadiran-export', 'exportKehadiran')->name('shift-schedules-kehadiran-export');
+            // route for shift schedules
+            Route::get('export-shift-schedules', 'exportshiftschedules')->name('export-shift-schedules');
         });
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
@@ -281,6 +283,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('send-slip-gaji-period', 'sendSlipGajiPeriod')->name('send-slip-gaji-period');
             // route for slip gaji mobile
             Route::post('slip-gaji-mobile', 'slipGajiMobile')->name('slip-gaji-mobile');
+            // route for export generate payroll
+            Route::get('generate-payroll-export', 'generatePayrollExport')->name('generate-payroll-export');
         });
         // route for pph
         Route::resource('pph', PphController::class)->parameters(['pph' => 'pph']);
@@ -306,7 +310,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for adjustment cuti employee
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
             // route for export adjustment cuti employee
-            Route::get('export-adjustment-cuti', 'exportAdjustmentCuti')->name('export-adjustment-cuti');
+            Route::get('adjustment-cuti-export', 'exportAdjustmentCuti')->name('adjustment-cuti-export');
         });
         // route for catatan cuti
         Route::resource('catatan-cuti', CatatanCutiController::class)->parameters(['catatan-cuti' => 'catatan_cuti']);
@@ -379,7 +383,9 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for mobile
         Route::post('leave-create-mobile', 'leaveCreateMobile')->name('leave-create-mobile');
         // route for export leaves
-        Route::get('export-leaves', 'exportLeave')->name('export-leaves');
+        Route::get('leaves-export', 'exportLeave')->name('leaves-export');
+        // route for export leaves status
+        Route::get('leaves-status-export', 'exportLeaveWhereStatus')->name('leaves-status-export');
     });
     // route for leave histories
     Route::resource('leave-histories', LeaveHistoryController::class);
@@ -408,6 +414,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('overtime-update-statuses-mobile', 'updateStatusMobile')->name('overtime-update-statuses-mobile');
         // route for mobile
         Route::post('overtime-create-mobile', 'overtimeCreateMobile')->name('overtime-create-mobile');
+        // route for export overtimes
+        Route::get('overtimes-export', 'exportOvertime')->name('export-overtimes');
+        // route for export leaves status
+        Route::get('overtimes-status-export', 'exportOvertimeWhereStatus')->name('overtimes-status-export');
     });
     // route for overtime histories
     Route::resource('overtime-histories', OvertimeHistoryController::class);
