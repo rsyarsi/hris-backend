@@ -305,6 +305,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(AdjustmentCutiController::class)->group(function () {
             // route for adjustment cuti employee
             Route::get('adjustment-cuti-employee', 'adjustmentCutiEmployee')->name('adjustment-cuti-employee');
+            // route for export adjustment cuti employee
+            Route::get('export-adjustment-cuti', 'exportAdjustmentCuti')->name('export-adjustment-cuti');
         });
         // route for catatan cuti
         Route::resource('catatan-cuti', CatatanCutiController::class)->parameters(['catatan-cuti' => 'catatan_cuti']);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AdjustmentCutiExport;
 use App\Http\Requests\AdjustmentCutiRequest;
 use App\Services\AdjustmentCuti\AdjustmentCutiServiceInterface;
 
@@ -91,6 +93,17 @@ class AdjustmentCutiController extends Controller
             $employeeId = $request->input('employee_id');
             $adjustmentCuti = $this->adjustmentCutiService->adjustmentCutiEmployee($perPage, $search, $employeeId);
             return $this->success('Adjustment Cuti employee retrieved successfully', $adjustmentCuti);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportAdjustmentCuti(Request $request)
+    {
+        try {
+            $year = $request->input('year');
+            $nameFile = 'data-adjustment-cuti-'.$year.'.xlsx';
+            return Excel::download(new AdjustmentCutiExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
