@@ -69,7 +69,7 @@ class LeaveController extends Controller
                     new DateSmallerThan('to_date'),
                 ],
                 'to_date' => 'required|date',
-                'note' => 'required',
+                'note' => 'required|max:255',
                 'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:5048',
             ];
             // Add a condition based on the value of Type

@@ -32,7 +32,7 @@ return new class extends Migration
             $table->foreignId('setup_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('setup_at')->nullable();
             $table->string('period', 32)->nullable();
-            $table->string('leave_note', 50)->nullable();
+            $table->string('leave_note')->nullable();
             $table->tinyInteger('holiday')->nullable();
             $table->tinyInteger('night')->nullable();
             $table->tinyInteger('national_holiday')->nullable();

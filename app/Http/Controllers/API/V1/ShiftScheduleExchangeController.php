@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShiftScheduleExchangeRequest;
 use App\Rules\UniqueShiftScheduleExchangeDateRange;
+use Illuminate\Support\Facades\Validator;
 use App\Services\ShiftScheduleExchange\ShiftScheduleExchangeServiceInterface;
 
 class ShiftScheduleExchangeController extends Controller
@@ -70,6 +71,16 @@ class ShiftScheduleExchangeController extends Controller
             ];
             if ($request->isMethod('post')) {
                 $rules['shift_schedule_date_requested'] = new UniqueShiftScheduleExchangeDateRange();
+            }
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'success' => false,
+                    'code' => 200, // Use a more appropriate HTTP status code
+                    'data' => $errorMessages,
+                ], 200);
             }
             $shiftSchedulesExchange = $this->shiftScheduleExchangeService->createMobile($request->all());
             return response()->json([
