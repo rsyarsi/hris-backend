@@ -82,7 +82,7 @@ class OvertimeController extends Controller
             $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
             if ($validator->fails()) {
                 return response()->json([
-                    'message' => 'Validation Error',
+                    'message' => $errorMessages,
                     'success' => false,
                     'code' => 200, // Use a more appropriate HTTP status code
                     'data' => $errorMessages,
