@@ -147,14 +147,14 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
-        if ($checkShiftSchedule->leave_id !== null) {
-            return [
-                'message' => 'Validation Error!',
-                'error' => true,
-                'code' => 422,
-                'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
-            ];
-        }
+        // if ($checkShiftSchedule->leave_id !== null) {
+        //     return [
+        //         'message' => 'Validation Error!',
+        //         'error' => true,
+        //         'code' => 422,
+        //         'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
+        //     ];
+        // }
 
         $overtime = $this->model->create($data);
         $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
@@ -287,20 +287,20 @@ class OvertimeRepository implements OvertimeRepositoryInterface
 
         if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
-                'message' => 'Validation Error!',
+                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
                 'success' => true,
                 'code' => 200,
                 'data' => ['type' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
-        if ($checkShiftSchedule->leave_id !== null) {
-            return [
-                'message' => 'Data Shift Schedule sudah tercatat cuti!',
-                'success' => false,
-                'code' => 200,
-                'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
-            ];
-        }
+        // if ($checkShiftSchedule->leave_id !== null) {
+        //     return [
+        //         'message' => 'Data Shift Schedule sudah tercatat cuti!',
+        //         'success' => false,
+        //         'code' => 200,
+        //         'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
+        //     ];
+        // }
 
         $overtime = $this->model->create($data);
         $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
