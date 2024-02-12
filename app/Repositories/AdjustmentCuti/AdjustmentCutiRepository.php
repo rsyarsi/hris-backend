@@ -57,7 +57,7 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
             'employee_id' => $adjustmentCuti->employee_id,
             'quantity_awal' => $adjustmentCuti->quantity_awal,
             'quantity_akhir' => $adjustmentCuti->quantity_akhir,
-            'quantity_in' => 0,
+            'quantity_in' => $adjustmentCuti->quantity_adjustment,
             'quantity_out' => 0,
             'type' => 'ADJUSTMENT CUTI',
             'description' => $adjustmentCuti->description,

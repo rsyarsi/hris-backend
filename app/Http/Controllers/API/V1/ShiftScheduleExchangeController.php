@@ -36,6 +36,31 @@ class ShiftScheduleExchangeController extends Controller
         }
     }
 
+    public function indexSubordinate(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $shiftSchedulesExchange = $this->shiftScheduleExchangeService->indexSubordinate($perPage, $search, $startDate, $endDate);
+            return $this->success('Shift schedule exchange subordinate retrived successfully!', $shiftSchedulesExchange);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function indexSubordinateMobile(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $overtimes = $this->shiftScheduleExchangeService->indexSubordinateMobile($employeeId);
+            return $this->success('Shift schedule exchange subordinate mobile retrived successfully!', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function store(ShiftScheduleExchangeRequest $request)
     {
         try {

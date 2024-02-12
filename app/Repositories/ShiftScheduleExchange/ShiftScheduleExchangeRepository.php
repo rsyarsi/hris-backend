@@ -2,9 +2,11 @@
 
 namespace App\Repositories\ShiftScheduleExchange;
 
+use Carbon\Carbon;
+use App\Models\Employee;
+use Illuminate\Support\Facades\DB;
 use App\Models\{Shift, ShiftSchedule, ShiftScheduleExchange};
 use App\Repositories\ShiftScheduleExchange\ShiftScheduleExchangeRepositoryInterface;
-use Carbon\Carbon;
 
 class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepositoryInterface
 {
@@ -126,6 +128,98 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
             $query->whereDate('shift_schedule_date_requested', '<=', $endDate);
         }
         return $query->paginate($perPage);
+    }
+
+    public function indexSubordinate($perPage, $search = null, $startDate = null, $endDate = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $queryEmployee = Employee::where(function ($q) use ($user) {
+                            $q->where('supervisor_id', $user->employee->id)
+                                ->orWhere('manager_id', $user->employee->id)
+                                ->orWhere('kabag_id', $user->employee->id);
+                        })
+                        ->get();
+        $employeeIds = []; // Collect employee IDs in an array
+        foreach ($queryEmployee as $item) {
+            $employeeIds[] = $item->id;
+        }
+        $query = $this->model
+                    ->with([
+                        'employeeRequest' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'employeeTo' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'exchangeEmployee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'shiftScheduleRequest' => function ($query) {
+                            $query->select($this->fieldShiftSchedule);
+                        },
+                        'shiftScheduleTo' => function ($query) {
+                            $query->select($this->fieldShiftSchedule);
+                        },
+                        'exchangeShiftSchedule' => function ($query) {
+                            $query->select($this->fieldShiftSchedule);
+                        },
+                        'userCreated' => function ($query) {
+                            $query->select('id', 'name', 'email');
+                        },
+                        'userUpdated' => function ($query) {
+                            $query->select('id', 'name', 'email');
+                        },
+                        'shiftAwalRequest' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'exchangeShiftTo' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'exchangeShiftAwal' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                    ])
+                    ->whereIn('employe_requested_id', $employeeIds)
+                    ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employe_requested_id', $search)
+                            ->orWhereHas('employeeRequest', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+        if ($startDate) {
+            $query->whereDate('shift_schedule_date_requested', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('shift_schedule_date_requested', '<=', $endDate);
+        }
+        return $query->paginate($perPage);
+    }
+
+    public function indexSubordinateMobile($employeeId)
+    {
+        $subordinateIds = Employee::where('supervisor_id', $employeeId)
+                                    ->orWhere('manager_id', $employeeId)
+                                    ->orWhere('kabag_id', $employeeId)
+                                    ->pluck('id');
+        return DB::table('shift_schedule_exchanges')
+                    ->leftJoin('employees AS requested_employee', 'shift_schedule_exchanges.employe_requested_id', '=', 'requested_employee.id')
+                    ->leftJoin('employees AS to_employee', 'shift_schedule_exchanges.to_employee_id', '=', 'to_employee.id')
+                    ->leftJoin('employees AS exchange_employee', 'shift_schedule_exchanges.exchange_employee_id', '=', 'exchange_employee.id')
+                    ->select([
+                        'shift_schedule_exchanges.id',
+                        'requested_employee.name AS requested_employee_name',
+                        'to_employee.name AS to_employee_name',
+                        'exchange_employee.name AS exchange_employee_name',
+                    ])
+                    ->whereIn('shift_schedule_exchanges.employe_requested_id', $subordinateIds)
+                    ->get();
     }
 
     public function store(array $data)

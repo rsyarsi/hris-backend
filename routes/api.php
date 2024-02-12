@@ -230,6 +230,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for master shift schedules
         Route::resource('shift-schedules-exchanges', ShiftScheduleExchangeController::class)->parameters(['shift-schedules-exchanges' => 'shift_schedules_exchange']);
         Route::controller(ShiftScheduleExchangeController::class)->group(function () {
+            // route for shift schedules exchange subordinate
+            Route::get('shift-schedules-exchange-subordinate', 'indexSubordinate')->name('shift-schedules-exchange-subordinate');
+            // route for shift schedules exchange mobile
+            Route::post('shift-schedules-exchange-subordinate-mobile', 'indexSubordinateMobile')->name('shift-schedules-exchange-subordinate-mobile');
             // route for shift schedules exchange mobile
             Route::post('shift-schedule-exchange-create-mobile', 'createMobile')->name('shift-schedule-exchange-create-mobile');
         });

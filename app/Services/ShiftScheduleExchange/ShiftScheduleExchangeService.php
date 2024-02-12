@@ -31,6 +31,16 @@ class ShiftScheduleExchangeService implements ShiftScheduleExchangeServiceInterf
         return $this->repository->index($perPage, $search, $startDate, $endDate);
     }
 
+    public function indexSubordinate($perPage, $search, $startDate, $endDate)
+    {
+        return $this->repository->indexSubordinate($perPage, $search, $startDate, $endDate);
+    }
+
+    public function indexSubordinateMobile($employeeId)
+    {
+        return $this->repository->indexSubordinateMobile($employeeId);
+    }
+
     public function store(array $data)
     {
         $shiftExchangeType = $data['shift_exchange_type'];
