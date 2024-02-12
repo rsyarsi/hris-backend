@@ -146,7 +146,7 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
         $catatanCuti = $this->model
                             ->select($this->field)
                             ->where('employee_id', $employeeId)
-                            ->where('batal', 0)
+                            // ->where('batal', 0)
                             ->whereYear('created_at', $currentYear)
                             ->latest()
                             ->first(); // Retrieve the latest record

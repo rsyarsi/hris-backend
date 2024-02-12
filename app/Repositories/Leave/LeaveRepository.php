@@ -887,21 +887,34 @@ class LeaveRepository implements LeaveRepositoryInterface
                                             ->latest()
                                             ->first();
                 // update catatan cuti
-                $catatanCuti->update([
-                    'quantity_akhir' => $catatanCuti->quantity_awal,
+                // $catatanCuti->update([
+                //     'quantity_akhir' => $catatanCuti->quantity_awal,
+                //     'quantity_out' => 0,
+                //     'batal' => 1
+                // ]);
+                $newCatatanCuti = CatatanCuti::create([
+                    'adjustment_cuti_id' => null,
+                    'leave_id' => $catatanCuti->leave_id,
+                    'employee_id' => $catatanCuti->employee_id,
+                    'quantity_awal' => $catatanCuti->quantity_akhir,
+                    'quantity_akhir' => (int)$catatanCuti->quantity_akhir + (int)$catatanCuti->quantity_out,
+                    'quantity_in' => $catatanCuti->quantity_out,
                     'quantity_out' => 0,
-                    'batal' => 1
+                    'type' => 'LEAVE',
+                    'description' => $leaveStatus->name,
+                    'batal' => 1,
                 ]);
+
                 // $employee = $this->employeeService->show($leave->employee_id);
                 // update Shift Schedule if shift, delete if non shift
                 // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
-                    
-                //     // LeaveHistory::where('leave_id', $leave->id)->delete();
-                //     // $leave->delete();
+                //     ShiftSchedule::where('leave_id', $leave->id)->delete();
+                //     LeaveHistory::where('leave_id', $leave->id)->delete();
+                //     $leave->delete();
                 // } else {
                 $leave->update([
-                    'quantity_cuti_awal' => 0,
-                    'sisa_cuti' => 0
+                    'quantity_cuti_awal' => $newCatatanCuti->quantity_akhir,
+                    'sisa_cuti' => $newCatatanCuti->quantity_akhir
                 ]);
                 // }
             }
@@ -985,12 +998,25 @@ class LeaveRepository implements LeaveRepositoryInterface
                                             ->latest()
                                             ->first();
                 // update catatan cuti
-                $catatanCuti->update([
-                    'quantity_akhir' => $catatanCuti->quantity_awal,
+                // $catatanCuti->update([
+                //     'quantity_akhir' => $catatanCuti->quantity_awal,
+                //     'quantity_out' => 0,
+                //     'batal' => 1
+                // ]);
+                $newCatatanCuti = CatatanCuti::create([
+                    'adjustment_cuti_id' => null,
+                    'leave_id' => $catatanCuti->leave_id,
+                    'employee_id' => $catatanCuti->employee_id,
+                    'quantity_awal' => $catatanCuti->quantity_akhir,
+                    'quantity_akhir' => (int)$catatanCuti->quantity_akhir + (int)$catatanCuti->quantity_out,
+                    'quantity_in' => $catatanCuti->quantity_out,
                     'quantity_out' => 0,
-                    'batal' => 1
+                    'type' => 'LEAVE',
+                    'description' => $leaveStatus->name,
+                    'batal' => 1,
                 ]);
-                $employee = $this->employeeService->show($leave->employee_id);
+
+                // $employee = $this->employeeService->show($leave->employee_id);
                 // update Shift Schedule if shift, delete if non shift
                 // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
                 //     ShiftSchedule::where('leave_id', $leave->id)->delete();
@@ -998,8 +1024,8 @@ class LeaveRepository implements LeaveRepositoryInterface
                 //     $leave->delete();
                 // } else {
                 $leave->update([
-                    'quantity_cuti_awal' => 0,
-                    'sisa_cuti' => 0
+                    'quantity_cuti_awal' => $newCatatanCuti->quantity_akhir,
+                    'sisa_cuti' => $newCatatanCuti->quantity_akhir
                 ]);
                 // }
             }
