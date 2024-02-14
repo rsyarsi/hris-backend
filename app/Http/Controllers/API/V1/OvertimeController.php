@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\Employee;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Rules\DateSmallerThan;
-use App\Exports\{OvertimeExport, OvertimeWhereStatusExport};
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Rules\UniqueOvertimeDateRange;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Overtime\OvertimeServiceInterface;
+use App\Exports\{OvertimeExport, OvertimeWhereStatusExport};
 use App\Http\Requests\{OvertimeRequest, OvertimeNewStatusRequest};
 
 class OvertimeController extends Controller
@@ -60,6 +61,8 @@ class OvertimeController extends Controller
     public function overtimeCreateMobile(Request $request)
     {
         try {
+            $employee = Employee::find($request->employee_id);
+            $unitId = $employee->unit_id ?? null;
             $rules = [
                 'employee_id' => 'required|exists:employees,id',
                 'task' => 'required|max:255',
@@ -75,6 +78,14 @@ class OvertimeController extends Controller
                 'to_date' => 'required|date',
                 'libur' => 'required|in:0,1',
             ];
+            if ($request->type === 'ONCALL' && $unitId !== 19) {
+                return response()->json([
+                    'message' => 'Type ONCALL hanya untuk unit HEMODIALISA.',
+                    'success' => false,
+                    'code' => 200, // Use a more appropriate HTTP status code
+                    'data' => 'Type ONCALL hanya untuk unit HEMODIALISA.',
+                ], 200);
+            }
             // if ($request->isMethod('post')) {
             //     $rules['from_date'][] = new UniqueOvertimeDateRange();
             // }
