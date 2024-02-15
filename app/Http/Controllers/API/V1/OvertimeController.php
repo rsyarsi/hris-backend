@@ -41,18 +41,57 @@ class OvertimeController extends Controller
         }
     }
 
-    public function store(OvertimeRequest $request)
+    public function store(Request $request)
     {
         try {
-            $data = $request->validated();
-            $overtime = $this->overtimeService->store($data);
+            $employee = Employee::find($request->employee_id);
+            $unitId = $employee->unit_id ?? null;
+            $rules = [
+                'employee_id' => 'required|exists:employees,id',
+                'task' => 'required|max:255',
+                'note' => 'required|max:255',
+                'overtime_status_id' => 'required|exists:overtime_statuses,id',
+                'amount' => 'required|max:18',
+                'type' => 'required|string|max:255',
+                'from_date' => [
+                                'required',
+                                'date',
+                                new DateSmallerThan('to_date')
+                            ],
+                'to_date' => 'required|date',
+                'libur' => 'required|in:0,1',
+            ];
+            if ($request->type === 'ONCALL' && $unitId !== 19 || $request->type === 'CITO' && $unitId !== 19) {
+                return response()->json([
+                    'message' => 'Validation Error!',
+                    'error' => false,
+                    'code' => 422, // Use a more appropriate HTTP status code
+                    'data' => [
+                        'type' => [
+                            'Type ONCALL/CITO hanya untuk unit HEMODIALISA.'
+                        ]
+                    ],
+                ], 422);
+            }
+            // if ($request->isMethod('post')) {
+            //     $rules['from_date'][] = new UniqueOvertimeDateRange();
+            // }
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation Error',
+                    'error' => false,
+                    'code' => 422, // Use a more appropriate HTTP status code
+                    'data' => $validator->errors(),
+                ], 422);
+            }
+            $overtime = $this->overtimeService->store($request->all());
             return response()->json([
                 'message' => $overtime['message'],
                 'error' => $overtime['error'],
                 'code' => $overtime['code'],
                 'data' => $overtime['data']
             ], $overtime['code']);
-            // return $this->success('Overtime created successfully', $overtime, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -78,12 +117,12 @@ class OvertimeController extends Controller
                 'to_date' => 'required|date',
                 'libur' => 'required|in:0,1',
             ];
-            if ($request->type === 'ONCALL' && $unitId !== 19) {
+            if ($request->type === 'ONCALL' && $unitId !== 19 || $request->type === 'CITO' && $unitId !== 19) {
                 return response()->json([
-                    'message' => 'Type ONCALL hanya untuk unit HEMODIALISA.',
+                    'message' => 'Type ONCALL/CITO hanya untuk unit HEMODIALISA.',
                     'success' => false,
                     'code' => 200, // Use a more appropriate HTTP status code
-                    'data' => 'Type ONCALL hanya untuk unit HEMODIALISA.',
+                    'data' => 'Type ONCALL/CITO hanya untuk unit HEMODIALISA.',
                 ], 200);
             }
             // if ($request->isMethod('post')) {
