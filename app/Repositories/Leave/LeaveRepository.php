@@ -42,6 +42,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         'file_disk',
         'shift_awal_id',
         'shift_schedule_id',
+        'created_at',
     ];
 
     public function __construct(
@@ -843,7 +844,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($period_2) {
             $query->whereDate('to_date', '<=', $period_2);
         }
-        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
+        return $query->orderBy('created_at', 'DESC')->paginate($perPage);
     }
 
     public function updateStatus($id, $data)
