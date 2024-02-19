@@ -165,24 +165,6 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
                                 ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
                                 ->first();
-        if ($employee->shift_group_id == $nonShiftGroupId && !$checkShiftSchedule) {
-            // insert data ke table shift schedule
-            $dataShiftSchedule['employee_id'] = $employee->id;
-            $dataShiftSchedule['shift_id'] = $shift->id;
-            $dataShiftSchedule['date'] = $fromDate->toDateString();
-            $dataShiftSchedule['created_user_id'] = auth()->id();
-            $dataShiftSchedule['setup_user_id'] = auth()->id();
-            $dataShiftSchedule['setup_at'] = now();
-            $dataShiftSchedule['time_in'] = $fromDate->toDateString() . ' ' . $shift->in_time;
-            $dataShiftSchedule['time_out'] = $toDate->toDateString() . ' ' . $shift->out_time;
-            $dataShiftSchedule['period'] = now()->format('Y-m');
-            $dataShiftSchedule['holiday'] = 0;
-            $dataShiftSchedule['night'] = 0;
-            $dataShiftSchedule['national_holiday'] = 0;
-            $dataShiftSchedule['absen_type'] = 'ABSEN';
-            $dataShiftSchedule['import'] = 0;
-            $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
-        }
         if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
                 'message' => 'Validation Error',
@@ -191,9 +173,39 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
-        $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
-        $data['shift_awal_id'] = $checkShiftSchedule->shift_id;
-        $data['shift_schedule_id'] = $checkShiftSchedule->id;
+        $shiftAwalId = null;
+        $shiftScheduleId = null;
+        if ($checkShiftSchedule) {
+            $shiftAwalId = $checkShiftSchedule->shift_id;
+            $shiftScheduleId = $checkShiftSchedule->id;
+        } else {
+            if ($employee->shift_group_id == $nonShiftGroupId) {
+                // Loop through each date and create shift schedules
+                for ($date = $fromDate; $date->lte($toDate); $date->addDay()) {
+                    // If shift schedule doesn't exist, create a new one
+                    $newShiftSchedule =  ShiftSchedule::create([
+                        'employee_id' => $employeeId,
+                        'shift_id' => $shift->id,
+                        'date' => $date->toDateString(),
+                        'created_user_id' => auth()->id(),
+                        'setup_user_id' => auth()->id(),
+                        'setup_at' => now(),
+                        'time_in' => $date->toDateString() . ' ' . $shift->in_time,
+                        'time_out' => $date->toDateString() . ' ' . $shift->out_time,
+                        'period' => now()->format('Y-m'),
+                        'holiday' => 0,
+                        'night' => 0,
+                        'national_holiday' => 0,
+                        'absen_type' => 'ABSEN',
+                        'import' => 0,
+                    ]);
+                    $shiftAwalId = $newShiftSchedule->shift_id;
+                    $shiftScheduleId = $newShiftSchedule->id;
+                }
+            }
+        }
+        $data['shift_awal_id'] = $shiftAwalId;
+        $data['shift_schedule_id'] = $shiftScheduleId;
         // create leave
         $leave = $this->model->create($data);
         // Update shift schedule if it exists
@@ -276,7 +288,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 $registrationIds[] = $employee->manager->user->firebase_id;
             }
         }
-
+        $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
         // notif ke HRD
         $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
         foreach ($employeeHrd as $key ) {
@@ -312,24 +324,6 @@ class LeaveRepository implements LeaveRepositoryInterface
                                 ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
                                 ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
                                 ->first();
-        if ($employee->shift_group_id == $nonShiftGroupId && !$checkShiftSchedule) {
-            // insert data ke table shift schedule
-            $dataShiftSchedule['employee_id'] = $employee->id;
-            $dataShiftSchedule['shift_id'] = $shift->id;
-            $dataShiftSchedule['date'] = $fromDate->toDateString();
-            $dataShiftSchedule['created_user_id'] = auth()->id();
-            $dataShiftSchedule['setup_user_id'] = auth()->id();
-            $dataShiftSchedule['setup_at'] = now();
-            $dataShiftSchedule['time_in'] = $fromDate->toDateString() . ' ' . $shift->in_time;
-            $dataShiftSchedule['time_out'] = $toDate->toDateString() . ' ' . $shift->out_time;
-            $dataShiftSchedule['period'] = now()->format('Y-m');
-            $dataShiftSchedule['holiday'] = 0;
-            $dataShiftSchedule['night'] = 0;
-            $dataShiftSchedule['national_holiday'] = 0;
-            $dataShiftSchedule['absen_type'] = 'ABSEN';
-            $dataShiftSchedule['import'] = 0;
-            $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
-        }
         if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
             return [
                 'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
@@ -338,8 +332,39 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
             ];
         }
-
-        $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
+        $shiftAwalId = null;
+        $shiftScheduleId = null;
+        if ($checkShiftSchedule) {
+            $shiftAwalId = $checkShiftSchedule->shift_id;
+            $shiftScheduleId = $checkShiftSchedule->id;
+        } else {
+            if ($employee->shift_group_id == $nonShiftGroupId) {
+                // Loop through each date and create shift schedules
+                for ($date = $fromDate; $date->lte($toDate); $date->addDay()) {
+                    // If shift schedule doesn't exist, create a new one
+                    $newShiftSchedule =  ShiftSchedule::create([
+                        'employee_id' => $employeeId,
+                        'shift_id' => $shift->id,
+                        'date' => $date->toDateString(),
+                        'created_user_id' => auth()->id(),
+                        'setup_user_id' => auth()->id(),
+                        'setup_at' => now(),
+                        'time_in' => $date->toDateString() . ' ' . $shift->in_time,
+                        'time_out' => $date->toDateString() . ' ' . $shift->out_time,
+                        'period' => now()->format('Y-m'),
+                        'holiday' => 0,
+                        'night' => 0,
+                        'national_holiday' => 0,
+                        'absen_type' => 'ABSEN',
+                        'import' => 0,
+                    ]);
+                    $shiftAwalId = $newShiftSchedule->shift_id;
+                    $shiftScheduleId = $newShiftSchedule->id;
+                }
+            }
+        }
+        $data['shift_awal_id'] = $shiftAwalId;
+        $data['shift_schedule_id'] = $shiftScheduleId;
         $leave = $this->model->create($data);
         $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
         $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
@@ -410,7 +435,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 $registrationIds[] = $employee->manager->user->firebase_id;
             }
         }
-
+        $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
         // notif ke HRD
         $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
         foreach ($employeeHrd as $key ) {
