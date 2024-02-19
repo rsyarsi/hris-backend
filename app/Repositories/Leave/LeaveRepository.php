@@ -1070,7 +1070,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 # code...
                 $firebaseIdx = $key;
             }
-        $registrationIds[] =$firebaseIdx->firebase_id;
+            $registrationIds[] =$firebaseIdx->firebase_id;
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
