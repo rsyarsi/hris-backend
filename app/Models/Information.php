@@ -18,12 +18,16 @@ class Information extends Model
 
     protected $fillable =
     [
-        'name',
-        'note',
         'user_id',
+        'name',
+        'short_description',
+        'note',
         'file_url',
         'file_path',
         'file_disk',
+        'image_url',
+        'image_path',
+        'image_disk',
     ];
 
     public function user()

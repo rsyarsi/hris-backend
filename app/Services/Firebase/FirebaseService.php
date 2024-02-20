@@ -29,4 +29,28 @@ class FirebaseService implements FirebaseServiceInterface
         }
         return $response->body();
     }
+
+    public function sendNotificationInformation($title, $body, $url = null)
+    {
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION_INFORMATION') // Make sure to prefix the authorization key with 'key='
+        ])->post(env('FIREBASE_URL'), [
+            'to' => '/topics/tester',
+            'data' => [
+                'extra_information' => 'Notification : New Information'
+            ],
+            'notification' => [
+                'title' => $title,
+                'body' => $body,
+                'image' => $url
+            ]
+        ]);
+        // Check for errors
+        if ($response->failed()) {
+            // Log or handle the error as needed
+            return 'Error sending notification: ' . $response->body();
+        }
+        return $response->body();
+    }
 }

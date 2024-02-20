@@ -21,38 +21,54 @@ class InformationService implements InformationServiceInterface
         return $this->repository->index($perPage, $search);
     }
 
+    public function indexMobile()
+    {
+        return $this->repository->indexMobile();
+    }
+
     public function store(array $data)
     {
-        $file = $data['file'];
+        $image = $data['image'] ?? null;
+        if ($image && $image->isValid()) {
+            // images upload
+            $imageName = uniqid('image_') . '.' . $image->getClientOriginalExtension();
+            $compressedImage = Image::load($image)->quality(50);
+            $tempImagePath = tempnam(sys_get_temp_dir(), 'compressed_image');
+            $compressedImage->save($tempImagePath);
+            $imagePath = Storage::disk('s3')->putFileAs('hrd/informations/images', $tempImagePath, $imageName, 'public');
+            $imageUrl = Storage::disk('s3')->url($imagePath);
+            unlink($tempImagePath);
+            $imageDisk = 's3';
+        } else {
+            $imagePath = null;
+            $imageUrl = null;
+            $imageDisk = null;
+        }
+
+        $file = $data['file'] ?? null;
         if ($file && $file->isValid()) {
-            $fileName = uniqid('image_') . '.' . $file->getClientOriginalExtension();
-
-            // Compress the image before uploading
-            $compressedImage = Image::load($file)->quality(50);
-
-            // Save the compressed image to a temporary file
-            $tempFilePath = tempnam(sys_get_temp_dir(), 'compressed_image');
-            $compressedImage->save($tempFilePath);
-
-            // Upload the temporary file to AWS S3 storage
-            $filePath = Storage::disk('s3')->putFileAs('hrd/informations', $tempFilePath, $fileName, 'public');
-
-            // Get the public URL of the uploaded file
+            // Upload the file to AWS S3 storage
+            $filePath = $file->store('hrd/informations/pdf', 's3');
+            // Make the file public by setting ACL to 'public-read'
+            Storage::disk('s3')->setVisibility($filePath, 'public');
             $fileUrl = Storage::disk('s3')->url($filePath);
-
-            // Clean up the temporary file
-            unlink($tempFilePath);
+            $fileDisk = 's3';
         } else {
             $filePath = null;
             $fileUrl = null;
+            $fileDisk = null;
         }
         $data = [
             'user_id' => auth()->id(),
             'name' => Str::upper($data['name']),
+            'short_description' => $data['short_description'],
             'note' => $data['note'],
+            'image_path' => $imagePath,
+            'image_url' => $imageUrl,
+            'image_disk' => $imageDisk,
             'file_path' => $filePath,
             'file_url' => $fileUrl,
-            'file_disk' => 's3',
+            'file_disk' => $fileDisk,
         ];
         return $this->repository->store($data);
     }
@@ -64,24 +80,47 @@ class InformationService implements InformationServiceInterface
 
     public function update($id, $data)
     {
-        $file = $data['file'];
+        $image = $data['image'] ?? null;
+        if ($image && $image->isValid()) {
+            // images upload
+            $imageName = uniqid('image_') . '.' . $image->getClientOriginalExtension();
+            $compressedImage = Image::load($image)->quality(50);
+            $tempImagePath = tempnam(sys_get_temp_dir(), 'compressed_image');
+            $compressedImage->save($tempImagePath);
+            $imagePath = Storage::disk('s3')->putFileAs('hrd/informations/images', $tempImagePath, $imageName, 'public');
+            $imageUrl = Storage::disk('s3')->url($imagePath);
+            unlink($tempImagePath);
+            $imageDisk = 's3';
+        } else {
+            $imagePath = null;
+            $imageUrl = null;
+            $imageDisk = null;
+        }
+
+        $file = $data['file'] ?? null;
         if ($file && $file->isValid()) {
             // Upload the file to AWS S3 storage
-            $filePath = $file->store('hrd/informations', 's3');
+            $filePath = $file->store('hrd/informations/pdf', 's3');
             // Make the file public by setting ACL to 'public-read'
             Storage::disk('s3')->setVisibility($filePath, 'public');
             $fileUrl = Storage::disk('s3')->url($filePath);
+            $fileDisk = 's3';
         } else {
             $filePath = null;
             $fileUrl = null;
+            $fileDisk = null;
         }
         $data = [
             'user_id' => auth()->id(),
             'name' => Str::upper($data['name']),
+            'short_description' => $data['short_description'],
             'note' => $data['note'],
+            'image_path' => $imagePath,
+            'image_url' => $imageUrl,
+            'image_disk' => $imageDisk,
             'file_path' => $filePath,
             'file_url' => $fileUrl,
-            'file_disk' => 's3',
+            'file_disk' => $fileDisk,
         ];
         return $this->repository->update($id, $data);
     }

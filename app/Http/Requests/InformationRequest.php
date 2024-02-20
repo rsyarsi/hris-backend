@@ -26,8 +26,10 @@ class InformationRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'short_description' => 'required|string|max:50',
             'note' => 'required|string',
-            'file' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+            'file' => 'nullable|mimes:pdf|max:2048',
         ];
     }
 

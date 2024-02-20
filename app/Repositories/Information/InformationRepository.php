@@ -3,26 +3,40 @@
 namespace App\Repositories\Information;
 
 use App\Models\Information;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\SendFirebaseNotification;
+use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Information\InformationRepositoryInterface;
 
 class InformationRepository implements InformationRepositoryInterface
 {
     private $model;
+    private $firebaseService;
 
-    public function __construct(Information $model)
+    public function __construct(
+        Information $model,
+        FirebaseServiceInterface $firebaseService,
+    )
     {
         $this->model = $model;
+        $this->firebaseService = $firebaseService;
     }
 
-    private $field = [
+    private $field =
+    [
         'id',
-        'name',
-        'note',
         'user_id',
+        'name',
+        'short_description',
+        'note',
         'file_url',
         'file_path',
         'file_disk',
+        'image_url',
+        'image_path',
+        'image_disk',
     ];
+
     public function index($perPage, $search = null)
     {
         $query = $this->model
@@ -38,9 +52,24 @@ class InformationRepository implements InformationRepositoryInterface
         return $query->orderBy('created_at', 'DESC')->paginate($perPage);
     }
 
+    public function indexMobile()
+    {
+        return $this->model
+                    ->select($this->field)
+                    ->orderBy('created_at', 'DESC')->get();
+    }
+
     public function store(array $data)
     {
-        return $this->model->create($data);
+        $information = $this->model->create($data);
+        if ($information) {
+            $title = $information->name;
+            $body = $information->short_description;
+            $url = $information->image_url;
+            // $this->firebaseService->sendNotificationInformation($title, $body, $url);
+            Queue::push(new SendFirebaseNotification($title, $body, $url));
+        }
+        return $information;
     }
 
     public function show($id)
@@ -61,6 +90,11 @@ class InformationRepository implements InformationRepositoryInterface
         $information = $this->model->find($id);
         if ($information) {
             $information->update($data);
+            $title = $information->name;
+            $body = $information->short_description;
+            $url = $information->image_url;
+            // $this->firebaseService->sendNotificationInformation($title, $body, $url);
+            Queue::push(new SendFirebaseNotification($title, $body, $url));
             return $information;
         }
         return null;

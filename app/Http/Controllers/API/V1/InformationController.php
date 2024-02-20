@@ -32,12 +32,32 @@ class InformationController extends Controller
         }
     }
 
-    public function store(InformationRequest $request)
+    public function indexMobile(Request $request)
     {
         try {
-            $data = $request->validated();
-            $information = $this->informationService->store($data);
-            return $this->success('Information created successfully', $information, 201);
+            $informations = $this->informationService->indexMobile();
+            return response()->json([
+                'message' => 'Informasi Berhasil Diambil!',
+                'success' => true,
+                'code' => 200,
+                'data' => $informations
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Informasi Gagal Diambil!',
+                'success' => false,
+                'code' => 200,
+                'data' => 'Informasi Gagal Diambil!, '.$e->getMessage()
+            ], 200);
+        }
+    }
+
+    public function store(InformationRequest $request)
+    {
+        $data = $request->validated();
+        $information = $this->informationService->store($data);
+        return $this->success('Information created successfully', $information, 201);
+        try {
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -359,6 +359,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         });
         // route for pengembalian
         Route::resource('informations', InformationController::class)->parameters(['informations' => 'informations']);
+        Route::controller(InformationController::class)->group(function () {
+            // route for get informations mobile
+            Route::get('informations-mobile', 'indexMobile')->name('informations-mobile');
+        });
     });
 });
 
