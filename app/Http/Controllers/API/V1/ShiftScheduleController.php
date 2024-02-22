@@ -240,7 +240,6 @@ class ShiftScheduleController extends Controller
             ], 200);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
-
             $errorData = [];
             foreach ($failures as $failure) {
                 if ($failure->attribute() == '0') {
@@ -252,14 +251,12 @@ class ShiftScheduleController extends Controller
                 } else if ($failure->attribute() == '3') {
                     $nameRow = 'TGL_SHIFT';
                 }
-
                 $errorData[] = [
                     'lokasi_row' => $failure->row(),
                     'lokasi_column' => $nameRow,
                     'errors' => $failure->errors(),
                 ];
             }
-
             return response()->json([
                 'message' => 'Error Saat Proses Import.',
                 'success' => false,
@@ -271,9 +268,9 @@ class ShiftScheduleController extends Controller
             return response()->json([
                 'message' => 'Error Saat Proses Import.: ' . $e->getMessage(),
                 'success' => false,
-                'code' => $e->getCode(),
+                'code' => 422,
                 'data' => null,
-            ], $e->getCode());
+            ], 422);
         }
     }
 

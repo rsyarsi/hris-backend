@@ -64,11 +64,6 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
         if (!$employee || !$shift) {
             return null; // Skip this row
         }
-        // Check if the entry already exists in the shift_schedules table
-        $existingEntryShiftNull = ShiftSchedule::where('employee_id', $employee->id)
-                                                ->where('shift_id', null)
-                                                ->where('date', $date)
-                                                ->first();
 
         $existingEntry = ShiftSchedule::where([
             'employee_id' => $employee->id,
@@ -80,12 +75,12 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
         $timeOut = $shift->night_shift == 1
                         ? Carbon::parse($date . ' ' . $shift->out_time)->addDay()
                         : Carbon::parse($date . ' ' . $shift->out_time);
-        $existingEntryShiftNull = ShiftSchedule::where('employee_id', $employee->id)
-                                                ->whereNull('shift_id')
-                                                ->where('date', $date)
-                                                ->first();
-        if ($existingEntryShiftNull) {
-            $existingEntryShiftNull->update([
+        // $existingEntryShiftNull = ShiftSchedule::where('employee_id', $employee->id)
+        //                                         ->whereNull('shift_id')
+        //                                         ->where('date', $date)
+        //                                         ->first();
+        if ($existingEntry) {
+            $existingEntry->update([
                 'shift_id' => $shift->id,
                 'time_in' => $timeIn,
                 'time_out' => $timeOut,
@@ -93,8 +88,8 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
                 'night' => $shift->night_shift
             ]);
             // Retrieve the updated instance
-            $shiftSchedule = ShiftSchedule::find($existingEntryShiftNull->id);
-        } else if(!$existingEntry) {
+            $shiftSchedule = ShiftSchedule::find($existingEntry->id);
+        } else {
             $shiftSchedule = ShiftSchedule::create([
                 'id' => Str::lower($ulid),
                 'employee_id' => $employee->id,
@@ -119,7 +114,6 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
                 'absen_type' => 'ABSEN',
             ]);
         }
-
         // save data to generate_absen
         $existingEntryGenerateAbsen = GenerateAbsen::where([
             'employee_id' => $employee->id,
