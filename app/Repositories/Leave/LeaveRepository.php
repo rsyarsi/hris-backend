@@ -900,7 +900,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'comment' => $leave->note,
             ];
             $this->leaveHistory->store($historyData);
-            if ($status == 10) {
+            if (in_array($status, [6, 7, 8, 9, 10])) {
                 ShiftSchedule::where('leave_id', $leave->id)
                             ->update([
                                 'leave_id' => null,
@@ -908,7 +908,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                             ]);
             }
             // update data batal catatan cuti
-            if ($leave->leave_type_id == 1 && $status == 10) {
+            if ($leave->leave_type_id == 1 && in_array($status, [6, 7, 8, 9, 10])) {
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
                                             ->latest()
                                             ->first();
@@ -1011,7 +1011,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'comment' => $leave->note,
             ];
             $this->leaveHistory->store($historyData);
-            if ($leaveStatusId == 10) {
+            if (in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
                 ShiftSchedule::where('leave_id', $leave->id)
                             ->update([
                                 'leave_id' => null,
@@ -1019,7 +1019,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                             ]);
             }
             // update data batal catatan cuti
-            if ($leave->leave_type_id == 1 && $leaveStatusId == 10) {
+            if ($leave->leave_type_id == 1 && in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
                                             ->latest()
                                             ->first();
