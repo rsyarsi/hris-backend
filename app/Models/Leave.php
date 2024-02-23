@@ -32,6 +32,7 @@ class Leave extends Model
         'file_disk',
         'shift_awal_id',
         'shift_schedule_id',
+        'year'
     ];
 
     public function employee()

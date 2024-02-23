@@ -42,6 +42,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         'file_disk',
         'shift_awal_id',
         'shift_schedule_id',
+        'year',
         'created_at',
     ];
 

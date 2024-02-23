@@ -29,7 +29,7 @@ class LeaveService implements LeaveServiceInterface
         $durationInMinutes = $fromDate->diffInMinutes($toDate);
         $data['duration'] = $durationInMinutes;
         $data['leave_status_id'] = $data['leave_status_id'];
-
+        $data['year'] = now()->format('Y');
         if ($leaveType == 2) {
             $file = $data['file'];
             if ($file && $file->isValid()) {
@@ -57,7 +57,7 @@ class LeaveService implements LeaveServiceInterface
         $durationInMinutes = $fromDate->diffInMinutes($toDate);
         $data['duration'] = $durationInMinutes;
         $data['leave_status_id'] = $data['leave_status_id'];
-
+        $data['year'] = now()->format('Y');
         if ($leaveType == 2) {
             $file = $data['file'];
             if ($file && $file->isValid()) {
