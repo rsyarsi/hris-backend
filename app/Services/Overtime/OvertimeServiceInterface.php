@@ -3,7 +3,7 @@ namespace App\Services\Overtime;
 
 interface OvertimeServiceInterface
 {
-    public function index($perPage, $searchv, $period_1, $period_2, $unit);
+    public function index($perPage, $search, $period_1, $period_2, $unit);
     public function store(array $data);
     public function overtimeCreateMobile(array $data);
     public function show($id);

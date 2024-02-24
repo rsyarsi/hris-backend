@@ -441,12 +441,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
         $registrationIds[] = $getHakAkses->firebase_id;
 
-                    // notif ke HRDs
-                    $employeeHrd = User::where('hrd','1')->get();
-                    foreach ($employeeHrd as $key ) {
-                        # code...
-                        $firebaseIdx = $key;
-                    }
+        // notif ke HRDs
+        $employeeHrd = User::where('hrd','1')->get();
+        foreach ($employeeHrd as $key ) {
+            # code...
+            $firebaseIdx = $key;
+        }
 
         if($employee->supervisor != null){
             if($employee->supervisor->user != null){

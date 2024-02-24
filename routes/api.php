@@ -17,7 +17,7 @@ use App\Http\Controllers\API\V1\{
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
     SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
-    InformationController
+    InformationController, OrderOvertimeController
 };
 
 /*
@@ -429,4 +429,18 @@ Route::middleware('api')->prefix('v1/')->group(function () {
     });
     // route for overtime histories
     Route::resource('overtime-histories', OvertimeHistoryController::class);
+    // route for order overtime
+    Route::resource('order-overtimes', OrderOvertimeController::class)->parameters(['order-overtimes' => 'order_overtimes']);
+    Route::controller(OrderOvertimeController::class)->group(function () {
+        // route for store order overtime mobile
+        Route::post('order-overtime-store-mobile', 'storeMobile')->name('order-overtime-store-mobile');
+        // route for index subOrdinate order overtime
+        Route::get('order-overtime-subordinate', 'indexSubOrdinate')->name('order-overtime-subordinate');
+        // route for index subOrdinate order overtime mobile
+        Route::post('order-overtime-subordinate-mobile', 'indexSubOrdinateMobile')->name('order-overtime-subordinate-mobile');
+        // route for update status
+        Route::post('order-overtime-update-status', 'updateStatus')->name('order-overtime-update-status');
+        // route for update status mobile
+        Route::post('order-overtime-update-status-mobile', 'updateStatusMobile')->name('order-overtime-update-status-mobile');
+    });
 });
