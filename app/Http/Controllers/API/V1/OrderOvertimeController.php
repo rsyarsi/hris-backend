@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Rules\DateSmallerThan;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\OrderOvertimeNewStatusRequest;
 use App\Services\OrderOvertime\OrderOvertimeServiceInterface;
 
 class OrderOvertimeController extends Controller
@@ -114,7 +115,7 @@ class OrderOvertimeController extends Controller
                     'data' => $validator->errors(),
                 ], 422);
             }
-            $overtime = $this->orderOvertimeService->store();
+            $overtime = $this->orderOvertimeService->store($request->all());
             return response()->json([
                 'message' => $overtime['message'],
                 'error' => $overtime['error'],
@@ -154,16 +155,13 @@ class OrderOvertimeController extends Controller
                     'data' => 'Type ONCALL/CITO hanya untuk unit HEMODIALISA.',
                 ], 200);
             }
-            // if ($request->isMethod('post')) {
-            //     $rules['from_date'][] = new UniqueOvertimeDateRange();
-            // }
             $validator = Validator::make($request->all(), $rules);
             $errorMessages = collect($validator->errors()->all())->implode(', '); // Collect and join errors with commas
             if ($validator->fails()) {
                 return response()->json([
                     'message' => $errorMessages,
                     'success' => false,
-                    'code' => 200, // Use a more appropriate HTTP status code
+                    'code' => 200,
                     'data' => $errorMessages,
                 ], 200);
             }
@@ -174,9 +172,7 @@ class OrderOvertimeController extends Controller
                 'code' => $overtime['code'],
                 'data' => $overtime['data']
             ], $overtime['code']);
-            // return $this->success('Overtime created successfully', $overtime, 201);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getCode());
             return response()->json([
                 'message' => $e->getMessage(),
                 'success' => false,
@@ -273,6 +269,66 @@ class OrderOvertimeController extends Controller
             return $this->success('Order Overtime deleted successfully, id : '.$overtime->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updateStatus(OrderOvertimeNewStatusRequest $request, $id)
+    {
+        try {
+            $data = $request->validated();
+            $orderOvertime = $this->orderOvertimeService->updateStatus($id, $data);
+            if (!$orderOvertime) {
+                return response()->json([
+                    'message' => 'Order overtime not found',
+                    'error' => true,
+                    'code' => 404,
+                    'data' => []
+                ], 200);
+            }
+            return response()->json([
+                'message' => $orderOvertime['message'],
+                'error' => $orderOvertime['error'],
+                'code' => $orderOvertime['code'],
+                'data' => $orderOvertime['data']
+            ], $orderOvertime['code']);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updateStatusMobile(Request $request)
+    {
+        try {
+            $rules = [
+                'id' => 'required|exists:order_overtimes,id',
+                'status' => 'required|in:OPEN,APPROVE,REJECT',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            $errorMessages = collect($validator->errors()->all())->implode(', ');
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => $errorMessages,
+                    'success' => false,
+                    'code' => 200,
+                    'data' => $errorMessages,
+                ], 200);
+            }
+            $id = $request->input('id');
+            $status = $request->input('status');
+            $orderOvertime = $this->orderOvertimeService->updateStatusMobile($id, $status);
+            return response()->json([
+                'message' => $orderOvertime['message'],
+                'error' => $orderOvertime['error'],
+                'code' => $orderOvertime['code'],
+                'data' => $orderOvertime['data']
+            ], $orderOvertime['code']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'error' => true,
+                'code' => 200,
+                'data' => $e->getMessage()
+            ], 200);
         }
     }
 }

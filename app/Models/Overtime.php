@@ -23,9 +23,9 @@ class Overtime extends Model
         'note',
         'overtime_status_id',
         'from_date',
+        'to_date',
         'amount',
         'type',
-        'to_date',
         'duration',
         'libur',
     ];

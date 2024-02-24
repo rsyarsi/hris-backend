@@ -3,33 +3,28 @@
 namespace App\Repositories\OrderOvertime;
 
 use Carbon\Carbon;
+use App\Models\GenerateAbsen;
+use App\Models\ShiftSchedule;
 use Illuminate\Support\Facades\DB;
-use App\Services\Employee\EmployeeServiceInterface;
-use App\Services\Firebase\FirebaseServiceInterface;
 use App\Services\Overtime\OvertimeServiceInterface;
 use App\Services\OvertimeHistory\OvertimeHistoryServiceInterface;
+use App\Models\{Employee, OrderOvertime, Overtime, OvertimeHistory};
 use App\Repositories\OrderOvertime\OrderOvertimeRepositoryInterface;
-use App\Models\{Employee, OrderOvertime, User, ShiftSchedule, GenerateAbsen, OvertimeHistory};
 
 class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
 {
     private $model;
     private $overtimeService;
     private $overtimeHistoryService;
-    private $firebaseService;
-    private $employeeService;
+
     public function __construct(
         OrderOvertime $model,
         OvertimeServiceInterface $overtimeService,
-        FirebaseServiceInterface $firebaseService,
-        EmployeeServiceInterface $employeeService,
         OvertimeHistoryServiceInterface $overtimeHistoryService,
     )
     {
         $this->model = $model;
         $this->overtimeService = $overtimeService;
-        $this->firebaseService = $firebaseService;
-        $this->employeeService = $employeeService;
         $this->overtimeHistoryService = $overtimeHistoryService;
     }
 
@@ -198,7 +193,6 @@ class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
     public function update($id, $data)
     {
         $orderOvertime = $this->model->find($id);
-
         if (!$orderOvertime) {
             return [
                 'message' => 'Order Overtime Not Found',
@@ -207,9 +201,7 @@ class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
                 'data' => []
             ];
         }
-
         $orderOvertime->update($data);
-
         return [
             'message' => 'Order Overtime Update successfully',
             'error' => false,
@@ -227,5 +219,211 @@ class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
             return $overtime;
         }
         return null;
+    }
+
+    public function updateStatus($id, $data)
+    {
+        try {
+            DB::beginTransaction();
+
+            $orderOvertime = $this->model->find($id);
+            if (!$orderOvertime) {
+                return [
+                    'message' => 'Order Overtime Not Found',
+                    'error' => true,
+                    'code' => 404,
+                    'data' => []
+                ];
+            }
+
+            $fromDate = Carbon::parse($orderOvertime->from_date);
+            $shiftSchedule = ShiftSchedule::where('employee_id', $orderOvertime->employee_staff_id)
+                                            ->where('date', $fromDate->toDateString())
+                                            ->first();
+            if ($data['status'] == 'REJECT') {
+                $orderOvertime->update($data);
+            } else if ($data['status'] == 'APPROVE' && $shiftSchedule) {
+                $orderOvertime->update($data);
+                $overtimeData = [
+                    'employee_id' => $orderOvertime->employee_staff_id,
+                    'task' => $orderOvertime->note_order,
+                    'note' => $orderOvertime->note_overtime . '(Data Dari Order Overtime)',
+                    'overtime_status_id' => 5,
+                    'from_date' => $orderOvertime->from_date,
+                    'to_date' => $orderOvertime->to_date,
+                    'amount' => 0,
+                    'type' => $orderOvertime->type,
+                    'duration' => $orderOvertime->duration,
+                    'libur' => $orderOvertime->holiday,
+                ];
+                $overtime = Overtime::create($overtimeData);
+
+                $historyData = [
+                    'overtime_id' => $overtime->id,
+                    'user_id' => auth()->id(),
+                    'description' => 'OVERTIME STATUS ' . $overtime->overtimeStatus->name,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'comment' => $overtime->note,
+                    'libur' => $overtime->libur,
+                ];
+                OvertimeHistory::create($historyData);
+
+                $fromDateParse = Carbon::parse($overtime->from_date);
+                $toDateParse = Carbon::parse($overtime->to_date);
+
+                $data['period'] = $fromDateParse->format('Y-m');
+                $data['date'] = $fromDateParse->toDateString();
+                $data['day'] = $fromDateParse->format('l');
+                $data['employee_id'] = $overtime->employee_id;
+                $data['employment_id'] = $overtime->employee->employment_number;
+                $data['shift_id'] = $shiftSchedule->shift_id;
+                $data['date_in_at'] = $fromDateParse->toDateString();
+                $data['time_in_at'] = $fromDateParse->toTimeString();
+                $data['date_out_at'] = $toDateParse->toDateString();
+                $data['time_out_at'] = $toDateParse->toTimeString();
+                $data['schedule_date_in_at'] = $shiftSchedule->date;
+                $data['schedule_time_in_at'] = Carbon::parse($shiftSchedule->time_in)->toTimeString();
+                $data['schedule_date_out_at'] = $shiftSchedule->date;
+                $data['schedule_time_out_at'] = Carbon::parse($shiftSchedule->time_out)->toTimeString();
+                $data['holiday'] = $shiftSchedule->holiday;
+                $data['night'] = $shiftSchedule->night;
+                $data['national_holiday'] = $shiftSchedule->national_holiday;
+                $data['function'] = null;
+                $data['note'] = null;
+                $data['type'] = 'SPL';
+                $data['overtime_type'] = $overtime->type;
+                $data['overtime_hours'] = $overtime->duration;
+                $data['shift_schedule_id'] = $shiftSchedule->id;
+                GenerateAbsen::create($data);
+            } else {
+                return [
+                    'message' => 'Shift Schedule Not Found!',
+                    'error' => true,
+                    'code' => 404,
+                    'data' => []
+                ];
+            }
+
+            DB::commit();
+
+            return [
+                'message' => 'Order Overtime Update successfully',
+                'error' => false,
+                'code' => 200,
+                'data' => [$orderOvertime]
+            ];
+        } catch (\Exception $e) {
+            DB::rollback();
+            return [
+                'message' => 'Error updating order overtime',
+                'error' => true,
+                'code' => 500,
+                'data' => ['status' => [$e->getMessage()]]
+            ];
+        }
+    }
+
+    public function updateStatusMobile($id, $status)
+    {
+        try {
+            DB::beginTransaction();
+
+            $orderOvertime = $this->model->find($id);
+            if (!$orderOvertime) {
+                return [
+                    'message' => 'Order Overtime Not Found',
+                    'error' => true,
+                    'code' => 404,
+                    'data' => []
+                ];
+            }
+
+            $fromDate = Carbon::parse($orderOvertime->from_date);
+            $shiftSchedule = ShiftSchedule::where('employee_id', $orderOvertime->employee_staff_id)
+                                            ->where('date', $fromDate->toDateString())
+                                            ->first();
+            if ($status == 'REJECT') {
+                $orderOvertime->update(['status' => $status]);
+            } else if ($status == 'APPROVE' && $shiftSchedule) {
+                $orderOvertime->update(['status' => $status]);
+                $overtimeData = [
+                    'employee_id' => $orderOvertime->employee_staff_id,
+                    'task' => $orderOvertime->note_order,
+                    'note' => $orderOvertime->note_overtime . '(Data Dari Order Overtime)',
+                    'overtime_status_id' => 5,
+                    'from_date' => $orderOvertime->from_date,
+                    'to_date' => $orderOvertime->to_date,
+                    'amount' => 0,
+                    'type' => $orderOvertime->type,
+                    'duration' => $orderOvertime->duration,
+                    'libur' => $orderOvertime->holiday,
+                ];
+                $overtime = Overtime::create($overtimeData);
+
+                $historyData = [
+                    'overtime_id' => $overtime->id,
+                    'user_id' => auth()->id(),
+                    'description' => 'OVERTIME STATUS ' . $overtime->overtimeStatus->name,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'comment' => $overtime->note,
+                    'libur' => $overtime->libur,
+                ];
+                OvertimeHistory::create($historyData);
+
+                $fromDateParse = Carbon::parse($overtime->from_date);
+                $toDateParse = Carbon::parse($overtime->to_date);
+
+                $data['period'] = $fromDateParse->format('Y-m');
+                $data['date'] = $fromDateParse->toDateString();
+                $data['day'] = $fromDateParse->format('l');
+                $data['employee_id'] = $overtime->employee_id;
+                $data['employment_id'] = $overtime->employee->employment_number;
+                $data['shift_id'] = $shiftSchedule->shift_id;
+                $data['date_in_at'] = $fromDateParse->toDateString();
+                $data['time_in_at'] = $fromDateParse->toTimeString();
+                $data['date_out_at'] = $toDateParse->toDateString();
+                $data['time_out_at'] = $toDateParse->toTimeString();
+                $data['schedule_date_in_at'] = $shiftSchedule->date;
+                $data['schedule_time_in_at'] = Carbon::parse($shiftSchedule->time_in)->toTimeString();
+                $data['schedule_date_out_at'] = $shiftSchedule->date;
+                $data['schedule_time_out_at'] = Carbon::parse($shiftSchedule->time_out)->toTimeString();
+                $data['holiday'] = $shiftSchedule->holiday;
+                $data['night'] = $shiftSchedule->night;
+                $data['national_holiday'] = $shiftSchedule->national_holiday;
+                $data['function'] = null;
+                $data['note'] = null;
+                $data['type'] = 'SPL';
+                $data['overtime_type'] = $overtime->type;
+                $data['overtime_hours'] = $overtime->duration;
+                $data['shift_schedule_id'] = $shiftSchedule->id;
+                GenerateAbsen::create($data);
+            } else {
+                return [
+                    'message' => 'Shift Schedule Not Found!',
+                    'error' => true,
+                    'code' => 404,
+                    'data' => []
+                ];
+            }
+
+            DB::commit();
+
+            return [
+                'message' => 'Order Overtime Update successfully',
+                'error' => false,
+                'code' => 200,
+                'data' => [$orderOvertime]
+            ];
+        } catch (\Exception $e) {
+            DB::rollback();
+            return [
+                'message' => 'Error updating order overtime',
+                'error' => true,
+                'code' => 500,
+                'data' => ['status' => [$e->getMessage()]]
+            ];
+        }
     }
 }

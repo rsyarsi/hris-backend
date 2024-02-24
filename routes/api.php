@@ -439,7 +439,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for index subOrdinate order overtime mobile
         Route::post('order-overtime-subordinate-mobile', 'indexSubOrdinateMobile')->name('order-overtime-subordinate-mobile');
         // route for update status
-        Route::post('order-overtime-update-status', 'updateStatus')->name('order-overtime-update-status');
+        Route::post('order-overtime-update-status/{id}', 'updateStatus')->name('order-overtime-update-status');
         // route for update status mobile
         Route::post('order-overtime-update-status-mobile', 'updateStatusMobile')->name('order-overtime-update-status-mobile');
     });

@@ -2,7 +2,6 @@
 namespace App\Services\OrderOvertime;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use App\Services\OrderOvertime\OrderOvertimeServiceInterface;
 use App\Repositories\OrderOvertime\OrderOvertimeRepositoryInterface;
 
@@ -76,5 +75,15 @@ class OrderOvertimeService implements OrderOvertimeServiceInterface
     public function destroy($id)
     {
         return $this->repository->destroy($id);
+    }
+
+    public function updateStatus($id, $data)
+    {
+        return $this->repository->updateStatus($id, $data);
+    }
+
+    public function updateStatusMobile($overtimeId, $status)
+    {
+        return $this->repository->updateStatusMobile($overtimeId, $status);
     }
 }
