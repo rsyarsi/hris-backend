@@ -334,7 +334,7 @@ class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
                 return [
                     'message' => 'Order Overtime Not Found',
                     'error' => true,
-                    'code' => 404,
+                    'code' => 200,
                     'data' => []
                 ];
             }
@@ -403,7 +403,7 @@ class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
                 return [
                     'message' => 'Shift Schedule Not Found!',
                     'error' => true,
-                    'code' => 404,
+                    'code' => 200,
                     'data' => []
                 ];
             }
@@ -421,7 +421,7 @@ class OrderOvertimeRepository implements OrderOvertimeRepositoryInterface
             return [
                 'message' => 'Error updating order overtime',
                 'error' => true,
-                'code' => 500,
+                'code' => 200,
                 'data' => ['status' => [$e->getMessage()]]
             ];
         }
