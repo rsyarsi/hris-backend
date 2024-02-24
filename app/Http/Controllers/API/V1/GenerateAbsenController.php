@@ -8,6 +8,7 @@ use App\Models\GenerateAbsen;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MonitoringAbsenExport;
+use App\Http\Requests\UpdateGenerateAbsenRequest;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
 use App\Http\Requests\{AbsenFromMobileRequest, GenerateAbsenRequest};
 
@@ -117,15 +118,15 @@ class GenerateAbsenController extends Controller
         }
     }
 
-    public function update(GenerateAbsenRequest $request, $id)
+    public function update(UpdateGenerateAbsenRequest $request, $id)
     {
+        $data = $request->validated();
+        $generateabsen = $this->generateAbsenService->update($id, $data);
+        if (!$generateabsen) {
+            return $this->error('Generate Absen not found', 404);
+        }
+        return $this->success('Generate Absen updated successfully', $generateabsen, 201);
         try {
-            $data = $request->validated();
-            $generateabsen = $this->generateAbsenService->update($id, $data);
-            if (!$generateabsen) {
-                return $this->error('Generate Absen not found', 404);
-            }
-            return $this->success('Generate Absen updated successfully', $generateabsen, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

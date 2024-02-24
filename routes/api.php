@@ -253,7 +253,7 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('log-finger-temp-user', 'logFingerTempUser')->name('log-finger-temp-user');
         });
         // route for generate absen
-        Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate-absen']);
+        Route::resource('generate-absen', GenerateAbsenController::class)->parameters(['generate-absen' => 'generate_absen']);
         Route::controller(GenerateAbsenController::class)->group(function () {
             // route for generate absen employee_id
             Route::get('generate-absen-employee/{employee_id}', 'generateAbsenEmployee')->name('generate-absen-employee');

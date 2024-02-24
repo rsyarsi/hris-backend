@@ -425,6 +425,16 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     {
         $generateAbsen = $this->model->find($id);
         if ($generateAbsen) {
+            $timeOutAt = $data['time_out_at'];
+            if ($timeOutAt !== null) {
+                $scheduleTimeOutAt = $generateAbsen->schedule_time_out_at;
+                $pa = null; // pa = pulang awal
+                if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
+                    $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+                }
+                $data['pa'] = $pa;
+                $data['note'] = $pa == null && $generateAbsen->telat == null ? null : 'WARNING';
+            }
             $generateAbsen->update($data);
             return $generateAbsen;
         }
