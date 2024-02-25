@@ -2,9 +2,11 @@
 
 namespace App\Repositories\CatatanCuti;
 
-use App\Models\CatatanCuti;
-use App\Repositories\CatatanCuti\CatatanCutiRepositoryInterface;
 use Carbon\Carbon;
+use App\Models\Employee;
+use App\Models\CatatanCuti;
+use Illuminate\Support\Facades\DB;
+use App\Repositories\CatatanCuti\CatatanCutiRepositoryInterface;
 
 class CatatanCutiRepository implements CatatanCutiRepositoryInterface
 {
@@ -163,5 +165,149 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
             return $catatanCuti;
         }
         return null;
+    }
+
+    public function historyPemakaianCutiAll($perPage, $search = null, $unit = null, $year = null)
+    {
+        $query1 = DB::table('catatan_cuti')
+                    ->select([
+                        'catatan_cuti.employee_id as employee_id',
+                        'employees.employment_number as employment_number',
+                        'employees.name as employment_name',
+                        'employees.unit_id',
+                        DB::raw('DATE(adjustment_cuti.created_at) as date_awal'),
+                        DB::raw('DATE(adjustment_cuti.created_at) as date_akhir'),
+                        'catatan_cuti.quantity_awal',
+                        'catatan_cuti.quantity_in',
+                        'catatan_cuti.quantity_out',
+                        'catatan_cuti.quantity_akhir',
+                        'catatan_cuti.type',
+                        'catatan_cuti.description',
+                        'adjustment_cuti.year',
+                        'catatan_cuti.created_at',
+                    ])
+                    ->join('adjustment_cuti', 'catatan_cuti.adjustment_cuti_id', '=', 'adjustment_cuti.id')
+                    ->join('employees', 'catatan_cuti.employee_id', '=', 'employees.id');
+
+        $query2 = DB::table('catatan_cuti')
+                    ->select([
+                        'catatan_cuti.employee_id as employee_id',
+                        'employees.employment_number as employment_number',
+                        'employees.name as employment_name',
+                        'employees.unit_id',
+                        DB::raw('DATE(leaves.from_date) as date_awal'),
+                        DB::raw('DATE(leaves.to_date) as date_akhir'),
+                        'catatan_cuti.quantity_awal',
+                        'catatan_cuti.quantity_in',
+                        'catatan_cuti.quantity_out',
+                        'catatan_cuti.quantity_akhir',
+                        'catatan_cuti.type',
+                        'catatan_cuti.description',
+                        'leaves.year',
+                        'catatan_cuti.created_at',
+                    ])
+                    ->join('leaves', 'catatan_cuti.leave_id', '=', 'leaves.id')
+                    ->join('employees', 'catatan_cuti.employee_id', '=', 'employees.id');
+        if ($unit) {
+            $query1->where('employees.unit_id', $unit);
+            $query2->where('employees.unit_id', $unit);
+        }
+        if ($year) {
+            $query1->where('catatan_cuti.year', $year);
+            $query2->where('catatan_cuti.year', $year);
+        }
+        if ($search) {
+            $query1->where(function ($query) use ($search) {
+                $query->where('employees.name', 'like', '%' . $search . '%')
+                    ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
+            });
+
+            $query2->where(function ($query) use ($search) {
+                $query->where('employees.name', 'like', '%' . $search . '%')
+                    ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
+            });
+        }
+        $query = $query1->unionAll($query2);
+        return $query->orderBy('created_at', 'ASC')->paginate($perPage);
+    }
+
+    public function historyPemakaianCutiSubordinate($perPage, $search = null, $unit = null, $year = null)
+    {
+        $user = auth()->user();
+        if (!$user->employee) {
+            return [];
+        }
+        $queryEmployee = Employee::where(function ($q) use ($user) {
+                            $q->where('supervisor_id', $user->employee->id)
+                                ->orWhere('manager_id', $user->employee->id)
+                                ->orWhere('kabag_id', $user->employee->id);
+                        })
+                        ->get();
+        $employeeIds = []; // Collect employee IDs in an array
+        foreach ($queryEmployee as $item) {
+            $employeeIds[] = $item->id;
+        }
+        $query1 = DB::table('catatan_cuti')
+                    ->select([
+                        'catatan_cuti.employee_id as employee_id',
+                        'employees.employment_number as employment_number',
+                        'employees.name as employment_name',
+                        'employees.unit_id',
+                        DB::raw('DATE(adjustment_cuti.created_at) as date_awal'),
+                        DB::raw('DATE(adjustment_cuti.created_at) as date_akhir'),
+                        'catatan_cuti.quantity_awal',
+                        'catatan_cuti.quantity_in',
+                        'catatan_cuti.quantity_out',
+                        'catatan_cuti.quantity_akhir',
+                        'catatan_cuti.type',
+                        'catatan_cuti.description',
+                        'adjustment_cuti.year',
+                        'catatan_cuti.created_at',
+                    ])
+                    ->join('adjustment_cuti', 'catatan_cuti.adjustment_cuti_id', '=', 'adjustment_cuti.id')
+                    ->join('employees', 'catatan_cuti.employee_id', '=', 'employees.id')
+                    ->whereIn('employees.id', $employeeIds);
+
+        $query2 = DB::table('catatan_cuti')
+                    ->select([
+                        'catatan_cuti.employee_id as employee_id',
+                        'employees.employment_number as employment_number',
+                        'employees.name as employment_name',
+                        'employees.unit_id',
+                        DB::raw('DATE(leaves.from_date) as date_awal'),
+                        DB::raw('DATE(leaves.to_date) as date_akhir'),
+                        'catatan_cuti.quantity_awal',
+                        'catatan_cuti.quantity_in',
+                        'catatan_cuti.quantity_out',
+                        'catatan_cuti.quantity_akhir',
+                        'catatan_cuti.type',
+                        'catatan_cuti.description',
+                        'leaves.year',
+                        'catatan_cuti.created_at',
+                    ])
+                    ->join('leaves', 'catatan_cuti.leave_id', '=', 'leaves.id')
+                    ->join('employees', 'catatan_cuti.employee_id', '=', 'employees.id')
+                    ->whereIn('employees.id', $employeeIds);
+        if ($unit) {
+            $query1->where('employees.unit_id', $unit);
+            $query2->where('employees.unit_id', $unit);
+        }
+        if ($year) {
+            $query1->where('catatan_cuti.year', $year);
+            $query2->where('catatan_cuti.year', $year);
+        }
+        if ($search) {
+            $query1->where(function ($query) use ($search) {
+                $query->where('employees.name', 'like', '%' . $search . '%')
+                    ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
+            });
+
+            $query2->where(function ($query) use ($search) {
+                $query->where('employees.name', 'like', '%' . $search . '%')
+                    ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
+            });
+        }
+        $query = $query1->unionAll($query2);
+        return $query->orderBy('created_at', 'ASC')->paginate($perPage);
     }
 }

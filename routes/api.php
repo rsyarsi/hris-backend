@@ -323,6 +323,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('catatan-cuti-employee', 'catatanCutiEmployee')->name('catatan-cuti-employee');
             // route for catatan cuti
             Route::get('catatan-cuti-employee-latest', 'catatanCutiEmployeeLatest')->name('catatan-cuti-employee-latest');
+            // route history pemakaian cuti
+            Route::get('history-pemakaian-cuti', 'historyPemakaianCutiAll')->name('history-pemakaian-cuti');
+            // route history pemakaian cuti subordinate
+            Route::get('history-pemakaian-cuti-subordinate', 'historyPemakaianCutiSubordinate')->name('history-pemakaian-cuti-subordinate');
         });
         // route for timesheet overtimes
         Route::resource('timesheet-overtimes', TimesheetOvertimeController::class)->parameters(['timesheet-overtimes' => 'timesheet-overtime']);

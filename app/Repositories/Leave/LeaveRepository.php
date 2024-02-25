@@ -260,6 +260,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'type' => 'LEAVE',
                 'description' => $leaveType->name,
                 'batal' => 0,
+                'year' => $leave->year,
             ];
             $this->catatanCutiService->store($catatanCutiData);
             $updateLeave = [
@@ -407,6 +408,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'type' => 'LEAVE',
                 'description' => $leaveType->name,
                 'batal' => 0,
+                'year' => $leave->year,
             ];
             $this->catatanCutiService->store($catatanCutiData);
             $updateLeave = [
@@ -930,6 +932,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'type' => 'LEAVE',
                     'description' => $leaveStatus->name,
                     'batal' => 1,
+                    'year' => $catatanCuti->year,
                 ]);
 
                 // $employee = $this->employeeService->show($leave->employee_id);
@@ -1041,6 +1044,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'type' => 'LEAVE',
                     'description' => $leaveStatus->name,
                     'batal' => 1,
+                    'year' => $catatanCuti->year,
                 ]);
 
                 // $employee = $this->employeeService->show($leave->employee_id);

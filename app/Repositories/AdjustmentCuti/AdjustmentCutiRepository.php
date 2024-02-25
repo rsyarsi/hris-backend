@@ -51,17 +51,28 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
     public function store(array $data)
     {
         $adjustmentCuti = $this->model->create($data);
+        $quantityAwal = $adjustmentCuti->quantity_awal;
+        $quantityAdjustment = $adjustmentCuti->quantity_adjustment;
+        $quantityAkhir = $adjustmentCuti->quantity_akhir;
+        $valueIn = 0;
+        $valueOut = 0;
+        if ($quantityAkhir < $quantityAwal ) {
+            $valueOut = $quantityAdjustment;
+        } else {
+            $valueIn = $quantityAdjustment;
+        }
         $catatanCutiData = [
             'adjustment_cuti_id' => $adjustmentCuti->id,
             'leave_id' => null,
             'employee_id' => $adjustmentCuti->employee_id,
             'quantity_awal' => $adjustmentCuti->quantity_awal,
             'quantity_akhir' => $adjustmentCuti->quantity_akhir,
-            'quantity_in' => $adjustmentCuti->quantity_adjustment,
-            'quantity_out' => 0,
+            'quantity_in' => $valueIn,
+            'quantity_out' => $valueOut,
             'type' => 'ADJUSTMENT CUTI',
             'description' => $adjustmentCuti->description,
             'batal' => 0,
+            'year' => now()->format('Y'),
         ];
         $this->catatanCutiService->store($catatanCutiData);
         return $adjustmentCuti;
@@ -85,17 +96,28 @@ class AdjustmentCutiRepository implements AdjustmentCutiRepositoryInterface
         $adjustmentCuti = $this->model->find($id);
         if ($adjustmentCuti) {
             $adjustmentCuti->update($data);
+            $quantityAwal = $adjustmentCuti->quantity_awal;
+            $quantityAdjustment = $adjustmentCuti->quantity_adjustment;
+            $quantityAkhir = $adjustmentCuti->quantity_akhir;
+            $valueIn = 0;
+            $valueOut = 0;
+            if ($quantityAkhir < $quantityAwal ) {
+                $valueOut = $quantityAdjustment;
+            } else {
+                $valueIn = $quantityAdjustment;
+            }
             $catatanCutiData = [
                 'adjustment_cuti_id' => $adjustmentCuti->id,
                 'leave_id' => null,
                 'employee_id' => $adjustmentCuti->employee_id,
                 'quantity_awal' => $adjustmentCuti->quantity_awal,
                 'quantity_akhir' => $adjustmentCuti->quantity_akhir,
-                'quantity_in' => 0,
-                'quantity_out' => 0,
+                'quantity_in' => $valueIn,
+                'quantity_out' => $valueOut,
                 'type' => 'ADJUSTMENT CUTI',
                 'description' => $adjustmentCuti->description,
                 'batal' => 0,
+                'year' => now()->format('Y'),
             ];
             $this->catatanCutiService->store($catatanCutiData);
             return $adjustmentCuti;

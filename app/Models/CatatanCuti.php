@@ -28,6 +28,7 @@ class CatatanCuti extends Model
         'type',
         'description',
         'batal',
+        'year',
     ];
 
     public function adjustmentCuti()
@@ -39,7 +40,7 @@ class CatatanCuti extends Model
     {
         return $this->belongsTo(Leave::class, 'leave_id', 'id');
     }
-    
+
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'id');

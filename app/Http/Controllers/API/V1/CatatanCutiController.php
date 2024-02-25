@@ -106,4 +106,32 @@ class CatatanCutiController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function historyPemakaianCutiAll(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $unit = $request->input('unit');
+        $year = $request->input('year');
+        $data = $this->catatanCutiService->historyPemakaianCutiAll($perPage, $search, $unit, $year);
+        return $this->success('History Pemakaian Cuti retrieved successfully', $data);
+        try {
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function historyPemakaianCutiSubordinate(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $unit = $request->input('unit');
+            $year = $request->input('year');
+            $data = $this->catatanCutiService->historyPemakaianCutiSubordinate($perPage, $search, $unit, $year);
+            return $this->success('History Pemakaian Cuti retrieved successfully', $data);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

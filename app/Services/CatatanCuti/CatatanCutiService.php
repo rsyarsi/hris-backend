@@ -37,12 +37,12 @@ class CatatanCutiService implements CatatanCutiServiceInterface
     {
         return $this->repository->update($id, $data);
     }
-    
+
     public function destroy($id)
     {
         return $this->repository->destroy($id);
     }
-    
+
     public function catatanCutiEmployeeLatest($employeeId)
     {
         return $this->repository->catatanCutiEmployeeLatest($employeeId);
@@ -51,5 +51,15 @@ class CatatanCutiService implements CatatanCutiServiceInterface
     public function updateStatus($id, $data)
     {
         return $this->repository->updateStatus($id, $data);
+    }
+
+    public function historyPemakaianCutiAll($perPage, $search, $unit, $year)
+    {
+        return $this->repository->historyPemakaianCutiAll($perPage, $search, $unit, $year);
+    }
+
+    public function historyPemakaianCutiSubordinate($perPage, $search, $unit, $year)
+    {
+        return $this->repository->historyPemakaianCutiSubordinate($perPage, $search, $unit, $year);
     }
 }

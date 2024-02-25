@@ -11,4 +11,6 @@ interface CatatanCutiServiceInterface
     public function update($id, array $data);
     public function updateStatus($id, array $data);
     public function destroy($id);
+    public function historyPemakaianCutiAll($perPage, $search, $unit, $year);
+    public function historyPemakaianCutiSubordinate($perPage, $search, $unit, $year);
 }
