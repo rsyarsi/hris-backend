@@ -218,12 +218,14 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
         }
         if ($search) {
             $query1->where(function ($query) use ($search) {
-                $query->where('employees.name', 'like', '%' . $search . '%')
+                $query->where('employees.id', 'like', '%' . $search . '%')
+                    ->orWhere('employees.name', 'like', '%' . $search . '%')
                     ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
             });
 
             $query2->where(function ($query) use ($search) {
-                $query->where('employees.name', 'like', '%' . $search . '%')
+                $query->where('employees.id', 'like', '%' . $search . '%')
+                    ->orWhere('employees.name', 'like', '%' . $search . '%')
                     ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
             });
         }
@@ -298,12 +300,14 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
         }
         if ($search) {
             $query1->where(function ($query) use ($search) {
-                $query->where('employees.name', 'like', '%' . $search . '%')
+                $query->where('employees.id', 'like', '%' . $search . '%')
+                    ->orWhere('employees.name', 'like', '%' . $search . '%')
                     ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
             });
 
             $query2->where(function ($query) use ($search) {
-                $query->where('employees.name', 'like', '%' . $search . '%')
+                $query->where('employees.id', 'like', '%' . $search . '%')
+                    ->orWhere('employees.name', 'like', '%' . $search . '%')
                     ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
             });
         }
