@@ -36,7 +36,7 @@ class UpdateGenerateAbsenRequest extends FormRequest
             'pa' => 'nullable|numeric',
             'holiday' => 'nullable|in:1,0',
             'national_holiday' => 'nullable|in:1,0',
-            'note' => 'nullable|date',
+            'note' => 'nullable',
         ];
     }
 
