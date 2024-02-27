@@ -25,6 +25,7 @@ class UpdateGenerateAbsenRequest extends FormRequest
     public function rules()
     {
         return [
+            'employee_id' => 'nullable|exists:employees,id',
             'shift_schedule_id' => 'nullable|exists:shift_schedules,id',
             'period' => 'nullable|date_format:Y-m',
             'date' => 'nullable|date',

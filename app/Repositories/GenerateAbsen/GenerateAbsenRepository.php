@@ -433,7 +433,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
                 }
                 $data['pa'] = $pa;
-                $data['note'] = $pa == null && $generateAbsen->telat == null ? null : 'WARNING';
+                $data['note'] = $pa == null && $data['telat'] == null ? null : 'WARNING';
             }
             $generateAbsen->update($data);
             return $generateAbsen;

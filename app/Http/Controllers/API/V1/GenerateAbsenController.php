@@ -120,13 +120,13 @@ class GenerateAbsenController extends Controller
 
     public function update(UpdateGenerateAbsenRequest $request, $id)
     {
-        $data = $request->validated();
-        $generateabsen = $this->generateAbsenService->update($id, $data);
-        if (!$generateabsen) {
-            return $this->error('Generate Absen not found', 404);
-        }
-        return $this->success('Generate Absen updated successfully', $generateabsen, 201);
         try {
+            $data = $request->validated();
+            $generateabsen = $this->generateAbsenService->update($id, $data);
+            if (!$generateabsen) {
+                return $this->error('Generate Absen not found', 404);
+            }
+            return $this->success('Generate Absen updated successfully', $generateabsen, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -159,28 +159,28 @@ class GenerateAbsenController extends Controller
 
     public function absenFromMobile(AbsenFromMobileRequest $request)
     {
-        $data = $request->validated();
-        $ipAddress = str_replace('.', '', $request->input('Ip_address'));
-        $ipAddressServer = '17216';
-        // Extract the first 5 characters from $ipAddress
-        $firstFiveCharacters = substr($ipAddress, 0, 5);
-        if ($firstFiveCharacters == substr($ipAddressServer, 0, 5)) {
-            $generateabsen = $this->generateAbsenService->absenFromMobile($data);
-            return response()->json([
-                'message' => $generateabsen['message'],
-                'success' => 'true',
-                'code' => 200,
-                'data' => $generateabsen['data'],
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Anda tidak berada di jaringan yang ditentukan!',
-                'success' => 'false',
-                'code' => 422,
-                'data' => [],
-            ]);
-        }
         try {
+            $data = $request->validated();
+            $ipAddress = str_replace('.', '', $request->input('Ip_address'));
+            $ipAddressServer = '17216';
+            // Extract the first 5 characters from $ipAddress
+            $firstFiveCharacters = substr($ipAddress, 0, 5);
+            if ($firstFiveCharacters == substr($ipAddressServer, 0, 5)) {
+                $generateabsen = $this->generateAbsenService->absenFromMobile($data);
+                return response()->json([
+                    'message' => $generateabsen['message'],
+                    'success' => 'true',
+                    'code' => 200,
+                    'data' => $generateabsen['data'],
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Anda tidak berada di jaringan yang ditentukan!',
+                    'success' => 'false',
+                    'code' => 422,
+                    'data' => [],
+                ]);
+            }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
