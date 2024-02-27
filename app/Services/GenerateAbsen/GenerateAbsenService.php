@@ -70,10 +70,10 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
     {
         $currentDate = Carbon::parse($data['date']);
         $data['day'] = $currentDate->format('l');
-        $shiftScheduleId = $data['shift_schedule_id'];
+        $shiftScheduleIdExists = $data['shift_schedule_id'];
         $employeeId = $data['employee_id'];
-        if ($shiftScheduleId !== null) {
-            $shiftSchedule = $this->shiftScheduleService->show($shiftScheduleId);
+        if ($shiftScheduleIdExists !== null) {
+            $shiftSchedule = $this->shiftScheduleService->show($shiftScheduleIdExists);
         } else {
             $shiftSchedule = $this->shiftScheduleService->shiftScheduleEmployeeDate($employeeId, $currentDate->toDateString());
         }
@@ -85,6 +85,7 @@ class GenerateAbsenService implements GenerateAbsenServiceInterface
             $telat = Carbon::parse($dateJamMasuk)->diffInMinutes($timeInSchedule);
         }
         $data['telat'] = $telat;
+        $data['shift_schedule_id'] = $shiftSchedule->id;
         return $this->repository->update($id, $data);
     }
 
