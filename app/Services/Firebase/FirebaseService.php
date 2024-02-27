@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Firebase;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use App\Services\Firebase\FirebaseServiceInterface;
 
@@ -8,6 +9,8 @@ class FirebaseService implements FirebaseServiceInterface
 {
     public function sendNotification($registrationIds, $typeSend, $employee)
     {
+        $body = 'Anda mendapatkan notifikasi baru, dari pengajuan '.$typeSend . ' : ' . $employee;
+        Log::info($body);
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION') // Make sure to prefix the authorization key with 'key='
@@ -18,7 +21,91 @@ class FirebaseService implements FirebaseServiceInterface
             ],
             'notification' => [
                 'title' => $typeSend . ' Notification',
-                'body' => 'Dear User, Anda mendapatkan ' .$typeSend. ' notifikasi baru, dari '.$employee,
+                'body' => $body,
+                'image' => ''
+            ]
+        ]);
+        // Check for errors
+        if ($response->failed()) {
+            // Log or handle the error as needed
+            return 'Error sending notification: ' . $response->body();
+        }
+        return $response->body();
+    }
+
+    public function sendNotificationLeave($registrationIds, $employee)
+    {
+        $body = 'Anda memiliki pengajuan Cuti/Izin dari : '. $employee . ', Silahkan lakukan Proses approval';
+        $registrationIdsString = implode(', ', $registrationIds);
+        // Log::info('Berhasil kirim ke: ' . $registrationIdsString);
+        Log::info($body);
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION') // Make sure to prefix the authorization key with 'key='
+        ])->post('https://fcm.googleapis.com/fcm/send', [
+            'registration_ids' => $registrationIds, // Remove the square brackets to send as an array
+            'data' => [
+                'extra_information' => 'Notification Cuti/Izin'
+            ],
+            'notification' => [
+                'title' => 'Cuti/Izin Notification',
+                'body' => $body,
+                'image' => ''
+            ]
+        ]);
+        // Check for errors
+        if ($response->failed()) {
+            // Log or handle the error as needed
+            return 'Error sending notification: ' . $response->body();
+        }
+        return $response->body();
+    }
+
+    public function sendNotificationOvertimeStaff($registrationIds, $startDate, $endDate)
+    {
+        $body = 'Anda memiliki Lembur, Tanggal '. $startDate . ' - '. $endDate;
+        $registrationIdsString = implode(', ', $registrationIds);
+        // Log::info('Berhasil kirim ke: ' . $registrationIdsString);
+        Log::info($body);
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION') // Make sure to prefix the authorization key with 'key='
+        ])->post('https://fcm.googleapis.com/fcm/send', [
+            'registration_ids' => $registrationIds, // Remove the square brackets to send as an array
+            'data' => [
+                'extra_information' => 'Notification Lembur'
+            ],
+            'notification' => [
+                'title' => 'Lembur Notification',
+                'body' => $body,
+                'image' => ''
+            ]
+        ]);
+        // Check for errors
+        if ($response->failed()) {
+            // Log or handle the error as needed
+            return 'Error sending notification: ' . $response->body();
+        }
+        return $response->body();
+    }
+
+    public function sendNotificationOvertimeLeader($registrationIds, $employee, $startDate, $endDate)
+    {
+        $body = 'Anda memiliki pengajuan Lembur dari : '. $employee . ', Tanggal '. $startDate . ' - '. $endDate. ', Silahkan lakukan Proses approval';
+        $registrationIdsString = implode(', ', $registrationIds);
+        // Log::info('Berhasil kirim ke: ' . $registrationIdsString);
+        Log::info($body);
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION') // Make sure to prefix the authorization key with 'key='
+        ])->post('https://fcm.googleapis.com/fcm/send', [
+            'registration_ids' => $registrationIds, // Remove the square brackets to send as an array
+            'data' => [
+                'extra_information' => 'Notification Lembur'
+            ],
+            'notification' => [
+                'title' => 'Lembur Notification',
+                'body' => $body,
                 'image' => ''
             ]
         ]);

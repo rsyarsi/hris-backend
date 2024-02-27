@@ -3,17 +3,17 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
-use App\Models\{CatatanCuti, Employee, GenerateAbsen, Leave, LeaveHistory, ShiftSchedule, User};
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
 use App\Repositories\Leave\LeaveRepositoryInterface;
+use App\Services\LeaveType\LeaveTypeServiceInterface;
 use App\Services\CatatanCuti\CatatanCutiServiceInterface;
 use App\Services\LeaveStatus\LeaveStatusServiceInterface;
 use App\Services\LeaveHistory\LeaveHistoryServiceInterface;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
-use App\Services\LeaveType\LeaveTypeServiceInterface;
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
+use App\Models\{CatatanCuti, Employee, GenerateAbsen, Leave, LeaveHistory, ShiftSchedule, User};
 
 class LeaveRepository implements LeaveRepositoryInterface
 {
@@ -271,7 +271,6 @@ class LeaveRepository implements LeaveRepositoryInterface
         }
 
         // firebase
-        $typeSend = 'Leaves';
         $employee = $this->employeeService->show($leave->employee_id);
         $registrationIds = [];
         if($employee->supervisor != null){
@@ -297,11 +296,9 @@ class LeaveRepository implements LeaveRepositoryInterface
         foreach ($employeeHrd as $key ) {
             $firebaseIdx = $key;
         }
-        // dd($firebaseIdx->firebase_id);
-        $registrationIds[] =$firebaseIdx->firebase_id;
-        // Check if there are valid registration IDs before sending the notification
+        $registrationIds[] = $firebaseIdx->firebase_id;
         if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotificationLeave($registrationIds, $employee->name);
         }
         return [
             'message' => 'Leave created successfully',
@@ -447,10 +444,10 @@ class LeaveRepository implements LeaveRepositoryInterface
             $firebaseIdx = $key;
         }
         // dd($firebaseIdx->firebase_id);
-        $registrationIds[] =$firebaseIdx->firebase_id;
+        $registrationIds[] = $firebaseIdx->firebase_id;
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotificationLeave($registrationIds, $employee->name);
         }
 
         return [
@@ -862,7 +859,6 @@ class LeaveRepository implements LeaveRepositoryInterface
 
             while ($startDate->lte($endDate)) {
                 $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
-
                 $dataAbsen = [
                     'period' => $startDate->format('Y-m'),
                     'employee_id' => $leave->employee_id,
@@ -875,13 +871,11 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'schedule_leave_time_at' => $leave->from_date,
                     'schedule_leave_out_at' => $leave->to_date,
                 ];
-
                 if (!$absen) { // if in the table generate_absen not exists -> create the data.
                     $this->generateAbsenService->store($dataAbsen);
                 } else {
                     $this->generateAbsenService->update($absen->id, $dataAbsen);
                 }
-
                 $startDate->addDay(); // Move to the next day
             }
         }
@@ -950,10 +944,10 @@ class LeaveRepository implements LeaveRepositoryInterface
             }
 
             // firebase
-            $typeSend = 'Leaves Update';
+            $typeSend = 'Cuti/Izin';
             $employee = $this->employeeService->show($leave->employee_id);
             $registrationIds = [];
-            if($employee->user != null){
+            if($employee->user != null) {
                 $registrationIds[] = $employee->user->firebase_id;
             }
                         // notif ke HRDs
@@ -993,6 +987,11 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'leave_out_at' => $leave->to_date,
                     'schedule_leave_time_at' => $leave->from_date,
                     'schedule_leave_out_at' => $leave->to_date,
+                    'shift_schedule_id' => $leave->shift_schedule_id,
+                    'date_in_at' => $startDate->toDateString(),
+                    'time_in_at' => '00:00:00',
+                    'date_out_at' => $startDate->toDateString(),
+                    'time_out_at' => '00:00:00',
                 ];
                 if (!$absen) { // if in the table generate_absen not exists -> create the data.
                     $this->generateAbsenService->store($dataAbsen);
@@ -1062,7 +1061,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             }
 
             // firebase
-            $typeSend = 'Leaves Update';
+            $typeSend = 'Cuti/Izin';
             $employee = $this->employeeService->show($leave->employee_id);
             $registrationIds = [];
             if($employee->user != null){

@@ -206,12 +206,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             GenerateAbsen::create($data);
         }
         // send firebase notification
-        $typeSend = 'Overtime';
+        $typeSend = 'Lembur';
         $registrationIds = [];
         $employee = $this->employeeService->show($overtime->employee_id);
-        $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
+        $getHakAkses = User::where('username', $employee->employment_number)->get()->first();
         // return $getHakAkses;
-        $registrationIds[] = $getHakAkses->firebase_id;
+        $registrationIdStaff[] = $getHakAkses->firebase_id;
 
         // notif ke HRDs
         $employeeHrd = User::where('hrd','1')->get();
@@ -236,9 +236,16 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             }
         }
 
+        $startDate = Carbon::parse($overtime->from_date);
+        $endDate = Carbon::parse($overtime->end_date);
+        $registrationIds[] = $firebaseIdx->firebase_id;
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotificationOvertimeLeader($registrationIds, $employee->name, $startDate->format('d-m-Y H:i'), $endDate->format('d-m-Y H:i'));
+        }
+
+        if (!empty($registrationIdStaff)) {
+            $this->firebaseService->sendNotificationOvertimeStaff($registrationIdStaff, $startDate->format('d-m-Y H:i'), $endDate->format('d-m-Y H:i'));
         }
 
         return [
@@ -354,7 +361,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         $registrationIds = [];
         $employee = $this->employeeService->show($overtime->employee_id);
         $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
-        $registrationIds[] = $getHakAkses->firebase_id;
+        $registrationIdStaff[] = $getHakAkses->firebase_id;
 
         // notif ke HRDs
         $employeeHrd = User::where('hrd','1')->get();
@@ -368,6 +375,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         //         $registrationIds[] = $employee->supervisor->user->firebase_id;
         //     }
         // }
+
         if($employee->kabag_id != null ){
             if($employee->kabag->user != null){
                 $registrationIds[] = $employee->kabag->user->firebase_id;
@@ -379,9 +387,16 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             }
         }
 
+        $startDate = Carbon::parse($overtime->from_date);
+        $endDate = Carbon::parse($overtime->end_date);
+        $registrationIds[] = $firebaseIdx->firebase_id;
         // Check if there are valid registration IDs before sending the notification
         if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            $this->firebaseService->sendNotificationOvertimeLeader($registrationIds, $employee->name, $startDate->format('d-m-Y H:i'), $endDate->format('d-m-Y H:i'));
+        }
+
+        if (!empty($registrationIdStaff)) {
+            $this->firebaseService->sendNotificationOvertimeStaff($registrationIdStaff, $startDate->format('d-m-Y H:i'), $endDate->format('d-m-Y H:i'));
         }
 
         return [
@@ -728,7 +743,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             //     OvertimeHistory::where('leave_id', $overtime->id)->delete();
             //     $overtime->delete();
             // }
-            $typeSend = 'Overtime Update';
+            $typeSend = 'Lembur';
             $employee = $this->employeeService->show($overtime->employee_id);
             $registrationIds = [];
             if($employee->user != null){
@@ -740,6 +755,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 # code...
                 $firebaseIdx = $key;
             }
+            $registrationIds[] = $firebaseIdx->firebase_id;
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
@@ -765,7 +781,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 'libur' => $overtime->libur,
             ];
             $this->overtimeHistoryService->store($historyData);
-            $typeSend = 'Overtime Update';
+            $typeSend = 'Lembur';
             $employee = $this->employeeService->show($overtime->employee_id);
             $registrationIds = [];
             if($employee->user != null){
@@ -778,6 +794,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 # code...
                 $firebaseIdx = $key;
             }
+            $registrationIds[] = $firebaseIdx->firebase_id;
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);

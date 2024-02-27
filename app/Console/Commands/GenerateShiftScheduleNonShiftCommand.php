@@ -3,14 +3,10 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use App\Models\Shift;
-use App\Models\Employee;
+use App\Models\{Shift, Employee, GenerateAbsen, ShiftSchedule};
 use Illuminate\Support\Str;
-use App\Models\GenerateAbsen;
-use App\Models\ShiftSchedule;
 use Illuminate\Console\Command;
 use Symfony\Component\Uid\Ulid;
-use App\Http\Controllers\API\V1\ShiftScheduleController;
 
 class GenerateShiftScheduleNonShiftCommand extends Command
 {
