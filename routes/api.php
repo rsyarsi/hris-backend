@@ -269,6 +269,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::post('absen-from-mobile', 'absenFromMobile')->name('absen-from-mobile');
             // route for export monitoring absen (absen yang tidak lengkap)
             Route::get('monitoring-absen-export', 'exportMonitoringAbsen')->name('monitoring-absen-export');
+            // route for rekap absensi
+            Route::get('monitoring-absen-rekap', 'exportMonitoringAbsenRekap')->name('monitoring-absen-rekap');
         });
         // route for generate payroll
         Route::resource('generate-payroll', GeneratePayrollController::class)->parameters(['generate-payroll' => 'generate-payroll']);

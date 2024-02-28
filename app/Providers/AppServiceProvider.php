@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\Pph\{PphService, PphServiceInterface};
@@ -65,8 +66,8 @@ use App\Repositories\Deduction\{DeductionRepository, DeductionRepositoryInterfac
 use App\Repositories\Education\{EducationRepository, EducationRepositoryInterface};
 use App\Repositories\LeaveType\{LeaveTypeRepository, LeaveTypeRepositoryInterface};
 use App\Repositories\LogFinger\{LogFingerRepository, LogFingerRepositoryInterface};
-use App\Repositories\SkillType\{SkillTypeRepository, SkillTypeRepositoryInterface};
 
+use App\Repositories\SkillType\{SkillTypeRepository, SkillTypeRepositoryInterface};
 use App\Services\EmployeeSkill\{EmployeeSkillService, EmployeeSkillServiceInterface};
 use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterface};
 use App\Services\LeaveApproval\{LeaveApprovalService, LeaveApprovalServiceInterface};
@@ -404,6 +405,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        if($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
