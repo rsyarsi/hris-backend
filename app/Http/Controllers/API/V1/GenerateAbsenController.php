@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\Unit;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Models\GenerateAbsen;
@@ -203,44 +204,9 @@ class GenerateAbsenController extends Controller
     public function exportMonitoringAbsenRekap(Request $request)
     {
         try {
-            // Fetch your data
-            $data = [
-                ['employee_id' => 1, 'name' => 'John Doe', 'january' => 'Present', 'february' => 'Absent'],
-                ['employee_id' => 2, 'name' => 'Jane Smith', 'january' => 'Absent', 'february' => 'Present'],
-                // Add more data as needed
-            ];
-
-            // Export the data using the custom view
-            $export = new MonitoringAbsenRekapExport($data);
-
-            // Set the headers for the download
-            $headers = [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="monitoring_absen_rekap.xlsx"',
-            ];
-
-            // Manipulate the Excel file
-            Excel::download($export, 'monitoring_absen_rekap.xlsx', function($excel) use ($data) {
-                $excel->sheet('Sheet1', function($sheet) use ($data) {
-                    // Merge cells for the "January" column
-                    $sheet->mergeCells('C1:D1');
-                    // Set the value for the merged cells
-                    $sheet->setCellValue('C1', 'JANUARY');
-
-                    // Populate the data from the view
-                    $sheet->loadView('monitoring_absen_rekap', ['data' => $data]);
-
-                    // Optionally, you can apply styles to the merged cell
-                    $sheet->getStyle('C1:D1')->applyFromArray([
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_CENTER,
-                            'vertical' => Alignment::VERTICAL_CENTER,
-                        ],
-                    ]);
-                });
-            }, Response::HTTP_OK, $headers);
-            $nameFile = 'data-monitoring-absen-rekap'.'.xlsx';
-            return Excel::download(new MonitoringAbsenRekapExport($data), $nameFile);
+            $export = new MonitoringAbsenRekapExport();
+            $nameFile = 'data-monitoring-absen-rekap.xlsx';
+            return Excel::download($export, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
