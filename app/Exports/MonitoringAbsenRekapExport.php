@@ -13,11 +13,15 @@ class MonitoringAbsenRekapExport implements FromView, ShouldAutoSize
 {
     public function view(): View
     {
-        $year = '2024';
+        $year = request()->input('year');
         $months = [];
+        $monthNames = [];
         for ($i = 1; $i <= 12; $i++) {
-            $monthName = Carbon::createFromDate($year, $i, 1)->format('Y-m');
-            $months[] = $monthName;
+            $monthPeriod = Carbon::createFromDate($year, $i, 1)->format('Y-m');
+            $months[] = $monthPeriod;
+
+            $monthNameString = Carbon::createFromDate($year, $i, 1)->format('F');
+            $monthNames[] = $monthNameString;
         }
 
         $units = Unit::all();
@@ -51,6 +55,7 @@ class MonitoringAbsenRekapExport implements FromView, ShouldAutoSize
         return view('excel.rekap_absen', [
             'units' => $units,
             'months' => $months,
+            'monthNames' => $monthNames,
             'employees' => $employees,
             'absences' => $absences,
             'year' => $year,

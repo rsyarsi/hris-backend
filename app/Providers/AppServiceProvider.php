@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\URL;
+// use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\Pph\{PphService, PphServiceInterface};
@@ -405,8 +405,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
+        // if($this->app->environment('production')) {
+        //     URL::forceScheme('https');
+        // }
     }
 }

@@ -204,8 +204,9 @@ class GenerateAbsenController extends Controller
     public function exportMonitoringAbsenRekap(Request $request)
     {
         try {
+            $year = $request->input('year');
             $export = new MonitoringAbsenRekapExport();
-            $nameFile = 'data-monitoring-absen-rekap.xlsx';
+            $nameFile = 'data-monitoring-absen-rekap-'.$year.'.xlsx';
             return Excel::download($export, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
