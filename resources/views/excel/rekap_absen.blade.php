@@ -2,31 +2,31 @@
 <table>
     <thead>
         <tr>
-            <th colspan="2">Rekap Absensi {{ $year }}</th>
+            <th colspan="2" align="center">Rekap Absensi {{ $year }}</th>
             @foreach($months as $month)
-            <th colspan="3">{{ $month }}</th>
+            <th colspan="3" align="center">{{ $month }}</th>
             @endforeach
         </tr>
         <tr>
-            <th>#</th>
-            <th>Unit Name</th>
+            <th align="center">#</th>
+            <th align="center">Unit Name</th>
             @for ($i = 0; $i < count($months); $i++)
-                <th>Tdk Telat</th>
-                <th>Jml Kary</th>
-                <th>% Unit</th>
+                <th align="center">Tdk Telat</th>
+                <th align="center">Jml Kary</th>
+                <th align="center">% Unit</th>
             @endfor
         </tr>
     </thead>
     <tbody>
         @foreach($units as $key => $unit)
         <tr>
-            <td>{{ $key + 1 }}</td>
+            <td align="center">{{ $key + 1 }}</td>
             <td>{{ $unit->name }}</td>
-            @for ($i = 0; $i < count($months); $i++)
-                <td></td> <!-- Display generate_absen data count where employee_id and telat bigger 60 -->
-                <td>{{ $employees[$unit->id] ?? 0 }}</td> <!-- Display employee count for this unit -->
-                <td></td>
-            @endfor
+            @foreach($months as $month)
+                <td align="center">{{ $absences[$unit->id][$month] ?? 0 }}</td>
+                <td align="center">{{ $employees[$unit->id] ?? 0 }}</td>
+                <td align="center">{{ $employees[$unit->id] > 0 ? number_format(($absences[$unit->id][$month] ?? 0) / $employees[$unit->id] * 100, 2) : 0 }}%</td>
+            @endforeach
         </tr>
         @endforeach
     </tbody>

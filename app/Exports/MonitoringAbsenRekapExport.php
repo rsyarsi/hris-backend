@@ -16,29 +16,43 @@ class MonitoringAbsenRekapExport implements FromView, ShouldAutoSize
         $year = '2024';
         $months = [];
         for ($i = 1; $i <= 12; $i++) {
-            $monthName = Carbon::create()->month($i)->format('F');
+            $monthName = Carbon::createFromDate($year, $i, 1)->format('Y-m');
             $months[] = $monthName;
         }
 
         $units = Unit::all();
-        $now = Carbon::now()->toDateString();
         $employees = [];
+        $absences = [];
+
         foreach ($units as $unit) {
             $employeeCount = Employee::where('unit_id', $unit->id)
-                                    ->where('started_at', '<=', $now)
-                                    ->where('resigned_at', '>=', $now)
-                                    ->count();
-            $employees[$unit->id] = $employeeCount; // Store count for each unit ID
+                ->where('started_at', '<=', now())
+                ->where(function ($query) {
+                    $query->whereNull('resigned_at')->orWhere('resigned_at', '>=', now());
+                })
+                ->count();
+
+            $employees[$unit->id] = $employeeCount;
+
+            foreach ($months as $month) {
+                $absenceCount = GenerateAbsen::whereHas('employee', function ($query) use ($unit) {
+                        $query->where('unit_id', $unit->id);
+                    })
+                    ->where('type', 'ABSEN')
+                    ->whereNull('leave_id')
+                    ->where('telat', '<=', 60)
+                    ->where('period', $month)
+                    ->count();
+
+                $absences[$unit->id][$month] = $absenceCount;
+            }
         }
 
-        // $generateAbsens = GenerateAbsen::where('period', )
-        //                                 ->get();
-
-        // Pass the units, months, and employee counts array to the view
         return view('excel.rekap_absen', [
             'units' => $units,
             'months' => $months,
             'employees' => $employees,
+            'absences' => $absences,
             'year' => $year,
         ]);
     }
