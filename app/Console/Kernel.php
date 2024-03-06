@@ -24,6 +24,8 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:generate-shift-schedule-non-shift')->everyMinute();
         $schedule->command('generate:generate-shift-schedule-non-shift')->dailyAt('00:05');
         $schedule->command('leave:cancel-leave')->dailyAt('00:35');
+        $schedule->command('backup:clean')->daily()->at('01:20');
+        $schedule->command('backup:run')->daily()->at('01:30');
     }
 
     /**
