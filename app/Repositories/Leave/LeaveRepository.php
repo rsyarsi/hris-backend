@@ -870,6 +870,11 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'leave_out_at' => $leave->to_date,
                     'schedule_leave_time_at' => $leave->from_date,
                     'schedule_leave_out_at' => $leave->to_date,
+                    'shift_schedule_id' => $leave->shift_schedule_id,
+                    'date_in_at' => $startDate->toDateString(),
+                    'time_in_at' => '00:00:00',
+                    'date_out_at' => $startDate->toDateString(),
+                    'time_out_at' => '00:00:00',
                 ];
                 if (!$absen) { // if in the table generate_absen not exists -> create the data.
                     $this->generateAbsenService->store($dataAbsen);
