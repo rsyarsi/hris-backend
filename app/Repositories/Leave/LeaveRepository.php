@@ -153,309 +153,334 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function store(array $data)
     {
-        $fromDate = Carbon::parse($data['from_date']);
-        $toDate = Carbon::parse($data['to_date']);
-        $employeeId = $data['employee_id'];
-        // validate special case employee non shift
-        $employee = DB::table('employees')->where('id', $employeeId)->first();
-        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
-        $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
-                                    ->where('code', 'N')
-                                    ->orWhere('name', 'NON SHIFT')
+        DB::beginTransaction();
+        try {
+            $fromDate = Carbon::parse($data['from_date']);
+            $toDate = Carbon::parse($data['to_date']);
+            $employeeId = $data['employee_id'];
+            // validate special case employee non shift
+            $employee = DB::table('employees')->where('id', $employeeId)->first();
+            $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+            $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
+                                        ->where('code', 'N')
+                                        ->orWhere('name', 'NON SHIFT')
+                                        ->first();
+            $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
+                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
                                     ->first();
-        $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
-                                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                ->first();
-        if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
-            return [
-                'message' => 'Validation Error',
-                'error' => true,
-                'code' => 422,
-                'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
-            ];
-        }
-        $shiftAwalId = null;
-        $shiftScheduleId = null;
-        if ($checkShiftSchedule) {
-            $shiftAwalId = $checkShiftSchedule->shift_id;
-            $shiftScheduleId = $checkShiftSchedule->id;
-        } else {
-            if ($employee->shift_group_id == $nonShiftGroupId) {
-                // Loop through each date and create shift schedules
-                for ($date = $fromDate; $date->lte($toDate); $date->addDay()) {
-                    // If shift schedule doesn't exist, create a new one
-                    $newShiftSchedule =  ShiftSchedule::create([
-                        'employee_id' => $employeeId,
-                        'shift_id' => $shift->id,
-                        'date' => $date->toDateString(),
-                        'created_user_id' => auth()->id(),
-                        'setup_user_id' => auth()->id(),
-                        'setup_at' => now(),
-                        'time_in' => $date->toDateString() . ' ' . $shift->in_time,
-                        'time_out' => $date->toDateString() . ' ' . $shift->out_time,
-                        'period' => now()->format('Y-m'),
-                        'holiday' => 0,
-                        'night' => 0,
-                        'national_holiday' => 0,
-                        'absen_type' => 'ABSEN',
-                        'import' => 0,
-                    ]);
-                    $shiftAwalId = $newShiftSchedule->shift_id;
-                    $shiftScheduleId = $newShiftSchedule->id;
+            if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
+                return [
+                    'message' => 'Validation Error',
+                    'error' => true,
+                    'code' => 422,
+                    'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
+                ];
+            }
+            $shiftAwalId = null;
+            $shiftScheduleId = null;
+            if ($checkShiftSchedule) {
+                $shiftAwalId = $checkShiftSchedule->shift_id;
+                $shiftScheduleId = $checkShiftSchedule->id;
+            } else {
+                if ($employee->shift_group_id == $nonShiftGroupId) {
+                    // Loop through each date and create shift schedules
+                    for ($date = $fromDate; $date->lte($toDate); $date->addDay()) {
+                        // If shift schedule doesn't exist, create a new one
+                        $newShiftSchedule =  ShiftSchedule::create([
+                            'employee_id' => $employeeId,
+                            'shift_id' => $shift->id,
+                            'date' => $date->toDateString(),
+                            'created_user_id' => auth()->id(),
+                            'setup_user_id' => auth()->id(),
+                            'setup_at' => now(),
+                            'time_in' => $date->toDateString() . ' ' . $shift->in_time,
+                            'time_out' => $date->toDateString() . ' ' . $shift->out_time,
+                            'period' => now()->format('Y-m'),
+                            'holiday' => 0,
+                            'night' => 0,
+                            'national_holiday' => 0,
+                            'absen_type' => 'ABSEN',
+                            'import' => 0,
+                        ]);
+                        $shiftAwalId = $newShiftSchedule->shift_id;
+                        $shiftScheduleId = $newShiftSchedule->id;
+                    }
                 }
             }
-        }
-        $data['shift_awal_id'] = $shiftAwalId;
-        $data['shift_schedule_id'] = $shiftScheduleId;
-        // create leave
-        $leave = $this->model->create($data);
-        // Update shift schedule if it exists
-        if ($checkShiftSchedule) {
-            $checkShiftScheduleModel = ShiftSchedule::find($checkShiftSchedule->id);
-            // Make sure the shift schedule model is found
-            if ($checkShiftScheduleModel) {
-                $checkShiftScheduleModel->update([
-                    'leave_id' => $leave->id,
-                    'leave_note' => $leave->note,
-                ]);
+            $data['shift_awal_id'] = $shiftAwalId;
+            $data['shift_schedule_id'] = $shiftScheduleId;
+            // create leave
+            $leave = $this->model->create($data);
+            // Update shift schedule if it exists
+            if ($checkShiftSchedule) {
+                $checkShiftScheduleModel = ShiftSchedule::find($checkShiftSchedule->id);
+                // Make sure the shift schedule model is found
+                if ($checkShiftScheduleModel) {
+                    $checkShiftScheduleModel->update([
+                        'leave_id' => $leave->id,
+                        'leave_note' => $leave->note,
+                    ]);
+                }
             }
-        }
-        $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
-        $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
-        // create leave history
-        $historyData = [
-            'leave_id' => $leave->id,
-            'user_id' => auth()->id(),
-            'description' => 'LEAVE STATUS '. $leaveStatus->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-            'comment' => $data['note'],
-        ];
-        $this->leaveHistory->store($historyData);
-        // update shift schedule if exists in the table shift_schedules
-        $fromDate = Carbon::parse($data['from_date']);
-        $toDate = Carbon::parse($data['to_date']);
-        $employeeId = $leave->employee_id;
-        $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
-        // catatan cuti
-        if ($data['leave_type_id'] == 1) {
-            $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
-            if ($catatanCutiLatest === null) {
-                $quantityAkhirCatatan = 12;
-            } else {
-                $quantityAkhirCatatan = $catatanCutiLatest->quantity_akhir;
-            }
-            $quantityOut = $fromDate->diffInDays($toDate);
-            $quantityOut = $quantityOut == 0 ? 1 : ($quantityOut + 1);
-            $quantityAkhir = (int)$quantityAkhirCatatan - (int)$quantityOut;
-            $catatanCutiData = [
-                'adjustment_cuti_id' => null,
+            $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
+            $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+            // create leave history
+            $historyData = [
                 'leave_id' => $leave->id,
-                'employee_id' => $leave->employee_id,
-                'quantity_awal' => $quantityAkhirCatatan,
-                'quantity_akhir' => $quantityAkhir,
-                'quantity_in' => 0,
-                'quantity_out' => $quantityOut,
-                'type' => 'LEAVE',
-                'description' => $leaveType->name,
-                'batal' => 0,
-                'year' => $leave->year,
+                'user_id' => auth()->id(),
+                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $data['note'],
             ];
-            $this->catatanCutiService->store($catatanCutiData);
-            $updateLeave = [
-                'quantity_cuti_awal' => $quantityAkhirCatatan,
-                'sisa_cuti' => $quantityAkhir,
+            $this->leaveHistory->store($historyData);
+            // update shift schedule if exists in the table shift_schedules
+            $fromDate = Carbon::parse($data['from_date']);
+            $toDate = Carbon::parse($data['to_date']);
+            $employeeId = $leave->employee_id;
+            $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+            // catatan cuti
+            if ($data['leave_type_id'] == 1) {
+                $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
+                if ($catatanCutiLatest === null) {
+                    $quantityAkhirCatatan = 12;
+                } else {
+                    $quantityAkhirCatatan = $catatanCutiLatest->quantity_akhir;
+                }
+                $quantityOut = $fromDate->diffInDays($toDate);
+                $quantityOut = $quantityOut == 0 ? 1 : ($quantityOut + 1);
+                $quantityAkhir = (int)$quantityAkhirCatatan - (int)$quantityOut;
+                $catatanCutiData = [
+                    'adjustment_cuti_id' => null,
+                    'leave_id' => $leave->id,
+                    'employee_id' => $leave->employee_id,
+                    'quantity_awal' => $quantityAkhirCatatan,
+                    'quantity_akhir' => $quantityAkhir,
+                    'quantity_in' => 0,
+                    'quantity_out' => $quantityOut,
+                    'type' => 'LEAVE',
+                    'description' => $leaveType->name,
+                    'batal' => 0,
+                    'year' => $leave->year,
+                ];
+                $this->catatanCutiService->store($catatanCutiData);
+                $updateLeave = [
+                    'quantity_cuti_awal' => $quantityAkhirCatatan,
+                    'sisa_cuti' => $quantityAkhir,
+                ];
+                $leave->update($updateLeave);
+            }
+
+            // firebase
+            $employee = $this->employeeService->show($leave->employee_id);
+            $registrationIds = [];
+            if($employee->supervisor != null){
+                if($employee->supervisor->user != null){
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
+            }
+
+            if($employee->kabag_id != null ){
+                if($employee->kabag->user != null){
+                    $registrationIds[] = $employee->kabag->user->firebase_id;
+                }
+            }
+
+            if($employee->manager_id != null ){
+                if($employee->manager->user != null){
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
+            }
+            $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
+            // notif ke HRD
+            $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
+            foreach ($employeeHrd as $key ) {
+                $firebaseIdx = $key;
+            }
+            $registrationIds[] = $firebaseIdx->firebase_id;
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotificationLeave($registrationIds, $employee->name);
+            }
+            DB::commit(); // Commit transaction if successful
+            return [
+                'message' => 'Leave created successfully',
+                'error' => false,
+                'code' => 200,
+                'data' => [$leave]
             ];
-            $leave->update($updateLeave);
-        }
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback on errors
 
-        // firebase
-        $employee = $this->employeeService->show($leave->employee_id);
-        $registrationIds = [];
-        if($employee->supervisor != null){
-            if($employee->supervisor->user != null){
-                $registrationIds[] = $employee->supervisor->user->firebase_id;
-            }
+            return [
+                'message' => 'Failed to create leave: ' . $e->getMessage(),
+                'error' => true,
+                'code' => 500,
+                'data' => []
+            ];
         }
-
-        if($employee->kabag_id != null ){
-            if($employee->kabag->user != null){
-                $registrationIds[] = $employee->kabag->user->firebase_id;
-            }
-        }
-
-        if($employee->manager_id != null ){
-            if($employee->manager->user != null){
-                $registrationIds[] = $employee->manager->user->firebase_id;
-            }
-        }
-        $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
-        // notif ke HRD
-        $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
-        foreach ($employeeHrd as $key ) {
-            $firebaseIdx = $key;
-        }
-        $registrationIds[] = $firebaseIdx->firebase_id;
-        if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotificationLeave($registrationIds, $employee->name);
-        }
-        return [
-            'message' => 'Leave created successfully',
-            'error' => false,
-            'code' => 200,
-            'data' => [$leave]
-        ];
     }
 
     public function leaveCreateMobile(array $data)
     {
-        $fromDate = Carbon::parse($data['from_date']);
-        $toDate = Carbon::parse($data['to_date']);
-        $employeeId = $data['employee_id'];
-        // validate special case employee non shift
-        $employee = DB::table('employees')->where('id', $employeeId)->first();
-        $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
-        $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
-                                    ->where('code', 'N')
-                                    ->orWhere('name', 'NON SHIFT')
+        DB::beginTransaction();
+        try {
+            $fromDate = Carbon::parse($data['from_date']);
+            $toDate = Carbon::parse($data['to_date']);
+            $employeeId = $data['employee_id'];
+            // validate special case employee non shift
+            $employee = DB::table('employees')->where('id', $employeeId)->first();
+            $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+            $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
+                                        ->where('code', 'N')
+                                        ->orWhere('name', 'NON SHIFT')
+                                        ->first();
+            $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
+                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
                                     ->first();
-        $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
-                                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                ->first();
-        if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
-            return [
-                'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
-                'success' => false,
-                'code' => 200,
-                'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
-            ];
-        }
-        $shiftAwalId = null;
-        $shiftScheduleId = null;
-        if ($checkShiftSchedule) {
-            $shiftAwalId = $checkShiftSchedule->shift_id;
-            $shiftScheduleId = $checkShiftSchedule->id;
-        } else {
-            if ($employee->shift_group_id == $nonShiftGroupId) {
-                // Loop through each date and create shift schedules
-                for ($date = $fromDate; $date->lte($toDate); $date->addDay()) {
-                    // If shift schedule doesn't exist, create a new one
-                    $newShiftSchedule =  ShiftSchedule::create([
-                        'employee_id' => $employeeId,
-                        'shift_id' => $shift->id,
-                        'date' => $date->toDateString(),
-                        'created_user_id' => auth()->id(),
-                        'setup_user_id' => auth()->id(),
-                        'setup_at' => now(),
-                        'time_in' => $date->toDateString() . ' ' . $shift->in_time,
-                        'time_out' => $date->toDateString() . ' ' . $shift->out_time,
-                        'period' => now()->format('Y-m'),
-                        'holiday' => 0,
-                        'night' => 0,
-                        'national_holiday' => 0,
-                        'absen_type' => 'ABSEN',
-                        'import' => 0,
-                    ]);
-                    $shiftAwalId = $newShiftSchedule->shift_id;
-                    $shiftScheduleId = $newShiftSchedule->id;
+            if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
+                return [
+                    'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
+                    'success' => false,
+                    'code' => 200,
+                    'data' => ['from_date' => ['Data Shift Schedule belum ada, silahkan hubungi atasan!']]
+                ];
+            }
+            $shiftAwalId = null;
+            $shiftScheduleId = null;
+            if ($checkShiftSchedule) {
+                $shiftAwalId = $checkShiftSchedule->shift_id;
+                $shiftScheduleId = $checkShiftSchedule->id;
+            } else {
+                if ($employee->shift_group_id == $nonShiftGroupId) {
+                    // Loop through each date and create shift schedules
+                    for ($date = $fromDate; $date->lte($toDate); $date->addDay()) {
+                        // If shift schedule doesn't exist, create a new one
+                        $newShiftSchedule =  ShiftSchedule::create([
+                            'employee_id' => $employeeId,
+                            'shift_id' => $shift->id,
+                            'date' => $date->toDateString(),
+                            'created_user_id' => auth()->id(),
+                            'setup_user_id' => auth()->id(),
+                            'setup_at' => now(),
+                            'time_in' => $date->toDateString() . ' ' . $shift->in_time,
+                            'time_out' => $date->toDateString() . ' ' . $shift->out_time,
+                            'period' => now()->format('Y-m'),
+                            'holiday' => 0,
+                            'night' => 0,
+                            'national_holiday' => 0,
+                            'absen_type' => 'ABSEN',
+                            'import' => 0,
+                        ]);
+                        $shiftAwalId = $newShiftSchedule->shift_id;
+                        $shiftScheduleId = $newShiftSchedule->id;
+                    }
                 }
             }
-        }
-        $data['shift_awal_id'] = $shiftAwalId;
-        $data['shift_schedule_id'] = $shiftScheduleId;
-        $leave = $this->model->create($data);
-        $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
-        $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
-        $historyData = [
-            'leave_id' => $leave->id,
-            'user_id' => auth()->id(),
-            'description' => 'LEAVE STATUS '. $leaveStatus->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-            'comment' => $data['note'],
-        ];
-        $this->leaveHistory->store($historyData);
-        // update shift schedule if exists in the table shift_schedules
-        $fromDate = Carbon::parse($data['from_date']);
-        $toDate = Carbon::parse($data['to_date']);
-        $employeeId = $leave->employee_id;
-        $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
-
-        // catatan cuti
-        if ($data['leave_type_id'] == 1) {
-            $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
-            if ($catatanCutiLatest === null) {
-                $quantityAkhirCatatan = 12;
-            } else {
-                $quantityAkhirCatatan = $catatanCutiLatest->quantity_akhir;
-            }
-            $quantityOut = $fromDate->diffInDays($toDate);
-            $quantityOut = $quantityOut == 0 ? 1 : ($quantityOut + 1);
-            $quantityAkhir = (int)$quantityAkhirCatatan - (int)$quantityOut;
-            $catatanCutiData = [
-                'adjustment_cuti_id' => null,
+            $data['shift_awal_id'] = $shiftAwalId;
+            $data['shift_schedule_id'] = $shiftScheduleId;
+            $leave = $this->model->create($data);
+            $leaveType = $this->leaveTypeService->show($data['leave_type_id']);
+            $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+            $historyData = [
                 'leave_id' => $leave->id,
-                'employee_id' => $leave->employee_id,
-                'quantity_awal' => $quantityAkhirCatatan,
-                'quantity_akhir' => $quantityAkhir,
-                'quantity_in' => 0,
-                'quantity_out' => $quantityOut,
-                'type' => 'LEAVE',
-                'description' => $leaveType->name,
-                'batal' => 0,
-                'year' => $leave->year,
+                'user_id' => auth()->id(),
+                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $data['note'],
             ];
-            $this->catatanCutiService->store($catatanCutiData);
-            $updateLeave = [
-                'quantity_cuti_awal' => $quantityAkhirCatatan,
-                'sisa_cuti' => $quantityAkhir,
+            $this->leaveHistory->store($historyData);
+            // update shift schedule if exists in the table shift_schedules
+            $fromDate = Carbon::parse($data['from_date']);
+            $toDate = Carbon::parse($data['to_date']);
+            $employeeId = $leave->employee_id;
+            $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+
+            // catatan cuti
+            if ($data['leave_type_id'] == 1) {
+                $catatanCutiLatest = $this->catatanCutiService->catatanCutiEmployeeLatest($leave->employee_id);
+                if ($catatanCutiLatest === null) {
+                    $quantityAkhirCatatan = 12;
+                } else {
+                    $quantityAkhirCatatan = $catatanCutiLatest->quantity_akhir;
+                }
+                $quantityOut = $fromDate->diffInDays($toDate);
+                $quantityOut = $quantityOut == 0 ? 1 : ($quantityOut + 1);
+                $quantityAkhir = (int)$quantityAkhirCatatan - (int)$quantityOut;
+                $catatanCutiData = [
+                    'adjustment_cuti_id' => null,
+                    'leave_id' => $leave->id,
+                    'employee_id' => $leave->employee_id,
+                    'quantity_awal' => $quantityAkhirCatatan,
+                    'quantity_akhir' => $quantityAkhir,
+                    'quantity_in' => 0,
+                    'quantity_out' => $quantityOut,
+                    'type' => 'LEAVE',
+                    'description' => $leaveType->name,
+                    'batal' => 0,
+                    'year' => $leave->year,
+                ];
+                $this->catatanCutiService->store($catatanCutiData);
+                $updateLeave = [
+                    'quantity_cuti_awal' => $quantityAkhirCatatan,
+                    'sisa_cuti' => $quantityAkhir,
+                ];
+                $leave->update($updateLeave);
+            }
+
+            // firebase
+            $typeSend = 'Leaves';
+            $employee = $this->employeeService->show($leave->employee_id);
+            $registrationIds = [];
+            if($employee->supervisor != null){
+                if($employee->supervisor->user != null){
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
+            }
+
+            if($employee->kabag_id != null ){
+                if($employee->kabag->user != null){
+                    $registrationIds[] = $employee->kabag->user->firebase_id;
+                }
+            }
+
+            if($employee->manager_id != null ){
+                if($employee->manager->user != null){
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
+            }
+            $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
+            // notif ke HRD
+            $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
+            foreach ($employeeHrd as $key ) {
+                # code...
+                $firebaseIdx = $key;
+            }
+            // dd($firebaseIdx->firebase_id);
+            $registrationIds[] = $firebaseIdx->firebase_id;
+            // Check if there are valid registration IDs before sending the notification
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotificationLeave($registrationIds, $employee->name);
+            }
+            DB::commit(); // Commit transaction if successful
+            return [
+                'message' => 'Leave created from mobile successfully',
+                'success' => true,
+                'code' => 200,
+                'data' => [$leave]
             ];
-            $leave->update($updateLeave);
-        }
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback on errors
 
-        // firebase
-        $typeSend = 'Leaves';
-        $employee = $this->employeeService->show($leave->employee_id);
-        $registrationIds = [];
-        if($employee->supervisor != null){
-            if($employee->supervisor->user != null){
-                $registrationIds[] = $employee->supervisor->user->firebase_id;
-            }
+            return [
+                'message' => 'Failed to create leave: ' . $e->getMessage(),
+                'error' => true,
+                'code' => 500,
+                'data' => []
+            ];
         }
-
-        if($employee->kabag_id != null ){
-            if($employee->kabag->user != null){
-                $registrationIds[] = $employee->kabag->user->firebase_id;
-            }
-        }
-
-        if($employee->manager_id != null ){
-            if($employee->manager->user != null){
-                $registrationIds[] = $employee->manager->user->firebase_id;
-            }
-        }
-        $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
-        // notif ke HRD
-        $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
-        foreach ($employeeHrd as $key ) {
-            # code...
-            $firebaseIdx = $key;
-        }
-        // dd($firebaseIdx->firebase_id);
-        $registrationIds[] = $firebaseIdx->firebase_id;
-        // Check if there are valid registration IDs before sending the notification
-        if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotificationLeave($registrationIds, $employee->name);
-        }
-
-        return [
-            'message' => 'Leave created from mobile successfully',
-            'success' => true,
-            'code' => 200,
-            'data' => [$leave]
-        ];
     }
 
     public function show($id)
@@ -856,7 +881,6 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($status == 5) { // if approval HRD
             $startDate = Carbon::parse($leave->from_date);
             $endDate = Carbon::parse($leave->to_date);
-
             while ($startDate->lte($endDate)) {
                 $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
                 $dataAbsen = [

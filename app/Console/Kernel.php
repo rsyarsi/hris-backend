@@ -21,8 +21,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         // $schedule->command('shiftSchedule')->dailyAt('00:01');
-        $schedule->command('generate:generate-shift-schedule-non-shift')->dailyAt('00:05');
         // $schedule->command('generate:generate-shift-schedule-non-shift')->everyMinute();
+        $schedule->command('generate:generate-shift-schedule-non-shift')->dailyAt('00:05');
+        $schedule->command('leave:cancel-leave')->dailyAt('00:35');
     }
 
     /**
@@ -34,7 +35,6 @@ class Kernel extends ConsoleKernel
     {
 
         $this->load(__DIR__.'/Commands');
-        // $this->load(__DIR__.'/Commands/GenerateShiftScheduleNonShiftCommand');
 
         require base_path('routes/console.php');
     }
