@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Leave;
 use App\Models\CatatanCuti;
 use App\Models\LeaveHistory;
+use App\Models\ShiftSchedule;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,11 @@ class CancelLeaveCommand extends Command
                     'comment' => 'CANCEL BY SYSTEM',
                 ];
                 LeaveHistory::create($historyData);
+                ShiftSchedule::where('leave_id', $leave->id)
+                            ->update([
+                                'leave_id' => null,
+                                'leave_note' => null
+                            ]);
             }
             DB::commit(); // Commit transaction if successful
             $this->info("Updated leave status for {$leaves} leaves.");

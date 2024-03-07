@@ -3,6 +3,7 @@
 namespace App\Repositories\Leave;
 
 use Carbon\Carbon;
+use App\Models\Shift;
 use Illuminate\Support\Facades\DB;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Firebase\FirebaseServiceInterface;
@@ -881,7 +882,40 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($status == 5) { // if approval HRD
             $startDate = Carbon::parse($leave->from_date);
             $endDate = Carbon::parse($leave->to_date);
+            $employee = Employee::where('id', $leave->employee_id)->first();
             while ($startDate->lte($endDate)) {
+                // search shift schedule employee_id and date shift
+                $shiftScheduleDate = $this->shiftScheduleService->shiftScheduleEmployeeDate($leave->employee_id, $startDate->toDateString());
+                // shift schedule non shift
+                $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+                $shift = Shift::where('shift_group_id', $nonShiftGroupId)
+                                ->where('code', 'N')
+                                ->orWhere('name', 'NON SHIFT')
+                                ->first();
+                $timeInAt = null;
+                $timeOutAt = null;
+                $shiftId = null;
+                $scheduleTimeInAt = null;
+                $scheduleTimeOutAt = null;
+                if ($leave->leave_type_id == 1) { // CUTI TAHUNAN
+                    $timeInAt = '00:00:00';
+                    $timeOutAt = '00:00:00';
+                    $shiftId = $shiftScheduleDate->shift_id;
+                    $scheduleTimeInAt = '00:00:00';
+                    $scheduleTimeOutAt = '00:00:00';
+                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id == $nonShiftGroupId) { // NON SHIFT
+                    $timeInAt = $shift->in_time;
+                    $timeOutAt = $shift->out_time;
+                    $shiftId = $shift->id;
+                    $scheduleTimeInAt = $shift->in_time;
+                    $scheduleTimeOutAt = $shift->out_time;
+                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id !== $nonShiftGroupId) { // SHIFT
+                    $timeInAt = $shiftScheduleDate->shift->in_time;
+                    $timeOutAt = $shiftScheduleDate->shift->out_time;
+                    $shiftId = $shiftScheduleDate->shift_id;
+                    $scheduleTimeInAt = $shiftScheduleDate->shift->in_time;
+                    $scheduleTimeOutAt = $shiftScheduleDate->shift->out_time;
+                }
                 $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
                 $dataAbsen = [
                     'period' => $startDate->format('Y-m'),
@@ -896,9 +930,15 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'schedule_leave_out_at' => $leave->to_date,
                     'shift_schedule_id' => $leave->shift_schedule_id,
                     'date_in_at' => $startDate->toDateString(),
-                    'time_in_at' => '00:00:00',
+                    'time_in_at' => $timeInAt,
                     'date_out_at' => $startDate->toDateString(),
-                    'time_out_at' => '00:00:00',
+                    'time_out_at' => $timeOutAt,
+                    'employment_id' => $employee->employment_number,
+                    'shift_id' => $shiftId,
+                    'schedule_date_in_at' => $startDate->toDateString(),
+                    'schedule_time_in_at' => $scheduleTimeInAt,
+                    'schedule_date_out_at' => $startDate->toDateString(),
+                    'schedule_time_out_at' => $scheduleTimeOutAt,
                 ];
                 if (!$absen) { // if in the table generate_absen not exists -> create the data.
                     $this->generateAbsenService->store($dataAbsen);
@@ -1003,7 +1043,40 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($leaveStatusId == 5) { // if approval HRD
             $startDate = Carbon::parse($leave->from_date);
             $endDate = Carbon::parse($leave->to_date);
+            $employee = Employee::where('id', $leave->employee_id)->first();
             while ($startDate->lte($endDate)) {
+                // search shift schedule employee_id and date shift
+                $shiftScheduleDate = $this->shiftScheduleService->shiftScheduleEmployeeDate($leave->employee_id, $startDate->toDateString());
+                // shift schedule non shift
+                $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+                $shift = Shift::where('shift_group_id', $nonShiftGroupId)
+                                ->where('code', 'N')
+                                ->orWhere('name', 'NON SHIFT')
+                                ->first();
+                $timeInAt = null;
+                $timeOutAt = null;
+                $shiftId = null;
+                $scheduleTimeInAt = null;
+                $scheduleTimeOutAt = null;
+                if ($leave->leave_type_id == 1) { // CUTI TAHUNAN
+                    $timeInAt = '00:00:00';
+                    $timeOutAt = '00:00:00';
+                    $shiftId = $shiftScheduleDate->shift_id;
+                    $scheduleTimeInAt = '00:00:00';
+                    $scheduleTimeOutAt = '00:00:00';
+                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id == $nonShiftGroupId) { // NON SHIFT
+                    $timeInAt = $shift->in_time;
+                    $timeOutAt = $shift->out_time;
+                    $shiftId = $shift->id;
+                    $scheduleTimeInAt = $shift->in_time;
+                    $scheduleTimeOutAt = $shift->out_time;
+                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id !== $nonShiftGroupId) { // SHIFT
+                    $timeInAt = $shiftScheduleDate->shift->in_time;
+                    $timeOutAt = $shiftScheduleDate->shift->out_time;
+                    $shiftId = $shiftScheduleDate->shift_id;
+                    $scheduleTimeInAt = $shiftScheduleDate->shift->in_time;
+                    $scheduleTimeOutAt = $shiftScheduleDate->shift->out_time;
+                }
                 $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
                 $dataAbsen = [
                     'period' => $startDate->format('Y-m'),
@@ -1018,9 +1091,15 @@ class LeaveRepository implements LeaveRepositoryInterface
                     'schedule_leave_out_at' => $leave->to_date,
                     'shift_schedule_id' => $leave->shift_schedule_id,
                     'date_in_at' => $startDate->toDateString(),
-                    'time_in_at' => '00:00:00',
+                    'time_in_at' => $timeInAt,
                     'date_out_at' => $startDate->toDateString(),
-                    'time_out_at' => '00:00:00',
+                    'time_out_at' => $timeOutAt,
+                    'employment_id' => $employee->employment_number,
+                    'shift_id' => $shiftId,
+                    'schedule_date_in_at' => $startDate->toDateString(),
+                    'schedule_time_in_at' => $scheduleTimeInAt,
+                    'schedule_date_out_at' => $startDate->toDateString(),
+                    'schedule_time_out_at' => $scheduleTimeOutAt,
                 ];
                 if (!$absen) { // if in the table generate_absen not exists -> create the data.
                     $this->generateAbsenService->store($dataAbsen);
