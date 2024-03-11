@@ -425,7 +425,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     {
         $generateAbsen = $this->model->find($id);
         if ($generateAbsen) {
-            $leaveId = $data['leave_id'];
+            $leaveId = $data['leave_id'] ?? null;
             $timeOutAt = $data['time_out_at'];
             if ($timeOutAt !== null) {
                 $scheduleTimeOutAt = $generateAbsen->schedule_time_out_at;
