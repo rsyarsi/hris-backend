@@ -104,6 +104,152 @@ class OvertimeRepository implements OvertimeRepositoryInterface
         return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
+    public function overtimeEmployeeRekap($perPage, $employeeId, $search = null, $period_1 = null, $period_2 = null)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'overtimeStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'overtimeHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'overtime_id',
+                                'user_id',
+                                'description',
+                                'ip_address',
+                                'user_agent',
+                                'comment',
+                                'libur',
+                            );
+                        },
+                        'generateAbsen' => function ($query) {
+                            $query->select($this->fieldGenerateAbsen);
+                        },
+                    ])
+                    ->where('employee_id', $employeeId)
+                    ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+        if ($period_1) {
+            $query->whereDate('from_date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('to_date', '<=', $period_2);
+        }
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
+    }
+
+    public function overtimeUnitRekap($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'overtimeStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'overtimeHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'overtime_id',
+                                'user_id',
+                                'description',
+                                'ip_address',
+                                'user_agent',
+                                'comment',
+                                'libur',
+                            );
+                        },
+                        'generateAbsen' => function ($query) {
+                            $query->select($this->fieldGenerateAbsen);
+                        },
+                    ])
+                    ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+        if ($unit) {
+            $query->whereHas('employee', function ($employeeQuery) use ($unit) {
+                $employeeQuery->where('unit_id', $unit);
+            });
+        }
+        if ($period_1) {
+            $query->whereDate('from_date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('to_date', '<=', $period_2);
+        }
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
+    }
+
+    public function overtimedepartmentRekap($perPage, $search = null, $period_1 = null, $period_2 = null, $department = null)
+    {
+        $query = $this->model
+                    ->with([
+                        'employee' => function ($query) {
+                            $query->select('id', 'name', 'employment_number');
+                        },
+                        'overtimeStatus' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'overtimeHistory' => function ($query) {
+                            $query->select(
+                                'id',
+                                'overtime_id',
+                                'user_id',
+                                'description',
+                                'ip_address',
+                                'user_agent',
+                                'comment',
+                                'libur',
+                            );
+                        },
+                        'generateAbsen' => function ($query) {
+                            $query->select($this->fieldGenerateAbsen);
+                        },
+                    ])
+                    ->select($this->field);
+        if ($search) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->orWhere('employee_id', $search)
+                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
+                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
+                            });
+            });
+        }
+        if ($department) {
+            $query->whereHas('employee', function ($employeeQuery) use ($department) {
+                $employeeQuery->where('department_id', $department);
+            });
+        }
+        if ($period_1) {
+            $query->whereDate('from_date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('to_date', '<=', $period_2);
+        }
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
+    }
+
     public function store(array $data)
     {
         $fromDate = Carbon::parse($data['from_date']);

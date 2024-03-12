@@ -41,6 +41,51 @@ class OvertimeController extends Controller
         }
     }
 
+    public function overtimeEmployeeRekap(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $employeeId = $request->input('employee_id');
+            $search = $request->input('search');
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $overtimes = $this->overtimeService->overtimeEmployeeRekap($perPage, $employeeId, $search, $period_1, $period_2);
+            return $this->success('Rekap overtime employee retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function overtimeUnitRekap(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $unit = $request->input('unit');
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $overtimes = $this->overtimeService->overtimeUnitRekap($perPage, $search, $period_1, $period_2, $unit);
+            return $this->success('Rekap overtime unit retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function overtimedepartmentRekap(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $department = $request->input('department');
+            $period_1 = $request->input('period_1');
+            $period_2 = $request->input('period_2');
+            $overtimes = $this->overtimeService->overtimedepartmentRekap($perPage, $search, $period_1, $period_2, $department);
+            return $this->success('Rekap overtime department retrieved successfully', $overtimes);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function store(Request $request)
     {
         try {

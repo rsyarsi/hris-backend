@@ -432,6 +432,14 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::get('overtimes-export', 'exportOvertime')->name('overtimes-export');
         // route for export leaves status
         Route::get('overtimes-status-export', 'exportOvertimeWhereStatus')->name('overtimes-status-export');
+        // ================ info rekap ================
+        // Route for rekap employee
+        Route::get('overtimes-employee-rekap', 'overtimeEmployeeRekap')->name('overtimes-employee-rekap');
+        // Route for rekap unit
+        Route::get('overtimes-unit-rekap', 'overtimeUnitRekap')->name('overtimes-unit-rekap');
+        // Route for rekap department
+        Route::get('overtimes-department-rekap', 'overtimedepartmentRekap')->name('overtimes-department-rekap');
+
     });
     // route for overtime histories
     Route::resource('overtime-histories', OvertimeHistoryController::class);

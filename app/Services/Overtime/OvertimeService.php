@@ -20,6 +20,21 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->index($perPage, $search, $period_1, $period_2, $unit);
     }
 
+    public function overtimeEmployeeRekap($perPage, $search, $period_1, $period_2, $unit)
+    {
+        return $this->repository->overtimeEmployeeRekap($perPage, $search, $period_1, $period_2, $unit);
+    }
+
+    public function overtimeUnitRekap($perPage, $search, $period_1, $period_2, $unit)
+    {
+        return $this->repository->overtimeUnitRekap($perPage, $search, $period_1, $period_2, $unit);
+    }
+
+    public function overtimedepartmentRekap($perPage, $search, $period_1, $period_2, $unit)
+    {
+        return $this->repository->overtimedepartmentRekap($perPage, $search, $period_1, $period_2, $unit);
+    }
+
     public function store(array $data)
     {
         $fromDate = Carbon::parse($data['from_date']);
