@@ -497,7 +497,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     $existingRecordAbsen->update([
                         'date_in_at' => $data['date_in_at'],
                         'time_in_at' => $data['time_in_at'],
-                        'date_out_at' => now(),
+                        'date_out_at' => now()->format('Y-m-d'),
                         'time_out_at' => null,
                         'telat' => $data['telat'],
                         'note' => $data['telat'] !== null ? 'WARNING' : 'BELUM ABSEN PULANG',
@@ -546,7 +546,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         }
                         $existingRecordAbsenOut->update([
                             'time_out_at' => $data['time_out_at'],
-                            'date_out_at' => now(),
+                            'date_out_at' => now()->format('Y-m-d'),
                             'pa' => $pa,
                             'note' => $pa == null && $existingRecordAbsenOut->telat == null ? null : 'WARNING',
                         ]);
@@ -630,6 +630,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 
                         $existingRecordSplOut->update([
                             'time_out_at' => $finalOvertimeOutAt,
+                            'date_out_at' => now()->format('Y-m-d'),
                             'overtime_out_at' => $finalOvertimeOutAt,
                             'note' => null,
                         ]);
