@@ -127,41 +127,47 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
             }
         ])
         ->whereNot('name', 'ADMINISTRATOR')
-        ->where('resigned_at', '>=', Carbon::now()->toDateString())
+        ->where('resigned_at', '>=', $now->toDateString())
         ->orderBy('name', 'ASC')
         ->get();
         $message = 'Execute Success!';
-        foreach ($employees as $item) {
-            // Check if the employee has a contract
-            if (count($item->contract) > 0 && count($item->contract->first()->employeeContractDetail) > 0) {
-                foreach ($item->contract as $contract) {
-                    // echo $contract->hour_per_day.',';
-                    if ($contract->employeeContractDetail !== null) {
-                        foreach ($contract->employeeContractDetail as $employeeContractDetail) {
-                            // echo $employeeContractDetail->id.',';
-                        }
-                    } else {
-                        $message = 'Execute Gagal di kontrak detail';
-                    }
-                }
-            } else {
-                $message = 'Execute gagal, di kontrak';
-            }
-        }
-
-        if ($message !== '') {
-            return $message;
-        }
+        // foreach ($employees as $item) {
+        //     // Check if the employee has a contract
+        //     if (count($item->contract) > 0 && count($item->contract->first()->employeeContractDetail) > 0) {
+        //         foreach ($item->contract as $contract) {
+        //             // echo $contract->hour_per_day.',';
+        //             if ($contract->employeeContractDetail !== null) {
+        //                 foreach ($contract->employeeContractDetail as $employeeContractDetail) {
+        //                     // echo $employeeContractDetail->id.',';
+        //                 }
+        //             } else {
+        //                 $message = 'Execute Gagal di kontrak detail';
+        //             }
+        //         }
+        //     } else {
+        //         $message = 'Execute gagal, di kontrak';
+        //     }
+        // }
+            
+        // if ($message !== '') {
+        //     return $message;
+        // }
         // If all employees pass the validation, proceed with stored procedures
         foreach ($employees as $item) {
+            // delete from timesheet_temp_overtimes 
+            // where periode=yearmonthabsenperiode and employee_id='11';
+            DB::table('timesheet_temp_overtimes')
+                ->where('periode', $periodGaji->format('Y-m'))
+                ->where('employee_id', $item->id)
+                ->delete();
+
             DB::select('CALL generatetempovertimes(?, ?, ?, ?, ?, ?)', [
                 $now->toDateString(),
                 $periodeAbsenStart,
                 $periodeAbsenEnd,
                 $item->id,
                 $periodGaji->format('Y-m'),
-                // '2024-01',
-                $item->contract['0']->hour_per_day,
+                $item->contract['0']->hour_per_day ?? 0,
             ]);
 
             DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
@@ -170,7 +176,6 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
                 $periodeAbsenEnd,
                 $item->id,
                 $periodGaji->format('Y-m')
-                // '2024-01',
             ]);
         }
         return $message;
