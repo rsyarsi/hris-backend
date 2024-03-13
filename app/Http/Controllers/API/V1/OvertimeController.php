@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\Employee;
 use App\Traits\ResponseAPI;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Rules\DateSmallerThan;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Rules\UniqueOvertimeDateRange;
 use Illuminate\Support\Facades\Validator;
+use App\Models\{Department, Unit, Employee};
 use App\Services\Overtime\OvertimeServiceInterface;
-use App\Exports\{OvertimeExport, OvertimeWhereStatusExport};
 use App\Http\Requests\{OvertimeRequest, OvertimeNewStatusRequest};
+use App\Exports\{OvertimeExport, OvertimeWhereStatusExport, OvertimeWhereEmployeeExport, OvertimeWhereUnitExport, OvertimeWhereDepartmentExport};
 
 class OvertimeController extends Controller
 {
@@ -386,6 +387,57 @@ class OvertimeController extends Controller
             $status = $request->input('status');
             $nameFile = 'data-review-overtime-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
             return Excel::download(new OvertimeWhereStatusExport, $nameFile);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportOvertimeEmployee(Request $request)
+    {
+        try {
+            $employeeId = $request->input('employee_id');
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $employee = Employee::where('id', $employeeId)->first(['id', 'name', 'employment_number']);
+            if (!$employee) {
+                return $this->error('Employee Not Found', 422);
+            }
+            $nameFile = 'data-rekap-overtime-'.Str::slug($employee->name).'-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new OvertimeWhereEmployeeExport, $nameFile);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportOvertimeUnit(Request $request)
+    {
+        try {
+            $unitId = $request->input('unit');
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $unit = Unit::where('id', $unitId)->first(['id', 'name']);
+            if (!$unit) {
+                return $this->error('Unit Not Found', 422);
+            }
+            $nameFile = 'data-rekap-overtime-'.Str::slug($unit->name).'-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new OvertimeWhereUnitExport, $nameFile);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function exportOvertimeDepartment(Request $request)
+    {
+        try {
+            $departmentId = $request->input('department');
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $department = Department::where('id', $departmentId)->first(['id', 'name']);
+            if (!$department) {
+                return $this->error('Department Not Found', 422);
+            }
+            $nameFile = 'data-rekap-overtime-'.Str::slug($department->name).'-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            return Excel::download(new OvertimeWhereDepartmentExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

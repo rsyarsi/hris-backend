@@ -428,10 +428,17 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('overtime-update-statuses-mobile', 'updateStatusMobile')->name('overtime-update-statuses-mobile');
         // route for mobile
         Route::post('overtime-create-mobile', 'overtimeCreateMobile')->name('overtime-create-mobile');
+        // ================ export ================
         // route for export overtimes
         Route::get('overtimes-export', 'exportOvertime')->name('overtimes-export');
         // route for export leaves status
         Route::get('overtimes-status-export', 'exportOvertimeWhereStatus')->name('overtimes-status-export');
+        // route for export leaves status
+        Route::get('overtimes-employee-rekap-export', 'exportOvertimeEmployee')->name('overtimes-employee-rekap-export');
+        // route for export leaves status
+        Route::get('overtimes-unit-rekap-export', 'exportOvertimeUnit')->name('overtimes-unit-rekap-export');
+        // route for export leaves status
+        Route::get('overtimes-department-rekap-export', 'exportOvertimeDepartment')->name('overtimes-department-rekap-export');
         // ================ info rekap ================
         // Route for rekap employee
         Route::get('overtimes-employee-rekap', 'overtimeEmployeeRekap')->name('overtimes-employee-rekap');
