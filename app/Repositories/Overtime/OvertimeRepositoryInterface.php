@@ -4,7 +4,7 @@ namespace App\Repositories\Overtime;
 Interface OvertimeRepositoryInterface
 {
     public function index($perPage, $search, $period_1, $period_2, $unit);
-    public function overtimeEmployeeRekap($perPage, $employeeId, $search, $period_1, $period_2);
+    public function overtimeEmployeeRekap($perPage, $employeeId, $period_1, $period_2);
     public function overtimeUnitRekap($perPage, $search, $period_1, $period_2, $unit);
     public function overtimedepartmentRekap($perPage, $search, $period_1, $period_2, $department);
     public function store(array $data);

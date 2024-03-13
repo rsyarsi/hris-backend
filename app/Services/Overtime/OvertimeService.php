@@ -20,9 +20,9 @@ class OvertimeService implements OvertimeServiceInterface
         return $this->repository->index($perPage, $search, $period_1, $period_2, $unit);
     }
 
-    public function overtimeEmployeeRekap($perPage, $search, $period_1, $period_2, $unit)
+    public function overtimeEmployeeRekap($perPage, $employeeId, $period_1, $period_2)
     {
-        return $this->repository->overtimeEmployeeRekap($perPage, $search, $period_1, $period_2, $unit);
+        return $this->repository->overtimeEmployeeRekap($perPage, $employeeId, $period_1, $period_2);
     }
 
     public function overtimeUnitRekap($perPage, $search, $period_1, $period_2, $unit)

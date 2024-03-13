@@ -46,10 +46,9 @@ class OvertimeController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $employeeId = $request->input('employee_id');
-            $search = $request->input('search');
             $period_1 = $request->input('period_1');
             $period_2 = $request->input('period_2');
-            $overtimes = $this->overtimeService->overtimeEmployeeRekap($perPage, $employeeId, $search, $period_1, $period_2);
+            $overtimes = $this->overtimeService->overtimeEmployeeRekap($perPage, $employeeId, $period_1, $period_2);
             return $this->success('Rekap overtime employee retrieved successfully', $overtimes);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
