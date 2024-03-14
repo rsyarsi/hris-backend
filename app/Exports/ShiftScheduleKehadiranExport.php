@@ -12,6 +12,7 @@ class ShiftScheduleKehadiranExport implements FromView, ShouldAutoSize
     {
         $period1 = request()->input('period_1');
         $period2 = request()->input('period_2');
+        $unit = request()->input('unit_id');
         $overtimes = DB::table('overtimes')
                         ->select([
                             'shift_schedules.id as shift_schedule_id',
@@ -57,6 +58,7 @@ class ShiftScheduleKehadiranExport implements FromView, ShouldAutoSize
                             $join->on('overtimes.employee_id', '=', 'shift_schedules.employee_id')
                                 ->where(DB::raw("CAST(overtimes.from_date AS DATE)"), '=', DB::raw("CAST(shift_schedules.date AS DATE)"));
                         })
+                        ->where('employees.unit_id', $unit)
                         ->whereNotIn('overtimes.overtime_status_id', [6,7,8,9,10])
                         ->whereBetween(DB::raw("CAST(overtimes.from_date AS DATE)"), [$period1, $period2]);
         $items = DB::table('shift_schedules')
@@ -105,6 +107,7 @@ class ShiftScheduleKehadiranExport implements FromView, ShouldAutoSize
                     ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
                     ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
                     ->leftJoin('munits', 'employees.unit_id', '=', 'munits.id')
+                    ->where('employees.unit_id', $unit)
                     ->unionAll($overtimes)
                     ->whereBetween('shift_schedules.date', [$period1, $period2])
                     ->orderBy('shift_schedule_date', 'desc')

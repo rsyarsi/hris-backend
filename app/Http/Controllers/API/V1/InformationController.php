@@ -54,10 +54,10 @@ class InformationController extends Controller
 
     public function store(InformationRequest $request)
     {
-        $data = $request->validated();
-        $information = $this->informationService->store($data);
-        return $this->success('Information created successfully', $information, 201);
         try {
+            $data = $request->validated();
+            $information = $this->informationService->store($data);
+            return $this->success('Information created successfully', $information, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

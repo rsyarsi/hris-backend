@@ -3,6 +3,7 @@
 namespace App\Repositories\Information;
 
 use App\Models\Information;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\SendFirebaseNotification;
 use App\Services\Firebase\FirebaseServiceInterface;
@@ -22,21 +23,6 @@ class InformationRepository implements InformationRepositoryInterface
         $this->firebaseService = $firebaseService;
     }
 
-    private $field =
-    [
-        'id',
-        'user_id',
-        'name',
-        'short_description',
-        'note',
-        'file_url',
-        'file_path',
-        'file_disk',
-        'image_url',
-        'image_path',
-        'image_disk',
-    ];
-
     public function index($perPage, $search = null)
     {
         $query = $this->model
@@ -45,7 +31,7 @@ class InformationRepository implements InformationRepositoryInterface
                             $query->select('id', 'name', 'email');
                         },
                     ])
-                    ->select($this->field);
+                    ->select();
         if ($search) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
         }
@@ -55,8 +41,13 @@ class InformationRepository implements InformationRepositoryInterface
     public function indexMobile()
     {
         return $this->model
-                    ->select($this->field)
-                    ->orderBy('created_at', 'DESC')->get();
+                    ->select('*', DB::raw('created_at as created_at_humanized'))
+                    ->orderBy('created_at', 'DESC')
+                    ->get()
+                    ->map(function ($item) {
+                        $item->created_at_humanized = $item->created_at->diffForHumans();
+                        return $item;
+                    });
     }
 
     public function store(array $data)
@@ -81,7 +72,7 @@ class InformationRepository implements InformationRepositoryInterface
                                 },
                             ])
                             ->where('id', $id)
-                            ->first($this->field);
+                            ->first();
         return $information ? $information : $information = null;
     }
 

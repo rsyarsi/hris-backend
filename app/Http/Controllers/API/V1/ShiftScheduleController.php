@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\Unit;
 use App\Traits\ResponseAPI;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Imports\ShiftScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\{ShiftScheduleKehadiranExport, ShiftScheduleExport};
 use App\Services\ShiftSchedule\ShiftScheduleServiceInterface;
+use App\Exports\{ShiftScheduleKehadiranExport, ShiftScheduleExport};
 use App\Http\Requests\{ShiftScheduleRequest, ImportShiftScheduleRequest};
 
 class ShiftScheduleController extends Controller
@@ -291,7 +293,12 @@ class ShiftScheduleController extends Controller
         try {
             $period1 = $request->input('period_1');
             $period2 = $request->input('period_2');
-            $nameFile = 'data-shift-schedule-kehadiran-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            $unitId = $request->input('unit_id');
+            $unit = Unit::where('id', $unitId)->first(['id', 'name']);
+            if (!$unit) {
+                return $this->error('Unit Not Found', 422);
+            }
+            $nameFile = 'data-shift-schedule-kehadiran-'.Str::slug($unit->name).'-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
             return Excel::download(new ShiftScheduleKehadiranExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
