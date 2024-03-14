@@ -40,45 +40,61 @@ class ShiftScheduleController extends Controller
         }
     }
 
-    public function shiftScheduleKehadiranEmployee(Request $request) // for admin
+    public function shiftScheduleKehadiranEmployee(Request $request) // for admin (overtime)
     {
-        $perPage = $request->input('per_page', 10);
-        $search = $request->input('search');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $employeeId = $request->input('employee_id');
-        $unit = $request->input('unit');
-        $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiranEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
-        return $this->success('Shift Schedule & kehadiran retrieved successfully', $shiftSchedules);
         try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $employeeId = $request->input('employee_id');
+            $unit = $request->input('unit');
+            $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiranEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
+            return $this->success('Shift Schedule & kehadiran retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
-    public function shiftScheduleKehadiranSubordinate(Request $request) // for atasan/subordinate
+    public function shiftScheduleKehadiranSubordinate(Request $request) // for atasan/subordinate (overtime)
     {
-        $perPage = $request->input('per_page', 10);
-        $search = $request->input('search');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $unit = $request->input('unit');
-        $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiranSubordinate($perPage, $search, $startDate, $endDate, $unit);
-        return $this->success('Shift Schedule & kehadiran subordinate retrieved successfully', $shiftSchedules);
         try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $unit = $request->input('unit');
+            $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiranSubordinate($perPage, $search, $startDate, $endDate, $unit);
+            return $this->success('Shift Schedule & kehadiran subordinate retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
-    public function shiftScheduleKehadiran(Request $request) // for employee
+    public function shiftScheduleKehadiran(Request $request) // for employee (overtime)
     {
-        $perPage = $request->input('per_page', 10);
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiran($perPage, $startDate, $endDate);
-        return $this->success('Shift Schedule & kehadiran employee retrieved successfully', $shiftSchedules);
         try {
+            $perPage = $request->input('per_page', 10);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $shiftSchedules = $this->shiftScheduleService->shiftScheduleKehadiran($perPage, $startDate, $endDate);
+            return $this->success('Shift Schedule & kehadiran employee retrieved successfully', $shiftSchedules);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function shiftScheduleLeaveEmployee(Request $request) // for admin (leave)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $employeeId = $request->input('employee_id');
+            $unit = $request->input('unit');
+            $shiftSchedules = $this->shiftScheduleService->shiftScheduleLeaveEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
+            return $this->success('Shift Schedule & kehadiran retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

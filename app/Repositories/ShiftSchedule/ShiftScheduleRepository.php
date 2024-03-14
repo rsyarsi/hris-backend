@@ -931,6 +931,124 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
         return $query->orderBy('shift_schedule_date', 'desc')->paginate($perPage);
     }
 
+    public function shiftScheduleLeaveEmployee($employeeId, $search, $perPage, $startDate = null, $endDate = null, $unit = null)
+    {
+        // $leaves = DB::table('leaves')
+        //                 ->select([
+        //                     'shift_schedules.id as shift_schedule_id',
+        //                     'employees.id as employee_id',
+        //                     'employees.name as employee_name',
+        //                     'employees.employment_number as employment_number',
+        //                     DB::raw("'' as shift_code"),
+        //                     DB::raw("'' as shift_name"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'YYYY-MM-DD'), '') as shift_schedule_date"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'Day'), '') as shift_schedule_day_name"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.time_in, 'YYYY-MM-DD HH24:MI:SS'), '') as shift_schedule_time_in"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD HH24:MI:SS'), '') as shift_schedule_time_out"),
+        //                     DB::raw("COALESCE(leaves.id, '') as leave_id"),
+        //                     DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD'), '') as leave_from_date"),
+        //                     DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD'), '') as leave_to_date"),
+        //                     DB::raw("COALESCE(leaves.duration::text, '') as leave_duration"),
+        //                     DB::raw("COALESCE(leaves.note, '') as leave_note"),
+        //                     DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
+        //                     DB::raw("COALESCE(leave_statuses.name, '') as leave_status_name"),
+        //                 ])
+        //                 ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+        //                 ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+        //                 ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+        //                 ->leftJoin('shift_schedules', function ($join) {
+        //                     $join->on('leaves.employee_id', '=', 'shift_schedules.employee_id')
+        //                         ->where(DB::raw("CAST(leaves.from_date AS DATE)"), '=', DB::raw("CAST(shift_schedules.date AS DATE)"));
+        //                 })
+        //                 ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
+        //                 ->where('shift_schedules.date', DB::raw('DATE(leaves.from_date)'));
+        //                 if ($employeeId) {
+        //                     $leaves->where('leaves.employee_id', $employeeId);
+        //                 }
+        //                 if ($startDate && $endDate) {
+        //                     $leaves->whereBetween(DB::raw("CAST(leaves.from_date AS DATE)"), [$startDate, $endDate]);
+        //                 }
+        //                 if ($unit) {
+        //                     $leaves->whereExists(function ($query) use ($unit) {
+        //                         $query->select(DB::raw(1))
+        //                             ->from('employees')
+        //                             ->whereRaw('employees.id = leaves.employee_id')
+        //                             ->where('employees.unit_id', $unit);
+        //                     });
+        //                 }
+        //                 if ($search) {
+        //                     $leaves->whereExists(function ($query) use ($search) {
+        //                         $query->select(DB::raw(1))
+        //                             ->from('employees')
+        //                             ->whereRaw('employees.id = leaves.employee_id')
+        //                             ->where(function ($query) use ($search) {
+        //                                 $query->whereRaw('LOWER(employees.name) LIKE ?', ["%".strtolower($search)."%"])
+        //                                     ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
+        //                             });
+        //                     });
+        //                 }
+        // $query = DB::table('shift_schedules')
+        //                 ->select([
+        //                     'shift_schedules.id as shift_schedule_id',
+        //                     'employees.id as employee_id',
+        //                     'employees.name as employee_name',
+        //                     'employees.employment_number as employment_number',
+        //                     DB::raw("COALESCE(shifts.code, '') as shift_code"),
+        //                     DB::raw("COALESCE(shifts.name, '') as shift_name"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'YYYY-MM-DD'), '') as shift_schedule_date"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.date, 'Day'), '') as shift_schedule_day_name"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.time_in, 'YYYY-MM-DD HH24:MI:SS'), '') as shift_schedule_time_in"),
+        //                     DB::raw("COALESCE(TO_CHAR(shift_schedules.time_out, 'YYYY-MM-DD HH24:MI:SS'), '') as shift_schedule_time_out"),
+        //                     DB::raw("'' as leave_id"),
+        //                     DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD'), '') as leave_from_date"),
+        //                     DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD'), '') as leave_to_date"),
+        //                     DB::raw("'' as leave_duration"),
+        //                     DB::raw("'' as leave_note"),
+        //                     DB::raw("'' as leave_type_name"),
+        //                     DB::raw("'' as leave_status_name"),
+        //                 ])
+        //                 ->leftJoin('employees', 'shift_schedules.employee_id', '=', 'employees.id')
+        //                 ->leftJoin('shifts', 'shift_schedules.shift_id', '=', 'shifts.id')
+        //                 ->leftJoin('leaves', 'shift_schedules.leave_id', '=', 'leaves.id')
+        //                 ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+        //                 ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+        //                 ->where('shift_schedules.date', DB::raw('DATE(leaves.from_date)'))
+        //                 ->unionAll($leaves);
+        //     if ($employeeId) {
+        //         $query->where('shift_schedules.employee_id', $employeeId);
+        //     }
+        //     if ($startDate && $endDate) {
+        //         $query->whereBetween('shift_schedules.date', [$startDate, $endDate]);
+        //     }
+        //     if ($unit) {
+        //         $query->whereExists(function ($query) use ($unit) {
+        //             $query->select(DB::raw(1))
+        //                 ->from('employees')
+        //                 ->whereRaw('employees.id = shift_schedules.employee_id')
+        //                 ->where('employees.unit_id', $unit);
+        //         });
+        //     }
+        //     if ($search) {
+        //         $query->whereExists(function ($q) use ($search) {
+        //             $q->select(DB::raw(1))
+        //                 ->from('employees')
+        //                 ->whereRaw('employees.id = shift_schedules.employee_id')
+        //                 ->where(function ($query) use ($search) {
+        //                     $query->whereRaw('LOWER(employees.name) LIKE ?', ["%".strtolower($search)."%"])
+        //                         ->orWhere('employees.employment_number', 'like', '%' . $search . '%');
+        //                 });
+        //         });
+        //     }
+        // return $query->orderBy('shift_schedule_date', 'desc')->paginate($perPage);
+        return DB::table('shift_schedules')
+            ->select('shift_schedules.*', 'shift_schedules.id as shift_schedules_id', 'leaves.*')
+            ->join('leaves', function ($join) {
+                $join->on(DB::raw("DATE(shift_schedules.date)"), '=', DB::raw("DATE(leaves.from_date)"));
+            })
+            ->orderBy('shift_schedules.date', 'desc')
+            ->paginate($perPage);
+    }
+
     public function shiftScheduleEmployeeToday($employeeId)
     {
         $employee = Employee::where('employment_number', $employeeId)->first();

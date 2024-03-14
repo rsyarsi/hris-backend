@@ -40,6 +40,11 @@ class ShiftScheduleService implements ShiftScheduleServiceInterface
         return $this->repository->shiftScheduleKehadiran($perPage, $startDate, $endDate);
     }
 
+    public function shiftScheduleLeaveEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit)
+    {
+        return $this->repository->shiftScheduleLeaveEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
+    }
+
     public function shiftScheduleSubordinate($perPage, $search, $startDate, $endDate)
     {
         return $this->repository->shiftScheduleSubordinate($perPage, $search, $startDate, $endDate);

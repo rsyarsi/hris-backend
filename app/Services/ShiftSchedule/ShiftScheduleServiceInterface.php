@@ -7,6 +7,7 @@ interface ShiftScheduleServiceInterface
     public function shiftScheduleKehadiranEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
     public function shiftScheduleKehadiranSubordinate($perPage, $search, $startDate, $endDate, $unit);
     public function shiftScheduleKehadiran($perPage, $startDate, $endDate);
+    public function shiftScheduleLeaveEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
     public function shiftScheduleSubordinate($perPage, $search, $startDate, $endDate);
     public function store(array $data);
     public function show($id);

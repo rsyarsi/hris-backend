@@ -222,6 +222,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             Route::get('shift-schedules-kehadiran-subordinate', 'shiftScheduleKehadiranSubordinate')->name('shift-schedules-kehadiran-subordinate');
             // route for shift schedules kehadiran employee login
             Route::get('shift-schedules-kehadiran', 'shiftScheduleKehadiran')->name('shift-schedules-kehadiran');
+            // route for shift schedules leave admin
+            Route::get('shift-schedules-leave-employee', 'shiftScheduleLeaveEmployee')->name('shift-schedules-leave-employee');
             // route for export shift schedule kehadiran
             Route::get('shift-schedules-kehadiran-export', 'exportKehadiran')->name('shift-schedules-kehadiran-export');
             // route for export shift schedules
