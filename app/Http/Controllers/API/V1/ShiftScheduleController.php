@@ -94,7 +94,7 @@ class ShiftScheduleController extends Controller
             $employeeId = $request->input('employee_id');
             $unit = $request->input('unit');
             $shiftSchedules = $this->shiftScheduleService->shiftScheduleLeaveEmployee($employeeId, $search, $perPage, $startDate, $endDate, $unit);
-            return $this->success('Shift Schedule & kehadiran retrieved successfully', $shiftSchedules);
+            return $this->success('Shift Schedule & leave retrieved successfully', $shiftSchedules);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
