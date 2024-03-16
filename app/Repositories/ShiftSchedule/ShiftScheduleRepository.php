@@ -1358,7 +1358,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                             ->whereBetween('shift_schedules.date', [$startOfMonth, $endOfMonth])
                             // ->whereNotIn('leaves.leave_status_id', [6, 7, 8, 9, 10])
                             ->unionAll($lembur)
-                            ->orderBy('date', 'ASC')
+                            ->orderBy('date', 'DESC')
                             ->get();
         return $shiftschedule;
     }

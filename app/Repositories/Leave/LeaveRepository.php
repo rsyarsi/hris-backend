@@ -817,7 +817,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                 ])
                 ->whereIn('employee_id', $subordinateIds)
                 ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
-                ->orderBy('from_date', 'DESC')
+                ->orderBy('leaves.from_date', 'DESC')
                 ->get();
     }
 
