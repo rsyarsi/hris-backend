@@ -171,7 +171,7 @@ return [
         'notifiable' => \Spatie\Backup\Notifications\Notifiable::class,
 
         'mail' => [
-            'to' => 'barnoxdev@gmail.com',
+            'to' => 'muchsin@rsyarsi.co.id',
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'info@rsyarsi.co.id'),
