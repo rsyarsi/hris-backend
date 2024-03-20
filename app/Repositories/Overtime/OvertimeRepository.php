@@ -849,41 +849,36 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 ];
                 $this->overtimeHistoryService->store($historyData);
 
-                $fromDate = Carbon::parse($overtime->from_date);
-                $now = Carbon::now();
+                // $fromDate = Carbon::parse($overtime->from_date);
+                // $now = Carbon::now();
                 $employee = $this->employeeService->show($overtime->employee_id);
                 // start of month
-                $periodeAbsenStart = $fromDate->copy()->startOfMonth()->toDateString();
+                // $periodeAbsenStart = $fromDate->copy()->startOfMonth()->toDateString();
                 // end of month
-                $periodeAbsenEnd = $fromDate->copy()->endOfMonth()->toDateString();
-                $period = $fromDate->format('Y-m');
+                // $periodeAbsenEnd = $fromDate->copy()->endOfMonth()->toDateString();
+                // $period = $fromDate->format('Y-m');
                 // execute store procedure generate lembur if approval HRD = 5
-                if ($status == '5') {
-                    DB::table('timesheet_temp_overtimes')
-                        ->where('periode', $fromDate->format('Y-m'))
-                        ->where('employee_id', $overtime->employee_id)
-                        ->delete();
-                    DB::select('CALL generatetempovertimes(?, ?, ?, ?, ?, ?)', [
-                        $now->toDateString(),
-                        $periodeAbsenStart,
-                        $periodeAbsenEnd,
-                        $overtime->employee_id,
-                        $period,
-                        $employee->contract['0']->hour_per_day ?? 0,
-                    ]);
-                    DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
-                        $now->toDateString(),
-                        $periodeAbsenStart,
-                        $periodeAbsenEnd,
-                        $overtime->employee_id,
-                        $period,
-                        // '2024-02-20',
-                        // '2024-02-01',
-                        // '2024-02-29',
-                        // '01hnqq6tjqnjqks1f61tt3q49x',
-                        // '2024-02',
-                    ]);
-                }
+                // if ($status == '5') {
+                //     DB::table('timesheet_temp_overtimes')
+                //         ->where('periode', $fromDate->format('Y-m'))
+                //         ->where('employee_id', $overtime->employee_id)
+                //         ->delete();
+                //     DB::select('CALL generatetempovertimes(?, ?, ?, ?, ?, ?)', [
+                //         $now->toDateString(),
+                //         $periodeAbsenStart,
+                //         $periodeAbsenEnd,
+                //         $overtime->employee_id,
+                //         $period,
+                //         $employee->contract['0']->hour_per_day ?? 0,
+                //     ]);
+                //     DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
+                //         $now->toDateString(),
+                //         $periodeAbsenStart,
+                //         $periodeAbsenEnd,
+                //         $overtime->employee_id,
+                //         $period,
+                //     ]);
+                // }
                 // delete overtime if employee non shift if batal
                 // if ($overtime->leave_type_id == 1 && $data['overtime_status_id'] == 10) {
                 //     $employee = $this->employeeService->show($overtime->employee_id);
