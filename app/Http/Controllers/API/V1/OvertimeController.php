@@ -318,6 +318,7 @@ class OvertimeController extends Controller
         try {
             $data = $request->validated();
             $overtime = $this->overtimeService->updateStatus($id, $data);
+            return $overtime;
             if (!$overtime) {
                 return $this->error('Overtime not found', 404);
             }

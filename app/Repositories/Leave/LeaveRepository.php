@@ -154,8 +154,8 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function store(array $data)
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             $fromDate = Carbon::parse($data['from_date']);
             $toDate = Carbon::parse($data['to_date']);
             $employeeId = $data['employee_id'];
@@ -312,7 +312,6 @@ class LeaveRepository implements LeaveRepositoryInterface
             ];
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback on errors
-
             return [
                 'message' => 'Failed to create leave: ' . $e->getMessage(),
                 'error' => true,

@@ -6,13 +6,11 @@ use App\Models\Employee;
 use Carbon\Carbon;
 use App\Models\TimesheetOvertime;
 use Illuminate\Support\Facades\DB;
-use App\Services\Employee\EmployeeServiceInterface;
 use App\Repositories\TimesheetOvertime\TimesheetOvertimeRepositoryInterface;
 
 class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterface
 {
     private $model;
-    private $employeeService;
     private $field =
     [
         'id',
@@ -39,10 +37,9 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
         'period',
     ];
 
-    public function __construct(TimesheetOvertime $model, EmployeeServiceInterface $employeeService)
+    public function __construct(TimesheetOvertime $model)
     {
         $this->model = $model;
-        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search = null, $period)
@@ -119,7 +116,7 @@ class TimesheetOvertimeRepository implements TimesheetOvertimeRepositoryInterfac
     {
         $now = Carbon::now();
         $periodGaji = Carbon::parse($periodeAbsenEnd);
-        $employees = Employee::with('contract')->with([
+        $employees = Employee::with([
             'contract' => function ($query) {
                 $query->select('id', 'employee_id', 'transaction_number', 'start_at', 'end_at', 'hour_per_day', 'created_at')->with([
                     'employeeContractDetail:id,employee_contract_id,nominal,created_at',
