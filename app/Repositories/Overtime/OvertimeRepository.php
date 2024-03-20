@@ -232,7 +232,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 $dataShiftSchedule['import'] = 0;
                 $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
             }
-    
+
             if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
                 return [
                     'message' => 'Validation Error!',
@@ -249,7 +249,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             //         'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
             //     ];
             // }
-    
+
             $overtime = $this->model->create($data);
             $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
             // save to table overtime history
@@ -273,7 +273,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 $shiftSchedule = ShiftSchedule::where('employee_id', $data['employee_id'])
                                         ->where('date', $fromDateParse->toDateString())
                                         ->first();
-    
+
                 $data['period'] = $fromDateParse->format('Y-m');
                 $data['date'] = $fromDateParse->toDateString();
                 $data['day'] = $fromDateParse->format('l');
@@ -390,7 +390,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 $dataShiftSchedule['import'] = 0;
                 $checkShiftSchedule = ShiftSchedule::create($dataShiftSchedule);
             }
-    
+
             if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
                 return [
                     'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
@@ -407,7 +407,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             //         'data' => ['type' => ['Data Shift Schedule sudah tercatat cuti!']]
             //     ];
             // }
-    
+
             $overtime = $this->model->create($data);
             $overtimeStatus = $this->overtimeStatusService->show($data['overtime_status_id']);
             // save to table overtime history
@@ -430,7 +430,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                 $shiftSchedule = ShiftSchedule::where('employee_id', $employeeId)
                                         ->where('date', $fromDateParse->toDateString())
                                         ->first();
-    
+
                 $data['period'] = $fromDateParse->format('Y-m');
                 $data['date'] = $fromDateParse->toDateString();
                 $data['day'] = $fromDateParse->format('l');
@@ -462,20 +462,20 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             $employee = $this->employeeService->show($overtime->employee_id);
             $getHakAkses = User::where('username',$employee->employment_number)->get()->first();
             $registrationIdStaff[] = $getHakAkses->firebase_id;
-    
+
             // notif ke HRDs
             $employeeHrd = User::where('hrd','1')->get();
             foreach ($employeeHrd as $key ) {
                 # code...
                 $firebaseIdx = $key;
             }
-    
+
             // if($employee->supervisor != null){
             //     if($employee->supervisor->user != null){
             //         $registrationIds[] = $employee->supervisor->user->firebase_id;
             //     }
             // }
-    
+
             if($employee->kabag_id != null ){
                 if($employee->kabag->user != null){
                     $registrationIds[] = $employee->kabag->user->firebase_id;
@@ -486,7 +486,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                     $registrationIds[] = $employee->manager->user->firebase_id;
                 }
             }
-    
+
             $startDate = Carbon::parse($overtime->from_date);
             $endDate = Carbon::parse($overtime->end_date);
             $registrationIds[] = $firebaseIdx->firebase_id;
@@ -494,7 +494,7 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotificationOvertimeLeader($registrationIds, $employee->name, $startDate->format('d-m-Y H:i'), $endDate->format('d-m-Y H:i'));
             }
-    
+
             if (!empty($registrationIdStaff)) {
                 $this->firebaseService->sendNotificationOvertimeStaff($registrationIdStaff, $startDate->format('d-m-Y H:i'), $endDate->format('d-m-Y H:i'));
             }
@@ -871,14 +871,18 @@ class OvertimeRepository implements OvertimeRepositoryInterface
                         $period,
                         $employee->contract['0']->hour_per_day ?? 0,
                     ]);
-                    // return 'sini';
-                    // DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
-                    //     $now->toDateString(),
-                    //     $periodeAbsenStart,
-                    //     $periodeAbsenEnd,
-                    //     $overtime->employee_id,
-                    //     $period,
-                    // ]);
+                    DB::select('CALL generateovertimes(?, ?, ?, ?, ?)', [
+                        $now->toDateString(),
+                        $periodeAbsenStart,
+                        $periodeAbsenEnd,
+                        $overtime->employee_id,
+                        $period,
+                        // '2024-02-20',
+                        // '2024-02-01',
+                        // '2024-02-29',
+                        // '01hnqq6tjqnjqks1f61tt3q49x',
+                        // '2024-02',
+                    ]);
                 }
                 // delete overtime if employee non shift if batal
                 // if ($overtime->leave_type_id == 1 && $data['overtime_status_id'] == 10) {
@@ -909,12 +913,12 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             }
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback on errors
-            return null;
+            return $e->getMessage();
         }
     }
 
     public function updateStatusMobile($overtimeId, $overtimeStatusId)
-    {        
+    {
         DB::beginTransaction();
         try {
             $overtime = $this->model->find($overtimeId);
@@ -956,10 +960,8 @@ class OvertimeRepository implements OvertimeRepositoryInterface
             // Rollback the transaction in case of an exception
             DB::rollBack();
             // Log the error or handle it as needed
-            return null;
+            return $e->getMessage();
         }
-
-        return null;
     }
 
 
