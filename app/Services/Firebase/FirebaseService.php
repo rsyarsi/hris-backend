@@ -123,7 +123,7 @@ class FirebaseService implements FirebaseServiceInterface
             'Content-Type' => 'application/json',
             'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION_INFORMATION') // Make sure to prefix the authorization key with 'key='
         ])->post(env('FIREBASE_URL'), [
-            'to' => '/topics/tester',
+            'to' => '/topics/news',
             'data' => [
                 'extra_information' => 'Notification : New Information'
             ],
