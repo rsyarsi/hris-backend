@@ -240,7 +240,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                     if ($endDate) {
                         $query->whereDate('date', '<=', $endDate);
                     }
-        return $query->orderBy('date', 'ASC')->paginate($perPage);
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -821,7 +821,7 @@ class ShiftScheduleRepository implements ShiftScheduleRepositoryInterface
                         });
                 });
             }
-        return $query->orderBy('shift_schedule_date', 'asc')->paginate($perPage);
+        return $query->orderBy('shift_schedule_date', 'DESC')->paginate($perPage);
     }
 
     public function shiftScheduleKehadiran($perPage, $startDate = null, $endDate = null)

@@ -44,23 +44,23 @@ class SendNotificationAbsenNonShift extends Command
                 $firebaseIds[] = $employee->user->firebase_id;
                 $names = $employee->user->name;
                 // Log::info($firebaseIds);
-                Log::info("Hay, " . $names . ", Jangan lupa absen masuk ya....");
-                Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION')
-                ])->post('https://fcm.googleapis.com/fcm/send', [
-                    'registration_ids' => $firebaseIds,
-                    'data' => [
-                        'extra_information' => 'Notification : ABSEN MASUK'
-                    ],
-                    'notification' => [
-                        'title' => '📢 📢📢 ABSEN MASUUK...',
-                        'body' => 'Hay '.$names.', Jangan lupa absen masuk ya....',
-                        'image' => ''
-                    ]
-                ]);
             }
         }
+        Log::info("Hay, " . $names . ", Jangan lupa absen masuk ya....");
+        Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION')
+        ])->post('https://fcm.googleapis.com/fcm/send', [
+            'registration_ids' => $firebaseIds,
+            'data' => [
+                'extra_information' => 'Notification : ABSEN MASUK'
+            ],
+            'notification' => [
+                'title' => '📢 📢📢 ABSEN MASUUK...',
+                'body' => 'Hay '.$names.', Jangan lupa absen masuk ya....',
+                'image' => ''
+            ]
+        ]);
 
         return Command::SUCCESS;
     }

@@ -199,7 +199,7 @@ class ShiftScheduleExchangeRepository implements ShiftScheduleExchangeRepository
         if ($endDate) {
             $query->whereDate('shift_schedule_date_requested', '<=', $endDate);
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('shift_schedule_date_requested', 'DESC')->paginate($perPage);
     }
 
     public function indexSubordinateMobile($employeeId)

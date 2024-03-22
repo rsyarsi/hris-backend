@@ -312,6 +312,6 @@ class CatatanCutiRepository implements CatatanCutiRepositoryInterface
             });
         }
         $query = $query1->unionAll($query2);
-        return $query->orderBy('created_at', 'ASC')->paginate($perPage);
+        return $query->orderBy('created_at', 'DESC')->paginate($perPage);
     }
 }

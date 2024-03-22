@@ -775,7 +775,7 @@ class LeaveRepository implements LeaveRepositoryInterface
                             });
             });
         }
-        return $query->paginate($perPage);
+        return $query->orderBy('from_date', 'DESC')->paginate($perPage);
     }
 
     public function leaveSupervisorOrManagerMobile($employeeId)
