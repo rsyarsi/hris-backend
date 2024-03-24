@@ -69,6 +69,7 @@ use App\Services\ShiftScheduleExchange\{ShiftScheduleExchangeService, ShiftSched
 use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, EmployeeContractDetailServiceInterface};
 use App\Services\EmployeePositionHistory\{EmployeePositionHistoryService, EmployeePositionHistoryServiceInterface};
 use App\Services\JobVacancy\{JobVacancyService, JobVacancyServiceInterface};
+use App\Services\Ethnic\{EthnicService, EthnicServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -134,6 +135,7 @@ use App\Repositories\ShiftScheduleExchange\{ShiftScheduleExchangeRepository, Shi
 use App\Repositories\EmployeeContractDetail\{EmployeeContractDetailRepository, EmployeeContractDetailRepositoryInterface};
 use App\Repositories\EmployeePositionHistory\{EmployeePositionHistoryRepository, EmployeePositionHistoryRepositoryInterface};
 use App\Repositories\JobVacancy\{JobVacancyRepository, JobVacancyRepositoryInterface};
+use App\Repositories\Ethnic\{EthnicRepository, EthnicRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -396,9 +398,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InformationRepositoryInterface::class, InformationRepository::class);
         $this->app->bind(InformationServiceInterface::class, InformationService::class);
 
-        // JobVacancy
+        // Job Vacancy / Lowongan Kerja
         $this->app->bind(JobVacancyRepositoryInterface::class, JobVacancyRepository::class);
         $this->app->bind(JobVacancyServiceInterface::class, JobVacancyService::class);
+
+        // Ethnic
+        $this->app->bind(EthnicRepositoryInterface::class, EthnicRepository::class);
+        $this->app->bind(EthnicServiceInterface::class, EthnicService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

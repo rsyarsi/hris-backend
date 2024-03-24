@@ -17,7 +17,7 @@ use App\Http\Controllers\API\V1\{
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
     SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
-    InformationController, OrderOvertimeController, JobVacancyController
+    InformationController, OrderOvertimeController, JobVacancyController, EthnicController
 };
 use App\Http\Controllers\{
     PublicJobVacancyController
@@ -376,6 +376,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         });
         // route for Job Vacancy
         Route::resource('job-vacancies', JobVacancyController::class)->parameters(['job-vacancies' => 'job_vacancies']);
+        // route for Ethnic
+        Route::resource('ethnics', EthnicController::class)->parameters(['ethnics' => 'ethnic']);
+        Route::controller(EthnicController::class)->group(function () {
+            // route for import ethnics
+            Route::post('import-ethnics', 'import')->name('import-ethnics');
+        });
     });
 });
 
