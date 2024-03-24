@@ -14,9 +14,9 @@ class JobVacancyService implements JobVacancyServiceInterface
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search = null, $startDate = null, $endDate = null, $status = null)
+    public function index($perPage, $search, $startDate, $endDate, $status)
     {
-        return $this->repository->index($perPage, $search = null, $startDate = null, $endDate = null, $status = null);
+        return $this->repository->index($perPage, $search, $startDate, $endDate, $status);
     }
 
     public function store(array $data)

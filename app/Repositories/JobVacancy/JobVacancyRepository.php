@@ -23,17 +23,19 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
                         ])
                         ->select();
         if ($search) {
-            $query->where('title', $search)
-                    ->orWhere('position', $search);
+            $query->where(function ($query) use ($search) {
+                $query->where('title', 'like', "%$search%")
+                        ->orWhere('position', 'like', "%$search%");
+            });
         }
-        if ($status) {
+        if ($status !== null) {
             $query->where('status', $status);
         }
-        if ($startDate) {
-            $query->whereDate('start_date', '>=', $startDate);
+        if ($startDate !== null) {
+            $query->where('start_date', '>=', $startDate);
         }
-        if ($endDate) {
-            $query->whereDate('end_date', '<=', $endDate);
+        if ($endDate !== null) {
+            $query->where('end_date', '<=', $endDate);
         }
         return $query->orderBy('start_date', 'DESC')->paginate($perPage);
     }
