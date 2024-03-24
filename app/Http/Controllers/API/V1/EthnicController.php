@@ -89,7 +89,7 @@ class EthnicController extends Controller
     {
         try {
             Excel::import(new EthnicImport, request()->file('file'));
-            return $this->success('Employee imported successfully', [], 201);
+            return $this->success('Ethnics imported successfully', [], 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
