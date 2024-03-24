@@ -17,7 +17,10 @@ use App\Http\Controllers\API\V1\{
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
     SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
-    InformationController, OrderOvertimeController
+    InformationController, OrderOvertimeController, JobVacancyController
+};
+use App\Http\Controllers\{
+    PublicJobVacancyController
 };
 
 /*
@@ -371,6 +374,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for get informations mobile
             Route::get('informations-mobile', 'indexMobile')->name('informations-mobile');
         });
+        // route for Job Vacancy
+        Route::resource('job-vacancies', JobVacancyController::class)->parameters(['job-vacancies' => 'job_vacancies']);
     });
 });
 
@@ -466,4 +471,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for update status mobile
         Route::post('order-overtime-update-status-mobile', 'updateStatusMobile')->name('order-overtime-update-status-mobile');
     });
+});
+
+Route::middleware('api')->group(function () {
+    Route::get('public/job-vacancies', [PublicJobVacancyController::class, 'index']);
 });
