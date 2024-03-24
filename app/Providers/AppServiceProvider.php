@@ -70,6 +70,7 @@ use App\Services\EmployeeContractDetail\{EmployeeContractDetailService, Employee
 use App\Services\EmployeePositionHistory\{EmployeePositionHistoryService, EmployeePositionHistoryServiceInterface};
 use App\Services\JobVacancy\{JobVacancyService, JobVacancyServiceInterface};
 use App\Services\Ethnic\{EthnicService, EthnicServiceInterface};
+use App\Services\Candidate\{CandidateService, CandidateServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -136,6 +137,7 @@ use App\Repositories\EmployeeContractDetail\{EmployeeContractDetailRepository, E
 use App\Repositories\EmployeePositionHistory\{EmployeePositionHistoryRepository, EmployeePositionHistoryRepositoryInterface};
 use App\Repositories\JobVacancy\{JobVacancyRepository, JobVacancyRepositoryInterface};
 use App\Repositories\Ethnic\{EthnicRepository, EthnicRepositoryInterface};
+use App\Repositories\Candidate\{CandidateRepository, CandidateRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -405,6 +407,10 @@ class AppServiceProvider extends ServiceProvider
         // Ethnic
         $this->app->bind(EthnicRepositoryInterface::class, EthnicRepository::class);
         $this->app->bind(EthnicServiceInterface::class, EthnicService::class);
+
+        // Candidate
+        $this->app->bind(CandidateRepositoryInterface::class, CandidateRepository::class);
+        $this->app->bind(CandidateServiceInterface::class, CandidateService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
