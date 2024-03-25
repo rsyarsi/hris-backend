@@ -15,13 +15,12 @@ return new class extends Migration
     {
         Schema::create('candidate_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('name', 150);
+            $table->string('email', 150)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('username')->nullable();
+            $table->string('username', 150)->nullable();
             $table->tinyInteger('active')->nullable()->default(0);
-            $table->tinyInteger('verified')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

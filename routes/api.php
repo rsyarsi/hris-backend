@@ -17,7 +17,8 @@ use App\Http\Controllers\API\V1\{
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
     SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
-    InformationController, OrderOvertimeController, JobVacancyController, EthnicController, CandidateController
+    InformationController, OrderOvertimeController, JobVacancyController, EthnicController, CandidateController,
+    CandidateAccountController
 };
 use App\Http\Controllers\{
     PublicJobVacancyController
@@ -480,6 +481,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
 
     // route for candidates
     Route::resource('candidates', CandidateController::class);
+    // route for candidates accounts
+    Route::resource('candidate-accounts', CandidateAccountController::class);
 });
 
 Route::middleware('api')->group(function () {

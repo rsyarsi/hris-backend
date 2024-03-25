@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CandidateAccountRequest;
 use App\Services\CandidateAccount\CandidateAccountServiceInterface;
 
-class CandidateAccountAccountController extends Controller
+class CandidateAccountController extends Controller
 {
     use ResponseAPI;
 
