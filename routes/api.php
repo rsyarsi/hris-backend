@@ -17,8 +17,11 @@ use App\Http\Controllers\API\V1\{
     PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
     SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
-    InformationController, OrderOvertimeController, JobVacancyController, EthnicController, CandidateController,
-    CandidateAccountController
+    InformationController, OrderOvertimeController, JobVacancyController, EthnicController, CandidateAccountController,
+    CandidateController, EmergencyContactCandidate, FamilyInformationCandidate, FamilyMemberCandidate,
+    EducationBackgroundCandidate, OrganizationExperienceCandidateController, ExpertiseCertificationCandidateController,
+    CoursesTrainingCandidateController, ForeignLanguageCandidateController, WorkExperienceCandidateController,
+    HospitalConnectionCandidateController, SelfPerspectiveCandidateController, AdditonalInformationCandidateController
 };
 use App\Http\Controllers\{
     PublicJobVacancyController
@@ -479,10 +482,21 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::post('order-overtime-update-status-mobile', 'updateStatusMobile')->name('order-overtime-update-status-mobile');
     });
 
-    // route for candidates
-    Route::resource('candidates', CandidateController::class);
-    // route for candidates accounts
-    Route::resource('candidate-accounts', CandidateAccountController::class);
+});
+
+Route::middleware('api')->prefix('v1/')->group(function () {
+    Route::prefix('career')->group(function () {
+        // route for candidates accounts
+        Route::resource('candidate-accounts', CandidateAccountController::class);
+        // route for candidates
+        Route::resource('candidates', CandidateController::class);
+        // candidate_accounts
+        // route for master users
+        // Route::controller(UserController::class)->group(function () {
+        //     // route for update password mobile
+        //     Route::post('/update-password-mobile', 'updatePasswordMobile')->name('update-password-mobile');
+        // });
+    });
 });
 
 Route::middleware('api')->group(function () {

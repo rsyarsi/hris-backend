@@ -14,7 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('hospital_connection_candidates', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('set null');
+            $table->string('candidate_id', 26)->nullable();
+            $table->foreignId('relationship_id')->nullable()->constrained('mrelationships')->nullOnDelete();
+            $table->string('name', 150)->nullable();
+            $table->foreignId('department_id')->nullable()->constrained('mdepartments')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('mpositions')->nullOnDelete();
             $table->timestamps();
         });
     }

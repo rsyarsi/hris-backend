@@ -14,7 +14,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('work_experience_candidates', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('set null');
+            $table->string('candidate_id', 26)->nullable();
+            $table->string('company', 150)->nullable();
+            $table->string('position', 150)->nullable();
+            $table->string('location')->nullable();
+            $table->date('from_date')->nullable();
+            $table->date('to_date')->nullable();
+            $table->text('job_description')->nullable();
+            $table->text('reason_for_resignation')->nullable();
             $table->timestamps();
         });
     }

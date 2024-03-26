@@ -2,86 +2,39 @@
 
 namespace App\Repositories\CandidateAccount;
 
-use Carbon\Carbon;
-use App\Models\{CandidateAccount, User};
-use Illuminate\Support\Facades\DB;
-use App\Repositories\CandidateAccount\CandidateRepositoryInterface;
+use App\Models\CandidateAccount;
 
-
-class CandidateRepository implements CandidateAccountRepositoryInterface
+class CandidateAccountRepository implements CandidateAccountRepositoryInterface
 {
     private $model;
+    private $field =
+    [
+        'name',
+        'email',
+        'username',
+        'active',
+    ];
 
     public function __construct(CandidateAccount $model)
     {
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null, $active)
+    public function index($perPage, $search = null, $active = null)
     {
         $query = $this->model
-                        ->with([
-                            'identityType' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'sex' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                        ])
-                        ->select();
-
-        if ($active === true) {
-            $query->where('resigned_at', '>=', Carbon::now()->toDateString());
-        }
-
+                    ->where('active', $active)
+                    ->select();
         if ($search !== null) {
-            $query->where(function ($query) use ($search) {
-                $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                    ->orWhere('employment_number', 'LIKE', "%{$search}%")
+            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
                     ->orWhere('email', 'LIKE', "%{$search}%");
-            });
         }
-        return $query->orderBy('employment_number', 'ASC')->paginate($perPage);
+        return $query->orderBy('name', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)
     {
         return $this->model->create($data);
-    }
-
-    public function candidateProfileMobile($candidateId)
-    {
-        $candidate = DB::table('candidates')
-                        ->select(
-                            'candidates.id as candidate_id',
-                            'candidates.employment_number as nik',
-                            'candidates.name as candidate_name',
-                            'candidates.birth_date as tanggal_lahir',
-                            'candidates.started_at as tanggal_masuk',
-                            // 'candidates.started_at as lama_kerja',
-                            DB::raw('EXTRACT(DAY FROM AGE(current_date, candidates.started_at)) as lama_kerja'),
-                            'candidates.file_url as photo',
-                            'munits.name as unit_name',
-                            'msexs.name as jenis_kelamin'
-                        )
-                        ->leftJoin('munits', 'candidates.unit_id', '=', 'munits.id')
-                        ->leftJoin('msexs', 'candidates.sex_id', '=', 'msexs.id')
-                        ->where('candidates.id', $candidateId)
-                        ->first();
-        if ($candidate) {
-            return [
-                'message' => 'CandidateAccount Retrieved Successfully!',
-                'success' => true,
-                'code' => 200,
-                'data' => [$candidate]
-            ];
-        }
-        return [
-            'message' => 'CandidateAccount Retrieved Successfully!',
-            'success' => false,
-            'code' => 200,
-            'data' => ''
-        ];
     }
 
     public function show($id)
@@ -91,51 +44,7 @@ class CandidateRepository implements CandidateAccountRepositoryInterface
                             'identityType' => function ($query) {
                                 $query->select('id', 'name');
                             },
-                            'sex' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'maritalStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'religion' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'province' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'city' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'district' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'village' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'currentProvince' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'currentCity' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'currentDistrict' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'currentVillage' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'statusEmployment' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'position' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'unit' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'department' => function ($query) {
-                                $query->select('id', 'name');
-                            },
+
                             'shiftGroup' => function ($query) {
                                 $query->select('id', 'name');
                             },
@@ -252,42 +161,9 @@ class CandidateRepository implements CandidateAccountRepositoryInterface
                                     'candidateCertificate:id,name,institution_name,started_at,ended_at,file_url,file_path,file_disk,verified_at,verified_user_Id,is_extended',
                                 ]);
                             },
-                            'contract' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'candidate_id',
-                                    'transaction_number',
-                                    'start_at',
-                                    'end_at',
-                                    'sk_number',
-                                    'shift_group_id',
-                                    'umk',
-                                    'contract_type_id',
-                                    'day',
-                                    'hour',
-                                    'hour_per_day',
-                                    'istirahat_overtime',
-                                    'vot1',
-                                    'vot2',
-                                    'vot3',
-                                    'vot4',
-                                    'unit_id',
-                                    'position_id',
-                                    'manager_id',
-                                )->with([
-                                    'candidate:id,name',
-                                    'shiftGroup:id,name,hour,day,type',
-                                    'contractType:id,name,active',
-                                    'unit:id,name,active',
-                                    'position:id,name,active',
-                                    'manager:id,name',
-                                    'candidateContractDetail:id,candidate_contract_id,payroll_component_id,nominal,active',
-                                    'candidateContractDetail.payrollComponent:id,name,active',
-                                ]);
-                            }
                         ])
                         ->where('id', $id)
-                        ->first($this->field);
+                        ->first();
         return $candidate ? $candidate : $candidate = null;
     }
 
@@ -296,9 +172,6 @@ class CandidateRepository implements CandidateAccountRepositoryInterface
         $candidate = $this->model->find($id);
         if ($candidate) {
             $candidate->update($data);
-            // if ($candidate->resigned_at , '>=', Carbon::now()->toDateString()) {
-            //     User::where('id', $candidate->user_id)->update(['active' => 0]);
-            // }
             return $candidate;
         }
         return null;

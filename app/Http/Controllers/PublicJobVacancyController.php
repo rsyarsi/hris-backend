@@ -2,34 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobVacancy;
 use App\Traits\ResponseAPI;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Services\JobVacancy\JobVacancyServiceInterface;
 
 class PublicJobVacancyController extends Controller
 {
     use ResponseAPI;
 
-    public function index(): JsonResponse
-    {
-        $jobVacancies = DB::table('job_vacancies')
-            ->join('meducations', 'job_vacancies.education_id', '=', 'meducations.id')
-            ->select(
-                'job_vacancies.title',
-                'job_vacancies.position',
-                'job_vacancies.description',
-                'job_vacancies.start_date',
-                'job_vacancies.end_date',
-                'job_vacancies.min_age',
-                'job_vacancies.max_age',
-                'job_vacancies.experience',
-                'job_vacancies.note',
-                'meducations.name as education_name'
-            )
-            ->where('job_vacancies.status', 1)
-            ->get();
+    private $jobVacancyService;
 
-        return $this->success('Job Vacancy retrieved successfully', $jobVacancies);
+    public function __construct(JobVacancyServiceInterface $jobVacancyService)
+    {
+        $this->jobVacancyService = $jobVacancyService;
+    }
+
+    public function index(Request $request)
+    {
+        try {
+            $jobVacancys = $this->jobVacancyService->indexPublic();
+            return $this->success('Job Vacancy retrieved successfully', $jobVacancys);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 }

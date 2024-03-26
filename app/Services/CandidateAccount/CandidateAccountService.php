@@ -4,7 +4,7 @@ namespace App\Services\CandidateAccount;
 use Illuminate\Support\Str;
 use App\Repositories\CandidateAccount\CandidateAccountRepositoryInterface;
 
-class CandidateService implements CandidateAccountServiceInterface
+class CandidateAccountService implements CandidateAccountServiceInterface
 {
     private $repository;
 
@@ -21,8 +21,7 @@ class CandidateService implements CandidateAccountServiceInterface
     public function store(array $data)
     {
         $data['name'] = $this->formatTextTitle($data['name']);
-        $data['religion_id'] = 1;
-        $data['resigned_at'] = '3000-01-01 00:00:00';
+        $data['password'] = $this->encryptPassword($data['password']);
         return $this->repository->store($data);
     }
 
@@ -34,6 +33,10 @@ class CandidateService implements CandidateAccountServiceInterface
     public function update($id, $data)
     {
         $data['name'] = $this->formatTextTitle($data['name']);
+        if(\array_key_exists('password', $data)) {
+            $data['password'] = $this->encryptPassword($data['password']);
+        }
+
         return $this->repository->update($id, $data);
     }
 
@@ -45,5 +48,10 @@ class CandidateService implements CandidateAccountServiceInterface
     public function formatTextTitle($data)
     {
         return Str::title($data);
+    }
+
+    public function encryptPassword($data)
+    {
+        return bcrypt($data);
     }
 }

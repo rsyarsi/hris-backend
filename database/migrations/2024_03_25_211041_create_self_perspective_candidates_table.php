@@ -14,7 +14,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('self_perspective_candidates', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('set null');
+            $table->string('candidate_id', 26)->nullable();
+            $table->text('self_perspective')->nullable();
+            $table->text('strengths')->nullable();
+            $table->text('weaknesses')->nullable();
+            $table->text('successes')->nullable();
+            $table->text('failures')->nullable();
+            $table->text('career_overview')->nullable();
+            $table->text('future_expectations')->nullable();
             $table->timestamps();
         });
     }

@@ -45,6 +45,11 @@ class JobVacancyService implements JobVacancyServiceInterface
         return $this->repository->destroy($id);
     }
 
+    public function indexPublic()
+    {
+        return $this->repository->indexPublic();
+    }
+
     public function formatTextTitle($data)
     {
         return Str::upper($data);

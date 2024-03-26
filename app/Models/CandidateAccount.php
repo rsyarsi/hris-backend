@@ -22,7 +22,6 @@ class CandidateAccount extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
-        'user_device_id',
         'username',
         'active',
         'verified',

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('candidates', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->foreignId('candidate_account_id')->nullable()->constrained('candidate_accounts')->nullOnDelete();
             $table->string('first_name', 150);
             $table->string('middle_name', 150)->nullable();
             $table->string('last_name', 150)->nullable();
@@ -35,7 +36,6 @@ return new class extends Migration
             $table->string('tax_identify_number', 150)->nullable();
             $table->integer('weight')->nullable();
             $table->integer('height')->nullable();
-            $table->foreignId('candidate_account_id')->nullable()->constrained('candidate_accounts')->nullOnDelete();
             $table->timestamps();
         });
     }
