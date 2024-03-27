@@ -1,15 +1,15 @@
 <?php
-namespace App\Services\Candidate;
+namespace App\Services\EmergencyContactCandidate;
 
 use Illuminate\Support\Str;
-use App\Services\Candidate\CandidateServiceInterface;
-use App\Repositories\Candidate\CandidateRepositoryInterface;
+use App\Services\EmergencyContactCandidate\EmergencyContactCandidateServiceInterface;
+use App\Repositories\EmergencyContactCandidate\EmergencyContactCandidateRepositoryInterface;
 
-class CandidateService implements CandidateServiceInterface
+class EmergencyContactCandidateService implements EmergencyContactCandidateServiceInterface
 {
     private $repository;
 
-    public function __construct(CandidateRepositoryInterface $repository)
+    public function __construct(EmergencyContactCandidateRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -21,9 +21,7 @@ class CandidateService implements CandidateServiceInterface
 
     public function store(array $data)
     {
-        $data['first_name'] = $this->formatTextTitle($data['first_name']);
-        $data['middle_name'] = $data['middle_name'] ?? null;
-        $data['last_name'] = $data['last_name'] ?? null;
+        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->store($data);
     }
 
@@ -34,9 +32,7 @@ class CandidateService implements CandidateServiceInterface
 
     public function update($id, $data)
     {
-        $data['first_name'] = $this->formatTextTitle($data['first_name']);
-        $data['middle_name'] = $data['middle_name'] ?? null;
-        $data['last_name'] = $data['last_name'] ?? null;
+        $data['name'] = $this->formatTextTitle($data['name']);
         return $this->repository->update($id, $data);
     }
 

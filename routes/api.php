@@ -18,8 +18,8 @@ use App\Http\Controllers\API\V1\{
     TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
     SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
     InformationController, OrderOvertimeController, JobVacancyController, EthnicController, CandidateAccountController,
-    CandidateController, EmergencyContactCandidate, FamilyInformationCandidate, FamilyMemberCandidate,
-    EducationBackgroundCandidate, OrganizationExperienceCandidateController, ExpertiseCertificationCandidateController,
+    CandidateController, EmergencyContactCandidateController, FamilyInformationCandidateController, FamilyMemberCandidateController,
+    EducationBackgroundCandidateController, OrganizationExperienceCandidateController, ExpertiseCertificationCandidateController,
     CoursesTrainingCandidateController, ForeignLanguageCandidateController, WorkExperienceCandidateController,
     HospitalConnectionCandidateController, SelfPerspectiveCandidateController, AdditonalInformationCandidateController
 };
@@ -490,6 +490,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('candidate-accounts', CandidateAccountController::class);
         // route for candidates
         Route::resource('candidates', CandidateController::class);
+        // route for emergency contact candidates
+        Route::resource('emergency-contact-candidates', EmergencyContactCandidateController::class);
+
+
         // candidate_accounts
         // route for master users
         // Route::controller(UserController::class)->group(function () {

@@ -72,6 +72,7 @@ use App\Services\JobVacancy\{JobVacancyService, JobVacancyServiceInterface};
 use App\Services\Ethnic\{EthnicService, EthnicServiceInterface};
 use App\Services\CandidateAccount\{CandidateAccountService, CandidateAccountServiceInterface};
 use App\Services\Candidate\{CandidateService, CandidateServiceInterface};
+use App\Services\EmergencyContactCandidate\{EmergencyContactCandidateService, EmergencyContactCandidateServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -140,6 +141,7 @@ use App\Repositories\JobVacancy\{JobVacancyRepository, JobVacancyRepositoryInter
 use App\Repositories\Ethnic\{EthnicRepository, EthnicRepositoryInterface};
 use App\Repositories\CandidateAccount\{CandidateAccountRepository, CandidateAccountRepositoryInterface};
 use App\Repositories\Candidate\{CandidateRepository, CandidateRepositoryInterface};
+use App\Repositories\EmergencyContactCandidate\{EmergencyContactCandidateRepository, EmergencyContactCandidateRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -417,6 +419,10 @@ class AppServiceProvider extends ServiceProvider
         // Candidate
         $this->app->bind(CandidateRepositoryInterface::class, CandidateRepository::class);
         $this->app->bind(CandidateServiceInterface::class, CandidateService::class);
+
+        // Emergency Contact Candidate
+        $this->app->bind(EmergencyContactCandidateRepositoryInterface::class, EmergencyContactCandidateRepository::class);
+        $this->app->bind(EmergencyContactCandidateServiceInterface::class, EmergencyContactCandidateService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

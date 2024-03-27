@@ -22,8 +22,6 @@ return new class extends Migration
             $table->foreignId('sex_id')->nullable()->constrained('msexs')->nullOnDelete();
             $table->text('address')->nullable();
             $table->string('phone_number', 20)->nullable();
-            $table->text('current_address')->nullable();
-            $table->string('home_phone_number', 20)->nullable();
             $table->timestamps();
         });
     }

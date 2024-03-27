@@ -1,7 +1,7 @@
 <?php
-namespace App\Repositories\Candidate;
+namespace App\Services\EmergencyContactCandidate;
 
-Interface CandidateRepositoryInterface
+interface EmergencyContactCandidateServiceInterface
 {
     public function index($perPage, $search);
     public function store(array $data);

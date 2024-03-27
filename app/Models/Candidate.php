@@ -18,6 +18,7 @@ class Candidate extends Model
 
     protected $fillable =
     [
+        'candidate_account_id',
         'first_name',
         'middle_name',
         'last_name',
@@ -38,7 +39,6 @@ class Candidate extends Model
         'tax_identify_number',
         'weight',
         'height',
-        'candidate_account_id',
     ];
 
     public function identityType()

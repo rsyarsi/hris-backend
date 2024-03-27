@@ -22,8 +22,9 @@ class CandidateAccountRepository implements CandidateAccountRepositoryInterface
 
     public function index($perPage, $search = null, $active = null)
     {
+        $status = $active == true ? 1 : 0;
         $query = $this->model
-                    ->where('active', $active)
+                    ->where('active', $status)
                     ->select();
         if ($search !== null) {
             $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])

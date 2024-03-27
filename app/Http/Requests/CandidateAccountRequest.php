@@ -24,7 +24,7 @@ class CandidateAccountRequest extends FormRequest
                 'max:150',
                 Rule::unique('users')->ignore($this->route('user')),
             ],
-            'password' => [Rule::requiredIf($this->isMethod('post')), 'string', 'max:255'],
+            'password' => [Rule::requiredIf($this->isMethod('post')), 'string', 'min:6', 'max:255'],
             'username' => [
                 'required',
                 'max:150',

@@ -25,8 +25,7 @@ class CandidateController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $active = $request->input('active');
-            $candidates = $this->candidateService->index($perPage, $search, $active);
+            $candidates = $this->candidateService->index($perPage, $search);
             return $this->success('Candidates retrieved successfully', $candidates);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
