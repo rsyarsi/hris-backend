@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Repositories\EmergencyContactCandidate;
+namespace App\Repositories\FamilyInformationCandidate;
 
-use App\Models\{EmergencyContactCandidate};
-use App\Repositories\EmergencyContactCandidate\EmergencyContactCandidateRepositoryInterface;
+use App\Models\{FamilyInformationCandidate};
+use App\Repositories\FamilyInformationCandidate\FamilyInformationCandidateRepositoryInterface;
 
 
-class EmergencyContactCandidateRepository implements EmergencyContactCandidateRepositoryInterface
+class FamilyInformationCandidateRepository implements FamilyInformationCandidateRepositoryInterface
 {
     private $model;
 
-    public function __construct(EmergencyContactCandidate $model)
+    public function __construct(FamilyInformationCandidate $model)
     {
         $this->model = $model;
     }
@@ -22,6 +22,8 @@ class EmergencyContactCandidateRepository implements EmergencyContactCandidateRe
                             'candidate:id,first_name,middle_name,last_name,email',
                             'relationship:id,name',
                             'sex:id,name',
+                            'education:id,name',
+                            'job:id,name',
                         ]);
 
         if ($search !== null) {
@@ -34,7 +36,7 @@ class EmergencyContactCandidateRepository implements EmergencyContactCandidateRe
                             ->orWhere('last_name', 'ILIKE', "%{$search}%");
                     });
             });
-        }        
+        }
         return $query->orderBy('name', 'ASC')->paginate($perPage);
     }
 
@@ -45,33 +47,35 @@ class EmergencyContactCandidateRepository implements EmergencyContactCandidateRe
 
     public function show($id)
     {
-        $emergencyContactcandidate = $this->model
+        $familyInformationcandidate = $this->model
                             ->with([
                                 'candidate:id,first_name,middle_name,last_name,email',
                                 'relationship:id,name',
                                 'sex:id,name',
+                                'education:id,name',
+                                'job:id,name',
                             ])
                             ->where('id', $id)
                             ->first();
-        return $emergencyContactcandidate ? $emergencyContactcandidate : $emergencyContactcandidate = null;
+        return $familyInformationcandidate ? $familyInformationcandidate : $familyInformationcandidate = null;
     }
 
     public function update($id, $data)
     {
-        $emergencyContactcandidate = $this->model->find($id);
-        if ($emergencyContactcandidate) {
-            $emergencyContactcandidate->update($data);
-            return $emergencyContactcandidate;
+        $familyInformationcandidate = $this->model->find($id);
+        if ($familyInformationcandidate) {
+            $familyInformationcandidate->update($data);
+            return $familyInformationcandidate;
         }
         return null;
     }
 
     public function destroy($id)
     {
-        $emergencyContactcandidate = $this->model->find($id);
-        if ($emergencyContactcandidate) {
-            $emergencyContactcandidate->delete();
-            return $emergencyContactcandidate;
+        $familyInformationcandidate = $this->model->find($id);
+        if ($familyInformationcandidate) {
+            $familyInformationcandidate->delete();
+            return $familyInformationcandidate;
         }
         return null;
     }

@@ -73,6 +73,9 @@ use App\Services\Ethnic\{EthnicService, EthnicServiceInterface};
 use App\Services\CandidateAccount\{CandidateAccountService, CandidateAccountServiceInterface};
 use App\Services\Candidate\{CandidateService, CandidateServiceInterface};
 use App\Services\EmergencyContactCandidate\{EmergencyContactCandidateService, EmergencyContactCandidateServiceInterface};
+use App\Services\FamilyInformationCandidate\{FamilyInformationCandidateService, FamilyInformationCandidateServiceInterface};
+use App\Services\FamilyMemberCandidate\{FamilyMemberCandidateService, FamilyMemberCandidateServiceInterface};
+use App\Services\EducationBackgroundCandidate\{EducationBackgroundCandidateService, EducationBackgroundCandidateServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -142,6 +145,9 @@ use App\Repositories\Ethnic\{EthnicRepository, EthnicRepositoryInterface};
 use App\Repositories\CandidateAccount\{CandidateAccountRepository, CandidateAccountRepositoryInterface};
 use App\Repositories\Candidate\{CandidateRepository, CandidateRepositoryInterface};
 use App\Repositories\EmergencyContactCandidate\{EmergencyContactCandidateRepository, EmergencyContactCandidateRepositoryInterface};
+use App\Repositories\FamilyInformationCandidate\{FamilyInformationCandidateRepository, FamilyInformationCandidateRepositoryInterface};
+use App\Repositories\FamilyMemberCandidate\{FamilyMemberCandidateRepository, FamilyMemberCandidateRepositoryInterface};
+use App\Repositories\EducationBackgroundCandidate\{EducationBackgroundCandidateRepository, EducationBackgroundCandidateRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -423,6 +429,18 @@ class AppServiceProvider extends ServiceProvider
         // Emergency Contact Candidate
         $this->app->bind(EmergencyContactCandidateRepositoryInterface::class, EmergencyContactCandidateRepository::class);
         $this->app->bind(EmergencyContactCandidateServiceInterface::class, EmergencyContactCandidateService::class);
+
+        // Family Information Candidate
+        $this->app->bind(FamilyInformationCandidateRepositoryInterface::class, FamilyInformationCandidateRepository::class);
+        $this->app->bind(FamilyInformationCandidateServiceInterface::class, FamilyInformationCandidateService::class);
+
+        // Family Member Candidate
+        $this->app->bind(FamilyMemberCandidateRepositoryInterface::class, FamilyMemberCandidateRepository::class);
+        $this->app->bind(FamilyMemberCandidateServiceInterface::class, FamilyMemberCandidateService::class);
+
+        // Education Background Candidate
+        $this->app->bind(EducationBackgroundCandidateRepositoryInterface::class, EducationBackgroundCandidateRepository::class);
+        $this->app->bind(EducationBackgroundCandidateServiceInterface::class, EducationBackgroundCandidateService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

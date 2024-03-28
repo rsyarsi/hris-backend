@@ -53,6 +53,17 @@ class CandidateRepository implements CandidateRepositoryInterface
                                 'religion:id,name',
                                 'ethnic:id,name',
                                 'candidateAccount:id,name,email,username,active',
+                                'emergencyContact:id,candidate_id,relationship_id,name,sex_id,address,phone_number',
+                                'emergencyContact.relationship:id,name',
+                                'emergencyContact.sex:id,name',
+                                'familyInformation:id,candidate_id,relationship_id,name,sex_id,birth_place,birth_date,education_id,job_id',
+                                'familyInformation.relationship:id,name',
+                                'familyInformation.sex:id,name',
+                                'familyInformation.education:id,name',
+                                'familyInformation.job:id,name',
+
+                                'educationBackground:id,candidate_id,education_id,institution_name,major,started_year,ended_year,final_score',
+                                'educationBackground.education:id,name',
                             ])
                             ->where('id', $id)
                             ->first();

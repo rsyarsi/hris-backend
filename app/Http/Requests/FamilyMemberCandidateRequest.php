@@ -6,7 +6,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class EmergencyContactCandidateRequest extends FormRequest
+class FamilyMemberCandidateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,14 +30,16 @@ class EmergencyContactCandidateRequest extends FormRequest
             'relationship_id' => [
                 'required',
                 'exists:mrelationships,id',
-                Rule::unique('emergency_contact_candidates')->where(function ($query) {
+                Rule::unique('family_member_candidates')->where(function ($query) {
                     return $query->where('candidate_id', $this->candidate_id);
-                })->ignore($this->route('emergency_contact_candidate')),
+                })->ignore($this->route('family_member_candidates')),
             ],
-            'sex_id' => 'required|exists:msexs,id',
             'name' => 'required|string|max:150',
-            'address' => 'nullable|max:255',
-            'phone_number' => 'nullable|max:20',
+            'sex_id' => 'required|exists:msexs,id',
+            'birth_place' => 'nullable|max:50',
+            'birth_date' => 'nullable|date',
+            'education_id' => 'required|exists:meducations,id',
+            'job_id' => 'required|exists:mjobs,id',
         ];
     }
 

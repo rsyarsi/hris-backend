@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Repositories\EmergencyContactCandidate;
+namespace App\Repositories\EducationBackgroundCandidate;
 
-use App\Models\{EmergencyContactCandidate};
-use App\Repositories\EmergencyContactCandidate\EmergencyContactCandidateRepositoryInterface;
+use App\Models\{EducationBackgroundCandidate};
+use App\Repositories\EducationBackgroundCandidate\EducationBackgroundCandidateRepositoryInterface;
 
 
-class EmergencyContactCandidateRepository implements EmergencyContactCandidateRepositoryInterface
+class EducationBackgroundCandidateRepository implements EducationBackgroundCandidateRepositoryInterface
 {
     private $model;
 
-    public function __construct(EmergencyContactCandidate $model)
+    public function __construct(EducationBackgroundCandidate $model)
     {
         $this->model = $model;
     }
@@ -20,22 +20,22 @@ class EmergencyContactCandidateRepository implements EmergencyContactCandidateRe
         $query = $this->model
                         ->with([
                             'candidate:id,first_name,middle_name,last_name,email',
-                            'relationship:id,name',
-                            'sex:id,name',
+                            'education:id,name',
                         ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('candidate_id', $search)
-                    ->orWhere('name', 'ILIKE', "%{$search}%")
+                    ->orWhere('institution_name', 'ILIKE', "%{$search}%")
+                    ->orWhere('major', 'ILIKE', "%{$search}%")
                     ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
                         $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
                             ->orWhere('middle_name', 'ILIKE', "%{$search}%")
                             ->orWhere('last_name', 'ILIKE', "%{$search}%");
                     });
             });
-        }        
-        return $query->orderBy('name', 'ASC')->paginate($perPage);
+        }
+        return $query->orderBy('candidate_id', 'ASC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -45,33 +45,32 @@ class EmergencyContactCandidateRepository implements EmergencyContactCandidateRe
 
     public function show($id)
     {
-        $emergencyContactcandidate = $this->model
+        $educationBackgroundcandidate = $this->model
                             ->with([
                                 'candidate:id,first_name,middle_name,last_name,email',
-                                'relationship:id,name',
-                                'sex:id,name',
+                                'education:id,name',
                             ])
                             ->where('id', $id)
                             ->first();
-        return $emergencyContactcandidate ? $emergencyContactcandidate : $emergencyContactcandidate = null;
+        return $educationBackgroundcandidate ? $educationBackgroundcandidate : $educationBackgroundcandidate = null;
     }
 
     public function update($id, $data)
     {
-        $emergencyContactcandidate = $this->model->find($id);
-        if ($emergencyContactcandidate) {
-            $emergencyContactcandidate->update($data);
-            return $emergencyContactcandidate;
+        $educationBackgroundcandidate = $this->model->find($id);
+        if ($educationBackgroundcandidate) {
+            $educationBackgroundcandidate->update($data);
+            return $educationBackgroundcandidate;
         }
         return null;
     }
 
     public function destroy($id)
     {
-        $emergencyContactcandidate = $this->model->find($id);
-        if ($emergencyContactcandidate) {
-            $emergencyContactcandidate->delete();
-            return $emergencyContactcandidate;
+        $educationBackgroundcandidate = $this->model->find($id);
+        if ($educationBackgroundcandidate) {
+            $educationBackgroundcandidate->delete();
+            return $educationBackgroundcandidate;
         }
         return null;
     }

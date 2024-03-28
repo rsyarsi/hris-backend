@@ -71,8 +71,18 @@ class Candidate extends Model
         return $this->belongsTo(CandidateAccount::class, 'candidate_account_id', 'id');
     }
 
-    // public function employeeOrganization()
-    // {
-    //     return $this->hasMany(EmployeeOrganization::class, 'employee_id');
-    // }
+    public function emergencyContact()
+    {
+        return $this->hasMany(EmergencyContactCandidate::class, 'candidate_id');
+    }
+
+    public function familyInformation()
+    {
+        return $this->hasMany(FamilyInformationCandidate::class, 'candidate_id');
+    }
+
+    public function educationBackground()
+    {
+        return $this->hasMany(EducationBackgroundCandidate::class, 'candidate_id');
+    }
 }
