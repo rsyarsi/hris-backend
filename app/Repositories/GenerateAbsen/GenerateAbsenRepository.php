@@ -626,9 +626,8 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             logger('Error during absenFromMobile: ' . $e->getMessage());
             // Return error response
             return [
-                'success' => false,
-                'message' => 'Failed to process absen. Please try again later.',
-                'error' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'data' => []
             ];
         }
 
