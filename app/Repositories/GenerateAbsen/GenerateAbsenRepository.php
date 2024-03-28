@@ -5,6 +5,7 @@ namespace App\Repositories\GenerateAbsen;
 use Carbon\Carbon;
 use App\Models\Employee;
 use App\Models\GenerateAbsen;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
 
 class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
@@ -462,192 +463,174 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 
     public function absenFromMobile(array $data)
     {
-        $idSchedule = $data['Id_schedule'];
-        $employeeId = $data['employee_id'];
-        $date = $data['date'];
-        $type = $data['type']; // ABSEN / SPL(SURAT PERINTAH LEMBUR)
-        $function = $data['function']; // IN / OUT
-        $overtimeId = $data['Overtime_id']; // OVERTIME ID YANG DIKIRIM DARI FE
-        // $fromDateOvertime = Carbon::parse($data['from_date_overtime']); // FROM DATE OVERTIME DI TABLE OVERTIMES
-        // $toDateOvertime = Carbon::parse($data['to_date_overtime']); // TO DATE OVERTIME DI TABLE OVERTIMES
-        // $durationOvertime = $data['duration_overtime']; // DURATION OVERTIME DI TABLE OVERTIMES
-        $date = $data['date']; // TIME IN DARI FE
-        $timeIn = $data['time_in_at']; // TIME IN DARI FE
-        // $timestampTimeIn = Carbon::parse($date.''.$timeIn);
-        // ABSEN
-        if ($type == 'ABSEN') {
-            $existingRecordAbsen = $this->model
-                                        ->where('shift_schedule_id', $idSchedule)
-                                        ->where('employee_id', $employeeId)
-                                        // ->where('date', $date)
-                                        // ->orWhere('date_out_at', $date)
-                                        ->where('type', 'ABSEN')
-                                        ->first();
-                                        // return [
-                                        //     'message' => 'data ketemu!',
-                                        //     'data' => [$existingRecordAbsen]
-                                        // ];
-            if ($function == 'IN') {
-                if ($existingRecordAbsen && $existingRecordAbsen->note == "TIDAK ABSEN MASUK") { // CASE TIDAK ABSEN MASUK
-                    return [
-                        'message' => 'ANDA TIDAK BISA ABSEN MASUK!',
-                        'data' => [$existingRecordAbsen]
-                    ];
-                } else if ($existingRecordAbsen && ($existingRecordAbsen->time_in_at == null && $existingRecordAbsen->time_in_at == "")) { // update absen (NON SHIFT);
-                    $existingRecordAbsen->update([
-                        'date_in_at' => $data['date_in_at'],
-                        'time_in_at' => $data['time_in_at'],
-                        'date_out_at' => now()->format('Y-m-d'),
-                        'time_out_at' => null,
-                        'telat' => $data['telat'],
-                        'note' => $data['telat'] !== null ? 'WARNING' : 'BELUM ABSEN PULANG',
-                    ]);
-                    return [
-                        'message' => 'Absen Masuk Berhasil!',
-                        'data' => [$existingRecordAbsen]
-                    ];
-                } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at !== null) {
-                    return [
-                        'message' => 'Anda Sudah Absen Masuk!',
-                        'data' => [$existingRecordAbsen]
-                    ];
-                } else { // Create a new record
-                    $data['time_out_at'] = null;
-                    $data['note'] = "BELUM ABSEN PULANG";
-                    $data['shift_schedule_id'] = $idSchedule;
-                    return [
-                        'message' => 'Absen Masuk Berhasil!',
-                        'data' => [$this->model->create($data)]
-                    ];
-                }
-            }
-
-            if ($function == 'OUT') {
-                $existingRecordAbsenOut = $this->model
-                                                ->where('shift_schedule_id', $idSchedule)
-                                                ->where('type', 'ABSEN')
-                                                ->first();
-                    // return [
-                    //     'message' => 'data ketemu!',
-                    //     'data' => [$existingRecordAbsenOut]
-                    // ];
-                if ($existingRecordAbsenOut) {
-                    if ($existingRecordAbsenOut->time_out_at !== null && $existingRecordAbsenOut->time_out_at == "") {
-                        return [
-                            'message' => 'Anda Sudah Absen Keluar!',
-                            'data' => [$existingRecordAbsenOut]
-                        ];
-                    } else { // Check if a record exists for the employee and date
-                        $timeOutAt = $data['time_out_at'];
-                        $scheduleTimeOutAt = $existingRecordAbsenOut->schedule_time_out_at;
-                        $pa = null; //pa = pulang awal
-                        if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
-                            $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
-                        }
-                        $existingRecordAbsenOut->update([
-                            'time_out_at' => $data['time_out_at'],
-                            'date_out_at' => now()->format('Y-m-d'),
-                            'pa' => $pa,
-                            'note' => $pa == null && $existingRecordAbsenOut->telat == null ? null : 'WARNING',
-                        ]);
-                        return [
-                            'message' => 'Absen Keluar Berhasil!',
-                            'data' => [$existingRecordAbsenOut]
-                        ];
-                    }
-                } else {
-                    // return [
-                    //     'message' => 'Anda Belum Absen/Data not found',
-                    //     'data' => []
-                    // ];
-                    $data['date_in_at'] = null;
-                    $data['time_in_at'] = null;
-                    $data['time_out_at'] = $data['time_out_at'];
-                    $data['note'] = "TIDAK ABSEN MASUK";
-                    $data['shift_schedule_id'] = $idSchedule;
-                    return [
-                        'message' => 'Absen Out Berhasil!',
-                        'data' => [$this->model->create($data)]
-                    ];
-                }
-            }
-        } else {
-            // EXISTING RECORD
-            $existingRecordOvertime = $this->model
-                                            ->where('employee_id', $employeeId)
-                                            ->where('type', 'SPL')
-                                            ->where('date', $date)
-                                            ->orWhere('overtime_out_at', $date)
-                                            ->first();
-            // return $existingRecordOvertime;
-
-            if ($type == 'SPL' && $function == 'IN') {
-                if ($existingRecordOvertime == null) {
-                    $data['overtime_id'] = $overtimeId;
-                    $data['overtime_time_at'] = $timeIn;
-                    $data['schedule_overtime_time_at'] = $data['from_date_overtime'] ?? null;
-                    $data['schedule_overtime_out_at'] = $data['to_date_overtime'] ?? null;
-                    $data['telat'] = 0;
-                    $data['pa'] = 0;
-                    $data['note'] = "BELUM ABSEN PULANG OVERTIME";
-                    $data['time_out_at'] = null;
-                    $data['overtime_out_at'] = null;
-                    $data['shift_schedule_id'] = $idSchedule;
-                    $data['overtime_hours'] = $data['duration_overtime'];
-                    $data['overtime_type'] = $data['overtime_type'];
-                    return [
-                        'message' => 'Absen Masuk Overtime Berhasil!',
-                        'data' => [
-                                $this->model->create($data)
-                            ]
-                    ];
-                } else {
-                    return [
-                        'message' => 'Anda Sudah Absen Masuk Overtime!',
-                        'data' => [$existingRecordOvertime]
-                    ];
-                }
-            }
-
-            if ($type == 'SPL' && $function == 'OUT') {
-                $existingRecordSplOut = $this->model
+        DB::beginTransaction();
+        try {
+            $idSchedule = $data['Id_schedule'];
+            $employeeId = $data['employee_id'];
+            $date = $data['date'];
+            $type = $data['type']; // ABSEN / SPL(SURAT PERINTAH LEMBUR)
+            $function = $data['function']; // IN / OUT
+            $overtimeId = $data['Overtime_id']; // OVERTIME ID YANG DIKIRIM DARI FE
+            // $fromDateOvertime = Carbon::parse($data['from_date_overtime']); // FROM DATE OVERTIME DI TABLE OVERTIMES
+            // $toDateOvertime = Carbon::parse($data['to_date_overtime']); // TO DATE OVERTIME DI TABLE OVERTIMES
+            // $durationOvertime = $data['duration_overtime']; // DURATION OVERTIME DI TABLE OVERTIMES
+            $date = $data['date']; // TIME IN DARI FE
+            $timeIn = $data['time_in_at']; // TIME IN DARI FE
+            // $timestampTimeIn = Carbon::parse($date.''.$timeIn);
+            // response variable
+            $finalData = "";
+            $message = "";
+            // ABSEN
+            if ($type == 'ABSEN') {
+                $existingRecordAbsen = $this->model
                                             ->where('shift_schedule_id', $idSchedule)
-                                            ->where('type', 'SPL')
+                                            ->where('employee_id', $employeeId)
+                                            // ->where('date', $date)
+                                            // ->orWhere('date_out_at', $date)
+                                            ->where('type', 'ABSEN')
                                             ->first();
-                if ($existingRecordSplOut) {
-                    if ($existingRecordSplOut->time_out_at !== null) {
-                        return [
-                            'message' => 'Anda Sudah Absen Overtime Keluar!',
-                            'data' => [$existingRecordSplOut]
-                        ];
-                    } else { // Check if a record exists for the employee and date
-                        // CHECK TIME OUT
-                        $finalOvertimeOutAt = $data['time_out_at'];
-                        $scheduleOvertimeOutAt = Carbon::parse($existingRecordSplOut->schedule_overtime_out_at);
-                        if ($data['time_out_at'] >= $scheduleOvertimeOutAt->format('H:i:s')) {
-                            $finalOvertimeOutAt = $scheduleOvertimeOutAt->format('H:i:s');
-                        }
-
-                        $existingRecordSplOut->update([
-                            'time_out_at' => $finalOvertimeOutAt,
+                if ($function == 'IN') {
+                    if ($existingRecordAbsen && $existingRecordAbsen->note == "TIDAK ABSEN MASUK") { // CASE TIDAK ABSEN MASUK
+                        $message = 'ANDA TIDAK BISA ABSEN MASUK!';
+                        $finalData = $existingRecordAbsen;
+                    } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
+                        $existingRecordAbsen->update([
+                            'date_in_at' => $data['date_in_at'],
+                            'time_in_at' => $data['time_in_at'],
                             'date_out_at' => now()->format('Y-m-d'),
-                            'overtime_out_at' => $finalOvertimeOutAt,
-                            'note' => null,
+                            'time_out_at' => null,
+                            'telat' => $data['telat'],
+                            'note' => $data['telat'] !== null ? 'WARNING' : 'BELUM ABSEN PULANG',
                         ]);
-                        return [
-                            'message' => 'Absen Keluar Overtime Berhasil!',
-                            'data' => [$existingRecordSplOut]
-                        ];
+                        $message = 'Absen Masuk Berhasil!';
+                        $finalData = $existingRecordAbsen;
+                    } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at !== null) {
+                        $message = 'Anda Sudah Absen Masuk!';
+                        $finalData = $existingRecordAbsen;
+                    } else { // Create a new record
+                        $data['time_out_at'] = null;
+                        $data['note'] = "BELUM ABSEN PULANG";
+                        $data['shift_schedule_id'] = $idSchedule;
+                        $message = 'Absen Masuk Berhasil!';
+                        $finalData = $this->model->create($data);
                     }
-                } else {
-                    // Handle the case where $existingRecordAbsen is null (data doesn't exist)
-                    // You might want to return an appropriate response or handle it accordingly
-                    return [
-                        'message' => 'Anda Belum Absen Overtime/Data not found',
-                        'data' => []
-                    ];
+                }
+    
+                if ($function == 'OUT') {
+                    $existingRecordAbsenOut = $this->model
+                                                    ->where('shift_schedule_id', $idSchedule)
+                                                    ->where('type', 'ABSEN')
+                                                    ->first();
+                    if ($existingRecordAbsenOut) {
+                        if ($existingRecordAbsenOut->time_out_at !== null) {
+                            $message = 'Anda Sudah Absen Keluar!';
+                            $finalData = $existingRecordAbsenOut;
+                        } else { // Check if a record exists for the employee and date
+                            $timeOutAt = $data['time_out_at'];
+                            $scheduleTimeOutAt = $existingRecordAbsenOut->schedule_time_out_at;
+                            $pa = null; //pa = pulang awal
+                            if (Carbon::parse($scheduleTimeOutAt)->greaterThan($timeOutAt)) {
+                                $pa = Carbon::parse($scheduleTimeOutAt)->diffInMinutes($timeOutAt);
+                            }
+                            $existingRecordAbsenOut->update([
+                                'time_out_at' => $data['time_out_at'],
+                                'date_out_at' => now()->format('Y-m-d'),
+                                'pa' => $pa,
+                                'note' => $pa == null && $existingRecordAbsenOut->telat == null ? null : 'WARNING',
+                            ]);
+                            $message = 'Absen Keluar Berhasil!';
+                            $finalData = $existingRecordAbsenOut;
+                        }
+                    } else {
+                        $data['date_in_at'] = null;
+                        $data['time_in_at'] = null;
+                        $data['time_out_at'] = $data['time_out_at'];
+                        $data['note'] = "TIDAK ABSEN MASUK";
+                        $data['shift_schedule_id'] = $idSchedule;
+                        $message = 'Absen Out Berhasil!';
+                        $finalData = $this->model->create($data);
+                    }
+                }
+            } else {
+                // EXISTING RECORD
+                $existingRecordOvertime = $this->model
+                                                ->where('employee_id', $employeeId)
+                                                ->where('type', 'SPL')
+                                                ->where('date', $date)
+                                                ->orWhere('overtime_out_at', $date)
+                                                ->first();
+    
+                if ($type == 'SPL' && $function == 'IN') {
+                    if ($existingRecordOvertime == null) {
+                        $data['overtime_id'] = $overtimeId;
+                        $data['overtime_time_at'] = $timeIn;
+                        $data['schedule_overtime_time_at'] = $data['from_date_overtime'] ?? null;
+                        $data['schedule_overtime_out_at'] = $data['to_date_overtime'] ?? null;
+                        $data['telat'] = 0;
+                        $data['pa'] = 0;
+                        $data['note'] = "BELUM ABSEN PULANG OVERTIME";
+                        $data['time_out_at'] = null;
+                        $data['overtime_out_at'] = null;
+                        $data['shift_schedule_id'] = $idSchedule;
+                        $data['overtime_hours'] = $data['duration_overtime'];
+                        $data['overtime_type'] = $data['overtime_type'];
+                        $message = 'Absen Masuk Overtime Berhasil!';
+                        $finalData = $this->model->create($data);
+                    } else {
+                        $message = 'Anda Sudah Absen Masuk Overtime!';
+                        $finalData = $existingRecordOvertime;
+                    }
+                }
+    
+                if ($type == 'SPL' && $function == 'OUT') {
+                    $existingRecordSplOut = $this->model
+                                                ->where('shift_schedule_id', $idSchedule)
+                                                ->where('type', 'SPL')
+                                                ->first();
+                    if ($existingRecordSplOut) {
+                        if ($existingRecordSplOut->time_out_at !== null) {
+                            $message = 'Anda Sudah Absen Overtime Keluar!';
+                            $finalData = $existingRecordSplOut;
+                        } else { // Check if a record exists for the employee and date
+                            // CHECK TIME OUT
+                            $finalOvertimeOutAt = $data['time_out_at'];
+                            $scheduleOvertimeOutAt = Carbon::parse($existingRecordSplOut->schedule_overtime_out_at);
+                            if ($data['time_out_at'] >= $scheduleOvertimeOutAt->format('H:i:s')) {
+                                $finalOvertimeOutAt = $scheduleOvertimeOutAt->format('H:i:s');
+                            }
+    
+                            $existingRecordSplOut->update([
+                                'time_out_at' => $finalOvertimeOutAt,
+                                'date_out_at' => now()->format('Y-m-d'),
+                                'overtime_out_at' => $finalOvertimeOutAt,
+                                'note' => null,
+                            ]);
+                            $message = 'Absen Keluar Overtime Berhasil!';
+                            $finalData = $existingRecordSplOut;
+                        }
+                    } else {
+                        $message = 'Anda Belum Absen Overtime/Data not found';
+                        $finalData = [];
+                    }
                 }
             }
+
+            DB::commit();
+            return [
+                'message' => $message,
+                'data' => [$finalData]
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log the error
+            logger('Error during absenFromMobile: ' . $e->getMessage());
+            // Return error response
+            return [
+                'success' => false,
+                'message' => 'Failed to process absen. Please try again later.',
+                'error' => $e->getMessage()
+            ];
         }
+
     }
 }
