@@ -494,8 +494,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('emergency-contact-candidates', EmergencyContactCandidateController::class)->parameters(['emergency-contact-candidates' => 'emergency_contact_candidate']);
         // route for family information candidates
         Route::resource('family-information-candidates', FamilyInformationCandidateController::class)->parameters(['family-information-candidates' => 'family_information_candidate']);
+        // route for family member candidates
+        Route::resource('family-member-candidates', FamilyMemberCandidateController::class)->parameters(['family-member-candidates' => 'family_member_candidate']);
         // route for family education background
         Route::resource('education-background-candidates', EducationBackgroundCandidateController::class)->parameters(['education-background-candidates' => 'education_background_candidate']);
+        // route for organization experience
+        Route::resource('organization-experience', OrganizationExperienceCandidateController::class)->parameters(['organization-experience' => 'organization_experience']);
 
 
         // candidate_accounts

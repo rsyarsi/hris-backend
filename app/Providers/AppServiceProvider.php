@@ -76,6 +76,7 @@ use App\Services\EmergencyContactCandidate\{EmergencyContactCandidateService, Em
 use App\Services\FamilyInformationCandidate\{FamilyInformationCandidateService, FamilyInformationCandidateServiceInterface};
 use App\Services\FamilyMemberCandidate\{FamilyMemberCandidateService, FamilyMemberCandidateServiceInterface};
 use App\Services\EducationBackgroundCandidate\{EducationBackgroundCandidateService, EducationBackgroundCandidateServiceInterface};
+use App\Services\OrganizationExperienceCandidate\{OrganizationExperienceCandidateService, OrganizationExperienceCandidateServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -148,6 +149,7 @@ use App\Repositories\EmergencyContactCandidate\{EmergencyContactCandidateReposit
 use App\Repositories\FamilyInformationCandidate\{FamilyInformationCandidateRepository, FamilyInformationCandidateRepositoryInterface};
 use App\Repositories\FamilyMemberCandidate\{FamilyMemberCandidateRepository, FamilyMemberCandidateRepositoryInterface};
 use App\Repositories\EducationBackgroundCandidate\{EducationBackgroundCandidateRepository, EducationBackgroundCandidateRepositoryInterface};
+use App\Repositories\OrganizationExperienceCandidate\{OrganizationExperienceCandidateRepository, OrganizationExperienceCandidateRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -441,6 +443,10 @@ class AppServiceProvider extends ServiceProvider
         // Education Background Candidate
         $this->app->bind(EducationBackgroundCandidateRepositoryInterface::class, EducationBackgroundCandidateRepository::class);
         $this->app->bind(EducationBackgroundCandidateServiceInterface::class, EducationBackgroundCandidateService::class);
+
+        // Organization Experience Candidate
+        $this->app->bind(OrganizationExperienceCandidateRepositoryInterface::class, OrganizationExperienceCandidateRepository::class);
+        $this->app->bind(OrganizationExperienceCandidateServiceInterface::class, OrganizationExperienceCandidateService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
