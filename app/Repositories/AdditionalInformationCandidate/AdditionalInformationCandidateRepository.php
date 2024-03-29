@@ -25,8 +25,6 @@ class AdditionalInformationCandidateRepository implements AdditionalInformationC
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('candidate_id', $search)
-                    ->orWhere('organization_name', 'ILIKE', "%{$search}%")
-                    ->orWhere('position', 'ILIKE', "%{$search}%")
                     ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
                         $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
                             ->orWhere('middle_name', 'ILIKE', "%{$search}%")

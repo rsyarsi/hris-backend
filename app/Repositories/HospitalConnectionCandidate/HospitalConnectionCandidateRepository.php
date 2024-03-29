@@ -18,15 +18,17 @@ class HospitalConnectionCandidateRepository implements HospitalConnectionCandida
     public function index($perPage, $search = null)
     {
         $query = $this->model
-                        ->with([
-                            'candidate:id,first_name,middle_name,last_name,email',
-                        ]);
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'relationship:id,name',
+                'department:id,name',
+                'position:id,name',
+            ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('candidate_id', $search)
-                    ->orWhere('organization_name', 'ILIKE', "%{$search}%")
-                    ->orWhere('position', 'ILIKE', "%{$search}%")
+                    ->orWhere('name', 'ILIKE', "%{$search}%")
                     ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
                         $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
                             ->orWhere('middle_name', 'ILIKE', "%{$search}%")
@@ -45,11 +47,14 @@ class HospitalConnectionCandidateRepository implements HospitalConnectionCandida
     public function show($id)
     {
         $hospitalConnectionCandidate = $this->model
-                            ->with([
-                                'candidate:id,first_name,middle_name,last_name,email',
-                            ])
-                            ->where('id', $id)
-                            ->first();
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'relationship:id,name',
+                'department:id,name',
+                'position:id,name',
+            ])
+            ->where('id', $id)
+            ->first();
         return $hospitalConnectionCandidate ? $hospitalConnectionCandidate : $hospitalConnectionCandidate = null;
     }
 
