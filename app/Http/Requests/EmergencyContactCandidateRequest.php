@@ -32,7 +32,7 @@ class EmergencyContactCandidateRequest extends FormRequest
                 'exists:mrelationships,id',
                 Rule::unique('emergency_contact_candidates')->where(function ($query) {
                     return $query->where('candidate_id', $this->candidate_id);
-                })->ignore($this->route('emergency_contact_candidate')),
+                })->ignore($this->route('emergency_contact')),
             ],
             'sex_id' => 'required|exists:msexs,id',
             'name' => 'required|string|max:150',

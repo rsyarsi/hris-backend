@@ -32,7 +32,7 @@ class FamilyInformationCandidateRequest extends FormRequest
                 'exists:mrelationships,id',
                 Rule::unique('family_information_candidates')->where(function ($query) {
                     return $query->where('candidate_id', $this->candidate_id);
-                })->ignore($this->route('family_information_candidates')),
+                })->ignore($this->route('family_information')),
             ],
             'name' => 'required|string|max:150',
             'sex_id' => 'required|exists:msexs,id',

@@ -32,7 +32,7 @@ class EducationBackgroundCandidateRequest extends FormRequest
                 'exists:meducations,id',
                 Rule::unique('education_background_candidates')->where(function ($query) {
                     return $query->where('candidate_id', $this->candidate_id);
-                })->ignore($this->route('education_background_candidate')),
+                })->ignore($this->route('education_background')),
             ],
             'institution_name' => 'required|string|max:150',
             'major' => 'nullable|max:150',

@@ -3,25 +3,85 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\{
-    AuthController, DepartmentController, EducationController, PositionController,
-    ReligionController, SexController, TaxController, UserController, UnitController, StatusEmploymentController,
-    JobController, RelationshipController, IdentityTypeController, MaritalStatusController,
-    LegalityTypeController, ProvinceController, CityController, DistrictController, VillageController,
-    EmployeeController, EmployeeOrganizationController, EmployeeExperienceController,
-    EmployeeEducationController, EmployeePositionHistoryController, EmployeeLegalityController,
-    EmployeeFamilyController, SkillTypeController, EmployeeCertificateController, EmployeeSkillController,
-    LeaveTypeController, LeaveStatusController, LeaveController, LeaveApprovalController, LeaveHistoryController,
-    ShiftGroupController, ShiftController, LogFingerController, OvertimeStatusController, OvertimeController,
-    ContractTypeController, PayrollComponentController, EmployeeContractController, EmployeeContractDetailController,
-    ShiftScheduleController, RoleController, PermissionController, GenerateAbsenController, LogFingerTempController,
-    PphController, DeductionController, GeneratePayrollController, UmpController, AdjustmentCutiController,
-    TimesheetOvertimeController, CatatanCutiController, OvertimeHistoryController, ShiftScheduleExchangeController,
-    SuratPeringatanController, MutationController, PromotionDemotionController, PengembalianController,
-    InformationController, OrderOvertimeController, JobVacancyController, EthnicController, CandidateAccountController,
-    CandidateController, EmergencyContactCandidateController, FamilyInformationCandidateController, FamilyMemberCandidateController,
-    EducationBackgroundCandidateController, OrganizationExperienceCandidateController, ExpertiseCertificationCandidateController,
-    CoursesTrainingCandidateController, ForeignLanguageCandidateController, WorkExperienceCandidateController,
-    HospitalConnectionCandidateController, SelfPerspectiveCandidateController, AdditonalInformationCandidateController
+    AuthController,
+    DepartmentController,
+    EducationController,
+    PositionController,
+    ReligionController,
+    SexController,
+    TaxController,
+    UserController,
+    UnitController,
+    StatusEmploymentController,
+    JobController,
+    RelationshipController,
+    IdentityTypeController,
+    MaritalStatusController,
+    LegalityTypeController,
+    ProvinceController,
+    CityController,
+    DistrictController,
+    VillageController,
+    EmployeeController,
+    EmployeeOrganizationController,
+    EmployeeExperienceController,
+    EmployeeEducationController,
+    EmployeePositionHistoryController,
+    EmployeeLegalityController,
+    EmployeeFamilyController,
+    SkillTypeController,
+    EmployeeCertificateController,
+    EmployeeSkillController,
+    LeaveTypeController,
+    LeaveStatusController,
+    LeaveController,
+    LeaveApprovalController,
+    LeaveHistoryController,
+    ShiftGroupController,
+    ShiftController,
+    LogFingerController,
+    OvertimeStatusController,
+    OvertimeController,
+    ContractTypeController,
+    PayrollComponentController,
+    EmployeeContractController,
+    EmployeeContractDetailController,
+    ShiftScheduleController,
+    RoleController,
+    PermissionController,
+    GenerateAbsenController,
+    LogFingerTempController,
+    PphController,
+    DeductionController,
+    GeneratePayrollController,
+    UmpController,
+    AdjustmentCutiController,
+    TimesheetOvertimeController,
+    CatatanCutiController,
+    OvertimeHistoryController,
+    ShiftScheduleExchangeController,
+    SuratPeringatanController,
+    MutationController,
+    PromotionDemotionController,
+    PengembalianController,
+    InformationController,
+    OrderOvertimeController,
+    JobVacancyController,
+    EthnicController,
+    CandidateAccountController,
+    CandidateController,
+    EmergencyContactCandidateController,
+    FamilyInformationCandidateController,
+    FamilyMemberCandidateController,
+    EducationBackgroundCandidateController,
+    OrganizationExperienceCandidateController,
+    ExpertiseCertificationCandidateController,
+    CoursesTrainingCandidateController,
+    ForeignLanguageCandidateController,
+    WorkExperienceCandidateController,
+    HospitalConnectionCandidateController,
+    SelfPerspectiveCandidateController,
+    AdditionalInformationCandidateController
 };
 use App\Http\Controllers\{
     PublicJobVacancyController
@@ -51,7 +111,6 @@ Route::middleware('api')->prefix('v1/auth')->group(function () {
         Route::get('/user-profile', 'userProfile');
         Route::post('/logout', 'logout');
     });
-
 });
 
 Route::middleware('api')->prefix('v1/')->group(function () {
@@ -463,7 +522,6 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::get('overtimes-unit-rekap', 'overtimeUnitRekap')->name('overtimes-unit-rekap');
         // Route for rekap department
         Route::get('overtimes-department-rekap', 'overtimedepartmentRekap')->name('overtimes-department-rekap');
-
     });
     // route for overtime histories
     Route::resource('overtime-histories', OvertimeHistoryController::class);
@@ -481,7 +539,6 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         // route for update status mobile
         Route::post('order-overtime-update-status-mobile', 'updateStatusMobile')->name('order-overtime-update-status-mobile');
     });
-
 });
 
 Route::middleware('api')->prefix('v1/')->group(function () {
@@ -490,24 +547,30 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('candidate-accounts', CandidateAccountController::class)->parameters(['candidate-accounts' => 'candidate_account']);
         // route for candidates
         Route::resource('candidates', CandidateController::class)->parameters(['candidates' => 'candidate']);
-        // route for emergency contact candidates
-        Route::resource('emergency-contact-candidates', EmergencyContactCandidateController::class)->parameters(['emergency-contact-candidates' => 'emergency_contact_candidate']);
-        // route for family information candidates
-        Route::resource('family-information-candidates', FamilyInformationCandidateController::class)->parameters(['family-information-candidates' => 'family_information_candidate']);
-        // route for family member candidates
-        Route::resource('family-member-candidates', FamilyMemberCandidateController::class)->parameters(['family-member-candidates' => 'family_member_candidate']);
-        // route for family education background
-        Route::resource('education-background-candidates', EducationBackgroundCandidateController::class)->parameters(['education-background-candidates' => 'education_background_candidate']);
+        // route for emergency contact
+        Route::resource('emergency-contacts', EmergencyContactCandidateController::class)->parameters(['emergency-contacts' => 'emergency_contact']);
+        // route for family informations
+        Route::resource('family-informations', FamilyInformationCandidateController::class)->parameters(['family-informations' => 'family_information']);
+        // route for family member
+        Route::resource('family-members', FamilyMemberCandidateController::class)->parameters(['family-members' => 'family_member']);
+        // route for education background
+        Route::resource('education-backgrounds', EducationBackgroundCandidateController::class)->parameters(['education-backgrounds' => 'education_background']);
         // route for organization experience
-        Route::resource('organization-experience', OrganizationExperienceCandidateController::class)->parameters(['organization-experience' => 'organization_experience']);
-
-
-        // candidate_accounts
-        // route for master users
-        // Route::controller(UserController::class)->group(function () {
-        //     // route for update password mobile
-        //     Route::post('/update-password-mobile', 'updatePasswordMobile')->name('update-password-mobile');
-        // });
+        Route::resource('organization-experiences', OrganizationExperienceCandidateController::class)->parameters(['organization-experiences' => 'organization_experience']);
+        // route for expertise certification
+        Route::resource('expertise-certifications', ExpertiseCertificationCandidateController::class)->parameters(['expertise-certifications' => 'expertise_certification']);
+        // route for courses training
+        Route::resource('courses-trainings', CoursesTrainingCandidateController::class)->parameters(['courses-trainings' => 'courses_training']);
+        // route for Foreign Language
+        Route::resource('foreign-languages', ForeignLanguageCandidateController::class)->parameters(['foreign-languages' => 'foreign_language']);
+        // route for Work Experience
+        Route::resource('work-experiences', WorkExperienceCandidateController::class)->parameters(['work-experiences' => 'work_experiences']);
+        // route for Hospital Connection
+        Route::resource('hospital-connections', HospitalConnectionCandidateController::class)->parameters(['hospital-connections' => 'hospital_connection']);
+        // route for Self Perspective
+        Route::resource('self-perspectives', SelfPerspectiveCandidateController::class)->parameters(['self-perspectives' => 'self_perspective']);
+        // route for Additional Information
+        Route::resource('additional-informations', AdditionalInformationCandidateController::class)->parameters(['additional-informations' => 'additional_informations']);
     });
 });
 

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('additonal_information_candidates', function (Blueprint $table) {
+        Schema::create('additional_information_candidates', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('set null');
             $table->string('candidate_id', 26)->nullable();

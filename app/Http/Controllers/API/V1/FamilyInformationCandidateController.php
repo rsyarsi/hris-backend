@@ -77,7 +77,7 @@ class FamilyInformationCandidateController extends Controller
             if (!$familyInformationCandidate) {
                 return $this->error('Family Information Candidate not found', 404);
             }
-            return $this->success('Family Information Candidate deleted successfully, id : '.$familyInformationCandidate->id, []);
+            return $this->success('Family Information Candidate deleted successfully, id : ' . $familyInformationCandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

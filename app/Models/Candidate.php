@@ -85,4 +85,44 @@ class Candidate extends Model
     {
         return $this->hasMany(EducationBackgroundCandidate::class, 'candidate_id');
     }
+
+    public function organizationExperience()
+    {
+        return $this->hasMany(OrganizationExperienceCandidate::class, 'candidate_id');
+    }
+
+    public function expertiseCertification()
+    {
+        return $this->hasMany(ExpertiseCertificationCandidate::class, 'candidate_id');
+    }
+
+    public function coursesTraining()
+    {
+        return $this->hasMany(CoursesTrainingCandidate::class, 'candidate_id');
+    }
+
+    public function foreignLanguage()
+    {
+        return $this->hasMany(ForeignLanguageCandidate::class, 'candidate_id');
+    }
+
+    public function workExperience()
+    {
+        return $this->hasMany(WorkExperienceCandidate::class, 'candidate_id');
+    }
+
+    public function hospitalConnection()
+    {
+        return $this->hasMany(HospitalConnectionCandidate::class, 'candidate_id');
+    }
+
+    public function selfPerspective()
+    {
+        return $this->hasMany(SelfPerspectiveCandidate::class, 'candidate_id');
+    }
+
+    public function additionalInformation()
+    {
+        return $this->hasMany(AdditionalInformationCandidate::class, 'candidate_id');
+    }
 }

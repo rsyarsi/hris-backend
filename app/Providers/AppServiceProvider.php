@@ -77,6 +77,13 @@ use App\Services\FamilyInformationCandidate\{FamilyInformationCandidateService, 
 use App\Services\FamilyMemberCandidate\{FamilyMemberCandidateService, FamilyMemberCandidateServiceInterface};
 use App\Services\EducationBackgroundCandidate\{EducationBackgroundCandidateService, EducationBackgroundCandidateServiceInterface};
 use App\Services\OrganizationExperienceCandidate\{OrganizationExperienceCandidateService, OrganizationExperienceCandidateServiceInterface};
+use App\Services\ExpertiseCertificationCandidate\{ExpertiseCertificationCandidateService, ExpertiseCertificationCandidateServiceInterface};
+use App\Services\CoursesTrainingCandidate\{CoursesTrainingCandidateService, CoursesTrainingCandidateServiceInterface};
+use App\Services\ForeignLanguageCandidate\{ForeignLanguageCandidateService, ForeignLanguageCandidateServiceInterface};
+use App\Services\WorkExperienceCandidate\{WorkExperienceCandidateService, WorkExperienceCandidateServiceInterface};
+use App\Services\HospitalConnectionCandidate\{HospitalConnectionCandidateService, HospitalConnectionCandidateServiceInterface};
+use App\Services\SelfPerspectiveCandidate\{SelfPerspectiveCandidateService, SelfPerspectiveCandidateServiceInterface};
+use App\Services\AdditionalInformationCandidate\{AdditionalInformationCandidateService, AdditionalInformationCandidateServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -150,6 +157,13 @@ use App\Repositories\FamilyInformationCandidate\{FamilyInformationCandidateRepos
 use App\Repositories\FamilyMemberCandidate\{FamilyMemberCandidateRepository, FamilyMemberCandidateRepositoryInterface};
 use App\Repositories\EducationBackgroundCandidate\{EducationBackgroundCandidateRepository, EducationBackgroundCandidateRepositoryInterface};
 use App\Repositories\OrganizationExperienceCandidate\{OrganizationExperienceCandidateRepository, OrganizationExperienceCandidateRepositoryInterface};
+use App\Repositories\ExpertiseCertificationCandidate\{ExpertiseCertificationCandidateRepository, ExpertiseCertificationCandidateRepositoryInterface};
+use App\Repositories\CoursesTrainingCandidate\{CoursesTrainingCandidateRepository, CoursesTrainingCandidateRepositoryInterface};
+use App\Repositories\ForeignLanguageCandidate\{ForeignLanguageCandidateRepository, ForeignLanguageCandidateRepositoryInterface};
+use App\Repositories\WorkExperienceCandidate\{WorkExperienceCandidateRepository, WorkExperienceCandidateRepositoryInterface};
+use App\Repositories\HospitalConnectionCandidate\{HospitalConnectionCandidateRepository, HospitalConnectionCandidateRepositoryInterface};
+use App\Repositories\SelfPerspectiveCandidate\{SelfPerspectiveCandidateRepository, SelfPerspectiveCandidateRepositoryInterface};
+use App\Repositories\AdditionalInformationCandidate\{AdditionalInformationCandidateRepository, AdditionalInformationCandidateRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -447,6 +461,34 @@ class AppServiceProvider extends ServiceProvider
         // Organization Experience Candidate
         $this->app->bind(OrganizationExperienceCandidateRepositoryInterface::class, OrganizationExperienceCandidateRepository::class);
         $this->app->bind(OrganizationExperienceCandidateServiceInterface::class, OrganizationExperienceCandidateService::class);
+
+        // Expertise Certification Candidate
+        $this->app->bind(ExpertiseCertificationCandidateRepositoryInterface::class, ExpertiseCertificationCandidateRepository::class);
+        $this->app->bind(ExpertiseCertificationCandidateServiceInterface::class, ExpertiseCertificationCandidateService::class);
+
+        // Courses Training Candidate
+        $this->app->bind(CoursesTrainingCandidateRepositoryInterface::class, CoursesTrainingCandidateRepository::class);
+        $this->app->bind(CoursesTrainingCandidateServiceInterface::class, CoursesTrainingCandidateService::class);
+
+        // Foreign Language Candidate
+        $this->app->bind(ForeignLanguageCandidateRepositoryInterface::class, ForeignLanguageCandidateRepository::class);
+        $this->app->bind(ForeignLanguageCandidateServiceInterface::class, ForeignLanguageCandidateService::class);
+
+        // Work Experience Candidate
+        $this->app->bind(WorkExperienceCandidateRepositoryInterface::class, WorkExperienceCandidateRepository::class);
+        $this->app->bind(WorkExperienceCandidateServiceInterface::class, WorkExperienceCandidateService::class);
+
+        // Hospital Connection Candidate
+        $this->app->bind(HospitalConnectionCandidateRepositoryInterface::class, HospitalConnectionCandidateRepository::class);
+        $this->app->bind(HospitalConnectionCandidateServiceInterface::class, HospitalConnectionCandidateService::class);
+
+        // Self Prespective Candidate
+        $this->app->bind(SelfPerspectiveCandidateRepositoryInterface::class, SelfPerspectiveCandidateRepository::class);
+        $this->app->bind(SelfPerspectiveCandidateServiceInterface::class, SelfPerspectiveCandidateService::class);
+
+        // Additional Information Candidate
+        $this->app->bind(AdditionalInformationCandidateRepositoryInterface::class, AdditionalInformationCandidateRepository::class);
+        $this->app->bind(AdditionalInformationCandidateServiceInterface::class, AdditionalInformationCandidateService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
