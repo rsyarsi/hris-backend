@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\API\V1\{
     AuthController,
     DepartmentController,
@@ -82,6 +83,9 @@ use App\Http\Controllers\API\V1\{
     HospitalConnectionCandidateController,
     SelfPerspectiveCandidateController,
     AdditionalInformationCandidateController
+};
+use App\Http\Controllers\API\Career\{
+    AuthCareerController
 };
 use App\Http\Controllers\{
     PublicJobVacancyController
@@ -573,6 +577,24 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('additional-informations', AdditionalInformationCandidateController::class)->parameters(['additional-informations' => 'additional_informations']);
     });
 });
+
+Route::middleware('api')->prefix('v1/auth/career')->group(function () {
+    Route::controller(AuthCareerController::class)->group(function () {
+        Route::post('/login', 'login');
+        Route::post('/register', 'register');
+        Route::post('/refresh', 'refresh');
+        Route::get('/user-profile', 'userProfile')->middleware('verified_caandidate');
+        Route::post('/resend-verify-email', 'resendVerifyEmail');
+        Route::get('verify-email/{token}/{email}', 'verifyEmail')->name('verify-email');
+
+        Route::post('/update-password', 'updatePassword')->name('candidate.update-password')->middleware('verified_caandidate');
+        // Route::post('/forgot-password', 'forgotPassword')->middleware('verified_caandidate');
+        // Route::post('/reset-password', 'resetPassword')->name('password.reset');
+
+        Route::post('/logout', 'logout');
+    });
+});
+
 
 Route::middleware('api')->group(function () {
     Route::get('public/job-vacancies', [PublicJobVacancyController::class, 'index']);

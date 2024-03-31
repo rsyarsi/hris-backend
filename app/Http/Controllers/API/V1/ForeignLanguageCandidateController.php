@@ -16,7 +16,7 @@ class ForeignLanguageCandidateController extends Controller
 
     public function __construct(ForeignLanguageCandidateServiceInterface $foreignLanguageCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->foreignLanguageCandidateService = $foreignLanguageCandidateService;
     }
 

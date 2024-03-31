@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\LoginLog;
 use App\Traits\ResponseAPI;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use App\Models\LoginLog;
+use Illuminate\Support\Facades\{Auth, Validator};
 
 
 class AuthController extends Controller
@@ -28,7 +26,8 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth:api', ['except' => ['login', 'loginMobileApps', 'register']]);
     }
     /**
@@ -55,7 +54,7 @@ class AuthController extends Controller
 
         $credentials = $validator->validated();
 
-        if (! $token = Auth::attempt($credentials, [
+        if (!$token = Auth::attempt($credentials, [
             'exp' => Carbon::now()->addYears(100)->timestamp,
         ])) {
             // return response()->json(['error' => 'Unauthorized'], 401);
@@ -103,11 +102,12 @@ class AuthController extends Controller
 
         $credentials = $validator->validated();
 
-        if (!$token = auth()->attempt([
-                                        'username' => $credentials['username'],
-                                        'password' => $credentials['password']]
-                                    ))
-        {
+        if (!$token = auth()->attempt(
+            [
+                'username' => $credentials['username'],
+                'password' => $credentials['password']
+            ]
+        )) {
             return response()->json([
                 'message' => 'Username atau password salah, Login gagal!',
                 'success' => false,
@@ -117,14 +117,14 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-       // dd($user->user_device_id == null);
+        // dd($user->user_device_id == null);
 
         // if ($user->user_device_id == null) {
         //     // Store or update device information
         // }
 
 
-        if($user->user_device_id == null){
+        if ($user->user_device_id == null) {
             $user->updateDeviceInfo(
                 $request->input('user_device_id'),
                 $request->input('firebase_id'),
@@ -186,7 +186,7 @@ class AuthController extends Controller
     private function isUserLoggedInFromAnotherDevice($user, $credentials)
     {
         return $user->user_device_id !== null ||
-                $user->firebase_id !== null;
+            $user->firebase_id !== null;
     }
 
     /**
@@ -194,20 +194,21 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             // return response()->json($validator->errors());
             return $this->error($validator->errors(), 422);
         }
         $user = User::create(array_merge(
-                    $validator->validated(),
-                    ['password' => bcrypt($request->password)]
-                ));
+            $validator->validated(),
+            ['password' => bcrypt($request->password)]
+        ));
         return $this->success('User Successfully Registered', $user);
     }
 
@@ -216,7 +217,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout() {
+    public function logout()
+    {
         $user = auth()->user();
 
         // Find the last login log for the user
@@ -250,7 +252,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh() {
+    public function refresh()
+    {
         return $this->createNewToken(auth()->refresh());
     }
     /**
@@ -258,7 +261,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function userProfile() {
+    public function userProfile()
+    {
         $user = auth()->user();
         $user->load([
             'employee' => function ($query) {
@@ -330,7 +334,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function createNewToken($token){
+    protected function createNewToken($token)
+    {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',

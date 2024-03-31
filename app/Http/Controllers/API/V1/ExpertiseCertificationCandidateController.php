@@ -16,7 +16,7 @@ class ExpertiseCertificationCandidateController extends Controller
 
     public function __construct(ExpertiseCertificationCandidateServiceInterface $expertiseCertificationCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->expertiseCertificationCandidateService = $expertiseCertificationCandidateService;
     }
 

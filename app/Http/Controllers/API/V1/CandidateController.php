@@ -16,7 +16,7 @@ class CandidateController extends Controller
 
     public function __construct(CandidateServiceInterface $candidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->candidateService = $candidateService;
     }
 
@@ -77,7 +77,7 @@ class CandidateController extends Controller
             if (!$candidate) {
                 return $this->error('Candidate not found', 404);
             }
-            return $this->success('Candidate deleted successfully, id : '.$candidate->id, []);
+            return $this->success('Candidate deleted successfully, id : ' . $candidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

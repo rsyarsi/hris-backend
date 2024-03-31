@@ -16,7 +16,7 @@ class OrganizationExperienceCandidateController extends Controller
 
     public function __construct(OrganizationExperienceCandidateServiceInterface $organizationExperienceCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->organizationExperienceCandidateService = $organizationExperienceCandidateService;
     }
 
@@ -77,7 +77,7 @@ class OrganizationExperienceCandidateController extends Controller
             if (!$organizationExperienceCandidate) {
                 return $this->error('Organization Experience Candidate not found', 404);
             }
-            return $this->success('Organization Experience Candidate deleted successfully, id : '.$organizationExperienceCandidate->id, []);
+            return $this->success('Organization Experience Candidate deleted successfully, id : ' . $organizationExperienceCandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

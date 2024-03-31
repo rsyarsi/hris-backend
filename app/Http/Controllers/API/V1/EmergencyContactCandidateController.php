@@ -16,7 +16,7 @@ class EmergencyContactCandidateController extends Controller
 
     public function __construct(EmergencyContactCandidateServiceInterface $emergencyContactCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->emergencyContactCandidateService = $emergencyContactCandidateService;
     }
 
@@ -77,7 +77,7 @@ class EmergencyContactCandidateController extends Controller
             if (!$emergencycontactcandidate) {
                 return $this->error('Emergency Contact Candidate not found', 404);
             }
-            return $this->success('Emergency Contact Candidate deleted successfully, id : '.$emergencycontactcandidate->id, []);
+            return $this->success('Emergency Contact Candidate deleted successfully, id : ' . $emergencycontactcandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -45,6 +45,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'candidate' => [
+            'driver' => 'jwt',
+            'provider' => 'candidate_accounts',
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -70,10 +75,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'candidate_accounts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\CandidateAccount::class,
+        ],
     ],
 
     /*
@@ -95,6 +100,13 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'candidate_accounts' => [
+            'provider' => 'candidate_accounts',
+            'table' => 'password_resets', // Assuming the same table as for 'users'
             'expire' => 60,
             'throttle' => 60,
         ],

@@ -16,7 +16,7 @@ class FamilyInformationCandidateController extends Controller
 
     public function __construct(FamilyInformationCandidateServiceInterface $familyInformationCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->familyInformationCandidateService = $familyInformationCandidateService;
     }
 

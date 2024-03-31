@@ -16,7 +16,7 @@ class CandidateAccountController extends Controller
 
     public function __construct(CandidateAccountServiceInterface $candidateAccountService)
     {
-        $this->middleware('auth:api');
+        $this->middleware(['auth:api']);
         $this->candidateAccountService = $candidateAccountService;
     }
 
@@ -78,7 +78,7 @@ class CandidateAccountController extends Controller
             if (!$candidateaccount) {
                 return $this->error('Candidate Account not found', 404);
             }
-            return $this->success('Candidate Account deleted successfully, id : '.$candidateaccount->id, []);
+            return $this->success('Candidate Account deleted successfully, id : ' . $candidateaccount->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

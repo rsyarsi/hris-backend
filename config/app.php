@@ -58,6 +58,7 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'url_career' => env('CAREER_URL', 'http://localhost:8000'),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

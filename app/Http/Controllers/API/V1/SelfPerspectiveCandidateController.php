@@ -16,7 +16,7 @@ class SelfPerspectiveCandidateController extends Controller
 
     public function __construct(SelfPerspectiveCandidateServiceInterface $selfPerspectiveCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->selfPerspectiveCandidateService = $selfPerspectiveCandidateService;
     }
 

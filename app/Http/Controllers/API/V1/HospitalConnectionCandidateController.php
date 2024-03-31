@@ -16,7 +16,7 @@ class HospitalConnectionCandidateController extends Controller
 
     public function __construct(HospitalConnectionCandidateServiceInterface $hospitalConnectionCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->hospitalConnectionCandidateService = $hospitalConnectionCandidateService;
     }
 

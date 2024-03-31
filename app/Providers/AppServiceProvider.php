@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\URL;
+
 use Illuminate\Support\ServiceProvider;
 use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\Pph\{PphService, PphServiceInterface};
@@ -19,7 +20,6 @@ use App\Services\Helper\{HelperService, HelperServiceInterface};
 use App\Services\Village\{VillageService, VillageServiceInterface};
 use App\Services\District\{DistrictService, DistrictServiceInterface};
 use App\Services\Employee\{EmployeeService, EmployeeServiceInterface};
-use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 use App\Services\Mutation\{MutationService, MutationServiceInterface};
 use App\Services\Overtime\{OvertimeService, OvertimeServiceInterface};
 use App\Services\Position\{PositionService, PositionServiceInterface};
@@ -84,6 +84,8 @@ use App\Services\WorkExperienceCandidate\{WorkExperienceCandidateService, WorkEx
 use App\Services\HospitalConnectionCandidate\{HospitalConnectionCandidateService, HospitalConnectionCandidateServiceInterface};
 use App\Services\SelfPerspectiveCandidate\{SelfPerspectiveCandidateService, SelfPerspectiveCandidateServiceInterface};
 use App\Services\AdditionalInformationCandidate\{AdditionalInformationCandidateService, AdditionalInformationCandidateServiceInterface};
+use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
+use App\Services\EmailVerification\{EmailVerificationService, EmailVerificationServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -492,6 +494,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);
+
+        // Email Verification
+        $this->app->bind(EmailVerificationServiceInterface::class, EmailVerificationService::class);
     }
 
     /**

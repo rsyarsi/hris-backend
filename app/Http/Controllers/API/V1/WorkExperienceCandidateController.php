@@ -16,7 +16,7 @@ class WorkExperienceCandidateController extends Controller
 
     public function __construct(WorkExperienceCandidateServiceInterface $workExperienceCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->workExperienceCandidateService = $workExperienceCandidateService;
     }
 
@@ -77,7 +77,7 @@ class WorkExperienceCandidateController extends Controller
             if (!$workExperienceCandidate) {
                 return $this->error('Work Experience Candidate not found', 404);
             }
-            return $this->success('Work Experience Candidate deleted successfully, id : '.$workExperienceCandidate->id, []);
+            return $this->success('Work Experience Candidate deleted successfully, id : ' . $workExperienceCandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -16,7 +16,7 @@ class EducationBackgroundCandidateController extends Controller
 
     public function __construct(EducationBackgroundCandidateServiceInterface $educationBackgroundCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->educationBackgroundCandidateService = $educationBackgroundCandidateService;
     }
 
@@ -77,7 +77,7 @@ class EducationBackgroundCandidateController extends Controller
             if (!$educationBackgroundCandidate) {
                 return $this->error('Education Background Candidate not found', 404);
             }
-            return $this->success('Education Background Candidate deleted successfully, id : '.$educationBackgroundCandidate->id, []);
+            return $this->success('Education Background Candidate deleted successfully, id : ' . $educationBackgroundCandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

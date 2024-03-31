@@ -22,13 +22,13 @@ class CandidateAccountRequest extends FormRequest
                 'required',
                 'email',
                 'max:150',
-                Rule::unique('users')->ignore($this->route('user')),
+                Rule::unique('candidate_accounts')->ignore($this->route('user')),
             ],
             'password' => [Rule::requiredIf($this->isMethod('post')), 'string', 'min:6', 'max:255'],
             'username' => [
                 'required',
                 'max:150',
-                Rule::unique('users')->ignore($this->route('user')),
+                Rule::unique('candidate_accounts')->ignore($this->route('user')),
             ],
             'active' => 'nullable|in:1,0',
         ];

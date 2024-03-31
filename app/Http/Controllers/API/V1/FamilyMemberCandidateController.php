@@ -16,7 +16,7 @@ class FamilyMemberCandidateController extends Controller
 
     public function __construct(FamilyMemberCandidateServiceInterface $familyMemberCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->familyMemberCandidateService = $familyMemberCandidateService;
     }
 
@@ -77,7 +77,7 @@ class FamilyMemberCandidateController extends Controller
             if (!$familyMemberCandidate) {
                 return $this->error('Family Member Candidate not found', 404);
             }
-            return $this->success('Family Member Candidate deleted successfully, id : '.$familyMemberCandidate->id, []);
+            return $this->success('Family Member Candidate deleted successfully, id : ' . $familyMemberCandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

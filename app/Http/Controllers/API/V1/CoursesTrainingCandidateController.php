@@ -16,7 +16,7 @@ class CoursesTrainingCandidateController extends Controller
 
     public function __construct(CoursesTrainingCandidateServiceInterface $coursesTrainingCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->coursesTrainingCandidateService = $coursesTrainingCandidateService;
     }
 
@@ -77,7 +77,7 @@ class CoursesTrainingCandidateController extends Controller
             if (!$coursesTrainingCandidate) {
                 return $this->error('Courses Training Candidate not found', 404);
             }
-            return $this->success('Courses Training Candidate deleted successfully, id : '.$coursesTrainingCandidate->id, []);
+            return $this->success('Courses Training Candidate deleted successfully, id : ' . $coursesTrainingCandidate->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

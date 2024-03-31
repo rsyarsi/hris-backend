@@ -16,7 +16,7 @@ class AdditionalInformationCandidateController extends Controller
 
     public function __construct(AdditionalInformationCandidateServiceInterface $additionalInformationCandidateService)
     {
-        $this->middleware('auth:api');
+        $this->middleware('api_or_candidate_auth');
         $this->additionalInformationCandidateService = $additionalInformationCandidateService;
     }
 
