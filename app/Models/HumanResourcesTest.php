@@ -19,6 +19,7 @@ class HumanResourcesTest extends Model
     protected $fillable =
     [
         'candidate_id',
+        'job_vacancy_id',
         'name',
         'applied_position',
         'date',
@@ -40,5 +41,10 @@ class HumanResourcesTest extends Model
     public function candidate()
     {
         return $this->belongsTo(Candidate::class, 'candidate_id', 'id');
+    }
+
+    public function jobVacancy()
+    {
+        return $this->belongsTo(JobVacancy::class, 'job_vacancy_id', 'id');
     }
 }

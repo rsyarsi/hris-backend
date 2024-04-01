@@ -83,6 +83,7 @@ use App\Http\Controllers\API\V1\{
     SelfPerspectiveCandidateController,
     AdditionalInformationCandidateController,
     HumanResourcesTestController,
+    JobInterviewFormController,
     JobVacanciesAppliedController
 };
 use App\Http\Controllers\API\Career\{
@@ -586,6 +587,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('human-resources-tests', HumanResourcesTestController::class)->parameters(['human-resources-tests' => 'human_resources_test']);
         // route for Job Vacancies Applieds
         Route::resource('job-vacancies-applieds', JobVacanciesAppliedController::class)->parameters(['job-vacancies-applieds' => 'job_vacancies_applied']);
+        // route for Job Interview Form
+        Route::resource('job-interview-forms', JobInterviewFormController::class)->parameters(['job-interview-forms' => 'job_interview_form']);
     });
 });
 

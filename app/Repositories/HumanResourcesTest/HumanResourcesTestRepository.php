@@ -20,16 +20,21 @@ class HumanResourcesTestRepository implements HumanResourcesTestRepositoryInterf
         $query = $this->model
             ->with([
                 'candidate:id,first_name,middle_name,last_name,email',
+                'jobVacancy',
+                'jobVacancy.education:id,name',
             ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('candidate_id', $search)
-                        ->orWhere('applied_position', 'ILIKE', "%{$search}%")
+                    ->orWhere('applied_position', 'ILIKE', "%{$search}%")
                     ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
                         $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
                             ->orWhere('middle_name', 'ILIKE', "%{$search}%")
                             ->orWhere('last_name', 'ILIKE', "%{$search}%");
+                    })->orWhereHas('jobVacancy', function ($jobVacancyQuery) use ($search) {
+                        $jobVacancyQuery->where('title', 'ILIKE', "%{$search}%")
+                            ->orWhere('position', 'ILIKE', "%{$search}%");
                     });
             });
         }
@@ -52,6 +57,8 @@ class HumanResourcesTestRepository implements HumanResourcesTestRepositoryInterf
         $humanResourcesTest = $this->model
             ->with([
                 'candidate:id,first_name,middle_name,last_name,email',
+                'jobVacancy',
+                'jobVacancy.education:id,name',
             ])
             ->where('id', $id)
             ->first();
