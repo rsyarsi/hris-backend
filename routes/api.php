@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\API\V1\{
     AuthController,
     DepartmentController,
@@ -83,7 +82,8 @@ use App\Http\Controllers\API\V1\{
     HospitalConnectionCandidateController,
     SelfPerspectiveCandidateController,
     AdditionalInformationCandidateController,
-    HumanResourcesTestController
+    HumanResourcesTestController,
+    JobVacanciesAppliedController
 };
 use App\Http\Controllers\API\Career\{
     AuthCareerController
@@ -552,6 +552,12 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('candidate-accounts', CandidateAccountController::class)->parameters(['candidate-accounts' => 'candidate_account']);
         // route for candidates
         Route::resource('candidates', CandidateController::class)->parameters(['candidates' => 'candidate']);
+
+        Route::controller(CandidateController::class)->group(function () {
+            // route for upload CV
+            Route::post('upload-cv/{id}', 'uploadCv')->name('upload-cv');
+        });
+
         // route for emergency contact
         Route::resource('emergency-contacts', EmergencyContactCandidateController::class)->parameters(['emergency-contacts' => 'emergency_contact']);
         // route for family informations
@@ -578,6 +584,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('additional-informations', AdditionalInformationCandidateController::class)->parameters(['additional-informations' => 'additional_informations']);
         // route for Human Resources Tests
         Route::resource('human-resources-tests', HumanResourcesTestController::class)->parameters(['human-resources-tests' => 'human_resources_test']);
+        // route for Job Vacancies Applieds
+        Route::resource('job-vacancies-applieds', JobVacanciesAppliedController::class)->parameters(['job-vacancies-applieds' => 'job_vacancies_applied']);
     });
 });
 

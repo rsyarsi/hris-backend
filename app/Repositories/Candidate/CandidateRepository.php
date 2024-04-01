@@ -99,4 +99,14 @@ class CandidateRepository implements CandidateRepositoryInterface
         }
         return null;
     }
+
+    function uploadCv($id, $data)
+    {
+        $candidate = $this->model->find($id);
+        if ($candidate) {
+            $candidate->update($data);
+            return $candidate;
+        }
+        return null;
+    }
 }

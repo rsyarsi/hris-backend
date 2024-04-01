@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Services\Candidate;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Candidate\CandidateServiceInterface;
 use App\Repositories\Candidate\CandidateRepositoryInterface;
 
@@ -48,5 +50,26 @@ class CandidateService implements CandidateServiceInterface
     public function formatTextTitle($data)
     {
         return Str::title($data);
+    }
+
+    public function uploadCv($id, $data)
+    {
+        $file = $data['file'];
+        if ($file && $file->isValid()) {
+            // Upload the file to AWS S3 storage
+            $filePath = $file->store('hrd/candidates/cv', 's3');
+            // Make the file public by setting ACL to 'public-read'
+            Storage::disk('s3')->setVisibility($filePath, 'public');
+            $fileUrl = Storage::disk('s3')->url($filePath);
+        } else {
+            $filePath = null;
+            $fileUrl = null;
+        }
+        $data = [
+            'file_path' => $filePath,
+            'file_url' => $fileUrl,
+            'file_disk' => 's3',
+        ];
+        return $this->repository->uploadCv($id, $data);
     }
 }

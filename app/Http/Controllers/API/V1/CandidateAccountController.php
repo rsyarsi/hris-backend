@@ -16,7 +16,7 @@ class CandidateAccountController extends Controller
 
     public function __construct(CandidateAccountServiceInterface $candidateAccountService)
     {
-        $this->middleware(['auth:api']);
+        $this->middleware('auth:api');
         $this->candidateAccountService = $candidateAccountService;
     }
 

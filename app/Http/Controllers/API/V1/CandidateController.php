@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadCvRequest;
 use App\Http\Requests\CandidateRequest;
 use App\Services\Candidate\CandidateServiceInterface;
 
@@ -78,6 +79,17 @@ class CandidateController extends Controller
                 return $this->error('Candidate not found', 404);
             }
             return $this->success('Candidate deleted successfully, id : ' . $candidate->id, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function uploadCv(UploadCvRequest $request, $id)
+    {
+        try {
+            $data = $request->validated();
+            $candidate = $this->candidateService->uploadCv($id, $data);
+            return $this->success('Cv Uploaded successfully!', $candidate, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

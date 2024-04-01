@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\URL;
-
 use Illuminate\Support\ServiceProvider;
 use App\Services\Job\{JobService, JobServiceInterface};
 use App\Services\Pph\{PphService, PphServiceInterface};
@@ -85,6 +83,7 @@ use App\Services\HospitalConnectionCandidate\{HospitalConnectionCandidateService
 use App\Services\SelfPerspectiveCandidate\{SelfPerspectiveCandidateService, SelfPerspectiveCandidateServiceInterface};
 use App\Services\AdditionalInformationCandidate\{AdditionalInformationCandidateService, AdditionalInformationCandidateServiceInterface};
 use App\Services\HumanResourcesTest\{HumanResourcesTestService, HumanResourcesTestServiceInterface};
+use App\Services\JobVacanciesApplied\{JobVacanciesAppliedService, JobVacanciesAppliedServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 use App\Services\EmailVerification\{EmailVerificationService, EmailVerificationServiceInterface};
 
@@ -168,6 +167,7 @@ use App\Repositories\HospitalConnectionCandidate\{HospitalConnectionCandidateRep
 use App\Repositories\SelfPerspectiveCandidate\{SelfPerspectiveCandidateRepository, SelfPerspectiveCandidateRepositoryInterface};
 use App\Repositories\AdditionalInformationCandidate\{AdditionalInformationCandidateRepository, AdditionalInformationCandidateRepositoryInterface};
 use App\Repositories\HumanResourcesTest\{HumanResourcesTestRepository, HumanResourcesTestRepositoryInterface};
+use App\Repositories\JobVacanciesApplied\{JobVacanciesAppliedRepository, JobVacanciesAppliedRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -497,6 +497,10 @@ class AppServiceProvider extends ServiceProvider
         // Human Resources Test
         $this->app->bind(HumanResourcesTestRepositoryInterface::class, HumanResourcesTestRepository::class);
         $this->app->bind(HumanResourcesTestServiceInterface::class, HumanResourcesTestService::class);
+
+        // Job Vacancies Applied
+        $this->app->bind(JobVacanciesAppliedRepositoryInterface::class, JobVacanciesAppliedRepository::class);
+        $this->app->bind(JobVacanciesAppliedServiceInterface::class, JobVacanciesAppliedService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

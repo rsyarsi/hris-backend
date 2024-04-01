@@ -39,6 +39,9 @@ class Candidate extends Model
         'tax_identify_number',
         'weight',
         'height',
+        'file_url',
+        'file_path',
+        'file_disk',
     ];
 
     public function identityType()
