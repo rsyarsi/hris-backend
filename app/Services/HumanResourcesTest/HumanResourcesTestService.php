@@ -24,8 +24,8 @@ class HumanResourcesTestService implements HumanResourcesTestServiceInterface
 
     public function store(array $data)
     {
-        $candidate = $this->candidateService->show('01ht19eet9wg9p0yte4rk050xf');
-        $data['name'] = $candidate->first_name + $candidate->middle_name + $candidate->last_name;
+        $candidate = $this->candidateService->show($data['candidate_id']);
+        $data['name'] = $candidate->first_name .' '. $candidate->middle_name .' '. $candidate->last_name ?? null;
         return $this->repository->store($data);
     }
 
@@ -37,7 +37,7 @@ class HumanResourcesTestService implements HumanResourcesTestServiceInterface
     public function update($id, $data)
     {
         $candidate = $this->candidateService->show($data['candidate_id']);
-        $data['name'] = $candidate->first_name .' '. $candidate->middle_name .' '. $candidate->last_name;
+        $data['name'] = $candidate->first_name .' '. $candidate->middle_name .' '. $candidate->last_name ?? null;
         return $this->repository->update($id, $data);
     }
 
