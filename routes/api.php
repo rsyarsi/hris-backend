@@ -82,7 +82,8 @@ use App\Http\Controllers\API\V1\{
     WorkExperienceCandidateController,
     HospitalConnectionCandidateController,
     SelfPerspectiveCandidateController,
-    AdditionalInformationCandidateController
+    AdditionalInformationCandidateController,
+    HumanResourcesTestController
 };
 use App\Http\Controllers\API\Career\{
     AuthCareerController
@@ -575,6 +576,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('self-perspectives', SelfPerspectiveCandidateController::class)->parameters(['self-perspectives' => 'self_perspective']);
         // route for Additional Information
         Route::resource('additional-informations', AdditionalInformationCandidateController::class)->parameters(['additional-informations' => 'additional_informations']);
+        // route for Human Resources Tests
+        Route::resource('human-resources-tests', HumanResourcesTestController::class)->parameters(['human-resources-tests' => 'human_resources_test']);
     });
 });
 

@@ -84,6 +84,7 @@ use App\Services\WorkExperienceCandidate\{WorkExperienceCandidateService, WorkEx
 use App\Services\HospitalConnectionCandidate\{HospitalConnectionCandidateService, HospitalConnectionCandidateServiceInterface};
 use App\Services\SelfPerspectiveCandidate\{SelfPerspectiveCandidateService, SelfPerspectiveCandidateServiceInterface};
 use App\Services\AdditionalInformationCandidate\{AdditionalInformationCandidateService, AdditionalInformationCandidateServiceInterface};
+use App\Services\HumanResourcesTest\{HumanResourcesTestService, HumanResourcesTestServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 use App\Services\EmailVerification\{EmailVerificationService, EmailVerificationServiceInterface};
 
@@ -166,6 +167,7 @@ use App\Repositories\WorkExperienceCandidate\{WorkExperienceCandidateRepository,
 use App\Repositories\HospitalConnectionCandidate\{HospitalConnectionCandidateRepository, HospitalConnectionCandidateRepositoryInterface};
 use App\Repositories\SelfPerspectiveCandidate\{SelfPerspectiveCandidateRepository, SelfPerspectiveCandidateRepositoryInterface};
 use App\Repositories\AdditionalInformationCandidate\{AdditionalInformationCandidateRepository, AdditionalInformationCandidateRepositoryInterface};
+use App\Repositories\HumanResourcesTest\{HumanResourcesTestRepository, HumanResourcesTestRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -491,6 +493,10 @@ class AppServiceProvider extends ServiceProvider
         // Additional Information Candidate
         $this->app->bind(AdditionalInformationCandidateRepositoryInterface::class, AdditionalInformationCandidateRepository::class);
         $this->app->bind(AdditionalInformationCandidateServiceInterface::class, AdditionalInformationCandidateService::class);
+
+        // Human Resources Test
+        $this->app->bind(HumanResourcesTestRepositoryInterface::class, HumanResourcesTestRepository::class);
+        $this->app->bind(HumanResourcesTestServiceInterface::class, HumanResourcesTestService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

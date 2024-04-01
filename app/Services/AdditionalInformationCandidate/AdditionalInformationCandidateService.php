@@ -2,7 +2,6 @@
 
 namespace App\Services\AdditionalInformationCandidate;
 
-use Illuminate\Support\Str;
 use App\Services\AdditionalInformationCandidate\AdditionalInformationCandidateServiceInterface;
 use App\Repositories\AdditionalInformationCandidate\AdditionalInformationCandidateRepositoryInterface;
 
