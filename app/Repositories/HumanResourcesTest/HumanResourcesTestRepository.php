@@ -15,7 +15,7 @@ class HumanResourcesTestRepository implements HumanResourcesTestRepositoryInterf
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $period_1 = null, $period_2 = null)
     {
         $query = $this->model
             ->with([
@@ -25,6 +25,7 @@ class HumanResourcesTestRepository implements HumanResourcesTestRepositoryInterf
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('candidate_id', $search)
+                        ->orWhere('applied_position', 'ILIKE', "%{$search}%")
                     ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
                         $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
                             ->orWhere('middle_name', 'ILIKE', "%{$search}%")
@@ -32,7 +33,13 @@ class HumanResourcesTestRepository implements HumanResourcesTestRepositoryInterf
                     });
             });
         }
-        return $query->orderBy('candidate_id', 'ASC')->paginate($perPage);
+        if ($period_1) {
+            $query->whereDate('date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('date', '<=', $period_2);
+        }
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)

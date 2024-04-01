@@ -25,7 +25,9 @@ class HumanResourcesTestController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $humanResourcesTests = $this->humanResourcesTestService->index($perPage, $search);
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $humanResourcesTests = $this->humanResourcesTestService->index($perPage, $search, $period1, $period2);
             return $this->success('Human Resources Test retrieved successfully', $humanResourcesTests);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
