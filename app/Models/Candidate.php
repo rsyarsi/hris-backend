@@ -128,4 +128,19 @@ class Candidate extends Model
     {
         return $this->hasMany(AdditionalInformationCandidate::class, 'candidate_id');
     }
+
+    public function humanResourcesTest()
+    {
+        return $this->hasMany(HumanResourcesTest::class, 'candidate_id');
+    }
+
+    public function jobVacanciesApplied()
+    {
+        return $this->hasMany(JobVacanciesApplied::class, 'candidate_id');
+    }
+
+    public function jobInterviewForm()
+    {
+        return $this->hasMany(JobInterviewForm::class, 'candidate_id');
+    }
 }

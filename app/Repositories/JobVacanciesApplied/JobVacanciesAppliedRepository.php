@@ -22,6 +22,7 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
                 'candidate:id,first_name,middle_name,last_name,email',
                 'jobVacancy',
                 'jobVacancy.education:id,name',
+                'jobInterviewForm',
             ]);
 
         if ($search !== null) {
@@ -53,6 +54,7 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
                 'candidate:id,first_name,middle_name,last_name,email',
                 'jobVacancy',
                 'jobVacancy.education:id,name',
+                'jobInterviewForm',
             ])
             ->where('id', $id)
             ->first();

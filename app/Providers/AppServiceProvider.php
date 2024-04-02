@@ -84,6 +84,7 @@ use App\Services\SelfPerspectiveCandidate\{SelfPerspectiveCandidateService, Self
 use App\Services\AdditionalInformationCandidate\{AdditionalInformationCandidateService, AdditionalInformationCandidateServiceInterface};
 use App\Services\HumanResourcesTest\{HumanResourcesTestService, HumanResourcesTestServiceInterface};
 use App\Services\JobVacanciesApplied\{JobVacanciesAppliedService, JobVacanciesAppliedServiceInterface};
+use App\Services\JobInterviewForm\{JobInterviewFormService, JobInterviewFormServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 use App\Services\EmailVerification\{EmailVerificationService, EmailVerificationServiceInterface};
 
@@ -168,6 +169,7 @@ use App\Repositories\SelfPerspectiveCandidate\{SelfPerspectiveCandidateRepositor
 use App\Repositories\AdditionalInformationCandidate\{AdditionalInformationCandidateRepository, AdditionalInformationCandidateRepositoryInterface};
 use App\Repositories\HumanResourcesTest\{HumanResourcesTestRepository, HumanResourcesTestRepositoryInterface};
 use App\Repositories\JobVacanciesApplied\{JobVacanciesAppliedRepository, JobVacanciesAppliedRepositoryInterface};
+use App\Repositories\JobInterviewForm\{JobInterviewFormRepository, JobInterviewFormRepositoryInterface};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -501,6 +503,10 @@ class AppServiceProvider extends ServiceProvider
         // Job Vacancies Applied
         $this->app->bind(JobVacanciesAppliedRepositoryInterface::class, JobVacanciesAppliedRepository::class);
         $this->app->bind(JobVacanciesAppliedServiceInterface::class, JobVacanciesAppliedService::class);
+
+        // Job Interview Form
+        $this->app->bind(JobInterviewFormRepositoryInterface::class, JobInterviewFormRepository::class);
+        $this->app->bind(JobInterviewFormServiceInterface::class, JobInterviewFormService::class);
 
         // Firebase
         $this->app->bind(FirebaseServiceInterface::class, FirebaseService::class);

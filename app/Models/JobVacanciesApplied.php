@@ -33,4 +33,9 @@ class JobVacanciesApplied extends Model
     {
         return $this->belongsTo(JobVacancy::class, 'job_vacancy_id', 'id');
     }
+
+    public function jobInterviewForm()
+    {
+        return $this->hasMany(JobInterviewForm::class, 'job_vacancies_applied_id');
+    }
 }

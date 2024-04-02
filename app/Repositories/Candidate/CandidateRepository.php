@@ -74,6 +74,11 @@ class CandidateRepository implements CandidateRepositoryInterface
                 'hospitalConnection.position:id,name',
                 'selfPerspective:id,candidate_id,self_perspective,strengths,weaknesses,successes,failures,career_overview,future_expectations',
                 'additionalInformation:id,candidate_id,physical_condition,severe_diseases,hospitalizations,last_medical_checkup',
+                'humanResourcesTest',
+                'jobVacanciesApplied',
+                'jobInterviewForm',
+                'jobInterviewForm.jobVacancy',
+                'jobInterviewForm.interviewer:id,name,email,employment_number',
             ])
             ->where('id', $id)
             ->first();

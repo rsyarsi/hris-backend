@@ -10,7 +10,7 @@ class JobInterviewForm extends Model
 {
     use HasFactory, HasUlids;
 
-    protected $table = 'emergency_contact_candidates';
+    protected $table = 'job_interview_forms';
 
     protected $primaryKey = 'id';
 
