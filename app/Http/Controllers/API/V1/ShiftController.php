@@ -79,7 +79,7 @@ class ShiftController extends Controller
             if (!$shift) {
                 return $this->error('Shift not found', 404);
             }
-            return $this->success('Shift deleted successfully, id : '.$shift->id, []);
+            return $this->success('Shift deleted successfully, id : ' . $shift->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

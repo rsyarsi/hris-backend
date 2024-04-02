@@ -36,10 +36,10 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
     }
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $date = $row[3];
@@ -55,8 +55,8 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
             return null; // reject the request if shiftGroupId = null
         }
         $shift = Shift::where('shift_group_id', $shiftGroupId)
-                        ->where('code', Str::upper($shiftCode))
-                        ->first();
+            ->where('code', Str::upper($shiftCode))
+            ->first();
         if (!$shift) {
             return null;
         }
@@ -73,8 +73,8 @@ class ShiftScheduleImport implements ToModel, WithStartRow, WithValidation
         $ulid = Ulid::generate(); // Generate a ULID
         $timeIn = Carbon::parse($date . ' ' . $shift->in_time);
         $timeOut = $shift->night_shift == 1
-                        ? Carbon::parse($date . ' ' . $shift->out_time)->addDay()
-                        : Carbon::parse($date . ' ' . $shift->out_time);
+            ? Carbon::parse($date . ' ' . $shift->out_time)->addDay()
+            : Carbon::parse($date . ' ' . $shift->out_time);
         // $existingEntryShiftNull = ShiftSchedule::where('employee_id', $employee->id)
         //                                         ->whereNull('shift_id')
         //                                         ->where('date', $date)

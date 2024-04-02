@@ -3,6 +3,8 @@
 namespace App\Repositories\Shift;
 
 use App\Models\Shift;
+use App\Models\GenerateAbsen;
+use App\Models\ShiftSchedule;
 use App\Repositories\Shift\ShiftRepositoryInterface;
 
 
@@ -38,20 +40,20 @@ class ShiftRepository implements ShiftRepositoryInterface
     public function index($perPage, $search = null, $groupShiftId = null, $active = 1)
     {
         $query = $this->model
-                    ->with([
-                        'shiftGroup' => function ($query) {
-                            $query->select('id', 'name', 'hour', 'day', 'type');
-                        },
-                        'userCreated' => function ($query) {
-                            $query->select('id', 'name', 'email');
-                        },
-                        'userUpdated' => function ($query) {
-                            $query->select('id', 'name', 'email');
-                        },
-                    ])
-                    ->select($this->field);
+            ->with([
+                'shiftGroup' => function ($query) {
+                    $query->select('id', 'name', 'hour', 'day', 'type');
+                },
+                'userCreated' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+                'userUpdated' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->select($this->field);
         if ($search !== null) {
-            $query->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"]);
+            $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"]);
         }
         // Add the condition to filter by shift_group_id
         if ($groupShiftId !== null) {
@@ -71,24 +73,34 @@ class ShiftRepository implements ShiftRepositoryInterface
     public function show($id)
     {
         $shift = $this->model
-                        ->with([
-                            'shiftGroup' => function ($query) {
-                                $query->select('id', 'name', 'hour', 'day', 'type');
-                            },
-                            'userCreated' => function ($query) {
-                                $query->select('id', 'name', 'email');
-                            },
-                            'userUpdated' => function ($query) {
-                                $query->select('id', 'name', 'email');
-                            },
-                        ])
-                        ->where('id', $id)
-                        ->first($this->field);
+            ->with([
+                'shiftGroup' => function ($query) {
+                    $query->select('id', 'name', 'hour', 'day', 'type');
+                },
+                'userCreated' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+                'userUpdated' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->where('id', $id)
+            ->first($this->field);
         return $shift ? $shift : $shift = null;
     }
 
     public function update($id, $data)
     {
+        $date = now()->toDateString();
+        $shiftSchedule = ShiftSchedule::where('shift_id', $id)
+            ->where('date', $date)
+            ->exists();
+        $generateAbsen = GenerateAbsen::where('shift_id', $id)
+            ->where('date', $date)
+            ->exists();
+        if ($shiftSchedule || $generateAbsen) {
+            return 'Kode shift ini sudah ada Jadwal Shift kerja / Generate Absen. Edit tidak diizinkan.';
+        }
         $shift = $this->model->find($id);
         if ($shift) {
             $shift->update($data);
@@ -110,10 +122,10 @@ class ShiftRepository implements ShiftRepositoryInterface
     public function searchShiftLibur($shiftGroupId)
     {
         $shift = $this->model
-                        ->where('shift_group_id', $shiftGroupId)
-                        ->where('code', 'L')
-                        ->orWhere('name', 'LIBUR')
-                        ->first($this->field);
+            ->where('shift_group_id', $shiftGroupId)
+            ->where('code', 'L')
+            ->orWhere('name', 'LIBUR')
+            ->first($this->field);
         if ($shift) {
             return $shift;
         }
