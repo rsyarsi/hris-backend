@@ -27,7 +27,6 @@ class HumanResourcesTestRepository implements HumanResourcesTestRepositoryInterf
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->where('candidate_id', $search)
-                    ->orWhere('applied_position', 'ILIKE', "%{$search}%")
                     ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
                         $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
                             ->orWhere('middle_name', 'ILIKE', "%{$search}%")

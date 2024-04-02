@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::table('human_resources_tests', function (Blueprint $table) {
             $table->foreign('job_vacancy_id')->references('id')->on('job_vacancies')->onDelete('set null');
             $table->string('job_vacancy_id', 26)->nullable();
+            $table->dropColumn(['name', 'applied_position']);
         });
     }
 

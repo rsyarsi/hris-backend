@@ -4,17 +4,14 @@ namespace App\Services\HumanResourcesTest;
 
 use App\Services\HumanResourcesTest\HumanResourcesTestServiceInterface;
 use App\Repositories\HumanResourcesTest\HumanResourcesTestRepositoryInterface;
-use App\Services\Candidate\CandidateServiceInterface;
 
 class HumanResourcesTestService implements HumanResourcesTestServiceInterface
 {
     private $repository;
-    private $candidateService;
 
-    public function __construct(HumanResourcesTestRepositoryInterface $repository, CandidateServiceInterface $candidateService)
+    public function __construct(HumanResourcesTestRepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->candidateService = $candidateService;
     }
 
     public function index($perPage, $search, $period_1, $period_2)
@@ -24,8 +21,6 @@ class HumanResourcesTestService implements HumanResourcesTestServiceInterface
 
     public function store(array $data)
     {
-        $candidate = $this->candidateService->show($data['candidate_id']);
-        $data['name'] = $candidate->first_name .' '. $candidate->middle_name .' '. $candidate->last_name ?? null;
         return $this->repository->store($data);
     }
 
@@ -36,8 +31,6 @@ class HumanResourcesTestService implements HumanResourcesTestServiceInterface
 
     public function update($id, $data)
     {
-        $candidate = $this->candidateService->show($data['candidate_id']);
-        $data['name'] = $candidate->first_name .' '. $candidate->middle_name .' '. $candidate->last_name ?? null;
         return $this->repository->update($id, $data);
     }
 

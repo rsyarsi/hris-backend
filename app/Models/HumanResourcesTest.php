@@ -20,8 +20,6 @@ class HumanResourcesTest extends Model
     [
         'candidate_id',
         'job_vacancy_id',
-        'name',
-        'applied_position',
         'date',
         'source_of_info',
         'motivation',

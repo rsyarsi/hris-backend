@@ -26,7 +26,7 @@ class HumanResourcesTestRequest extends FormRequest
     {
         return [
             'candidate_id' => 'required|exists:candidates,id',
-            'applied_position' => 'required|string|max:150',
+            'job_vacancy_id' => 'required|exists:job_vacancies,id',
             'date' => 'required|date',
             'source_of_info' => 'nullable',
             'motivation' => 'nullable',
