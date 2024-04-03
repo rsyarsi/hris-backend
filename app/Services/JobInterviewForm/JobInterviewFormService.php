@@ -9,14 +9,14 @@ class JobInterviewFormService implements JobInterviewFormServiceInterface
 {
     private $repository;
 
-    public function __construct(JobInterviewFormRepositoryInterface $repository)
+public function __construct(JobInterviewFormRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search)
+    public function index($perPage, $search, $period_1, $period_2)
     {
-        return $this->repository->index($perPage, $search);
+        return $this->repository->index($perPage, $search, $period_1, $period_2);
     }
 
     public function store(array $data)
@@ -44,5 +44,10 @@ class JobInterviewFormService implements JobInterviewFormServiceInterface
     public function formatTextTitle($data)
     {
         return Str::upper($data);
+    }
+
+    public function interviewer($perPage, $search, $period_1, $period_2)
+    {
+        return $this->repository->interviewer($perPage, $search, $period_1, $period_2);
     }
 }

@@ -25,7 +25,9 @@ class JobInterviewFormController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $jobinterviewforms = $this->jobInterviewFormService->index($perPage, $search);
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $jobinterviewforms = $this->jobInterviewFormService->index($perPage, $search, $period1, $period2);
             return $this->success('Job Interview Form retrieved successfully', $jobinterviewforms);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -78,6 +80,20 @@ class JobInterviewFormController extends Controller
                 return $this->error('Job Interview Form not found', 404);
             }
             return $this->success('Job Interview Form deleted successfully, id : ' . $jobinterviewform->id, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    function interviewer(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $period1 = $request->input('period_1');
+            $period2 = $request->input('period_2');
+            $jobinterviewforms = $this->jobInterviewFormService->interviewer($perPage, $search, $period1, $period2);
+            return $this->success('Job Interview Form Interviewer retrieved successfully', $jobinterviewforms);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

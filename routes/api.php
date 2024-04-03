@@ -553,12 +553,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('candidate-accounts', CandidateAccountController::class)->parameters(['candidate-accounts' => 'candidate_account']);
         // route for candidates
         Route::resource('candidates', CandidateController::class)->parameters(['candidates' => 'candidate']);
-
         Route::controller(CandidateController::class)->group(function () {
             // route for upload CV
             Route::post('upload-cv/{id}', 'uploadCv')->name('upload-cv');
         });
-
         // route for emergency contact
         Route::resource('emergency-contacts', EmergencyContactCandidateController::class)->parameters(['emergency-contacts' => 'emergency_contact']);
         // route for family informations
@@ -589,6 +587,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('job-vacancies-applieds', JobVacanciesAppliedController::class)->parameters(['job-vacancies-applieds' => 'job_vacancies_applied']);
         // route for Job Interview Form
         Route::resource('job-interview-forms', JobInterviewFormController::class)->parameters(['job-interview-forms' => 'job_interview_form']);
+        Route::controller(JobInterviewFormController::class)->group(function () {
+            // route for Job Interview Form where interviewer login (employee)
+            Route::get('job-interview-forms-interviewer', 'interviewer')->name('job-interview-forms-interviewer');
+        });
     });
 });
 

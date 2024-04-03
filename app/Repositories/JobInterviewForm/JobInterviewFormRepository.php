@@ -3,6 +3,7 @@
 namespace App\Repositories\JobInterviewForm;
 
 use App\Models\{JobInterviewForm};
+use Illuminate\Support\Facades\Auth;
 use App\Repositories\JobInterviewForm\JobInterviewFormRepositoryInterface;
 
 
@@ -15,7 +16,7 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $period_1 = null, $period_2 = null)
     {
         $query = $this->model
                         ->with([
@@ -44,7 +45,13 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
                     });
             });
         }
-        return $query->orderBy('candidate_id', 'ASC')->paginate($perPage);
+        if ($period_1) {
+            $query->whereDate('date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('date', '<=', $period_2);
+        }
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 
     public function store(array $data)
@@ -85,5 +92,39 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
             return $jobInterviewForm;
         }
         return null;
+    }
+
+    public function interviewer($perPage, $search = null, $period_1 = null, $period_2 = null)
+    {
+        $query = $this->model
+                        ->with([
+                            'candidate:id,first_name,middle_name,last_name,email',
+                            'jobVacancy',
+                            'jobVacancy.education:id,name',
+                            'interviewer:id,name,email,employment_number',
+                            'jobVacanciesApplied',
+                        ])->where('interviewer_id', Auth::user()->employee->id);
+
+        if ($search !== null) {
+            $query->where(function ($subquery) use ($search) {
+                $subquery->where('candidate_id', $search)
+                    ->orWhereHas('candidate', function ($candidateQuery) use ($search) {
+                        $candidateQuery->where('first_name', 'ILIKE', "%{$search}%")
+                            ->orWhere('middle_name', 'ILIKE', "%{$search}%")
+                            ->orWhere('last_name', 'ILIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('jobVacancy', function ($candidateQuery) use ($search) {
+                        $candidateQuery->where('title', 'ILIKE', "%{$search}%")
+                            ->orWhere('position', 'ILIKE', "%{$search}%");
+                    });
+            });
+        }
+        if ($period_1) {
+            $query->whereDate('date', '>=', $period_1);
+        }
+        if ($period_2) {
+            $query->whereDate('date', '<=', $period_2);
+        }
+        return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 }
