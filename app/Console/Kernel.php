@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('leave:cancel-leave')->dailyAt('00:35');
         $schedule->command('backup:clean')->dailyAt('01:28');
         $schedule->command('backup:run')->dailyAt('01:30');
-        $schedule->command('scheduller:sahur')->dailyAt('03:00');
+        // $schedule->command('scheduller:sahur')->dailyAt('03:00');
         $schedule->command('absen:absen-masuk-non-shift')->weekdays()->at('07:30');
     }
 
