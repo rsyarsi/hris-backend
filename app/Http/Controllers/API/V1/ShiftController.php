@@ -64,9 +64,19 @@ class ShiftController extends Controller
             $data = $request->validated();
             $shift = $this->shiftService->update($id, $data);
             if (!$shift) {
-                return $this->error('Shift not found', 404);
+                return response()->json([
+                    'message' => 'Shift not found',
+                    'error' => true,
+                    'code' => 422,
+                    'data' => null
+                ], 422);
             }
-            return $this->success('Shift updated successfully', $shift, 201);
+            return response()->json([
+                'message' => $shift['message'],
+                'error' => $shift['error'],
+                'code' => $shift['code'],
+                'data' => $shift['data']
+            ], $shift['code']);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

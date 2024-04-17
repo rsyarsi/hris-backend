@@ -93,20 +93,35 @@ class ShiftRepository implements ShiftRepositoryInterface
     {
         $date = now()->toDateString();
         $shiftSchedule = ShiftSchedule::where('shift_id', $id)
-            ->where('date', $date)
-            ->exists();
+                                        ->where('date', $date)
+                                        ->exists();
         $generateAbsen = GenerateAbsen::where('shift_id', $id)
-            ->where('date', $date)
-            ->exists();
+                                        ->where('date', $date)
+                                        ->exists();
         if ($shiftSchedule || $generateAbsen) {
-            return 'Kode shift ini sudah ada Jadwal Shift kerja / Generate Absen. Edit tidak diizinkan.';
+            return [
+                'message' => 'Kode shift ini sudah ada Jadwal Shift kerja / Generate Absen. Edit tidak diizinkan.',
+                'error' => true,
+                'code' => 422,
+                'data' => ['code' => ['Kode shift ini sudah ada Jadwal Shift kerja / Generate Absen. Edit tidak diizinkan.']]
+            ];
         }
         $shift = $this->model->find($id);
         if ($shift) {
             $shift->update($data);
-            return $shift;
+            return [
+                'message' => 'Shift Updated Successfully!',
+                'error' => false,
+                'code' => 201,
+                'data' => $shift
+            ];
         }
-        return null;
+        return [
+            'message' => 'Shift Not found',
+            'error' => true,
+            'code' => 422,
+            'data' => null
+        ];
     }
 
     public function destroy($id)
