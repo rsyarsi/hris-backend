@@ -30,6 +30,8 @@ return new class extends Migration
         Schema::table('human_resources_tests', function (Blueprint $table) {
             $table->dropForeign(['job_vacancy_id']);
             $table->dropColumn('job_vacancy_id');
+            $table->string('name', 150)->nullable();
+            $table->string('applied_position', 150)->nullable();
         });
     }
 };

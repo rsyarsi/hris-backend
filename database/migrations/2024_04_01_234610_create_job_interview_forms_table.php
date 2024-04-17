@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('interviewer_id', 26)->nullable();
             $table->foreign('job_vacancies_applied_id')->references('id')->on('job_vacancies_applieds')->onDelete('set null');
             $table->string('job_vacancies_applied_id', 26)->nullable();
-            $table->date('date')->nullable();
+            $table->timestamp('date')->nullable();
             $table->tinyInteger('communication_skills')->nullable();
             $table->tinyInteger('confidence_and_eye_contact')->nullable();
             $table->tinyInteger('coherent_problem_solving')->nullable();
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->tinyInteger('strategic_planning')->nullable();
             $table->tinyInteger('conflict_resolution')->nullable();
             $table->tinyInteger('additional_comments')->nullable();
-            $table->enum('status', ['HIRE', 'RECOMENDED-OTHER-POSITION', 'POSIBLE-INTEREST', 'REJECT'])->nullable();
+            $table->enum('status', ['PENDING', 'HIRE', 'RECOMENDED-OTHER-POSITION', 'POSIBLE-INTEREST', 'REJECT'])->nullable()->default(null);
             $table->timestamps();
         });
     }

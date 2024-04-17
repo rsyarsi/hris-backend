@@ -3,6 +3,8 @@
 namespace App\Services\JobVacanciesApplied;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendInvitationInterviewMail;
 use App\Services\JobVacanciesApplied\JobVacanciesAppliedServiceInterface;
 use App\Repositories\JobVacanciesApplied\JobVacanciesAppliedRepositoryInterface;
 
@@ -40,6 +42,16 @@ class JobVacanciesAppliedService implements JobVacanciesAppliedServiceInterface
     public function destroy($id)
     {
         return $this->repository->destroy($id);
+    }
+
+    public function sendEmailInterview($id)
+    {
+        $item = $this->repository->show($id);
+        if ($item) {
+            Mail::to($item->candidate->email)->send(new SendInvitationInterviewMail($item));
+            return $item;
+        }
+        return null;
     }
 
     public function formatTextTitle($data)

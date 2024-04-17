@@ -5,7 +5,7 @@
     xmlns:o="urn:schemas-microsoft-com:office:office"
 >
     <head>
-        <title>Slip Gaji</title>
+        <title>Invitation Interview</title>
         <!--[if !mso]><!-->
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <!--<![endif]-->
@@ -269,7 +269,7 @@
                                                             color: #071c4d;
                                                         "
                                                     >
-                                                        Slip Gaji
+                                                        Invitation Interview
                                                     </div>
                                                 </td>
                                             </tr>
@@ -294,7 +294,7 @@
                                                             color: #071c4d;
                                                         "
                                                     >
-                                                        Dear {{ $item->employee_name }},
+                                                        Dear {{ $item->candidate->first_name }} {{ $item->candidate->middle_name }} {{ $item->candidate->last_name }},
                                                     </div>
                                                     <div
                                                         style="
@@ -308,7 +308,7 @@
                                                             margin-top: 10px;
                                                         "
                                                     >
-                                                        Terlampir Slip Gaji Periode {{ date("M Y", strtotime($item->period_payroll)) }}.
+                                                    Sehubungan dengan proses seleksi lowongan pekerjaan untuk posisi {{ $item->job_vacancy->position }} di RS YARSI, dengan ini kami mengundang Bapak/Ibu untuk mengikuti interview pada:
                                                     </div>
                                                 </td>
                                             </tr>
@@ -354,7 +354,7 @@
                                                                         0px;
                                                                 "
                                                             >
-                                                                Name
+                                                                Hari/Tanggal
                                                             </td>
                                                             <td
                                                                 style="
@@ -362,7 +362,7 @@
                                                                     padding-top: 5px;
                                                                 "
                                                             >
-                                                                : {{ $item->employee_name }}
+                                                                : {{ $item->job_interview_form->date }}
                                                             </td>
                                                         </tr>
                                                         <!-- DEPARTMENT -->
@@ -381,7 +381,7 @@
                                                                         0px;
                                                                 "
                                                             >
-                                                                Department
+                                                                Jam
                                                             </td>
                                                             <td
                                                                 style="
@@ -389,7 +389,7 @@
                                                                     padding-top: 5px;
                                                                 "
                                                             >
-                                                                : {{ $item->employee_department_name }}
+                                                                : {{ $item->job_interview_form->date }}
                                                             </td>
                                                         </tr>
                                                         <!-- PERIOD -->
@@ -408,7 +408,7 @@
                                                                         0px;
                                                                 "
                                                             >
-                                                                Periode
+                                                                Tempat
                                                             </td>
                                                             <td
                                                                 style="
@@ -416,10 +416,64 @@
                                                                     padding-top: 5px;
                                                                 "
                                                             >
-                                                                : {{ date("M Y", strtotime($item->period_payroll)) }}
+                                                                : RS Yarsi, Jl. Letjen Suprapto No.Kav 13 10, RT.10/RW.5, Cemp. Putih Tim., Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10510
                                                             </td>
                                                         </tr>
                                                     </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    align="left"
+                                                    style="
+                                                        font-size: 0px;
+                                                        padding: 10px 10px;
+                                                        word-break: break-word;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            font-family: Assistant,
+                                                                Helvetica, Arial,
+                                                                sans-serif;
+                                                            font-size: 13px;
+                                                            line-height: 1;
+                                                            text-align: left;
+                                                            color: #071c4d;
+                                                            margin-top: 10px;
+                                                        "
+                                                    >
+                                                        Jika Bapak/Ibu berhalangan hadir, mohon konfirmasi kepada kami melalui:
+                                                        <ul>
+                                                            <li>HR YARSI</li>
+                                                            <li>08912345678</li>
+                                                            <li>hr@email.com</li>
+                                                        </ul>
+                                                        Demikian surat undangan ini kami sampaikan. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
+                                                    </div>
+                                                </td>
+                                                <td
+                                                    align="left"
+                                                    style="
+                                                        font-size: 0px;
+                                                        padding: 10px 10px;
+                                                        word-break: break-word;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            font-family: Assistant,
+                                                                Helvetica, Arial,
+                                                                sans-serif;
+                                                            font-size: 13px;
+                                                            line-height: 1;
+                                                            text-align: left;
+                                                            color: #071c4d;
+                                                            margin-top: 10px;
+                                                        "
+                                                    >
+                                                        Hormat kami, HR RS Yarsi
+                                                    </div>
                                                 </td>
                                             </tr>
                                             <tr>

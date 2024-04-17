@@ -36,10 +36,10 @@ class JobInterviewFormController extends Controller
 
     public function store(JobInterviewFormRequest $request)
     {
-        $data = $request->validated();
-        $jobinterviewform = $this->jobInterviewFormService->store($data);
-        return $this->success('Job Interview Form created successfully', $jobinterviewform, 201);
         try {
+            $data = $request->validated();
+            $jobinterviewform = $this->jobInterviewFormService->store($data);
+            return $this->success('Job Interview Form created successfully', $jobinterviewform, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

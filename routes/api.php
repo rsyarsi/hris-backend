@@ -585,6 +585,10 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::resource('human-resources-tests', HumanResourcesTestController::class)->parameters(['human-resources-tests' => 'human_resources_test']);
         // route for Job Vacancies Applieds
         Route::resource('job-vacancies-applieds', JobVacanciesAppliedController::class)->parameters(['job-vacancies-applieds' => 'job_vacancies_applied']);
+        Route::controller(JobVacanciesAppliedController::class)->group(function () {
+            // route for send email invitation interview
+            Route::get('job-vacancies-applieds/send-email-interview', 'sendEmailInterview')->name('job-vacancies-applieds.send-email-interview');
+        });
         // route for Job Interview Form
         Route::resource('job-interview-forms', JobInterviewFormController::class)->parameters(['job-interview-forms' => 'job_interview_form']);
         Route::controller(JobInterviewFormController::class)->group(function () {

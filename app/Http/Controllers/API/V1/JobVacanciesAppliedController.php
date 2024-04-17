@@ -25,8 +25,8 @@ class JobVacanciesAppliedController extends Controller
         try {
             $perPage = $request->input('per_page', 10);
             $search = $request->input('search');
-            $jobvacanciesapplieds = $this->jobVacanciesAppliedService->index($perPage, $search);
-            return $this->success('Job Vacancies Applied retrieved successfully', $jobvacanciesapplieds);
+            $jobVacanciesApplied = $this->jobVacanciesAppliedService->index($perPage, $search);
+            return $this->success('Job Vacancies Applied retrieved successfully', $jobVacanciesApplied);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -34,10 +34,10 @@ class JobVacanciesAppliedController extends Controller
 
     public function store(JobVacanciesAppliedRequest $request)
     {
-        $data = $request->validated();
-        $jobvacanciesapplied = $this->jobVacanciesAppliedService->store($data);
-        return $this->success('Job Vacancies Applied created successfully', $jobvacanciesapplied, 201);
         try {
+            $data = $request->validated();
+            $jobVacanciesApplied = $this->jobVacanciesAppliedService->store($data);
+            return $this->success('Job Vacancies Applied created successfully', $jobVacanciesApplied, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -46,11 +46,11 @@ class JobVacanciesAppliedController extends Controller
     public function show($id)
     {
         try {
-            $jobvacanciesapplied = $this->jobVacanciesAppliedService->show($id);
-            if (!$jobvacanciesapplied) {
+            $jobVacanciesApplied = $this->jobVacanciesAppliedService->show($id);
+            if (!$jobVacanciesApplied) {
                 return $this->error('Job Vacancies Applied not found', 404);
             }
-            return $this->success('Job Vacancies Applied retrieved successfully', $jobvacanciesapplied);
+            return $this->success('Job Vacancies Applied retrieved successfully', $jobVacanciesApplied);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -60,11 +60,11 @@ class JobVacanciesAppliedController extends Controller
     {
         try {
             $data = $request->validated();
-            $jobvacanciesapplied = $this->jobVacanciesAppliedService->update($id, $data);
-            if (!$jobvacanciesapplied) {
+            $jobVacanciesApplied = $this->jobVacanciesAppliedService->update($id, $data);
+            if (!$jobVacanciesApplied) {
                 return $this->error('Job Vacancies Applied not found', 404);
             }
-            return $this->success('Job Vacancies Applied updated successfully', $jobvacanciesapplied, 201);
+            return $this->success('Job Vacancies Applied updated successfully', $jobVacanciesApplied, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -73,11 +73,24 @@ class JobVacanciesAppliedController extends Controller
     public function destroy($id)
     {
         try {
-            $jobvacanciesapplied = $this->jobVacanciesAppliedService->destroy($id);
-            if (!$jobvacanciesapplied) {
+            $jobVacanciesApplied = $this->jobVacanciesAppliedService->destroy($id);
+            if (!$jobVacanciesApplied) {
                 return $this->error('Job Vacancies Applied not found', 404);
             }
-            return $this->success('Job Vacancies Applied deleted successfully, id : ' . $jobvacanciesapplied->id, []);
+            return $this->success('Job Vacancies Applied deleted successfully, id : ' . $jobVacanciesApplied->id, []);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function sendEmailInterview($id)
+    {
+        try {
+            $jobVacanciesApplied = $this->jobVacanciesAppliedService->sendEmailInterview($id);
+            if (!$jobVacanciesApplied) {
+                return $this->error('Job Vacancies Applied not found', 404);
+            }
+            return $this->success('Email Invitation sent successfully', $jobVacanciesApplied, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

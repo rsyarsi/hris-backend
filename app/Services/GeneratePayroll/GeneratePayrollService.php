@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\GeneratePayroll;
 
 use App\Mail\SlipGajiEmail;
@@ -51,7 +52,7 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         $employeeFixUangmakan = $data['employee_fix_uangmakan'];
         $employeeFixTunjangankemahalan = $data['employee_fix_tunjangankemahalan'];
         $fixIncomeTotal = (int)$employeeFixGapok + (int)$employeeFixTransport +
-                            (int)$employeeFixUangmakan + (int)$employeeFixTunjangankemahalan;
+            (int)$employeeFixUangmakan + (int)$employeeFixTunjangankemahalan;
         $data['fix_income_total'] = $fixIncomeTotal; // oke
 
         // tunjangan
@@ -62,10 +63,10 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         $employeeTunjanganIntensifkhusus = $data['employee_tunjangan_intensifkhusus'];
         $employeeTunjanganExtrafooding = $data['employee_tunjangan_extrafooding'];
         $employeeTunjanganLembur = $data['employee_tunjangan_lembur'];
-        $totalTunjangan = (int)$employeeTunjanganHdm +(int) $employeeTunjanganJabatan +
-                            (int)$employeeTunjanganDinasmalam + (int)$employeeTunjanganTunjanganppr +
-                            (int)$employeeTunjanganIntensifkhusus + (int)$employeeTunjanganExtrafooding +
-                            (int)$employeeTunjanganLembur;
+        $totalTunjangan = (int)$employeeTunjanganHdm + (int) $employeeTunjanganJabatan +
+            (int)$employeeTunjanganDinasmalam + (int)$employeeTunjanganTunjanganppr +
+            (int)$employeeTunjanganIntensifkhusus + (int)$employeeTunjanganExtrafooding +
+            (int)$employeeTunjanganLembur;
         $data['tunjangan_total'] = $totalTunjangan; // oke
 
         // liability company
@@ -74,9 +75,9 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         $liabilityCompaniesJht = $data['liability_companies_jht'];
         $liabilityCompaniesJp = $data['liability_companies_jp'];
         $liabilityCompaniesBpjskesehatan = $data['liability_companies_bpjskesehatan'];
-        $liabilityCompaniesTotal = (int)$liabilityCompaniesJkk +(int) $liabilityCompaniesJkm +
-                                    (int)$liabilityCompaniesJht + (int)$liabilityCompaniesJp +
-                                    (int)$liabilityCompaniesBpjskesehatan;
+        $liabilityCompaniesTotal = (int)$liabilityCompaniesJkk + (int) $liabilityCompaniesJkm +
+            (int)$liabilityCompaniesJht + (int)$liabilityCompaniesJp +
+            (int)$liabilityCompaniesBpjskesehatan;
         $data['liability_companies_total'] = $liabilityCompaniesTotal; //oke
 
         // liability pekerja
@@ -85,9 +86,9 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
         $liabilityEmployeePotongan = $data['liability_employee_potongan'];
         $liabilityEmployeeBpjskesehatan = $data['liability_employee_bpjskesehatan'];
         $liabilityEmployeePph21 = $data['liability_employee_pph21'];
-        $liabilityEmployeeTotal = (int)$liabilityEmployeeJht +(int) $liabilityEmployeeJp +
-                                    (int)$liabilityEmployeePotongan + (int)$liabilityEmployeeBpjskesehatan +
-                                    (int)$liabilityEmployeePph21;
+        $liabilityEmployeeTotal = (int)$liabilityEmployeeJht + (int) $liabilityEmployeeJp +
+            (int)$liabilityEmployeePotongan + (int)$liabilityEmployeeBpjskesehatan +
+            (int)$liabilityEmployeePph21;
         $data['liability_employee_total'] = $liabilityEmployeeTotal; // oke
 
         $gajiBruto = $totalTunjangan + $fixIncomeTotal;
@@ -98,7 +99,7 @@ class GeneratePayrollService implements GeneratePayrollServiceInterface
 
         // zakat
         if ($salaryTotalBeforeZakat >= 7083000) {
-		    $zakat = ($salaryTotalBeforeZakat * 2.5) / 100;
+            $zakat = ($salaryTotalBeforeZakat * 2.5) / 100;
         } else {
             $zakat = 0;
         }
