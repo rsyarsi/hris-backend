@@ -7,10 +7,12 @@ use App\Models\Employee;
 use App\Models\GenerateAbsen;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\GenerateAbsen\GenerateAbsenRepositoryInterface;
+use App\Services\LogGenerateAbsen\LogGenerateAbsenServiceInterface;
 
 class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
 {
     private $model;
+    private $logGenerateAbsen;
     private $field =
     [
         'id', 'period', 'date', 'day', 'employee_id', 'shift_id', 'date_in_at', 'time_in_at',
@@ -56,39 +58,40 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         'night',
     ];
 
-    public function __construct(GenerateAbsen $model)
+    public function __construct(GenerateAbsen $model, LogGenerateAbsenServiceInterface $logGenerateAbsen)
     {
         $this->model = $model;
+        $this->logGenerateAbsen = $logGenerateAbsen;
     }
 
     public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
-                        },
-                        'shift' => function ($query) {
-                            $query->select(
-                                $this->fieldShift
-                            );
-                        },
-                        'shiftSchedule' => function ($query) {
-                            $query->select(
-                                $this->fieldShiftSchedule
-                            );
-                        },
-                        'leave' => function ($query) {
-                            $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'user' => function ($query) {
-                            $query->select('id', 'name', 'email');
-                        },
-                    ])
-                    ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        $this->fieldShift
+                    );
+                },
+                'shiftSchedule' => function ($query) {
+                    $query->select(
+                        $this->fieldShiftSchedule
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->select($this->field);
         // Additional conditions
         if ($period_1 && $period_2) {
             $query->whereBetween('date', [$period_1, $period_2]);
@@ -105,10 +108,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
         return $query->paginate($perPage);
@@ -117,92 +120,92 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     public function generateAbsenEmployee($employeeId)
     {
         $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
-                        },
-                        'shift' => function ($query) {
-                            $query->select(
-                                'id',
-                                'code',
-                                'name',
-                                'in_time',
-                                'out_time',
-                                'finger_in_less',
-                                'finger_in_more',
-                                'finger_out_less',
-                                'finger_out_more',
-                                'night_shift',
-                            );
-                        },
-                        'leave' => function ($query) {
-                            $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'user' => function ($query) {
-                            $query->select('id', 'name', 'email');
-                        },
-                    ])
-                    ->select($this->field)
-                    ->where('employee_id', $employeeId);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                        'finger_in_less',
+                        'finger_in_more',
+                        'finger_out_less',
+                        'finger_out_more',
+                        'night_shift',
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->select($this->field)
+            ->where('employee_id', $employeeId);
         return $query->orderBy('date', 'DESC')->paginate();
     }
 
     public function monitoringAbsen($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number', 'unit_id')->with('unit:id,name');
-                            },
-                            'shift' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'code',
-                                    'name',
-                                    'in_time',
-                                    'out_time',
-                                    'finger_in_less',
-                                    'finger_in_more',
-                                    'finger_out_less',
-                                    'finger_out_more',
-                                    'night_shift',
-                                );
-                            },
-                            'leave' => function ($query) {
-                                $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                            },
-                            'leaveType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'user' => function ($query) {
-                                $query->select('id', 'name', 'email');
-                            },
-                        ])
-                        ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'employment_number', 'unit_id')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                        'finger_in_less',
+                        'finger_in_more',
+                        'finger_out_less',
+                        'finger_out_more',
+                        'night_shift',
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->select($this->field);
 
-                        // Additional conditions
-                        $query->where(function ($subquery) {
-                            $subquery->whereNull('leave_id')
-                                ->orWhere('leave_id', null)
-                                ->orWhere('leave_id', '');
-                        })
-                        ->where(function ($subquery) {
-                            $subquery->whereNull('holiday')
-                                ->orWhere('holiday', 0);
-                        })
-                        ->where(function ($subquery) {
-                            $subquery->where(function ($timeQuery) {
-                                $timeQuery->whereNull('time_in_at')
-                                    ->whereNull('time_out_at');
-                            })
-                            ->orWhere(function ($timeQuery) {
-                                $timeQuery->whereNotNull('time_in_at')
-                                    ->whereNull('time_out_at');
-                            });
-                        });
+        // Additional conditions
+        $query->where(function ($subquery) {
+            $subquery->whereNull('leave_id')
+                ->orWhere('leave_id', null)
+                ->orWhere('leave_id', '');
+        })
+            ->where(function ($subquery) {
+                $subquery->whereNull('holiday')
+                    ->orWhere('holiday', 0);
+            })
+            ->where(function ($subquery) {
+                $subquery->where(function ($timeQuery) {
+                    $timeQuery->whereNull('time_in_at')
+                        ->whereNull('time_out_at');
+                })
+                    ->orWhere(function ($timeQuery) {
+                        $timeQuery->whereNotNull('time_in_at')
+                            ->whereNull('time_out_at');
+                    });
+            });
 
         // Period conditions
         if ($period_1 && $period_2) {
@@ -223,10 +226,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
 
@@ -240,11 +243,11 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             return [];
         }
         $queryEmployee = Employee::where(function ($q) use ($user) {
-                            $q->where('supervisor_id', $user->employee->id)
-                                ->orWhere('manager_id', $user->employee->id)
-                                ->orWhere('kabag_id', $user->employee->id);
-                        })
-                        ->get();
+            $q->where('supervisor_id', $user->employee->id)
+                ->orWhere('manager_id', $user->employee->id)
+                ->orWhere('kabag_id', $user->employee->id);
+        })
+            ->get();
         $employeeIds = []; // Collect employee IDs in an array
         foreach ($queryEmployee as $item) {
             $employeeIds[] = $item->id;
@@ -299,10 +302,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
 
@@ -316,46 +319,46 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             return [];
         }
         $queryEmployee = Employee::where(function ($q) use ($employee) {
-                            $q->where('supervisor_id', $employee->id)
-                                ->orWhere('manager_id', $employee->id)
-                                ->orWhere('kabag_id', $employee->id);
-                        })
-                        ->get();
+            $q->where('supervisor_id', $employee->id)
+                ->orWhere('manager_id', $employee->id)
+                ->orWhere('kabag_id', $employee->id);
+        })
+            ->get();
         $employeeIds = []; // Collect employee IDs in an array
         foreach ($queryEmployee as $item) {
             $employeeIds[] = $item->id;
         }
         $query = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
-                            },
-                            'shift' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'code',
-                                    'name',
-                                    'in_time',
-                                    'out_time',
-                                    'finger_in_less',
-                                    'finger_in_more',
-                                    'finger_out_less',
-                                    'finger_out_more',
-                                    'night_shift',
-                                );
-                            },
-                            'leave' => function ($query) {
-                                $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                            },
-                            'leaveType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'user' => function ($query) {
-                                $query->select('id', 'name', 'email');
-                            },
-                        ])
-                        ->whereIn('employee_id', $employeeIds)
-                        ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'unit_id', 'employment_number')->with('unit:id,name');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                        'finger_in_less',
+                        'finger_in_more',
+                        'finger_out_less',
+                        'finger_out_more',
+                        'night_shift',
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->whereIn('employee_id', $employeeIds)
+            ->select($this->field);
 
         // Period conditions
         if ($period_1 && $period_2) {
@@ -375,10 +378,10 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
 
@@ -393,32 +396,32 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
     public function show($id)
     {
         $generateAbsen = $this->model
-                                ->with([
-                                    'employee' => function ($query) {
-                                        $query->select('id', 'name', 'email', 'employment_number');
-                                    },
-                                    'shift' => function ($query) {
-                                        $query->select(
-                                            $this->fieldShift
-                                        );
-                                    },
-                                    'shiftSchedule' => function ($query) {
-                                        $query->select(
-                                            $this->fieldShiftSchedule
-                                        );
-                                    },
-                                    'leave' => function ($query) {
-                                        $query->select('id', 'from_date', 'to_date', 'duration', 'note');
-                                    },
-                                    'leaveType' => function ($query) {
-                                        $query->select('id', 'name', 'is_salary_deduction', 'active');
-                                    },
-                                    'user' => function ($query) {
-                                        $query->select('id', 'name', 'email');
-                                    },
-                                ])
-                                ->where('id', $id)
-                                ->first($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'email', 'employment_number');
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        $this->fieldShift
+                    );
+                },
+                'shiftSchedule' => function ($query) {
+                    $query->select(
+                        $this->fieldShiftSchedule
+                    );
+                },
+                'leave' => function ($query) {
+                    $query->select('id', 'from_date', 'to_date', 'duration', 'note');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+            ])
+            ->where('id', $id)
+            ->first($this->field);
         return $generateAbsen ? $generateAbsen : $generateAbsen = null;
     }
 
@@ -483,12 +486,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             // ABSEN
             if ($type == 'ABSEN') {
                 $existingRecordAbsen = $this->model
-                                            ->where('shift_schedule_id', $idSchedule)
-                                            ->where('employee_id', $employeeId)
-                                            // ->where('date', $date)
-                                            // ->orWhere('date_out_at', $date)
-                                            ->where('type', 'ABSEN')
-                                            ->first();
+                    ->where('shift_schedule_id', $idSchedule)
+                    ->where('employee_id', $employeeId)
+                    // ->where('date', $date)
+                    // ->orWhere('date_out_at', $date)
+                    ->where('type', 'ABSEN')
+                    ->first();
                 if ($function == 'IN') {
                     if ($existingRecordAbsen && $existingRecordAbsen->note == "TIDAK ABSEN MASUK") { // CASE TIDAK ABSEN MASUK
                         $message = 'ANDA TIDAK BISA ABSEN MASUK!';
@@ -513,14 +516,15 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $data['shift_schedule_id'] = $idSchedule;
                         $message = 'Absen Masuk Berhasil!';
                         $finalData = $this->model->create($data);
+                        $this->logGenerateAbsen->store($data);
                     }
                 }
-    
+
                 if ($function == 'OUT') {
                     $existingRecordAbsenOut = $this->model
-                                                    ->where('shift_schedule_id', $idSchedule)
-                                                    ->where('type', 'ABSEN')
-                                                    ->first();
+                        ->where('shift_schedule_id', $idSchedule)
+                        ->where('type', 'ABSEN')
+                        ->first();
                     if ($existingRecordAbsenOut) {
                         if ($existingRecordAbsenOut->time_out_at !== null) {
                             $message = 'Anda Sudah Absen Keluar!';
@@ -540,6 +544,8 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             ]);
                             $message = 'Absen Keluar Berhasil!';
                             $finalData = $existingRecordAbsenOut;
+                            $existingRecordAbsenOutArray = $existingRecordAbsenOut->toArray();
+                            $this->logGenerateAbsen->store($existingRecordAbsenOutArray);
                         }
                     } else {
                         $data['date_in_at'] = null;
@@ -549,17 +555,18 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $data['shift_schedule_id'] = $idSchedule;
                         $message = 'Absen Out Berhasil!';
                         $finalData = $this->model->create($data);
+                        $this->logGenerateAbsen->store($data);
                     }
                 }
             } else {
                 // EXISTING RECORD
                 $existingRecordOvertime = $this->model
-                                                ->where('employee_id', $employeeId)
-                                                ->where('type', 'SPL')
-                                                ->where('date', $date)
-                                                ->orWhere('overtime_out_at', $date)
-                                                ->first();
-    
+                    ->where('employee_id', $employeeId)
+                    ->where('type', 'SPL')
+                    ->where('date', $date)
+                    ->orWhere('overtime_out_at', $date)
+                    ->first();
+
                 if ($type == 'SPL' && $function == 'IN') {
                     if ($existingRecordOvertime == null) {
                         $data['overtime_id'] = $overtimeId;
@@ -576,17 +583,18 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $data['overtime_type'] = $data['overtime_type'];
                         $message = 'Absen Masuk Overtime Berhasil!';
                         $finalData = $this->model->create($data);
+                        $this->logGenerateAbsen->store($data);
                     } else {
                         $message = 'Anda Sudah Absen Masuk Overtime!';
                         $finalData = $existingRecordOvertime;
                     }
                 }
-    
+
                 if ($type == 'SPL' && $function == 'OUT') {
                     $existingRecordSplOut = $this->model
-                                                ->where('shift_schedule_id', $idSchedule)
-                                                ->where('type', 'SPL')
-                                                ->first();
+                        ->where('shift_schedule_id', $idSchedule)
+                        ->where('type', 'SPL')
+                        ->first();
                     if ($existingRecordSplOut) {
                         if ($existingRecordSplOut->time_out_at !== null) {
                             $message = 'Anda Sudah Absen Overtime Keluar!';
@@ -598,7 +606,7 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             if ($data['time_out_at'] >= $scheduleOvertimeOutAt->format('H:i:s')) {
                                 $finalOvertimeOutAt = $scheduleOvertimeOutAt->format('H:i:s');
                             }
-    
+
                             $existingRecordSplOut->update([
                                 'time_out_at' => $finalOvertimeOutAt,
                                 'date_out_at' => now()->format('Y-m-d'),
@@ -607,6 +615,8 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             ]);
                             $message = 'Absen Keluar Overtime Berhasil!';
                             $finalData = $existingRecordSplOut;
+                            $existingRecordSplOutArray = $existingRecordSplOut->toArray();
+                            $this->logGenerateAbsen->store($existingRecordSplOutArray);
                         }
                     } else {
                         $message = 'Anda Belum Absen Overtime/Data not found';
@@ -623,13 +633,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
         } catch (\Exception $e) {
             DB::rollBack();
             // Log the error
-            logger('Error during absenFromMobile: ' . $e->getMessage());
+            logger('Error during Absen From Mobile: ' . $e->getMessage());
             // Return error response
             return [
                 'message' => $e->getMessage(),
                 'data' => []
             ];
         }
-
     }
 }

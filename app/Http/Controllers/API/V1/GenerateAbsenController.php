@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\Unit;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
 use App\Models\GenerateAbsen;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Http\Requests\UpdateGenerateAbsenRequest;
 use App\Services\GenerateAbsen\GenerateAbsenServiceInterface;
 use App\Exports\{MonitoringAbsenExport, MonitoringAbsenRekapExport};
@@ -142,7 +139,7 @@ class GenerateAbsenController extends Controller
             if (!$generateabsen) {
                 return $this->error('Generate Absen not found', 404);
             }
-            return $this->success('Generate Absen deleted successfully, id : '.$generateabsen->id, []);
+            return $this->success('Generate Absen deleted successfully, id : ' . $generateabsen->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -194,7 +191,7 @@ class GenerateAbsenController extends Controller
         try {
             $period1 = $request->input('period_1');
             $period2 = $request->input('period_2');
-            $nameFile = 'data-monitoring-absen-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            $nameFile = 'data-monitoring-absen-' . date("Y-m-d", strtotime($period1)) . '-' . date("Y-m-d", strtotime($period2)) . '.xlsx';
             return Excel::download(new MonitoringAbsenExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -206,7 +203,7 @@ class GenerateAbsenController extends Controller
         try {
             $year = $request->input('year');
             $export = new MonitoringAbsenRekapExport();
-            $nameFile = 'data-monitoring-absen-rekap-'.$year.'.xlsx';
+            $nameFile = 'data-monitoring-absen-rekap-' . $year . '.xlsx';
             return Excel::download($export, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

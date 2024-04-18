@@ -42,6 +42,7 @@ use App\Services\Pengembalian\{PengembalianService, PengembalianServiceInterface
 use App\Services\Relationship\{RelationshipService, RelationshipServiceInterface};
 use App\Services\EmployeeSkill\{EmployeeSkillService, EmployeeSkillServiceInterface};
 use App\Services\GenerateAbsen\{GenerateAbsenService, GenerateAbsenServiceInterface};
+use App\Services\LogGenerateAbsen\{LogGenerateAbsenService, LogGenerateAbsenServiceInterface};
 use App\Services\LeaveApproval\{LeaveApprovalService, LeaveApprovalServiceInterface};
 use App\Services\LogFingerTemp\{LogFingerTempService, LogFingerTempServiceInterface};
 use App\Services\MaritalStatus\{MaritalStatusService, MaritalStatusServiceInterface};
@@ -127,6 +128,7 @@ use App\Repositories\Pengembalian\{PengembalianRepository, PengembalianRepositor
 use App\Repositories\Relationship\{RelationshipRepository, RelationshipRepositoryInterface};
 use App\Repositories\EmployeeSkill\{EmployeeSkillRepository, EmployeeSkillRepositoryInterface};
 use App\Repositories\GenerateAbsen\{GenerateAbsenRepository, GenerateAbsenRepositoryInterface};
+use App\Repositories\LogGenerateAbsen\{LogGenerateAbsenRepository, LogGenerateAbsenRepositoryInterface};
 use App\Repositories\LeaveApproval\{LeaveApprovalRepository, LeaveApprovalRepositoryInterface};
 use App\Repositories\LogFingerTemp\{LogFingerTempRepository, LogFingerTempRepositoryInterface};
 use App\Repositories\MaritalStatus\{MaritalStatusRepository, MaritalStatusRepositoryInterface};
@@ -379,6 +381,10 @@ class AppServiceProvider extends ServiceProvider
         // Generate Absen
         $this->app->bind(GenerateAbsenRepositoryInterface::class, GenerateAbsenRepository::class);
         $this->app->bind(GenerateAbsenServiceInterface::class, GenerateAbsenService::class);
+
+        // Log Generate Absen
+        $this->app->bind(LogGenerateAbsenRepositoryInterface::class, LogGenerateAbsenRepository::class);
+        $this->app->bind(LogGenerateAbsenServiceInterface::class, LogGenerateAbsenService::class);
 
         // Generate Payroll
         $this->app->bind(GeneratePayrollRepositoryInterface::class, GeneratePayrollRepository::class);

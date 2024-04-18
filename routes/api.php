@@ -84,7 +84,8 @@ use App\Http\Controllers\API\V1\{
     AdditionalInformationCandidateController,
     HumanResourcesTestController,
     JobInterviewFormController,
-    JobVacanciesAppliedController
+    JobVacanciesAppliedController,
+    LogGenerateAbsenController
 };
 use App\Http\Controllers\API\Career\{
     AuthCareerController
@@ -346,6 +347,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
             // route for rekap absensi
             Route::get('monitoring-absen-rekap', 'exportMonitoringAbsenRekap')->name('monitoring-absen-rekap');
         });
+        // route for log generate absen
+        Route::resource('log-generate-absen', LogGenerateAbsenController::class)->parameters(['log-generate-absen' => 'log_generate_absen']);
         // route for generate payroll
         Route::resource('generate-payroll', GeneratePayrollController::class)->parameters(['generate-payroll' => 'generate-payroll']);
         Route::controller(GeneratePayrollController::class)->group(function () {

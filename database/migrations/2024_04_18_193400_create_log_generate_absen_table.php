@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('generate_absen', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
+        Schema::create('log_generate_absen', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->string('period', 50)->nullable();
+            $table->date('date')->nullable();
             $table->string('day', 50)->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('employee_id', 26)->nullable();
@@ -62,9 +62,10 @@ return new class extends Migration
             $table->string('gp_out', 50)->nullable();
             $table->string('employment_id', 100)->nullable();
             $table->string('overtime_type', 100)->nullable();
-            $table->date('date')->nullable();
             $table->string('type')->nullable();
             $table->decimal('overtime_hours', 18, 2)->nullable();
+            $table->foreign('shift_schedule_id')->references('id')->on('shift_schedules')->onDelete('set null');
+            $table->string('shift_schedule_id', 26)->nullable();
             $table->timestamps();
         });
     }
@@ -76,6 +77,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('generate_absen');
+        Schema::dropIfExists('log_generate_absen');
     }
 };
