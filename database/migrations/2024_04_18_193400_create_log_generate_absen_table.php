@@ -66,6 +66,10 @@ return new class extends Migration
             $table->decimal('overtime_hours', 18, 2)->nullable();
             $table->foreign('shift_schedule_id')->references('id')->on('shift_schedules')->onDelete('set null');
             $table->string('shift_schedule_id', 26)->nullable();
+            $table->text('message')->nullable();
+            $table->boolean('success')->nullable();
+            $table->tinyInteger('code')->nullable();
+            $table->text('data')->nullable();
             $table->timestamps();
         });
     }

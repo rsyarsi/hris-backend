@@ -496,6 +496,13 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                     if ($existingRecordAbsen && $existingRecordAbsen->note == "TIDAK ABSEN MASUK") { // CASE TIDAK ABSEN MASUK
                         $message = 'ANDA TIDAK BISA ABSEN MASUK!';
                         $finalData = $existingRecordAbsen;
+                        $log = $this->logGenerateAbsen->store($data);
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => false,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at == null) { // update absen (NON SHIFT);
                         $existingRecordAbsen->update([
                             'date_in_at' => $data['date_in_at'],
@@ -507,16 +514,36 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         ]);
                         $message = 'Absen Masuk Berhasil!';
                         $finalData = $existingRecordAbsen;
+                        $log = $this->logGenerateAbsen->store($data);
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     } else if ($existingRecordAbsen && $existingRecordAbsen->time_in_at !== null) {
                         $message = 'Anda Sudah Absen Masuk!';
                         $finalData = $existingRecordAbsen;
+                        $log = $this->logGenerateAbsen->store($existingRecordAbsen->toArray());
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     } else { // Create a new record
                         $data['time_out_at'] = null;
                         $data['note'] = "BELUM ABSEN PULANG";
                         $data['shift_schedule_id'] = $idSchedule;
                         $message = 'Absen Masuk Berhasil!';
                         $finalData = $this->model->create($data);
-                        $this->logGenerateAbsen->store($data);
+                        $log = $this->logGenerateAbsen->store($data);
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     }
                 }
 
@@ -529,6 +556,13 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         if ($existingRecordAbsenOut->time_out_at !== null) {
                             $message = 'Anda Sudah Absen Keluar!';
                             $finalData = $existingRecordAbsenOut;
+                            $log = $this->logGenerateAbsen->store($existingRecordAbsenOut->toArray());
+                            $this->logGenerateAbsen->update($log->id, [
+                                'message' => $message,
+                                'success' => true,
+                                'code' => 200,
+                                'data' => null,
+                            ]);
                         } else { // Check if a record exists for the employee and date
                             $timeOutAt = $data['time_out_at'];
                             $scheduleTimeOutAt = $existingRecordAbsenOut->schedule_time_out_at;
@@ -544,8 +578,13 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             ]);
                             $message = 'Absen Keluar Berhasil!';
                             $finalData = $existingRecordAbsenOut;
-                            $existingRecordAbsenOutArray = $existingRecordAbsenOut->toArray();
-                            $this->logGenerateAbsen->store($existingRecordAbsenOutArray);
+                            $log = $this->logGenerateAbsen->store($existingRecordAbsenOut->toArray());
+                            $this->logGenerateAbsen->update($log->id, [
+                                'message' => $message,
+                                'success' => true,
+                                'code' => 200,
+                                'data' => null,
+                            ]);
                         }
                     } else {
                         $data['date_in_at'] = null;
@@ -555,7 +594,13 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $data['shift_schedule_id'] = $idSchedule;
                         $message = 'Absen Out Berhasil!';
                         $finalData = $this->model->create($data);
-                        $this->logGenerateAbsen->store($data);
+                        $log = $this->logGenerateAbsen->store($data);
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     }
                 }
             } else {
@@ -583,10 +628,23 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         $data['overtime_type'] = $data['overtime_type'];
                         $message = 'Absen Masuk Overtime Berhasil!';
                         $finalData = $this->model->create($data);
-                        $this->logGenerateAbsen->store($data);
+                        $log = $this->logGenerateAbsen->store($data);
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     } else {
                         $message = 'Anda Sudah Absen Masuk Overtime!';
                         $finalData = $existingRecordOvertime;
+                        $log = $this->logGenerateAbsen->store($existingRecordOvertime->toArray());
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     }
                 }
 
@@ -599,6 +657,13 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                         if ($existingRecordSplOut->time_out_at !== null) {
                             $message = 'Anda Sudah Absen Overtime Keluar!';
                             $finalData = $existingRecordSplOut;
+                            $log = $this->logGenerateAbsen->store($existingRecordSplOut->toArray());
+                            $this->logGenerateAbsen->update($log->id, [
+                                'message' => $message,
+                                'success' => true,
+                                'code' => 200,
+                                'data' => null,
+                            ]);
                         } else { // Check if a record exists for the employee and date
                             // CHECK TIME OUT
                             $finalOvertimeOutAt = $data['time_out_at'];
@@ -615,12 +680,24 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
                             ]);
                             $message = 'Absen Keluar Overtime Berhasil!';
                             $finalData = $existingRecordSplOut;
-                            $existingRecordSplOutArray = $existingRecordSplOut->toArray();
-                            $this->logGenerateAbsen->store($existingRecordSplOutArray);
+                            $log = $this->logGenerateAbsen->store($existingRecordSplOut->toArray());
+                            $this->logGenerateAbsen->update($log->id, [
+                                'message' => $message,
+                                'success' => true,
+                                'code' => 200,
+                                'data' => null,
+                            ]);
                         }
                     } else {
                         $message = 'Anda Belum Absen Overtime/Data not found';
                         $finalData = [];
+                        $log = $this->logGenerateAbsen->store($data);
+                        $this->logGenerateAbsen->update($log->id, [
+                            'message' => $message,
+                            'success' => true,
+                            'code' => 200,
+                            'data' => null,
+                        ]);
                     }
                 }
             }
@@ -635,6 +712,12 @@ class GenerateAbsenRepository implements GenerateAbsenRepositoryInterface
             // Log the error
             logger('Error during Absen From Mobile: ' . $e->getMessage());
             // Return error response
+            $this->logGenerateAbsen->store([
+                'message' => $e->getMessage(),
+                'success' => false,
+                'code' => 200,
+                'data' => [],
+            ]);
             return [
                 'message' => $e->getMessage(),
                 'data' => []

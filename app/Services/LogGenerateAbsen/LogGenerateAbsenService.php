@@ -30,6 +30,11 @@ class LogGenerateAbsenService implements LogGenerateAbsenServiceInterface
         return $this->repository->show($id);
     }
 
+    public function update($id, $data)
+    {
+        return $this->repository->update($id, $data);
+    }
+
     public function findDate($employeeId, $date)
     {
         return $this->repository->findDate($employeeId, $date);

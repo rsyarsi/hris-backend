@@ -17,7 +17,8 @@ class LogGenerateAbsenRepository implements LogGenerateAbsenRepositoryInterface
         'leave_out_at', 'schedule_leave_time_at', 'schedule_leave_out_at', 'overtime_id',
         'overtime_at', 'overtime_time_at', 'overtime_out_at', 'schedule_overtime_time_at',
         'schedule_overtime_out_at', 'ot1', 'ot2', 'ot3', 'ot4', 'manual', 'user_manual_id',
-        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'type', 'shift_schedule_id'
+        'input_manual_at', 'lock', 'gp_in', 'gp_out', 'employment_id', 'overtime_type', 'type',
+        'overtime_hours', 'shift_schedule_id', 'message', 'success', 'code', 'data'
     ];
     private $fieldShift = [
         'id',
@@ -130,6 +131,16 @@ class LogGenerateAbsenRepository implements LogGenerateAbsenRepositoryInterface
             ->where('id', $id)
             ->first($this->field);
         return $logGenerateAbsen ? $logGenerateAbsen : $logGenerateAbsen = null;
+    }
+
+    public function update($id, $data)
+    {
+        $logGenerateAbsen = $this->model->find($id);
+        if ($logGenerateAbsen) {
+            $logGenerateAbsen->update($data);
+            return $logGenerateAbsen;
+        }
+        return null;
     }
 
     public function findDate($employeeId, $date)
