@@ -15,7 +15,7 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null)
+    public function index($perPage, $search = null, $status = null)
     {
         $query = $this->model
             ->with([
@@ -38,6 +38,9 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
                             ->orWhere('position', 'ILIKE', "%{$search}%");
                     });
             });
+        }
+        if ($status) {
+            $query->whereRaw('LOWER(status) LIKE ?', ["%" . strtolower($status) . "%"]);
         }
         return $query->orderBy('created_at', 'DESC')->paginate($perPage);
     }

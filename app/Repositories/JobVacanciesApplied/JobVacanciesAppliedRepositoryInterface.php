@@ -4,7 +4,7 @@ namespace App\Repositories\JobVacanciesApplied;
 
 interface JobVacanciesAppliedRepositoryInterface
 {
-    public function index($perPage, $search);
+    public function index($perPage, $search, $status);
     public function store(array $data);
     public function show($id);
     public function update($id, array $data);

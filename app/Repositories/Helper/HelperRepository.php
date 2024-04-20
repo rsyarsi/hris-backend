@@ -9,7 +9,13 @@ use App\Repositories\Helper\HelperRepositoryInterface;
 class HelperRepository implements HelperRepositoryInterface
 {
     private $model;
-    private $field = ['id', 'employment_number'];
+    private $field =
+    [
+        'id',
+        'employment_number',
+        'telephone_invitation_interview',
+        'email_invitation_interview'
+    ];
 
     public function __construct(Helper $model)
     {
@@ -17,7 +23,7 @@ class HelperRepository implements HelperRepositoryInterface
     }
     public function show()
     {
-        $helper = $this->model->where('id', 1)->first($this->field);
+        $helper = $this->model->first($this->field);
         return $helper ? $helper : $helper = null;
     }
 

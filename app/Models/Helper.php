@@ -11,5 +11,10 @@ class Helper extends Model
 
     protected $table = 'helpers';
 
-    protected $fillable = ['employment_number'];
+    protected $fillable =
+    [
+        'employment_number',
+        'telephone_invitation_interview',
+        'email_invitation_interview'
+    ];
 }

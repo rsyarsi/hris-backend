@@ -16,16 +16,16 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
         $this->model = $model;
     }
 
-    public function index($perPage, $search = null, $period_1 = null, $period_2 = null)
+    public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $status = null)
     {
         $query = $this->model
-                        ->with([
-                            'candidate:id,first_name,middle_name,last_name,email',
-                            'jobVacancy',
-                            'jobVacancy.education:id,name',
-                            'interviewer:id,name,email,employment_number',
-                            'jobVacanciesApplied',
-                        ]);
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'jobVacancy',
+                'jobVacancy.education:id,name',
+                'interviewer:id,name,email,employment_number',
+                'jobVacanciesApplied',
+            ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
@@ -51,6 +51,9 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
         if ($period_2) {
             $query->whereDate('date', '<=', $period_2);
         }
+        if ($status) {
+            $query->whereRaw('LOWER(status) LIKE ?', ["%" . strtolower($status) . "%"]);
+        }
         return $query->orderBy('date', 'DESC')->paginate($perPage);
     }
 
@@ -62,15 +65,15 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
     public function show($id)
     {
         $jobInterviewForm = $this->model
-                            ->with([
-                                'candidate:id,first_name,middle_name,last_name,email',
-                                'jobVacancy',
-                                'jobVacancy.education:id,name',
-                                'interviewer:id,name,email,employment_number',
-                                'jobVacanciesApplied',
-                            ])
-                            ->where('id', $id)
-                            ->first();
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'jobVacancy',
+                'jobVacancy.education:id,name',
+                'interviewer:id,name,email,employment_number',
+                'jobVacanciesApplied',
+            ])
+            ->where('id', $id)
+            ->first();
         return $jobInterviewForm ? $jobInterviewForm : $jobInterviewForm = null;
     }
 
@@ -94,16 +97,16 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
         return null;
     }
 
-    public function interviewer($perPage, $search = null, $period_1 = null, $period_2 = null)
+    public function interviewer($perPage, $search = null, $period_1 = null, $period_2 = null, $status = null)
     {
         $query = $this->model
-                        ->with([
-                            'candidate:id,first_name,middle_name,last_name,email',
-                            'jobVacancy',
-                            'jobVacancy.education:id,name',
-                            'interviewer:id,name,email,employment_number',
-                            'jobVacanciesApplied',
-                        ])->where('interviewer_id', Auth::user()->employee->id);
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'jobVacancy',
+                'jobVacancy.education:id,name',
+                'interviewer:id,name,email,employment_number',
+                'jobVacanciesApplied',
+            ])->where('interviewer_id', Auth::user()->employee->id);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
@@ -124,6 +127,9 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
         }
         if ($period_2) {
             $query->whereDate('date', '<=', $period_2);
+        }
+        if ($status) {
+            $query->whereRaw('LOWER(status) LIKE ?', ["%" . strtolower($status) . "%"]);
         }
         return $query->orderBy('date', 'DESC')->paginate($perPage);
     }

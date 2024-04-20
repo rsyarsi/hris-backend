@@ -27,7 +27,8 @@ class JobInterviewFormController extends Controller
             $search = $request->input('search');
             $period1 = $request->input('period_1');
             $period2 = $request->input('period_2');
-            $jobinterviewforms = $this->jobInterviewFormService->index($perPage, $search, $period1, $period2);
+            $status = $request->input('status');
+            $jobinterviewforms = $this->jobInterviewFormService->index($perPage, $search, $period1, $period2, $status);
             return $this->success('Job Interview Form retrieved successfully', $jobinterviewforms);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -92,7 +93,8 @@ class JobInterviewFormController extends Controller
             $search = $request->input('search');
             $period1 = $request->input('period_1');
             $period2 = $request->input('period_2');
-            $jobinterviewforms = $this->jobInterviewFormService->interviewer($perPage, $search, $period1, $period2);
+            $status = $request->input('status');
+            $jobinterviewforms = $this->jobInterviewFormService->interviewer($perPage, $search, $period1, $period2, $status);
             return $this->success('Job Interview Form Interviewer retrieved successfully', $jobinterviewforms);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

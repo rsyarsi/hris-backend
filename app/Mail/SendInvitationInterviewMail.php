@@ -5,23 +5,22 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\{Address, Content, Envelope};
 use Illuminate\Queue\SerializesModels;
 
 class SendInvitationInterviewMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $item;
+    public $data;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($item)
+    public function __construct($data)
     {
-        $this->item = $item;
+        $this->data = $data;
     }
 
     /**
@@ -32,6 +31,7 @@ class SendInvitationInterviewMail extends Mailable implements ShouldQueue
     public function envelope()
     {
         return new Envelope(
+            from: new Address('noreply@rsyarsi.co.id', 'Noreply RS Yarsi'),
             subject: 'Invitation Interview RS Yarsi',
         );
     }
@@ -45,6 +45,9 @@ class SendInvitationInterviewMail extends Mailable implements ShouldQueue
     {
         return new Content(
             view: 'emails.invitation_interview',
+            with: [
+                'data' => $this->data
+            ]
         );
     }
 

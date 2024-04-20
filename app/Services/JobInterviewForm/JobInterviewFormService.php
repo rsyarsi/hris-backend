@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\JobInterviewForm;
 
 use Illuminate\Support\Str;
@@ -9,14 +10,14 @@ class JobInterviewFormService implements JobInterviewFormServiceInterface
 {
     private $repository;
 
-public function __construct(JobInterviewFormRepositoryInterface $repository)
+    public function __construct(JobInterviewFormRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
-    public function index($perPage, $search, $period_1, $period_2)
+    public function index($perPage, $search, $period_1, $period_2, $status)
     {
-        return $this->repository->index($perPage, $search, $period_1, $period_2);
+        return $this->repository->index($perPage, $search, $period_1, $period_2, $status);
     }
 
     public function store(array $data)
@@ -46,8 +47,8 @@ public function __construct(JobInterviewFormRepositoryInterface $repository)
         return Str::upper($data);
     }
 
-    public function interviewer($perPage, $search, $period_1, $period_2)
+    public function interviewer($perPage, $search, $period_1, $period_2, $status)
     {
-        return $this->repository->interviewer($perPage, $search, $period_1, $period_2);
+        return $this->repository->interviewer($perPage, $search, $period_1, $period_2, $status);
     }
 }

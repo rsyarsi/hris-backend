@@ -18,15 +18,15 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
     public function index($perPage, $search = null, $startDate = null, $endDate = null, $status = null)
     {
         $query = $this->model
-                        ->with([
-                            'userCreated:id,name,email',
-                            'education:id,name',
-                        ])
-                        ->select();
+            ->with([
+                'userCreated:id,name,email',
+                'education:id,name',
+            ])
+            ->select();
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('title', 'like', "%$search%")
-                        ->orWhere('position', 'like', "%$search%");
+                    ->orWhere('position', 'like', "%$search%");
             });
         }
         if ($status !== null) {
@@ -49,12 +49,12 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
     public function show($id)
     {
         $jobvacancy = $this->model
-                            ->with([
-                                'userCreated:id,name,email',
-                                'education:id,name',
-                            ])
-                            ->where('id', $id)
-                            ->first();
+            ->with([
+                'userCreated:id,name,email',
+                'education:id,name',
+            ])
+            ->where('id', $id)
+            ->first();
         return $jobvacancy ? $jobvacancy : $jobvacancy = null;
     }
 
@@ -81,21 +81,21 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
     public function indexPublic()
     {
         $jobVacancies = DB::table('job_vacancies')
-                            ->join('meducations', 'job_vacancies.education_id', '=', 'meducations.id')
-                            ->select(
-                                'job_vacancies.title',
-                                'job_vacancies.position',
-                                'job_vacancies.description',
-                                'job_vacancies.start_date',
-                                'job_vacancies.end_date',
-                                'job_vacancies.min_age',
-                                'job_vacancies.max_age',
-                                'job_vacancies.experience',
-                                'job_vacancies.note',
-                                'meducations.name as education_name'
-                            )
-                            ->where('job_vacancies.status', 1)
-                            ->get();
+            ->join('meducations', 'job_vacancies.education_id', '=', 'meducations.id')
+            ->select(
+                'job_vacancies.title',
+                'job_vacancies.position',
+                'job_vacancies.description',
+                'job_vacancies.start_date',
+                'job_vacancies.end_date',
+                'job_vacancies.min_age',
+                'job_vacancies.max_age',
+                'job_vacancies.experience',
+                'job_vacancies.note',
+                'meducations.name as education_name'
+            )
+            ->where('job_vacancies.status', 1)
+            ->get();
         return $jobVacancies;
     }
 }

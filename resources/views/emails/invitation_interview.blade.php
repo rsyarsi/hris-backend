@@ -294,7 +294,7 @@
                                                             color: #071c4d;
                                                         "
                                                     >
-                                                        Dear {{ $item->candidate->first_name }} {{ $item->candidate->middle_name }} {{ $item->candidate->last_name }},
+                                                        Dear {{ $data['name'] }},
                                                     </div>
                                                     <div
                                                         style="
@@ -308,7 +308,7 @@
                                                             margin-top: 10px;
                                                         "
                                                     >
-                                                    Sehubungan dengan proses seleksi lowongan pekerjaan untuk posisi {{ $item->job_vacancy->position }} di RS YARSI, dengan ini kami mengundang Bapak/Ibu untuk mengikuti interview pada:
+                                                    Sehubungan dengan proses seleksi lowongan pekerjaan untuk posisi {{ $data['position']}} di RS YARSI, dengan ini kami mengundang Bapak/Ibu untuk mengikuti interview pada:
                                                     </div>
                                                 </td>
                                             </tr>
@@ -362,7 +362,7 @@
                                                                     padding-top: 5px;
                                                                 "
                                                             >
-                                                                : {{ $item->job_interview_form->date }}
+                                                                : {{ $data['day'] }}, {{ $data['date'] }}
                                                             </td>
                                                         </tr>
                                                         <!-- DEPARTMENT -->
@@ -389,10 +389,10 @@
                                                                     padding-top: 5px;
                                                                 "
                                                             >
-                                                                : {{ $item->job_interview_form->date }}
+                                                                : {{ $data['hour'] }}
                                                             </td>
                                                         </tr>
-                                                        <!-- PERIOD -->
+                                                        <!-- Location -->
                                                         <tr
                                                             style="
                                                                 border-bottom: 1px
@@ -416,7 +416,34 @@
                                                                     padding-top: 5px;
                                                                 "
                                                             >
-                                                                : RS Yarsi, Jl. Letjen Suprapto No.Kav 13 10, RT.10/RW.5, Cemp. Putih Tim., Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10510
+                                                                : Rumah Sakit Yarsi, Jakarta
+                                                            </td>
+                                                        </tr>
+                                                        <!-- Google Maps -->
+                                                        <tr
+                                                            style="
+                                                                border-bottom: 1px
+                                                                    solid
+                                                                    #ecedee;
+                                                            "
+                                                        >
+                                                            <td
+                                                                width="27%"
+                                                                style="
+                                                                    font-weight: bold;
+                                                                    padding-bottom: 5px
+                                                                        0px;
+                                                                "
+                                                            >
+                                                                Google Maps
+                                                            </td>
+                                                            <td
+                                                                style="
+                                                                    padding-bottom: 5px;
+                                                                    padding-top: 5px;
+                                                                "
+                                                            >
+                                                                : <a href="https://maps.app.goo.gl/T7wqGXK567S3z9PKA" target="_blank">https://maps.app.goo.gl/T7wqGXK567S3z9PKA</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -443,36 +470,14 @@
                                                             margin-top: 10px;
                                                         "
                                                     >
-                                                        Jika Bapak/Ibu berhalangan hadir, mohon konfirmasi kepada kami melalui:
+                                                        <p>Jika Bapak/Ibu berhalangan hadir, mohon konfirmasi kepada kami melalui:</p>
                                                         <ul>
                                                             <li>HR YARSI</li>
-                                                            <li>08912345678</li>
-                                                            <li>hr@email.com</li>
+                                                            <li>{{ $data['telephone_hr'] }}</li>
+                                                            <li>{{ $data['email_hr'] }}</li>
                                                         </ul>
-                                                        Demikian surat undangan ini kami sampaikan. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
-                                                    </div>
-                                                </td>
-                                                <td
-                                                    align="left"
-                                                    style="
-                                                        font-size: 0px;
-                                                        padding: 10px 10px;
-                                                        word-break: break-word;
-                                                    "
-                                                >
-                                                    <div
-                                                        style="
-                                                            font-family: Assistant,
-                                                                Helvetica, Arial,
-                                                                sans-serif;
-                                                            font-size: 13px;
-                                                            line-height: 1;
-                                                            text-align: left;
-                                                            color: #071c4d;
-                                                            margin-top: 10px;
-                                                        "
-                                                    >
-                                                        Hormat kami, HR RS Yarsi
+                                                        <p>Demikian surat undangan ini kami sampaikan, atas perhatian dan kerjasamanya, kami ucapkan terima kasih.</p>
+                                                        <p>Hormat kami, HR RS Yarsi</p>
                                                     </div>
                                                 </td>
                                             </tr>
