@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Repositories\Employee;
 
-Interface EmployeeRepositoryInterface
+interface EmployeeRepositoryInterface
 {
     public function index($perPage, $search, $active);
     public function store(array $data);
     public function show($id);
+    public function checkNameEmail($name, $email);
     public function update($id, array $data);
     public function employeeUploadPhoto($id, array $data);
     public function employeeUploadPhotoMobile(array $data);

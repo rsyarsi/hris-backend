@@ -34,8 +34,15 @@ class JobVacanciesAppliedRequest extends FormRequest
                     return $query->where('candidate_id', $this->candidate_id);
                 })->ignore($this->route('job_vacancies_applied')),
             ],
-            'status' => 'required|max:150',
+            'status' => 'required|in:REVIEW,INTERVIEW,DITERIMA,DITOLAK',
             'note' => 'required|string',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'status.in' => 'The :attribute must be one of the following: REVIEW, INTERVIEW, DITERIMA, DITOLAK.',
         ];
     }
 

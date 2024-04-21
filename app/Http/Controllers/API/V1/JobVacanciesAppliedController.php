@@ -62,10 +62,12 @@ class JobVacanciesAppliedController extends Controller
         try {
             $data = $request->validated();
             $jobVacanciesApplied = $this->jobVacanciesAppliedService->update($id, $data);
-            if (!$jobVacanciesApplied) {
-                return $this->error('Job Vacancies Applied not found', 404);
-            }
-            return $this->success('Job Vacancies Applied updated successfully', $jobVacanciesApplied, 201);
+            return response()->json([
+                'message' => $jobVacanciesApplied['message'],
+                'error' => $jobVacanciesApplied['error'],
+                'code' => $jobVacanciesApplied['code'],
+                'data' => $jobVacanciesApplied['data']
+            ], $jobVacanciesApplied['code']);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -89,7 +91,6 @@ class JobVacanciesAppliedController extends Controller
         try {
             $data = $request->validated();
             $jobVacanciesApplied = $this->jobVacanciesAppliedService->sendEmailInterview($data);
-            // return $jobVacanciesApplied;
             return response()->json([
                 'message' => $jobVacanciesApplied['message'],
                 'error' => $jobVacanciesApplied['error'],

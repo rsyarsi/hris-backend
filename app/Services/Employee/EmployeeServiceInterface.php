@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Employee;
 
 interface EmployeeServiceInterface
@@ -9,6 +10,7 @@ interface EmployeeServiceInterface
     public function employeeUploadPhotoMobile(array $data);
     public function employeeProfileMobile($employeeId);
     public function show($id);
+    public function checkNameEmail($name, $email);
     public function update($id, array $data);
     public function destroy($id);
     public function employeeNumberNull($perPage, $search);

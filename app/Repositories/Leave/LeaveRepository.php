@@ -57,8 +57,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         GenerateAbsenServiceInterface $generateAbsenService,
         CatatanCutiServiceInterface $catatanCutiService,
         LeaveTypeServiceInterface $leaveTypeService
-    )
-    {
+    ) {
         $this->model = $model;
         $this->leaveHistory = $leaveHistory;
         $this->leaveStatus = $leaveStatus;
@@ -73,69 +72,69 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $unit = null)
     {
         $query = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number', 'unit_id');
-                            },
-                            'leaveType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'leaveStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'leaveHistory' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'leave_id',
-                                    'description',
-                                    'ip_address',
-                                    'user_id',
-                                    'user_agent',
-                                    'comment',
-                                );
-                            },
-                            'shiftSchedule' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'employee_id',
-                                    'shift_id',
-                                    'date',
-                                    'time_in',
-                                    'time_out',
-                                    'late_note',
-                                    'shift_exchange_id',
-                                    'user_exchange_id',
-                                    'user_exchange_at',
-                                    'created_user_id',
-                                    'updated_user_id',
-                                    'setup_user_id',
-                                    'setup_at',
-                                    'period',
-                                    'leave_note',
-                                    'holiday',
-                                    'night',
-                                    'national_holiday',
-                                    'leave_id'
-                                );
-                            },
-                            'shift' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'code',
-                                    'name',
-                                    'in_time',
-                                    'out_time',
-                                );
-                            },
-                        ])
-                        ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'employment_number', 'unit_id');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment',
+                    );
+                },
+                'shiftSchedule' => function ($query) {
+                    $query->select(
+                        'id',
+                        'employee_id',
+                        'shift_id',
+                        'date',
+                        'time_in',
+                        'time_out',
+                        'late_note',
+                        'shift_exchange_id',
+                        'user_exchange_id',
+                        'user_exchange_at',
+                        'created_user_id',
+                        'updated_user_id',
+                        'setup_user_id',
+                        'setup_at',
+                        'period',
+                        'leave_note',
+                        'holiday',
+                        'night',
+                        'national_holiday',
+                        'leave_id'
+                    );
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                    );
+                },
+            ])
+            ->select($this->field);
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
         if ($unit) {
@@ -154,8 +153,8 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function store(array $data)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $fromDate = Carbon::parse($data['from_date']);
             $toDate = Carbon::parse($data['to_date']);
             $employeeId = $data['employee_id'];
@@ -163,13 +162,13 @@ class LeaveRepository implements LeaveRepositoryInterface
             $employee = DB::table('employees')->where('id', $employeeId)->first();
             $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
             $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
-                                        ->where('code', 'N')
-                                        ->orWhere('name', 'NON SHIFT')
-                                        ->first();
+                ->where('code', 'N')
+                ->orWhere('name', 'NON SHIFT')
+                ->first();
             $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
-                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                    ->first();
+                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                ->first();
             if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
                 return [
                     'message' => 'Validation Error',
@@ -230,7 +229,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             $historyData = [
                 'leave_id' => $leave->id,
                 'user_id' => auth()->id(),
-                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'description' => 'LEAVE STATUS ' . $leaveStatus->name,
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'comment' => $data['note'],
@@ -276,27 +275,27 @@ class LeaveRepository implements LeaveRepositoryInterface
             // firebase
             $employee = $this->employeeService->show($leave->employee_id);
             $registrationIds = [];
-            if($employee->supervisor != null){
-                if($employee->supervisor->user != null){
+            if ($employee->supervisor != null) {
+                if ($employee->supervisor->user != null) {
                     $registrationIds[] = $employee->supervisor->user->firebase_id;
                 }
             }
 
-            if($employee->kabag_id != null ){
-                if($employee->kabag->user != null){
+            if ($employee->kabag_id != null) {
+                if ($employee->kabag->user != null) {
                     $registrationIds[] = $employee->kabag->user->firebase_id;
                 }
             }
 
-            if($employee->manager_id != null ){
-                if($employee->manager->user != null){
+            if ($employee->manager_id != null) {
+                if ($employee->manager->user != null) {
                     $registrationIds[] = $employee->manager->user->firebase_id;
                 }
             }
             $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
             // notif ke HRD
             $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
-            foreach ($employeeHrd as $key ) {
+            foreach ($employeeHrd as $key) {
                 $firebaseIdx = $key;
             }
             $registrationIds[] = $firebaseIdx->firebase_id;
@@ -332,13 +331,13 @@ class LeaveRepository implements LeaveRepositoryInterface
             $employee = DB::table('employees')->where('id', $employeeId)->first();
             $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
             $shift = DB::table('shifts')->where('shift_group_id', $nonShiftGroupId)
-                                        ->where('code', 'N')
-                                        ->orWhere('name', 'NON SHIFT')
-                                        ->first();
+                ->where('code', 'N')
+                ->orWhere('name', 'NON SHIFT')
+                ->first();
             $checkShiftSchedule = DB::table('shift_schedules')->where('employee_id', $employeeId)
-                                    ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
-                                    ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
-                                    ->first();
+                ->where('date', '>=', Carbon::parse($data['from_date'])->toDateString())
+                ->where('date', '<=', Carbon::parse($data['to_date'])->toDateString())
+                ->first();
             if ($employee->shift_group_id !== $nonShiftGroupId && !$checkShiftSchedule) {
                 return [
                     'message' => 'Data Shift Schedule belum ada, silahkan hubungi atasan!',
@@ -386,7 +385,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             $historyData = [
                 'leave_id' => $leave->id,
                 'user_id' => auth()->id(),
-                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'description' => 'LEAVE STATUS ' . $leaveStatus->name,
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'comment' => $data['note'],
@@ -434,27 +433,27 @@ class LeaveRepository implements LeaveRepositoryInterface
             $typeSend = 'Leaves';
             $employee = $this->employeeService->show($leave->employee_id);
             $registrationIds = [];
-            if($employee->supervisor != null){
-                if($employee->supervisor->user != null){
+            if ($employee->supervisor != null) {
+                if ($employee->supervisor->user != null) {
                     $registrationIds[] = $employee->supervisor->user->firebase_id;
                 }
             }
 
-            if($employee->kabag_id != null ){
-                if($employee->kabag->user != null){
+            if ($employee->kabag_id != null) {
+                if ($employee->kabag->user != null) {
                     $registrationIds[] = $employee->kabag->user->firebase_id;
                 }
             }
 
-            if($employee->manager_id != null ){
-                if($employee->manager->user != null){
+            if ($employee->manager_id != null) {
+                if ($employee->manager->user != null) {
                     $registrationIds[] = $employee->manager->user->firebase_id;
                 }
             }
-            $getEmployee = Employee::where('id',$data['employee_id'])->get()->first();
+            $getEmployee = Employee::where('id', $data['employee_id'])->get()->first();
             // notif ke HRD
-            $employeeHrd = User::where('hrd','1')->where('username','<>',$getEmployee->employment_number)->get();
-            foreach ($employeeHrd as $key ) {
+            $employeeHrd = User::where('hrd', '1')->where('username', '<>', $getEmployee->employment_number)->get();
+            foreach ($employeeHrd as $key) {
                 # code...
                 $firebaseIdx = $key;
             }
@@ -486,63 +485,63 @@ class LeaveRepository implements LeaveRepositoryInterface
     public function show($id)
     {
         $leave = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number');
-                            },
-                            'leaveType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'leaveStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'leaveHistory' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'leave_id',
-                                    'description',
-                                    'ip_address',
-                                    'user_id',
-                                    'user_agent',
-                                    'comment',
-                                );
-                            },
-                            'shiftSchedule' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'employee_id',
-                                    'shift_id',
-                                    'date',
-                                    'time_in',
-                                    'time_out',
-                                    'late_note',
-                                    'shift_exchange_id',
-                                    'user_exchange_id',
-                                    'user_exchange_at',
-                                    'created_user_id',
-                                    'updated_user_id',
-                                    'setup_user_id',
-                                    'setup_at',
-                                    'period',
-                                    'leave_note',
-                                    'holiday',
-                                    'night',
-                                    'national_holiday',
-                                    'leave_id'
-                                );
-                            },
-                            'shift' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'code',
-                                    'name',
-                                    'in_time',
-                                    'out_time',
-                                );
-                            },
-                        ])
-                        ->where('id', $id)
-                        ->first($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'employment_number');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment',
+                    );
+                },
+                'shiftSchedule' => function ($query) {
+                    $query->select(
+                        'id',
+                        'employee_id',
+                        'shift_id',
+                        'date',
+                        'time_in',
+                        'time_out',
+                        'late_note',
+                        'shift_exchange_id',
+                        'user_exchange_id',
+                        'user_exchange_at',
+                        'created_user_id',
+                        'updated_user_id',
+                        'setup_user_id',
+                        'setup_at',
+                        'period',
+                        'leave_note',
+                        'holiday',
+                        'night',
+                        'national_holiday',
+                        'leave_id'
+                    );
+                },
+                'shift' => function ($query) {
+                    $query->select(
+                        'id',
+                        'code',
+                        'name',
+                        'in_time',
+                        'out_time',
+                    );
+                },
+            ])
+            ->where('id', $id)
+            ->first($this->field);
         return $leave ? $leave : $leave = null;
     }
 
@@ -552,7 +551,7 @@ class LeaveRepository implements LeaveRepositoryInterface
         $historyData = [
             'leave_id' => $leave->id,
             'user_id' => auth()->id(),
-            'description' => 'LEAVE STATUS '. $leave->leaveStatus->name,
+            'description' => 'LEAVE STATUS ' . $leave->leaveStatus->name,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'comment' => $data['note'],
@@ -568,8 +567,8 @@ class LeaveRepository implements LeaveRepositoryInterface
         $typeSend = 'Leaves';
         $employee = $this->employeeService->show($leave->employee_id);
         $registrationIds = [];
-        if($employee->supervisor != null){
-            if($employee->supervisor->user != null){
+        if ($employee->supervisor != null) {
+            if ($employee->supervisor->user != null) {
                 $registrationIds[] = $employee->supervisor->user->firebase_id;
             }
         }
@@ -578,8 +577,8 @@ class LeaveRepository implements LeaveRepositoryInterface
         //         $registrationIds[] = $employee->kabag->user->firebase_id;
         //     }
         // }
-        if($employee->manager_id != null ){
-            if($employee->manager->user != null){
+        if ($employee->manager_id != null) {
+            if ($employee->manager->user != null) {
                 $registrationIds[] = $employee->manager->user->firebase_id;
             }
         }
@@ -613,29 +612,29 @@ class LeaveRepository implements LeaveRepositoryInterface
             return [];
         }
         $query = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number');
-                            },
-                            'leaveType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'leaveStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'leaveHistory' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'leave_id',
-                                    'description',
-                                    'ip_address',
-                                    'user_id',
-                                    'user_agent',
-                                    'comment',
-                                );
-                            }
-                        ])
-                        ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'employment_number');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment',
+                    );
+                }
+            ])
+            ->select($this->field);
         $query->where('employee_id', $user->employee->id);
         if ($leaveStatus) {
             $query->where('leave_status_id', $leaveStatus);
@@ -657,64 +656,64 @@ class LeaveRepository implements LeaveRepositoryInterface
         }
 
         $leave = DB::table('leaves')
-                    ->select([
-                        DB::raw("COALESCE(leaves.id, '') as id"),
-                        DB::raw("COALESCE(leaves.employee_id, '') as employee_id"),
-                        DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
-                        DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
-                        DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'HH24:MI:SS'), '') as from_time"),
-                        DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'HH24:MI:SS'), '') as to_time"),
-                        DB::raw("COALESCE(leaves.duration::text, '') as duration"),
-                        DB::raw("COALESCE(leaves.note, '') as note"),
-                        DB::raw("COALESCE(leaves.file_url, '') as file_url"),
-                        DB::raw("COALESCE(leaves.file_path, '') as file_path"),
-                        DB::raw("COALESCE(leaves.file_disk, '') as file_disk"),
-                        DB::raw("COALESCE(employees.name, '') as employee_name"),
-                        DB::raw("COALESCE(leave_types.id::text, '') as leave_type_id"),
-                        DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
-                        DB::raw("COALESCE(leave_types.is_salary_deduction::text, '') as is_salary_deduction"),
-                        DB::raw("COALESCE(leaves.leave_status_id::text, '') as leave_status_id"),
-                        DB::raw("COALESCE(leave_statuses.name, '') as overtime_status_name"),
-                        // DB::raw("COALESCE(leave_histories.description, '') as history_description"),
-                    ])
-                    ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
-                    ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
-                    ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-                    // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
-                    ->where('leaves.employee_id', $employee->id)
-                    ->orderBy('leaves.from_date', 'DESC')
-                    // ->groupBy('leaves.id', 'leaves.employee_id', 'leaves.from_date', 'leaves.to_date', 'leaves.duration', 'leaves.note', 'employees.name', 'leave_types.id', 'leave_types.name', 'leave_types.is_salary_deduction', 'leave_statuses.name', 'leave_histories.description')
-                    ->get();
+            ->select([
+                DB::raw("COALESCE(leaves.id, '') as id"),
+                DB::raw("COALESCE(leaves.employee_id, '') as employee_id"),
+                DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'YYYY-MM-DD HH24:MI:SS'), '') as from_date"),
+                DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'YYYY-MM-DD HH24:MI:SS'), '') as to_date"),
+                DB::raw("COALESCE(TO_CHAR(leaves.from_date, 'HH24:MI:SS'), '') as from_time"),
+                DB::raw("COALESCE(TO_CHAR(leaves.to_date, 'HH24:MI:SS'), '') as to_time"),
+                DB::raw("COALESCE(leaves.duration::text, '') as duration"),
+                DB::raw("COALESCE(leaves.note, '') as note"),
+                DB::raw("COALESCE(leaves.file_url, '') as file_url"),
+                DB::raw("COALESCE(leaves.file_path, '') as file_path"),
+                DB::raw("COALESCE(leaves.file_disk, '') as file_disk"),
+                DB::raw("COALESCE(employees.name, '') as employee_name"),
+                DB::raw("COALESCE(leave_types.id::text, '') as leave_type_id"),
+                DB::raw("COALESCE(leave_types.name, '') as leave_type_name"),
+                DB::raw("COALESCE(leave_types.is_salary_deduction::text, '') as is_salary_deduction"),
+                DB::raw("COALESCE(leaves.leave_status_id::text, '') as leave_status_id"),
+                DB::raw("COALESCE(leave_statuses.name, '') as overtime_status_name"),
+                // DB::raw("COALESCE(leave_histories.description, '') as history_description"),
+            ])
+            ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+            ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+            ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+            // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
+            ->where('leaves.employee_id', $employee->id)
+            ->orderBy('leaves.from_date', 'DESC')
+            // ->groupBy('leaves.id', 'leaves.employee_id', 'leaves.from_date', 'leaves.to_date', 'leaves.duration', 'leaves.note', 'employees.name', 'leave_types.id', 'leave_types.name', 'leave_types.is_salary_deduction', 'leave_statuses.name', 'leave_histories.description')
+            ->get();
         return $leave ? $leave : $leave = null;
     }
 
     public function leaveHrdMobile()
     {
         return DB::table('leaves')
-                ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
-                ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
-                ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-                ->select([
-                    'leaves.id',
-                    'leaves.employee_id',
-                    'leaves.leave_type_id',
-                    'leaves.from_date',
-                    'leaves.to_date',
-                    'leaves.duration',
-                    'leaves.note',
-                    'leaves.leave_status_id',
-                    'leaves.quantity_cuti_awal',
-                    'leaves.sisa_cuti',
-                    'leaves.file_url',
-                    'leaves.file_path',
-                    'leaves.file_disk',
-                    'employees.name as employee_name',
-                    'leave_types.name as leave_type_name',
-                    'leave_statuses.name as leave_status_name',
-                ])
-                ->whereIn('leave_status_id', [1, 2, 3, 4])
-                ->orderBy('from_date', 'DESC')
-                ->get();
+            ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+            ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+            ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+            ->select([
+                'leaves.id',
+                'leaves.employee_id',
+                'leaves.leave_type_id',
+                'leaves.from_date',
+                'leaves.to_date',
+                'leaves.duration',
+                'leaves.note',
+                'leaves.leave_status_id',
+                'leaves.quantity_cuti_awal',
+                'leaves.sisa_cuti',
+                'leaves.file_url',
+                'leaves.file_path',
+                'leaves.file_disk',
+                'employees.name as employee_name',
+                'leave_types.name as leave_type_name',
+                'leave_statuses.name as leave_status_name',
+            ])
+            ->whereIn('leave_status_id', [1, 2, 3, 4])
+            ->orderBy('from_date', 'DESC')
+            ->get();
     }
 
     public function leaveSupervisorOrManager($perPage, $search, $leaveStatus = null, $startDate = null, $endDate = null)
@@ -726,34 +725,34 @@ class LeaveRepository implements LeaveRepositoryInterface
 
         // Get employees supervised or managed by the logged-in user
         $subordinateIds = Employee::where('supervisor_id', $user->employee->id)
-                                    ->orWhere('manager_id', $user->employee->id)
-                                    ->orWhere('kabag_id', $user->employee->id)
-                                    ->pluck('id');
+            ->orWhere('manager_id', $user->employee->id)
+            ->orWhere('kabag_id', $user->employee->id)
+            ->pluck('id');
 
         $query = $this->model
-                        ->with([
-                            'employee' => function ($query) {
-                                $query->select('id', 'name', 'employment_number');
-                            },
-                            'leaveType' => function ($query) {
-                                $query->select('id', 'name', 'is_salary_deduction', 'active');
-                            },
-                            'leaveStatus' => function ($query) {
-                                $query->select('id', 'name');
-                            },
-                            'leaveHistory' => function ($query) {
-                                $query->select(
-                                    'id',
-                                    'leave_id',
-                                    'description',
-                                    'ip_address',
-                                    'user_id',
-                                    'user_agent',
-                                    'comment'
-                                );
-                            }
-                        ])
-                        ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'employment_number');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment'
+                    );
+                }
+            ])
+            ->select($this->field);
 
         // Filter leave data for supervised or managed employees
         $query->whereIn('employee_id', $subordinateIds);
@@ -769,10 +768,10 @@ class LeaveRepository implements LeaveRepositoryInterface
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
         return $query->orderBy('from_date', 'DESC')->paginate($perPage);
@@ -782,80 +781,80 @@ class LeaveRepository implements LeaveRepositoryInterface
     {
         // Get employees supervised or managed by the logged-in user
         $subordinateIds = Employee::where('supervisor_id', $employeeId)
-                                    ->orWhere('manager_id', $employeeId)
-                                    ->orWhere('kabag_id', $employeeId)
-                                    ->pluck('id');
+            ->orWhere('manager_id', $employeeId)
+            ->orWhere('kabag_id', $employeeId)
+            ->pluck('id');
         return DB::table('leaves')
-                ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
-                ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
-                ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
-                // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
-                ->select([
-                    'leaves.id',
-                    'leaves.employee_id',
-                    'leaves.leave_type_id',
-                    'leaves.from_date',
-                    'leaves.to_date',
-                    'leaves.duration',
-                    'leaves.note',
-                    'leaves.leave_status_id',
-                    'leaves.quantity_cuti_awal',
-                    'leaves.sisa_cuti',
-                    'leaves.file_url',
-                    'leaves.file_path',
-                    'leaves.file_disk',
-                    'employees.name as employee_name',
-                    'leave_types.name as leave_type_name',
-                    'leave_statuses.name as leave_status_name',
-                    // 'leave_histories.id as leave_history_id',
-                    // 'leave_histories.description as leave_histories_description',
-                    // 'leave_histories.ip_address as leave_histories_ip_address',
-                    // 'leave_histories.user_id as leave_histories_user_id',
-                    // 'leave_histories.user_agent as leave_histories_user_agent',
-                    // 'leave_histories.comment as leave_histories_comment',
-                ])
-                ->whereIn('employee_id', $subordinateIds)
-                ->whereNotIn('leaves.leave_status_id', [6,7,8,9,10])
-                ->orderBy('leaves.from_date', 'DESC')
-                ->get();
+            ->leftJoin('employees', 'leaves.employee_id', '=', 'employees.id')
+            ->leftJoin('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+            ->leftJoin('leave_statuses', 'leaves.leave_status_id', '=', 'leave_statuses.id')
+            // ->leftJoin('leave_histories', 'leaves.id', '=', 'leave_histories.leave_id')
+            ->select([
+                'leaves.id',
+                'leaves.employee_id',
+                'leaves.leave_type_id',
+                'leaves.from_date',
+                'leaves.to_date',
+                'leaves.duration',
+                'leaves.note',
+                'leaves.leave_status_id',
+                'leaves.quantity_cuti_awal',
+                'leaves.sisa_cuti',
+                'leaves.file_url',
+                'leaves.file_path',
+                'leaves.file_disk',
+                'employees.name as employee_name',
+                'leave_types.name as leave_type_name',
+                'leave_statuses.name as leave_status_name',
+                // 'leave_histories.id as leave_history_id',
+                // 'leave_histories.description as leave_histories_description',
+                // 'leave_histories.ip_address as leave_histories_ip_address',
+                // 'leave_histories.user_id as leave_histories_user_id',
+                // 'leave_histories.user_agent as leave_histories_user_agent',
+                // 'leave_histories.comment as leave_histories_comment',
+            ])
+            ->whereIn('employee_id', $subordinateIds)
+            ->whereNotIn('leaves.leave_status_id', [6, 7, 8, 9, 10])
+            ->orderBy('leaves.from_date', 'DESC')
+            ->get();
     }
 
     public function leaveStatus($perPage, $search = null, $period_1 = null, $period_2 = null, $leaveStatus = null, $unit)
     {
         $query = $this->model
-                    ->with([
-                        'employee' => function ($query) {
-                            $query->select('id', 'name', 'employment_number', 'unit_id');
-                        },
-                        'leaveType' => function ($query) {
-                            $query->select('id', 'name', 'is_salary_deduction', 'active');
-                        },
-                        'leaveStatus' => function ($query) {
-                            $query->select('id', 'name');
-                        },
-                        'leaveHistory' => function ($query) {
-                            $query->select(
-                                'id',
-                                'leave_id',
-                                'description',
-                                'ip_address',
-                                'user_id',
-                                'user_agent',
-                                'comment',
-                            );
-                        }
-                    ])
-                    ->select($this->field);
+            ->with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name', 'employment_number', 'unit_id');
+                },
+                'leaveType' => function ($query) {
+                    $query->select('id', 'name', 'is_salary_deduction', 'active');
+                },
+                'leaveStatus' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'leaveHistory' => function ($query) {
+                    $query->select(
+                        'id',
+                        'leave_id',
+                        'description',
+                        'ip_address',
+                        'user_id',
+                        'user_agent',
+                        'comment',
+                    );
+                }
+            ])
+            ->select($this->field);
         if ($leaveStatus) {
             $query->whereIn('leave_status_id', $leaveStatus);
         }
         if ($search) {
             $query->where(function ($subquery) use ($search) {
                 $subquery->orWhere('employee_id', $search)
-                            ->orWhereHas('employee', function ($employeeQuery) use ($search) {
-                                $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%".strtolower($search)."%"])
-                                                ->orWhere('employment_number', 'like', '%' . $search . '%');
-                            });
+                    ->orWhereHas('employee', function ($employeeQuery) use ($search) {
+                        $employeeQuery->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
+                            ->orWhere('employment_number', 'like', '%' . $search . '%');
+                    });
             });
         }
         if ($unit) {
@@ -888,9 +887,9 @@ class LeaveRepository implements LeaveRepositoryInterface
                 // shift schedule non shift
                 $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
                 $shift = Shift::where('shift_group_id', $nonShiftGroupId)
-                                ->where('code', 'N')
-                                ->orWhere('name', 'NON SHIFT')
-                                ->first();
+                    ->where('code', 'N')
+                    ->orWhere('name', 'NON SHIFT')
+                    ->first();
                 $timeInAt = null;
                 $timeOutAt = null;
                 $shiftId = null;
@@ -959,7 +958,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             $historyData = [
                 'leave_id' => $leave->id,
                 'user_id' => auth()->id(),
-                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'description' => 'LEAVE STATUS ' . $leaveStatus->name,
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'comment' => $leave->note,
@@ -967,16 +966,16 @@ class LeaveRepository implements LeaveRepositoryInterface
             $this->leaveHistory->store($historyData);
             if (in_array($status, [6, 7, 8, 9, 10])) {
                 ShiftSchedule::where('leave_id', $leave->id)
-                            ->update([
-                                'leave_id' => null,
-                                'leave_note' => null
-                            ]);
+                    ->update([
+                        'leave_id' => null,
+                        'leave_note' => null
+                    ]);
             }
             // update data batal catatan cuti
             if ($leave->leave_type_id == 1 && in_array($status, [6, 7, 8, 9, 10])) {
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
-                                            ->latest()
-                                            ->first();
+                    ->latest()
+                    ->first();
                 // update catatan cuti
                 // $catatanCuti->update([
                 //     'quantity_akhir' => $catatanCuti->quantity_awal,
@@ -1015,12 +1014,12 @@ class LeaveRepository implements LeaveRepositoryInterface
             $typeSend = 'Cuti/Izin';
             $employee = $this->employeeService->show($leave->employee_id);
             $registrationIds = [];
-            if($employee->user != null) {
+            if ($employee->user != null) {
                 $registrationIds[] = $employee->user->firebase_id;
             }
-                        // notif ke HRDs
-            $employeeHrd = User::where('hrd','1')->get();
-            foreach ($employeeHrd as $key ) {
+            // notif ke HRDs
+            $employeeHrd = User::where('hrd', '1')->get();
+            foreach ($employeeHrd as $key) {
                 # code...
                 $firebaseIdx = $key;
             }
@@ -1049,9 +1048,9 @@ class LeaveRepository implements LeaveRepositoryInterface
                 // shift schedule non shift
                 $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
                 $shift = Shift::where('shift_group_id', $nonShiftGroupId)
-                                ->where('code', 'N')
-                                ->orWhere('name', 'NON SHIFT')
-                                ->first();
+                    ->where('code', 'N')
+                    ->orWhere('name', 'NON SHIFT')
+                    ->first();
                 $timeInAt = null;
                 $timeOutAt = null;
                 $shiftId = null;
@@ -1115,7 +1114,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             $historyData = [
                 'leave_id' => $leave->id,
                 'user_id' => auth()->id(),
-                'description' => 'LEAVE STATUS '. $leaveStatus->name,
+                'description' => 'LEAVE STATUS ' . $leaveStatus->name,
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'comment' => $leave->note,
@@ -1123,16 +1122,16 @@ class LeaveRepository implements LeaveRepositoryInterface
             $this->leaveHistory->store($historyData);
             if (in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
                 ShiftSchedule::where('leave_id', $leave->id)
-                            ->update([
-                                'leave_id' => null,
-                                'leave_note' => null
-                            ]);
+                    ->update([
+                        'leave_id' => null,
+                        'leave_note' => null
+                    ]);
             }
             // update data batal catatan cuti
             if ($leave->leave_type_id == 1 && in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
                 $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
-                                            ->latest()
-                                            ->first();
+                    ->latest()
+                    ->first();
                 // update catatan cuti
                 // $catatanCuti->update([
                 //     'quantity_akhir' => $catatanCuti->quantity_awal,
@@ -1171,17 +1170,17 @@ class LeaveRepository implements LeaveRepositoryInterface
             $typeSend = 'Cuti/Izin';
             $employee = $this->employeeService->show($leave->employee_id);
             $registrationIds = [];
-            if($employee->user != null){
+            if ($employee->user != null) {
                 $registrationIds[] = $employee->user->firebase_id;
             }
 
             // notif ke HRDs
-            $employeeHrd = User::where('hrd','1')->get();
-            foreach ($employeeHrd as $key ) {
+            $employeeHrd = User::where('hrd', '1')->get();
+            foreach ($employeeHrd as $key) {
                 # code...
                 $firebaseIdx = $key;
             }
-            $registrationIds[] =$firebaseIdx->firebase_id;
+            $registrationIds[] = $firebaseIdx->firebase_id;
             // Check if there are valid registration IDs before sending the notification
             if (!empty($registrationIds)) {
                 $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);

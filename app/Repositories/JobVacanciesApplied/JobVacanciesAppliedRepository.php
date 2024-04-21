@@ -2,17 +2,21 @@
 
 namespace App\Repositories\JobVacanciesApplied;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Models\{JobVacanciesApplied};
+use App\Services\Employee\EmployeeServiceInterface;
 use App\Repositories\JobVacanciesApplied\JobVacanciesAppliedRepositoryInterface;
-
 
 class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInterface
 {
     private $model;
+    private $employeeService;
 
-    public function __construct(JobVacanciesApplied $model)
+    public function __construct(JobVacanciesApplied $model, EmployeeServiceInterface $employeeService)
     {
         $this->model = $model;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search = null, $status = null)
@@ -66,12 +70,54 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
 
     public function update($id, $data)
     {
-        $jobVacanciesApplied = $this->model->find($id);
-        if ($jobVacanciesApplied) {
+        DB::beginTransaction();
+        try {
+            $jobVacanciesApplied = $this->model->with('candidate')->find($id);
             $jobVacanciesApplied->update($data);
-            return $jobVacanciesApplied;
+            $message = 'Data Updated Successfully!';
+            $error = false;
+            $code = 201;
+            $fullName = (string)$jobVacanciesApplied->candidate->first_name . ' ' . $jobVacanciesApplied->candidate->middle_name . ' ' . $jobVacanciesApplied->candidate->last_name;
+            if (Str::upper($jobVacanciesApplied->status) == "DITERIMA") { // IF CANDIDATE DITERIMA
+                $existEmployee = $this->employeeService->checkNameEmail($fullName, $jobVacanciesApplied->candidate->email);
+                if (!$existEmployee) {
+                    $dataEmployee = [
+                        'name' => $fullName,
+                        'sex_id' => $jobVacanciesApplied->candidate->sex_id,
+                        'legal_identity_type_id' => $jobVacanciesApplied->candidate->legal_identity_type_id,
+                        'legal_identity_number' => $jobVacanciesApplied->candidate->legal_identity_number,
+                        'legal_address' => $jobVacanciesApplied->candidate->legal_address,
+                        'current_address' => $jobVacanciesApplied->candidate->current_address,
+                        'legal_home_phone_number' => $jobVacanciesApplied->candidate->home_phone_number,
+                        'current_home_phone_number' => $jobVacanciesApplied->candidate->home_phone_number,
+                        'phone_number' => $jobVacanciesApplied->candidate->phone_number,
+                        'email' => $jobVacanciesApplied->candidate->email,
+                        'birth_place' => $jobVacanciesApplied->candidate->birth_place,
+                        'birth_date' => $jobVacanciesApplied->candidate->birth_date,
+                        'marital_status_id' => $jobVacanciesApplied->candidate->marital_status_id,
+                        'religion_id' => $jobVacanciesApplied->candidate->religion_id,
+                        'tax_identify_number' => $jobVacanciesApplied->candidate->tax_identify_number,
+                    ];
+                    $this->employeeService->store($dataEmployee);
+                    $message = 'Data Updated Successfully & Created data employee!';
+                }
+            }
+            DB::commit();
+            return [
+                'message' => $message,
+                'error' => $error,
+                'code' => $code,
+                'data' => $jobVacanciesApplied
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [
+                'message' => $e->getMessage(),
+                'error' => true,
+                'code' => 422,
+                'data' => null
+            ];
         }
-        return null;
     }
 
     public function destroy($id)

@@ -52,7 +52,6 @@ class JobVacanciesAppliedService implements JobVacanciesAppliedServiceInterface
     {
         $item = $this->repository->show($data['id']);
         $helper = $this->helperService->show();
-        // return $helper;
         $message = 'Belum ada jadwal interview';
         $error = true;
         $code = 422;

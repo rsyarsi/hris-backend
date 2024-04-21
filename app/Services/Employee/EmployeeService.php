@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Employee;
 
 use Illuminate\Support\Str;
@@ -79,6 +80,11 @@ class EmployeeService implements EmployeeServiceInterface
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function checkNameEmail($name, $email)
+    {
+        return $this->repository->checkNameEmail($name, $email);
     }
 
     public function update($id, $data)
