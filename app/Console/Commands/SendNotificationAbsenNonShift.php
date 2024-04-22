@@ -33,20 +33,20 @@ class SendNotificationAbsenNonShift extends Command
     {
         $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
         $employees = Employee::with('user')
-                            ->where('shift_group_id', $nonShiftGroupId)
-                            ->where('resigned_at', '3000-01-01 00:00:00')
-                            ->get(['id', 'user_id', 'name']);
+            ->where('shift_group_id', $nonShiftGroupId)
+            ->where('resigned_at', '3000-01-01 00:00:00')
+            ->get(['id', 'user_id', 'name']);
         // Log::info($employees);
         $firebaseIds = [];
-        $names = [];
+        // $names = [];
         foreach ($employees as $employee) {
             if ($employee->user && $employee->user->firebase_id) {
                 $firebaseIds[] = $employee->user->firebase_id;
-                $names = $employee->user->name;
+                // $names = $employee->user->name;
                 // Log::info($firebaseIds);
             }
         }
-        Log::info("Hay, " . $names . ", Jangan lupa absen masuk ya....");
+        // Log::info("Hay, " . $names . ", Jangan lupa absen masuk ya....");
         Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => 'key=' . env('FIREBASE_AUTHORIZATION')
@@ -57,7 +57,7 @@ class SendNotificationAbsenNonShift extends Command
             ],
             'notification' => [
                 'title' => '📢 📢📢 ABSEN MASUUK...',
-                'body' => 'Hay '.$names.', Jangan lupa absen masuk ya....',
+                'body' => 'Hay jangan lupa absen masuk ya....',
                 'image' => ''
             ]
         ]);
