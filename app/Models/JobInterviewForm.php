@@ -48,6 +48,7 @@ class JobInterviewForm extends Model
         'conflict_resolution',
         'additional_comments',
         'status',
+        'date_interview'
     ];
 
     public function candidate()

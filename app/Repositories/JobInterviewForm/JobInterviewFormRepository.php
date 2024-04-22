@@ -3,17 +3,20 @@
 namespace App\Repositories\JobInterviewForm;
 
 use App\Models\{JobInterviewForm};
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Services\JobVacanciesApplied\JobVacanciesAppliedServiceInterface;
 use App\Repositories\JobInterviewForm\JobInterviewFormRepositoryInterface;
-
 
 class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
 {
     private $model;
+    private $jobVacancyApplied;
 
-    public function __construct(JobInterviewForm $model)
+    public function __construct(JobInterviewForm $model, JobVacanciesAppliedServiceInterface $jobVacancyApplied)
     {
         $this->model = $model;
+        $this->jobVacancyApplied = $jobVacancyApplied;
     }
 
     public function index($perPage, $search = null, $period_1 = null, $period_2 = null, $status = null)
@@ -59,7 +62,19 @@ class JobInterviewFormRepository implements JobInterviewFormRepositoryInterface
 
     public function store(array $data)
     {
-        return $this->model->create($data);
+        DB::beginTransaction();
+        try {
+            $jobInterviewForm = $this->model->create($data);
+            $existingCount = $this->model->where('job_vacancies_applied_id', $jobInterviewForm->job_vacancies_applied_id)->count();
+            if ($existingCount === 1) {
+                $this->jobVacancyApplied->update($jobInterviewForm->job_vacancies_applied_id, ['status' => 'INTERVIEW']);
+            }
+            DB::commit();
+            return $jobInterviewForm;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e->getMessage();
+        }
     }
 
     public function show($id)

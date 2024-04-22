@@ -37,6 +37,7 @@ class JobInterviewFormRequest extends FormRequest
             ],
             'job_vacancies_applied_id' => 'required|exists:job_vacancies_applieds,id',
             'date' => 'required|date_format:Y-m-d H:i:s',
+            'date_interview' => 'required|date',
             'communication_skills' => 'nullable|numeric|digits_between:1,5',
             'confidence_and_eye_contact' => 'nullable|numeric|digits_between:1,5',
             'coherent_problem_solving' => 'nullable|numeric|digits_between:1,5',
@@ -60,7 +61,7 @@ class JobInterviewFormRequest extends FormRequest
             'influencing_skills' => 'nullable|numeric|digits_between:1,5',
             'strategic_planning' => 'nullable|numeric|digits_between:1,5',
             'conflict_resolution' => 'nullable|numeric|digits_between:1,5',
-            'additional_comments' => 'nullable|numeric|digits_between:1,5',
+            'additional_comments' => 'nullable|string',
             'status' => 'nullable|in:PENDING,HIRE,RECOMENDED-OTHER-POSITION,POSIBLE-INTEREST,REJECT',
         ];
     }
