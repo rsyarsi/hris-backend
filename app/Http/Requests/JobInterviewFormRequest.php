@@ -62,7 +62,7 @@ class JobInterviewFormRequest extends FormRequest
             'strategic_planning' => 'nullable|numeric|digits_between:1,5',
             'conflict_resolution' => 'nullable|numeric|digits_between:1,5',
             'additional_comments' => 'nullable|string',
-            'status' => 'nullable|in:PENDING,HIRE,RECOMENDED-OTHER-POSITION,POSIBLE-INTEREST,REJECT',
+            'status' => 'required|in:PENDING,HIRE,RECOMENDED-OTHER-POSITION,POSIBLE-INTEREST,REJECT',
         ];
     }
 
