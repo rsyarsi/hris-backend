@@ -547,50 +547,63 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function update($id, $data)
     {
-        $leave = $this->model->with('leaveStatus')->find($id);
-        $historyData = [
-            'leave_id' => $leave->id,
-            'user_id' => auth()->id(),
-            'description' => 'LEAVE STATUS ' . $leave->leaveStatus->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-            'comment' => $data['note'],
-        ];
-        $this->leaveHistory->store($historyData);
-        // update shift schedule if exists in the table shift_schedules
-        $fromDate = Carbon::parse($data['from_date']);
-        $toDate = Carbon::parse($data['to_date']);
-        $employeeId = $leave->employee_id;
-        $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
+        // Start the database transaction
+        DB::beginTransaction();
+        try {
+            $leave = $this->model->with('leaveStatus')->find($id);
+            $historyData = [
+                'leave_id' => $leave->id,
+                'user_id' => auth()->id(),
+                'description' => 'LEAVE STATUS ' . $leave->leaveStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'comment' => $data['note'],
+            ];
+            $this->leaveHistory->store($historyData);
+            // update shift schedule if exists in the table shift_schedules
+            $fromDate = Carbon::parse($data['from_date']);
+            $toDate = Carbon::parse($data['to_date']);
+            $employeeId = $leave->employee_id;
+            $this->shiftScheduleService->updateShiftSchedulesForLeave($employeeId, $fromDate, $toDate, $leave->id, $data['note']);
 
-        // firebase
-        $typeSend = 'Leaves';
-        $employee = $this->employeeService->show($leave->employee_id);
-        $registrationIds = [];
-        if ($employee->supervisor != null) {
-            if ($employee->supervisor->user != null) {
-                $registrationIds[] = $employee->supervisor->user->firebase_id;
+            // firebase
+            $typeSend = 'Leaves';
+            $employee = $this->employeeService->show($leave->employee_id);
+            $registrationIds = [];
+            if ($employee->supervisor != null) {
+                if ($employee->supervisor->user != null) {
+                    $registrationIds[] = $employee->supervisor->user->firebase_id;
+                }
             }
-        }
-        // if($employee->kabag_id != null ){
-        //     if($employee->kabag->user != null){
-        //         $registrationIds[] = $employee->kabag->user->firebase_id;
-        //     }
-        // }
-        if ($employee->manager_id != null) {
-            if ($employee->manager->user != null) {
-                $registrationIds[] = $employee->manager->user->firebase_id;
+            // if($employee->kabag_id != null ){
+            //     if($employee->kabag->user != null){
+            //         $registrationIds[] = $employee->kabag->user->firebase_id;
+            //     }
+            // }
+            if ($employee->manager_id != null) {
+                if ($employee->manager->user != null) {
+                    $registrationIds[] = $employee->manager->user->firebase_id;
+                }
             }
+            // Check if there are valid registration IDs before sending the notification
+            if (!empty($registrationIds)) {
+                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+            }
+            if ($leave) {
+                $leave->update($data);
+                // Commit the transaction
+                DB::commit();
+                return $leave;
+            }
+            return null;
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of any exception
+            DB::rollback();
+
+            // Handle the exception (log, throw, etc.)
+            // For now, we'll just rethrow the exception
+            throw $e;
         }
-        // Check if there are valid registration IDs before sending the notification
-        if (!empty($registrationIds)) {
-            $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
-        }
-        if ($leave) {
-            $leave->update($data);
-            return $leave;
-        }
-        return null;
     }
 
     public function destroy($id)
@@ -873,321 +886,347 @@ class LeaveRepository implements LeaveRepositoryInterface
 
     public function updateStatus($id, $data)
     {
-        $leave = $this->model->find($id);
-        $status = $data['leave_status_id'];
-        $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
-        // $date = Carbon::parse($leave->from_date);
-        if ($status == 5) { // if approval HRD
-            $startDate = Carbon::parse($leave->from_date);
-            $endDate = Carbon::parse($leave->to_date);
-            $employee = Employee::where('id', $leave->employee_id)->first();
-            while ($startDate->lte($endDate)) {
-                // search shift schedule employee_id and date shift
-                $shiftScheduleDate = $this->shiftScheduleService->shiftScheduleEmployeeDate($leave->employee_id, $startDate->toDateString());
-                // shift schedule non shift
-                $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
-                $shift = Shift::where('shift_group_id', $nonShiftGroupId)
-                    ->where('code', 'N')
-                    ->orWhere('name', 'NON SHIFT')
-                    ->first();
-                $timeInAt = null;
-                $timeOutAt = null;
-                $shiftId = null;
-                $scheduleTimeInAt = null;
-                $scheduleTimeOutAt = null;
-                if ($leave->leave_type_id == 1) { // CUTI TAHUNAN
-                    $timeInAt = '00:00:00';
-                    $timeOutAt = '00:00:00';
-                    $shiftId = $shiftScheduleDate->shift_id;
-                    $scheduleTimeInAt = '00:00:00';
-                    $scheduleTimeOutAt = '00:00:00';
-                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id == $nonShiftGroupId) { // NON SHIFT
-                    $timeInAt = $shift->in_time;
-                    $timeOutAt = $shift->out_time;
-                    $shiftId = $shift->id;
-                    $scheduleTimeInAt = $shift->in_time;
-                    $scheduleTimeOutAt = $shift->out_time;
-                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id !== $nonShiftGroupId) { // SHIFT
-                    $timeInAt = $shiftScheduleDate->shift->in_time;
-                    $timeOutAt = $shiftScheduleDate->shift->out_time;
-                    $shiftId = $shiftScheduleDate->shift_id;
-                    $scheduleTimeInAt = $shiftScheduleDate->shift->in_time;
-                    $scheduleTimeOutAt = $shiftScheduleDate->shift->out_time;
+        // Start the database transaction
+        DB::beginTransaction();
+        try {
+            $leave = $this->model->find($id);
+            $status = $data['leave_status_id'];
+            $leaveStatus = $this->leaveStatus->show($data['leave_status_id']);
+            // $date = Carbon::parse($leave->from_date);
+            if ($status == 5) { // if approval HRD
+                $startDate = Carbon::parse($leave->from_date);
+                $endDate = Carbon::parse($leave->to_date);
+                $employee = Employee::where('id', $leave->employee_id)->first();
+                while ($startDate->lte($endDate)) {
+                    // search shift schedule employee_id and date shift
+                    $shiftScheduleDate = $this->shiftScheduleService->shiftScheduleEmployeeDate($leave->employee_id, $startDate->toDateString());
+                    // shift schedule non shift
+                    $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+                    $shift = Shift::where('shift_group_id', $nonShiftGroupId)
+                        ->where('code', 'N')
+                        ->orWhere('name', 'NON SHIFT')
+                        ->first();
+                    $timeInAt = null;
+                    $timeOutAt = null;
+                    $shiftId = null;
+                    $scheduleTimeInAt = null;
+                    $scheduleTimeOutAt = null;
+                    if ($leave->leave_type_id == 1) { // CUTI TAHUNAN
+                        $timeInAt = '00:00:00';
+                        $timeOutAt = '00:00:00';
+                        $shiftId = $shiftScheduleDate->shift_id;
+                        $scheduleTimeInAt = '00:00:00';
+                        $scheduleTimeOutAt = '00:00:00';
+                    } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id == $nonShiftGroupId) { // NON SHIFT
+                        $timeInAt = $shift->in_time;
+                        $timeOutAt = $shift->out_time;
+                        $shiftId = $shift->id;
+                        $scheduleTimeInAt = $shift->in_time;
+                        $scheduleTimeOutAt = $shift->out_time;
+                    } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id !== $nonShiftGroupId) { // SHIFT
+                        $timeInAt = $shiftScheduleDate->shift->in_time;
+                        $timeOutAt = $shiftScheduleDate->shift->out_time;
+                        $shiftId = $shiftScheduleDate->shift_id;
+                        $scheduleTimeInAt = $shiftScheduleDate->shift->in_time;
+                        $scheduleTimeOutAt = $shiftScheduleDate->shift->out_time;
+                    }
+                    $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
+                    $dataAbsen = [
+                        'period' => $startDate->format('Y-m'),
+                        'employee_id' => $leave->employee_id,
+                        'date' => $startDate->toDateString(),
+                        'day' => $startDate->format('l'),
+                        'leave_id' => $leave->id,
+                        'leave_type_id' => $leave->leave_type_id,
+                        'leave_time_at' => $leave->from_date,
+                        'leave_out_at' => $leave->to_date,
+                        'schedule_leave_time_at' => $leave->from_date,
+                        'schedule_leave_out_at' => $leave->to_date,
+                        'shift_schedule_id' => $leave->shift_schedule_id,
+                        'date_in_at' => $startDate->toDateString(),
+                        'time_in_at' => $timeInAt,
+                        'date_out_at' => $startDate->toDateString(),
+                        'time_out_at' => $timeOutAt,
+                        'employment_id' => $employee->employment_number,
+                        'shift_id' => $shiftId,
+                        'schedule_date_in_at' => $startDate->toDateString(),
+                        'schedule_time_in_at' => $scheduleTimeInAt,
+                        'schedule_date_out_at' => $startDate->toDateString(),
+                        'schedule_time_out_at' => $scheduleTimeOutAt,
+                    ];
+                    if (!$absen) { // if in the table generate_absen not exists -> create the data.
+                        $this->generateAbsenService->store($dataAbsen);
+                    } else {
+                        $this->generateAbsenService->update($absen->id, $dataAbsen);
+                    }
+                    $startDate->addDay(); // Move to the next day
                 }
-                $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
-                $dataAbsen = [
-                    'period' => $startDate->format('Y-m'),
-                    'employee_id' => $leave->employee_id,
-                    'date' => $startDate->toDateString(),
-                    'day' => $startDate->format('l'),
+            }
+            // if ($status == 10) { // if batal HRD
+            //     $shiftScheduleUpdate = ShiftSchedule::where('leave_id', $id)->first();
+            //     $shiftScheduleUpdate->update([
+            //         'leave_id' => null,
+            //         'leave_note' => null,
+            //     ]);
+            // }
+            if ($leave) {
+                $leave->update(['leave_status_id' => $status]);
+                $historyData = [
                     'leave_id' => $leave->id,
-                    'leave_type_id' => $leave->leave_type_id,
-                    'leave_time_at' => $leave->from_date,
-                    'leave_out_at' => $leave->to_date,
-                    'schedule_leave_time_at' => $leave->from_date,
-                    'schedule_leave_out_at' => $leave->to_date,
-                    'shift_schedule_id' => $leave->shift_schedule_id,
-                    'date_in_at' => $startDate->toDateString(),
-                    'time_in_at' => $timeInAt,
-                    'date_out_at' => $startDate->toDateString(),
-                    'time_out_at' => $timeOutAt,
-                    'employment_id' => $employee->employment_number,
-                    'shift_id' => $shiftId,
-                    'schedule_date_in_at' => $startDate->toDateString(),
-                    'schedule_time_in_at' => $scheduleTimeInAt,
-                    'schedule_date_out_at' => $startDate->toDateString(),
-                    'schedule_time_out_at' => $scheduleTimeOutAt,
+                    'user_id' => auth()->id(),
+                    'description' => 'LEAVE STATUS ' . $leaveStatus->name,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'comment' => $leave->note,
                 ];
-                if (!$absen) { // if in the table generate_absen not exists -> create the data.
-                    $this->generateAbsenService->store($dataAbsen);
-                } else {
-                    $this->generateAbsenService->update($absen->id, $dataAbsen);
+                $this->leaveHistory->store($historyData);
+                if (in_array($status, [6, 7, 8, 9, 10])) {
+                    ShiftSchedule::where('leave_id', $leave->id)
+                        ->update([
+                            'leave_id' => null,
+                            'leave_note' => null
+                        ]);
                 }
-                $startDate->addDay(); // Move to the next day
-            }
-        }
-        // if ($status == 10) { // if batal HRD
-        //     $shiftScheduleUpdate = ShiftSchedule::where('leave_id', $id)->first();
-        //     $shiftScheduleUpdate->update([
-        //         'leave_id' => null,
-        //         'leave_note' => null,
-        //     ]);
-        // }
-        if ($leave) {
-            $leave->update(['leave_status_id' => $status]);
-            $historyData = [
-                'leave_id' => $leave->id,
-                'user_id' => auth()->id(),
-                'description' => 'LEAVE STATUS ' . $leaveStatus->name,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'comment' => $leave->note,
-            ];
-            $this->leaveHistory->store($historyData);
-            if (in_array($status, [6, 7, 8, 9, 10])) {
-                ShiftSchedule::where('leave_id', $leave->id)
-                    ->update([
-                        'leave_id' => null,
-                        'leave_note' => null
+                // update data batal catatan cuti
+                if ($leave->leave_type_id == 1 && in_array($status, [6, 7, 8, 9, 10])) {
+                    $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
+                        ->latest()
+                        ->first();
+                    // update catatan cuti
+                    // $catatanCuti->update([
+                    //     'quantity_akhir' => $catatanCuti->quantity_awal,
+                    //     'quantity_out' => 0,
+                    //     'batal' => 1
+                    // ]);
+                    $newCatatanCuti = CatatanCuti::create([
+                        'adjustment_cuti_id' => null,
+                        'leave_id' => $catatanCuti->leave_id,
+                        'employee_id' => $catatanCuti->employee_id,
+                        'quantity_awal' => $catatanCuti->quantity_akhir,
+                        'quantity_akhir' => (int)$catatanCuti->quantity_akhir + (int)$catatanCuti->quantity_out,
+                        'quantity_in' => $catatanCuti->quantity_out,
+                        'quantity_out' => 0,
+                        'type' => 'LEAVE',
+                        'description' => $leaveStatus->name,
+                        'batal' => 1,
+                        'year' => $catatanCuti->year,
                     ]);
-            }
-            // update data batal catatan cuti
-            if ($leave->leave_type_id == 1 && in_array($status, [6, 7, 8, 9, 10])) {
-                $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
-                    ->latest()
-                    ->first();
-                // update catatan cuti
-                // $catatanCuti->update([
-                //     'quantity_akhir' => $catatanCuti->quantity_awal,
-                //     'quantity_out' => 0,
-                //     'batal' => 1
-                // ]);
-                $newCatatanCuti = CatatanCuti::create([
-                    'adjustment_cuti_id' => null,
-                    'leave_id' => $catatanCuti->leave_id,
-                    'employee_id' => $catatanCuti->employee_id,
-                    'quantity_awal' => $catatanCuti->quantity_akhir,
-                    'quantity_akhir' => (int)$catatanCuti->quantity_akhir + (int)$catatanCuti->quantity_out,
-                    'quantity_in' => $catatanCuti->quantity_out,
-                    'quantity_out' => 0,
-                    'type' => 'LEAVE',
-                    'description' => $leaveStatus->name,
-                    'batal' => 1,
-                    'year' => $catatanCuti->year,
-                ]);
 
-                // $employee = $this->employeeService->show($leave->employee_id);
-                // update Shift Schedule if shift, delete if non shift
-                // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
-                //     ShiftSchedule::where('leave_id', $leave->id)->delete();
-                //     LeaveHistory::where('leave_id', $leave->id)->delete();
-                //     $leave->delete();
-                // } else {
-                $leave->update([
-                    'quantity_cuti_awal' => $newCatatanCuti->quantity_akhir,
-                    'sisa_cuti' => $newCatatanCuti->quantity_akhir
-                ]);
-                // }
-            }
+                    // $employee = $this->employeeService->show($leave->employee_id);
+                    // update Shift Schedule if shift, delete if non shift
+                    // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
+                    //     ShiftSchedule::where('leave_id', $leave->id)->delete();
+                    //     LeaveHistory::where('leave_id', $leave->id)->delete();
+                    //     $leave->delete();
+                    // } else {
+                    $leave->update([
+                        'quantity_cuti_awal' => $newCatatanCuti->quantity_akhir,
+                        'sisa_cuti' => $newCatatanCuti->quantity_akhir
+                    ]);
+                    // }
+                }
 
-            // firebase
-            $typeSend = 'Cuti/Izin';
-            $employee = $this->employeeService->show($leave->employee_id);
-            $registrationIds = [];
-            if ($employee->user != null) {
-                $registrationIds[] = $employee->user->firebase_id;
-            }
-            // notif ke HRDs
-            $employeeHrd = User::where('hrd', '1')->get();
-            foreach ($employeeHrd as $key) {
-                # code...
-                $firebaseIdx = $key;
-            }
-            $registrationIds[] = $firebaseIdx->firebase_id;
+                // firebase
+                $typeSend = 'Cuti/Izin';
+                $employee = $this->employeeService->show($leave->employee_id);
+                $registrationIds = [];
+                if ($employee->user != null) {
+                    $registrationIds[] = $employee->user->firebase_id;
+                }
+                // notif ke HRDs
+                $employeeHrd = User::where('hrd', '1')->get();
+                foreach ($employeeHrd as $key) {
+                    # code...
+                    $firebaseIdx = $key;
+                }
+                $registrationIds[] = $firebaseIdx->firebase_id;
 
-            // Check if there are valid registration IDs before sending the notification
-            if (!empty($registrationIds)) {
-                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+                // Check if there are valid registration IDs before sending the notification
+                if (!empty($registrationIds)) {
+                    $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+                }
+                // Commit the transaction
+                DB::commit();
+                return $leave;
             }
-            return $leave;
+            return null;
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of any exception
+            DB::rollback();
+
+            // Handle the exception (log, throw, etc.)
+            // For now, we'll just rethrow the exception
+            throw $e;
         }
-        return null;
     }
 
     public function updateStatusMobile($leaveId, $leaveStatusId)
     {
-        $leave = $this->model->find($leaveId);
-        $leaveStatus = $this->leaveStatus->show($leaveStatusId);
-        if ($leaveStatusId == 5) { // if approval HRD
-            $startDate = Carbon::parse($leave->from_date);
-            $endDate = Carbon::parse($leave->to_date);
-            $employee = Employee::where('id', $leave->employee_id)->first();
-            while ($startDate->lte($endDate)) {
-                // search shift schedule employee_id and date shift
-                $shiftScheduleDate = $this->shiftScheduleService->shiftScheduleEmployeeDate($leave->employee_id, $startDate->toDateString());
-                // shift schedule non shift
-                $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
-                $shift = Shift::where('shift_group_id', $nonShiftGroupId)
-                    ->where('code', 'N')
-                    ->orWhere('name', 'NON SHIFT')
-                    ->first();
-                $timeInAt = null;
-                $timeOutAt = null;
-                $shiftId = null;
-                $scheduleTimeInAt = null;
-                $scheduleTimeOutAt = null;
-                if ($leave->leave_type_id == 1) { // CUTI TAHUNAN
-                    $timeInAt = '00:00:00';
-                    $timeOutAt = '00:00:00';
-                    $shiftId = $shiftScheduleDate->shift_id;
-                    $scheduleTimeInAt = '00:00:00';
-                    $scheduleTimeOutAt = '00:00:00';
-                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id == $nonShiftGroupId) { // NON SHIFT
-                    $timeInAt = $shift->in_time;
-                    $timeOutAt = $shift->out_time;
-                    $shiftId = $shift->id;
-                    $scheduleTimeInAt = $shift->in_time;
-                    $scheduleTimeOutAt = $shift->out_time;
-                } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id !== $nonShiftGroupId) { // SHIFT
-                    $timeInAt = $shiftScheduleDate->shift->in_time;
-                    $timeOutAt = $shiftScheduleDate->shift->out_time;
-                    $shiftId = $shiftScheduleDate->shift_id;
-                    $scheduleTimeInAt = $shiftScheduleDate->shift->in_time;
-                    $scheduleTimeOutAt = $shiftScheduleDate->shift->out_time;
+        // Start the database transaction
+        DB::beginTransaction();
+        try {
+            $leave = $this->model->find($leaveId);
+            $leaveStatus = $this->leaveStatus->show($leaveStatusId);
+            if ($leaveStatusId == 5) { // if approval HRD
+                $startDate = Carbon::parse($leave->from_date);
+                $endDate = Carbon::parse($leave->to_date);
+                $employee = Employee::where('id', $leave->employee_id)->first();
+                while ($startDate->lte($endDate)) {
+                    // search shift schedule employee_id and date shift
+                    $shiftScheduleDate = $this->shiftScheduleService->shiftScheduleEmployeeDate($leave->employee_id, $startDate->toDateString());
+                    // shift schedule non shift
+                    $nonShiftGroupId = '01hfhe3aqcbw9r1fxvr2j2tb75';
+                    $shift = Shift::where('shift_group_id', $nonShiftGroupId)
+                        ->where('code', 'N')
+                        ->orWhere('name', 'NON SHIFT')
+                        ->first();
+                    $timeInAt = null;
+                    $timeOutAt = null;
+                    $shiftId = null;
+                    $scheduleTimeInAt = null;
+                    $scheduleTimeOutAt = null;
+                    if ($leave->leave_type_id == 1) { // CUTI TAHUNAN
+                        $timeInAt = '00:00:00';
+                        $timeOutAt = '00:00:00';
+                        $shiftId = $shiftScheduleDate->shift_id;
+                        $scheduleTimeInAt = '00:00:00';
+                        $scheduleTimeOutAt = '00:00:00';
+                    } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id == $nonShiftGroupId) { // NON SHIFT
+                        $timeInAt = $shift->in_time;
+                        $timeOutAt = $shift->out_time;
+                        $shiftId = $shift->id;
+                        $scheduleTimeInAt = $shift->in_time;
+                        $scheduleTimeOutAt = $shift->out_time;
+                    } else if ($leave->leave_type_id !== 1 && $employee->shift_group_id !== $nonShiftGroupId) { // SHIFT
+                        $timeInAt = $shiftScheduleDate->shift->in_time;
+                        $timeOutAt = $shiftScheduleDate->shift->out_time;
+                        $shiftId = $shiftScheduleDate->shift_id;
+                        $scheduleTimeInAt = $shiftScheduleDate->shift->in_time;
+                        $scheduleTimeOutAt = $shiftScheduleDate->shift->out_time;
+                    }
+                    $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
+                    $dataAbsen = [
+                        'period' => $startDate->format('Y-m'),
+                        'employee_id' => $leave->employee_id,
+                        'date' => $startDate->toDateString(),
+                        'day' => $startDate->format('l'),
+                        'leave_id' => $leave->id,
+                        'leave_type_id' => $leave->leave_type_id,
+                        'leave_time_at' => $leave->from_date,
+                        'leave_out_at' => $leave->to_date,
+                        'schedule_leave_time_at' => $leave->from_date,
+                        'schedule_leave_out_at' => $leave->to_date,
+                        'shift_schedule_id' => $leave->shift_schedule_id,
+                        'date_in_at' => $startDate->toDateString(),
+                        'time_in_at' => $timeInAt,
+                        'date_out_at' => $startDate->toDateString(),
+                        'time_out_at' => $timeOutAt,
+                        'employment_id' => $employee->employment_number,
+                        'shift_id' => $shiftId,
+                        'schedule_date_in_at' => $startDate->toDateString(),
+                        'schedule_time_in_at' => $scheduleTimeInAt,
+                        'schedule_date_out_at' => $startDate->toDateString(),
+                        'schedule_time_out_at' => $scheduleTimeOutAt,
+                    ];
+                    if (!$absen) { // if in the table generate_absen not exists -> create the data.
+                        $this->generateAbsenService->store($dataAbsen);
+                    } else {
+                        $this->generateAbsenService->update($absen->id, $dataAbsen);
+                    }
+                    $startDate->addDay(); // Move to the next day
                 }
-                $absen = $this->generateAbsenService->findDate($leave->employee_id, $startDate->toDateString());
-                $dataAbsen = [
-                    'period' => $startDate->format('Y-m'),
-                    'employee_id' => $leave->employee_id,
-                    'date' => $startDate->toDateString(),
-                    'day' => $startDate->format('l'),
+            }
+            if ($leave) {
+                // update leave status in the table leaves
+                $leave->update(['leave_status_id' => $leaveStatusId]);
+                // create leave history in the table leaves history
+                $historyData = [
                     'leave_id' => $leave->id,
-                    'leave_type_id' => $leave->leave_type_id,
-                    'leave_time_at' => $leave->from_date,
-                    'leave_out_at' => $leave->to_date,
-                    'schedule_leave_time_at' => $leave->from_date,
-                    'schedule_leave_out_at' => $leave->to_date,
-                    'shift_schedule_id' => $leave->shift_schedule_id,
-                    'date_in_at' => $startDate->toDateString(),
-                    'time_in_at' => $timeInAt,
-                    'date_out_at' => $startDate->toDateString(),
-                    'time_out_at' => $timeOutAt,
-                    'employment_id' => $employee->employment_number,
-                    'shift_id' => $shiftId,
-                    'schedule_date_in_at' => $startDate->toDateString(),
-                    'schedule_time_in_at' => $scheduleTimeInAt,
-                    'schedule_date_out_at' => $startDate->toDateString(),
-                    'schedule_time_out_at' => $scheduleTimeOutAt,
+                    'user_id' => auth()->id(),
+                    'description' => 'LEAVE STATUS ' . $leaveStatus->name,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'comment' => $leave->note,
                 ];
-                if (!$absen) { // if in the table generate_absen not exists -> create the data.
-                    $this->generateAbsenService->store($dataAbsen);
-                } else {
-                    $this->generateAbsenService->update($absen->id, $dataAbsen);
+                $this->leaveHistory->store($historyData);
+                if (in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
+                    ShiftSchedule::where('leave_id', $leave->id)
+                        ->update([
+                            'leave_id' => null,
+                            'leave_note' => null
+                        ]);
                 }
-                $startDate->addDay(); // Move to the next day
-            }
-        }
-        if ($leave) {
-            // update leave status in the table leaves
-            $leave->update(['leave_status_id' => $leaveStatusId]);
-            // create leave history in the table leaves history
-            $historyData = [
-                'leave_id' => $leave->id,
-                'user_id' => auth()->id(),
-                'description' => 'LEAVE STATUS ' . $leaveStatus->name,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'comment' => $leave->note,
-            ];
-            $this->leaveHistory->store($historyData);
-            if (in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
-                ShiftSchedule::where('leave_id', $leave->id)
-                    ->update([
-                        'leave_id' => null,
-                        'leave_note' => null
+                // update data batal catatan cuti
+                if ($leave->leave_type_id == 1 && in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
+                    $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
+                        ->latest()
+                        ->first();
+                    // update catatan cuti
+                    // $catatanCuti->update([
+                    //     'quantity_akhir' => $catatanCuti->quantity_awal,
+                    //     'quantity_out' => 0,
+                    //     'batal' => 1
+                    // ]);
+                    $newCatatanCuti = CatatanCuti::create([
+                        'adjustment_cuti_id' => null,
+                        'leave_id' => $catatanCuti->leave_id,
+                        'employee_id' => $catatanCuti->employee_id,
+                        'quantity_awal' => $catatanCuti->quantity_akhir,
+                        'quantity_akhir' => (int)$catatanCuti->quantity_akhir + (int)$catatanCuti->quantity_out,
+                        'quantity_in' => $catatanCuti->quantity_out,
+                        'quantity_out' => 0,
+                        'type' => 'LEAVE',
+                        'description' => $leaveStatus->name,
+                        'batal' => 1,
+                        'year' => $catatanCuti->year,
                     ]);
-            }
-            // update data batal catatan cuti
-            if ($leave->leave_type_id == 1 && in_array($leaveStatusId, [6, 7, 8, 9, 10])) {
-                $catatanCuti = CatatanCuti::where('leave_id', $leave->id)
-                    ->latest()
-                    ->first();
-                // update catatan cuti
-                // $catatanCuti->update([
-                //     'quantity_akhir' => $catatanCuti->quantity_awal,
-                //     'quantity_out' => 0,
-                //     'batal' => 1
-                // ]);
-                $newCatatanCuti = CatatanCuti::create([
-                    'adjustment_cuti_id' => null,
-                    'leave_id' => $catatanCuti->leave_id,
-                    'employee_id' => $catatanCuti->employee_id,
-                    'quantity_awal' => $catatanCuti->quantity_akhir,
-                    'quantity_akhir' => (int)$catatanCuti->quantity_akhir + (int)$catatanCuti->quantity_out,
-                    'quantity_in' => $catatanCuti->quantity_out,
-                    'quantity_out' => 0,
-                    'type' => 'LEAVE',
-                    'description' => $leaveStatus->name,
-                    'batal' => 1,
-                    'year' => $catatanCuti->year,
-                ]);
 
-                // $employee = $this->employeeService->show($leave->employee_id);
-                // update Shift Schedule if shift, delete if non shift
-                // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
-                //     ShiftSchedule::where('leave_id', $leave->id)->delete();
-                //     LeaveHistory::where('leave_id', $leave->id)->delete();
-                //     $leave->delete();
-                // } else {
-                $leave->update([
-                    'quantity_cuti_awal' => $newCatatanCuti->quantity_akhir,
-                    'sisa_cuti' => $newCatatanCuti->quantity_akhir
-                ]);
-                // }
-            }
+                    // $employee = $this->employeeService->show($leave->employee_id);
+                    // update Shift Schedule if shift, delete if non shift
+                    // if ($employee->shift_group_id == '01hfhe3aqcbw9r1fxvr2j2tb75') {
+                    //     ShiftSchedule::where('leave_id', $leave->id)->delete();
+                    //     LeaveHistory::where('leave_id', $leave->id)->delete();
+                    //     $leave->delete();
+                    // } else {
+                    $leave->update([
+                        'quantity_cuti_awal' => $newCatatanCuti->quantity_akhir,
+                        'sisa_cuti' => $newCatatanCuti->quantity_akhir
+                    ]);
+                    // }
+                }
 
-            // firebase
-            $typeSend = 'Cuti/Izin';
-            $employee = $this->employeeService->show($leave->employee_id);
-            $registrationIds = [];
-            if ($employee->user != null) {
-                $registrationIds[] = $employee->user->firebase_id;
-            }
+                // firebase
+                $typeSend = 'Cuti/Izin';
+                $employee = $this->employeeService->show($leave->employee_id);
+                $registrationIds = [];
+                if ($employee->user != null) {
+                    $registrationIds[] = $employee->user->firebase_id;
+                }
 
-            // notif ke HRDs
-            $employeeHrd = User::where('hrd', '1')->get();
-            foreach ($employeeHrd as $key) {
-                # code...
-                $firebaseIdx = $key;
+                // notif ke HRDs
+                $employeeHrd = User::where('hrd', '1')->get();
+                foreach ($employeeHrd as $key) {
+                    # code...
+                    $firebaseIdx = $key;
+                }
+                $registrationIds[] = $firebaseIdx->firebase_id;
+                // Check if there are valid registration IDs before sending the notification
+                if (!empty($registrationIds)) {
+                    $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
+                }
+                // Commit the transaction
+                DB::commit();
+                return $leave;
             }
-            $registrationIds[] = $firebaseIdx->firebase_id;
-            // Check if there are valid registration IDs before sending the notification
-            if (!empty($registrationIds)) {
-                $this->firebaseService->sendNotification($registrationIds, $typeSend, $employee->name);
-            }
-            return $leave;
+            return null;
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of any exception
+            DB::rollback();
+
+            // Handle the exception (log, throw, etc.)
+            // For now, we'll just rethrow the exception
+            throw $e;
         }
-        return null;
     }
 
     function leaveSisa($employeeId)
