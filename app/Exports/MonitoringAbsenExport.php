@@ -38,16 +38,16 @@ class MonitoringAbsenExport implements FromView, ShouldAutoSize
                             $subquery->whereNull('holiday')
                                 ->orWhere('holiday', 0);
                         })
-                        ->where(function ($subquery) {
-                            $subquery->where(function ($timeQuery) {
-                                $timeQuery->whereNull('time_in_at')
-                                    ->whereNull('time_out_at');
-                            })
-                            ->orWhere(function ($timeQuery) {
-                                $timeQuery->whereNotNull('time_in_at')
-                                    ->whereNull('time_out_at');
-                            });
-                        })
+                        // ->where(function ($subquery) {
+                        //     $subquery->where(function ($timeQuery) {
+                        //         $timeQuery->whereNull('time_in_at')
+                        //             ->whereNull('time_out_at');
+                        //     })
+                        //     ->orWhere(function ($timeQuery) {
+                        //         $timeQuery->whereNotNull('time_in_at')
+                        //             ->whereNull('time_out_at');
+                        //     });
+                        // })
                         ->whereDate('date','>=', $period1)
                         ->whereDate('date','<=', $period2)
                         ->orderBy('date', 'DESC')
