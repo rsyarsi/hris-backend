@@ -121,12 +121,12 @@ class Candidate extends Model
 
     public function selfPerspective()
     {
-        return $this->hasMany(SelfPerspectiveCandidate::class, 'candidate_id');
+        return $this->hasOne(SelfPerspectiveCandidate::class, 'candidate_id', 'id');
     }
 
     public function additionalInformation()
     {
-        return $this->hasMany(AdditionalInformationCandidate::class, 'candidate_id');
+        return $this->hasOne(AdditionalInformationCandidate::class, 'candidate_id', 'id');
     }
 
     public function humanResourcesTest()
