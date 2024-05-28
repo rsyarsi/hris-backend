@@ -33,6 +33,11 @@ class WorkExperienceCandidateRequest extends FormRequest
             'to_date' => 'nullable|date',
             'job_description' => 'nullable|string',
             'reason_for_resignation' => 'nullable|string',
+            'take_home_pay' => [
+                'required',
+                'numeric',
+                'regex:/^\d{1,16}(\.\d{1,2})?$/'
+            ],
         ];
     }
 

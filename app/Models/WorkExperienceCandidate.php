@@ -26,6 +26,7 @@ class WorkExperienceCandidate extends Model
         'to_date',
         'job_description',
         'reason_for_resignation',
+        'take_home_pay',
     ];
 
     public function candidate()
