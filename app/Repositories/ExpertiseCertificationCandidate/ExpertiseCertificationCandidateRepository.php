@@ -38,6 +38,11 @@ class ExpertiseCertificationCandidateRepository implements ExpertiseCertificatio
         return $query->orderBy('candidate_id', 'ASC')->paginate($perPage);
     }
 
+    public function indexByCandidate($candidateId)
+    {
+        return $this->model->where('candidate_id', $candidateId)->get();
+    }
+
     public function store(array $data)
     {
         return $this->model->create($data);

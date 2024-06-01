@@ -77,7 +77,7 @@ class EmployeeEducationController extends Controller
             if (!$employeeeducation) {
                 return $this->error('Employee Education not found', 404);
             }
-            return $this->success('Employee Education deleted successfully, id : '.$employeeeducation->id, []);
+            return $this->success('Employee Education deleted successfully, id : ' . $employeeeducation->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

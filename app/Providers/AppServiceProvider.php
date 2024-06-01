@@ -88,6 +88,7 @@ use App\Services\JobVacanciesApplied\{JobVacanciesAppliedService, JobVacanciesAp
 use App\Services\JobInterviewForm\{JobInterviewFormService, JobInterviewFormServiceInterface};
 use App\Services\Firebase\{FirebaseService, FirebaseServiceInterface};
 use App\Services\EmailVerification\{EmailVerificationService, EmailVerificationServiceInterface};
+use App\Services\CopyFile\{CopyFileService, CopyFileServiceInterface};
 
 use App\Repositories\Job\{JobRepository, JobRepositoryInterface};
 use App\Repositories\Pph\{PphRepository, PphRepositoryInterface};
@@ -519,6 +520,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Email Verification
         $this->app->bind(EmailVerificationServiceInterface::class, EmailVerificationService::class);
+
+        // Copy File
+        $this->app->bind(CopyFileServiceInterface::class, CopyFileService::class);
     }
 
     /**

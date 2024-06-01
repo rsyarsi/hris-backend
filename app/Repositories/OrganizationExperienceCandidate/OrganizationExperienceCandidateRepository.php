@@ -18,9 +18,9 @@ class OrganizationExperienceCandidateRepository implements OrganizationExperienc
     public function index($perPage, $search = null)
     {
         $query = $this->model
-                        ->with([
-                            'candidate:id,first_name,middle_name,last_name,email',
-                        ]);
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+            ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
@@ -37,6 +37,11 @@ class OrganizationExperienceCandidateRepository implements OrganizationExperienc
         return $query->orderBy('candidate_id', 'ASC')->paginate($perPage);
     }
 
+    public function indexByCandidate($candidateId)
+    {
+        return $this->model->where('candidate_id', $candidateId)->get();
+    }
+
     public function store(array $data)
     {
         return $this->model->create($data);
@@ -45,11 +50,11 @@ class OrganizationExperienceCandidateRepository implements OrganizationExperienc
     public function show($id)
     {
         $organizationExperienceCandidate = $this->model
-                            ->with([
-                                'candidate:id,first_name,middle_name,last_name,email',
-                            ])
-                            ->where('id', $id)
-                            ->first();
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+            ])
+            ->where('id', $id)
+            ->first();
         return $organizationExperienceCandidate ? $organizationExperienceCandidate : $organizationExperienceCandidate = null;
     }
 

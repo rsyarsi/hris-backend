@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Services\EmployeeCertificate;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Services\EmployeeCertificate\EmployeeCertificateServiceInterface;
 use App\Repositories\EmployeeCertificate\EmployeeCertificateRepositoryInterface;
@@ -50,6 +50,11 @@ class EmployeeCertificateService implements EmployeeCertificateServiceInterface
         return $this->repository->store($data);
     }
 
+    public function storeFromCandidate($data)
+    {
+        return $this->repository->store($data);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);
@@ -68,7 +73,7 @@ class EmployeeCertificateService implements EmployeeCertificateServiceInterface
             $filePath = null;
             $fileUrl = null;
         }
-        $legalityData = [
+        $finalData = [
             'employee_id' => $data['employee_id'],
             'name' => $data['name'],
             'institution_name' => $data['institution_name'],
@@ -81,7 +86,7 @@ class EmployeeCertificateService implements EmployeeCertificateServiceInterface
             'verified_user_Id' => $data['verified_user_Id'],
             'is_extended' => $data['is_extended'],
         ];
-        return $this->repository->update($id, $legalityData);
+        return $this->repository->update($id, $finalData);
     }
 
     public function destroy($id)

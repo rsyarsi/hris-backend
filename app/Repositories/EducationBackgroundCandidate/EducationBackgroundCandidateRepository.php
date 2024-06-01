@@ -18,10 +18,10 @@ class EducationBackgroundCandidateRepository implements EducationBackgroundCandi
     public function index($perPage, $search = null)
     {
         $query = $this->model
-                        ->with([
-                            'candidate:id,first_name,middle_name,last_name,email',
-                            'education:id,name',
-                        ]);
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'education:id,name',
+            ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
@@ -46,12 +46,12 @@ class EducationBackgroundCandidateRepository implements EducationBackgroundCandi
     public function show($id)
     {
         $educationBackgroundcandidate = $this->model
-                            ->with([
-                                'candidate:id,first_name,middle_name,last_name,email',
-                                'education:id,name',
-                            ])
-                            ->where('id', $id)
-                            ->first();
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'education:id,name',
+            ])
+            ->where('id', $id)
+            ->first();
         return $educationBackgroundcandidate ? $educationBackgroundcandidate : $educationBackgroundcandidate = null;
     }
 
@@ -73,5 +73,10 @@ class EducationBackgroundCandidateRepository implements EducationBackgroundCandi
             return $educationBackgroundcandidate;
         }
         return null;
+    }
+
+    public function indexByCandidate($candidateId)
+    {
+        return $this->model->where('candidate_id', $candidateId)->get();
     }
 }

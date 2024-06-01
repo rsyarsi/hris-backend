@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UploadCvRequest;
 use App\Http\Requests\CandidateRequest;
+use App\Http\Requests\UploadPhotoCandidateRequest;
 use App\Services\Candidate\CandidateServiceInterface;
 
 class CandidateController extends Controller
@@ -90,6 +91,17 @@ class CandidateController extends Controller
             $data = $request->validated();
             $candidate = $this->candidateService->uploadCv($id, $data);
             return $this->success('Cv Uploaded successfully!', $candidate, 201);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function uploadPhotoCandidate(UploadPhotoCandidateRequest $request, $id)
+    {
+        try {
+            $data = $request->validated();
+            $candidate = $this->candidateService->uploadPhotoCandidate($id, $data);
+            return $this->success('Photo Uploaded successfully!', $candidate, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

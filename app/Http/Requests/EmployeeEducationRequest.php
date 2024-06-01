@@ -33,6 +33,7 @@ class EmployeeEducationRequest extends FormRequest
             'ended_year' => 'nullable|digits_between:1,10',
             'is_passed' => 'nullable|integer',
             'verified_at' => 'nullable|date',
+            'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
         ];
     }
 

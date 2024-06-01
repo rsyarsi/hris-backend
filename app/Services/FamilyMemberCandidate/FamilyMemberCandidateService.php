@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\FamilyMemberCandidate;
 
 use Illuminate\Support\Str;
@@ -39,6 +40,11 @@ class FamilyMemberCandidateService implements FamilyMemberCandidateServiceInterf
     public function destroy($id)
     {
         return $this->repository->destroy($id);
+    }
+
+    public function indexByCandidate($candidateId)
+    {
+        return $this->repository->indexByCandidate($candidateId);
     }
 
     public function formatTextTitle($data)

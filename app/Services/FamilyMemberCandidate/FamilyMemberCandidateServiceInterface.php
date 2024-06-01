@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\FamilyMemberCandidate;
 
 interface FamilyMemberCandidateServiceInterface
@@ -8,4 +9,5 @@ interface FamilyMemberCandidateServiceInterface
     public function show($id);
     public function update($id, array $data);
     public function destroy($id);
+    public function indexByCandidate($candidateId);
 }

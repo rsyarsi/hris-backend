@@ -20,6 +20,11 @@ class WorkExperienceCandidateService implements WorkExperienceCandidateServiceIn
         return $this->repository->index($perPage, $search);
     }
 
+    public function indexByCandidate($candidateId)
+    {
+        return $this->repository->indexByCandidate($candidateId);
+    }
+
     public function store(array $data)
     {
         $data['company'] = $this->formatTextTitle($data['company']);

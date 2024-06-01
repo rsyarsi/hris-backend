@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Repositories\EmployeeEducation;
 
-Interface EmployeeEducationRepositoryInterface{
+interface EmployeeEducationRepositoryInterface
+{
 
     public function index($perPage, $search);
     public function store(array $data);

@@ -18,13 +18,13 @@ class FamilyMemberCandidateRepository implements FamilyMemberCandidateRepository
     public function index($perPage, $search = null)
     {
         $query = $this->model
-                        ->with([
-                            'candidate:id,first_name,middle_name,last_name,email',
-                            'relationship:id,name',
-                            'sex:id,name',
-                            'education:id,name',
-                            'job:id,name',
-                        ]);
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'relationship:id,name',
+                'sex:id,name',
+                'education:id,name',
+                'job:id,name',
+            ]);
 
         if ($search !== null) {
             $query->where(function ($subquery) use ($search) {
@@ -48,15 +48,15 @@ class FamilyMemberCandidateRepository implements FamilyMemberCandidateRepository
     public function show($id)
     {
         $familyMembercandidate = $this->model
-                            ->with([
-                                'candidate:id,first_name,middle_name,last_name,email',
-                                'relationship:id,name',
-                                'sex:id,name',
-                                'education:id,name',
-                                'job:id,name',
-                            ])
-                            ->where('id', $id)
-                            ->first();
+            ->with([
+                'candidate:id,first_name,middle_name,last_name,email',
+                'relationship:id,name',
+                'sex:id,name',
+                'education:id,name',
+                'job:id,name',
+            ])
+            ->where('id', $id)
+            ->first();
         return $familyMembercandidate ? $familyMembercandidate : $familyMembercandidate = null;
     }
 
@@ -78,5 +78,10 @@ class FamilyMemberCandidateRepository implements FamilyMemberCandidateRepository
             return $familyMembercandidate;
         }
         return null;
+    }
+
+    public function indexByCandidate($candidateId)
+    {
+        return $this->model->where('candidate_id', $candidateId)->get();
     }
 }

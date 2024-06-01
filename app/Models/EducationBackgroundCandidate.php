@@ -25,6 +25,9 @@ class EducationBackgroundCandidate extends Model
         'started_year',
         'ended_year',
         'final_score',
+        'file_url',
+        'file_path',
+        'file_disk',
     ];
 
     public function candidate()

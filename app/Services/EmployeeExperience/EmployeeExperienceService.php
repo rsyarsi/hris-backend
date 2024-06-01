@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\EmployeeExperience;
 
 use Illuminate\Support\Str;
@@ -45,5 +46,4 @@ class EmployeeExperienceService implements EmployeeExperienceServiceInterface
     {
         return Str::upper($data);
     }
-
 }

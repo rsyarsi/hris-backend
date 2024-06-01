@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\OrganizationExperienceCandidate;
 
 use Illuminate\Support\Str;
@@ -17,6 +18,11 @@ class OrganizationExperienceCandidateService implements OrganizationExperienceCa
     public function index($perPage, $search)
     {
         return $this->repository->index($perPage, $search);
+    }
+
+    public function indexByCandidate($candidateId)
+    {
+        return $this->repository->indexByCandidate($candidateId);
     }
 
     public function store(array $data)

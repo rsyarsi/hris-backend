@@ -559,6 +559,8 @@ Route::middleware('api')->prefix('v1/')->group(function () {
         Route::controller(CandidateController::class)->group(function () {
             // route for upload CV
             Route::post('upload-cv/{id}', 'uploadCv')->name('upload-cv');
+            // route for upload photo candidate
+            Route::post('upload-photo-candidate/{id}', 'uploadPhotoCandidate')->name('upload-photo-candidate');
         });
         // route for emergency contact
         Route::resource('emergency-contacts', EmergencyContactCandidateController::class)->parameters(['emergency-contacts' => 'emergency_contact']);

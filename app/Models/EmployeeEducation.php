@@ -24,8 +24,12 @@ class EmployeeEducation extends Model
         'major',
         'started_year',
         'ended_year',
+        'final_score',
         'is_passed',
-        'verified_at'
+        'verified_at',
+        'file_url',
+        'file_path',
+        'file_disk',
     ];
 
     public function employee()

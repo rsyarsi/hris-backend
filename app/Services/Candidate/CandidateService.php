@@ -72,4 +72,25 @@ class CandidateService implements CandidateServiceInterface
         ];
         return $this->repository->uploadCv($id, $data);
     }
+
+    public function uploadPhotoCandidate($id, $data)
+    {
+        $file = $data['file'];
+        if ($file && $file->isValid()) {
+            // Upload the file to AWS S3 storage
+            $filePath = $file->store('hrd/candidates/photo', 's3');
+            // Make the file public by setting ACL to 'public-read'
+            Storage::disk('s3')->setVisibility($filePath, 'public');
+            $fileUrl = Storage::disk('s3')->url($filePath);
+        } else {
+            $filePath = null;
+            $fileUrl = null;
+        }
+        $data = [
+            'photo_file_path' => $filePath,
+            'photo_file_url' => $fileUrl,
+            'photo_file_disk' => 's3',
+        ];
+        return $this->repository->uploadPhotoCandidate($id, $data);
+    }
 }

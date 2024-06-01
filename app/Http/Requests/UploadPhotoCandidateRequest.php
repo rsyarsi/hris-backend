@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class EducationBackgroundCandidateRequest extends FormRequest
+class UploadPhotoCandidateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,20 +25,7 @@ class EducationBackgroundCandidateRequest extends FormRequest
     public function rules()
     {
         return [
-            'candidate_id' => 'required|exists:candidates,id',
-            'education_id' => [
-                'required',
-                'exists:meducations,id',
-                Rule::unique('education_background_candidates')->where(function ($query) {
-                    return $query->where('candidate_id', $this->candidate_id);
-                })->ignore($this->route('education_background')),
-            ],
-            'institution_name' => 'required|string|max:150',
-            'major' => 'nullable|max:150',
-            'started_year' => 'required|date_format:Y',
-            'ended_year' => 'required|date_format:Y',
-            'final_score' => 'nullable|max:18',
-            'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'file' => 'nullable|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 

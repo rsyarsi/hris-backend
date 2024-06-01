@@ -42,6 +42,9 @@ class Candidate extends Model
         'file_url',
         'file_path',
         'file_disk',
+        'photo_file_path',
+        'photo_file_url',
+        'photo_file_disk',
     ];
 
     public function identityType()
