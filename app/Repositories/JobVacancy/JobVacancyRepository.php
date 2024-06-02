@@ -83,6 +83,7 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
         $jobVacancies = DB::table('job_vacancies')
             ->join('meducations', 'job_vacancies.education_id', '=', 'meducations.id')
             ->select(
+                'job_vacancies.id',
                 'job_vacancies.title',
                 'job_vacancies.position',
                 'job_vacancies.description',
