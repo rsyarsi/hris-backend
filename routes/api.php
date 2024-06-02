@@ -622,5 +622,26 @@ Route::middleware('api')->prefix('v1/auth/career')->group(function () {
 
 
 Route::middleware('api')->group(function () {
-    Route::get('public/job-vacancies', [PublicJobVacancyController::class, 'index']);
+    Route::prefix('public')->group(function () {
+        Route::controller(PublicJobVacancyController::class)->group(function () {
+            // Route for get data job vacancy public
+            Route::get('job-vacancies',  'index');
+            Route::prefix('job-vacancies')->group(function () {
+                // Route for post data form applied
+                Route::post('apply',  'applyJob');
+                // Route for get data marital statuses for form
+                Route::get('marital-statuses',  'maritalStatus');
+                // Route for get data religion for form
+                Route::get('religions',  'relogion');
+                // Route for get data ethnics for form
+                Route::get('ethnics',  'ethnic');
+                // Route for get data relationships for form
+                Route::get('relationships',  'relationship');
+                // Route for get data educations for form
+                Route::get('educations',  'education');
+                // Route for get data jobs for form
+                Route::get('jobs',  'job');
+            });
+        });
+    });
 });

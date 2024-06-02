@@ -4,15 +4,25 @@ namespace App\Repositories\JobVacancy;
 
 use App\Models\JobVacancy;
 use Illuminate\Support\Facades\DB;
+use App\Services\Candidate\CandidateServiceInterface;
 use App\Repositories\JobVacancy\JobVacancyRepositoryInterface;
 
 class JobVacancyRepository implements JobVacancyRepositoryInterface
 {
     private $model;
+    private $candidateService;
 
     public function __construct(JobVacancy $model)
     {
         $this->model = $model;
+    }
+
+    private function getCandidateService()
+    {
+        if (!$this->candidateService) {
+            $this->candidateService = app(CandidateServiceInterface::class);
+        }
+        return $this->candidateService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null, $status = null)
@@ -80,7 +90,7 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function indexPublic()
     {
-        $jobVacancies = DB::table('job_vacancies')
+        return DB::table('job_vacancies')
             ->join('meducations', 'job_vacancies.education_id', '=', 'meducations.id')
             ->select(
                 'job_vacancies.id',
@@ -97,6 +107,70 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             )
             ->where('job_vacancies.status', 1)
             ->get();
-        return $jobVacancies;
+    }
+
+    public function applyJob(array $data)
+    {
+        return $data;
+        // Candidate
+        $candidate = $this->getCandidateService()->store($data);
+        $this->getCandidateService()->uploadCv($candidate->id, $data);
+        $this->getCandidateService()->uploadPhoto($candidate->id, $data);
+
+        // Family Member
+    }
+
+    public function maritalStatus()
+    {
+        return DB::table('mmaritalstatuses')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+    }
+
+    public function religion()
+    {
+        return DB::table('mreligions')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+    }
+
+    public function ethnic()
+    {
+        return DB::table('methnics')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+    }
+
+    public function relationship()
+    {
+        return DB::table('mrelationships')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+    }
+
+    public function education()
+    {
+        return DB::table('meducations')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+    }
+
+    public function job()
+    {
+        return DB::table('mjobs')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
     }
 }

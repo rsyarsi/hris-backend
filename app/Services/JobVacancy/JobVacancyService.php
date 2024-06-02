@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\JobVacancy;
 
 use Illuminate\Support\Str;
@@ -48,6 +49,41 @@ class JobVacancyService implements JobVacancyServiceInterface
     public function indexPublic()
     {
         return $this->repository->indexPublic();
+    }
+
+    public function applyJob(array $data)
+    {
+        return $this->repository->applyJob($data);
+    }
+
+    public function maritalStatus()
+    {
+        return $this->repository->maritalStatus();
+    }
+
+    public function religion()
+    {
+        return $this->repository->religion();
+    }
+
+    public function ethnic()
+    {
+        return $this->repository->ethnic();
+    }
+
+    public function relationship()
+    {
+        return $this->repository->relationship();
+    }
+
+    public function education()
+    {
+        return $this->repository->education();
+    }
+
+    public function job()
+    {
+        return $this->repository->job();
     }
 
     public function formatTextTitle($data)
