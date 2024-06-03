@@ -91,7 +91,8 @@ use App\Http\Controllers\API\Career\{
     AuthCareerController
 };
 use App\Http\Controllers\{
-    PublicJobVacancyController
+    PublicJobVacancyController,
+    DeductionOuterController
 };
 
 /*
@@ -641,7 +642,15 @@ Route::middleware('api')->group(function () {
                 Route::get('educations',  'education');
                 // Route for get data jobs for form
                 Route::get('jobs',  'job');
+                // Route for get data positions for form
+                Route::get('positions',  'position');
+                // Route for get data departments for form
+                Route::get('departments',  'department');
             });
+        });
+        Route::controller(DeductionOuterController::class)->group(function () {
+            // Route for get data departments for form
+            Route::post('deductions/outer/store',  'store');
         });
     });
 });

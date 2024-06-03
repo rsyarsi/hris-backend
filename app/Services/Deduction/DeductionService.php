@@ -1,16 +1,22 @@
 <?php
 namespace App\Services\Deduction;
 
+use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\Deduction\DeductionServiceInterface;
 use App\Repositories\Deduction\DeductionRepositoryInterface;
 
 class DeductionService implements DeductionServiceInterface
 {
     private $repository;
+    private $employeeService;
 
-    public function __construct(DeductionRepositoryInterface $repository)
+    public function __construct(
+        DeductionRepositoryInterface $repository,
+        EmployeeServiceInterface $employeeService
+    )
     {
         $this->repository = $repository;
+        $this->employeeService = $employeeService;
     }
 
     public function index($perPage, $search, $period)
@@ -25,6 +31,13 @@ class DeductionService implements DeductionServiceInterface
 
     public function store(array $data)
     {
+        return $this->repository->store($data);
+    }
+
+    public function storeOuter(array $data)
+    {
+        $employee = $this->employeeService->employeeWhereEmployeeNumber($data['employee_number']);
+        $data['employee_id'] = $employee->id;
         return $this->repository->store($data);
     }
 

@@ -173,4 +173,22 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             ->orderBy('id', 'ASC')
             ->get();
     }
+
+    public function position()
+    {
+        return DB::table('mpositions')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('name', 'ASC')
+            ->get();
+    }
+
+    public function department()
+    {
+        return DB::table('mdepartments')
+            ->select('id', 'name')
+            ->where('active', 1)
+            ->orderBy('name', 'ASC')
+            ->get();
+    }
 }

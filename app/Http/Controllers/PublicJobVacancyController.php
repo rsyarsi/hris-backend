@@ -92,8 +92,28 @@ class PublicJobVacancyController extends Controller
     public function job(Request $request)
     {
         try {
-            $relationshipjobs = $this->jobVacancyService->job();
-            return $this->success('Jobs retrieved successfully', $relationshipjobs);
+            $jobs = $this->jobVacancyService->job();
+            return $this->success('Jobs retrieved successfully', $jobs);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function position(Request $request)
+    {
+        try {
+            $positions = $this->jobVacancyService->position();
+            return $this->success('Positions retrieved successfully', $positions);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function department(Request $request)
+    {
+        try {
+            $departments = $this->jobVacancyService->department();
+            return $this->success('Departments retrieved successfully', $departments);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

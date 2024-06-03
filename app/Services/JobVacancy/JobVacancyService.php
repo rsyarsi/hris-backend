@@ -86,6 +86,16 @@ class JobVacancyService implements JobVacancyServiceInterface
         return $this->repository->job();
     }
 
+    public function position()
+    {
+        return $this->repository->position();
+    }
+
+    public function department()
+    {
+        return $this->repository->department();
+    }
+
     public function formatTextTitle($data)
     {
         return Str::upper($data);

@@ -17,4 +17,6 @@ interface JobVacancyRepositoryInterface
     public function relationship();
     public function education();
     public function job();
+    public function position();
+    public function department();
 }
