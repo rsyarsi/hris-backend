@@ -159,7 +159,7 @@ class ShiftScheduleController extends Controller
             if (!$shiftSchedule) {
                 return $this->error('Shift Schedule not found', 404);
             }
-            return $this->success('Shift Schedule deleted successfully, id : '.$shiftSchedule->id, []);
+            return $this->success('Shift Schedule deleted successfully, id : ' . $shiftSchedule->id, []);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -314,7 +314,7 @@ class ShiftScheduleController extends Controller
             if (!$unit) {
                 return $this->error('Unit Not Found', 422);
             }
-            $nameFile = 'data-shift-schedule-kehadiran-'.Str::slug($unit->name).'-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            $nameFile = 'data-shift-schedule-kehadiran-' . Str::slug($unit->name) . '-' . date("Y-m-d", strtotime($period1)) . '-' . date("Y-m-d", strtotime($period2)) . '.xlsx';
             return Excel::download(new ShiftScheduleKehadiranExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -326,7 +326,7 @@ class ShiftScheduleController extends Controller
         try {
             $period1 = $request->input('period_1');
             $period2 = $request->input('period_2');
-            $nameFile = 'data-jadwal-shift-'.date("Y-m-d", strtotime($period1)).'-'.date("Y-m-d", strtotime($period2)).'.xlsx';
+            $nameFile = 'data-jadwal-shift-' . date("Y-m-d", strtotime($period1)) . '-' . date("Y-m-d", strtotime($period2)) . '.xlsx';
             return Excel::download(new ShiftScheduleExport, $nameFile);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

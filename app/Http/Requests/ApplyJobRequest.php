@@ -25,7 +25,11 @@ class ApplyJobRequest extends FormRequest
     {
         return [
             'first_name' => 'required',
-            'file_cv' => 'required|file|mimes:pdf',
+            'relationship_id' => 'required',
+            'sex_id' => 'required',
+            'name' => 'required',
+            'phone_number' => 'required',
+            'file_cv' => 'required|file|mimes:pdf'
         ];
     }
 }

@@ -25,7 +25,7 @@ class UploadPhotoCandidateRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+            'file_photo' => 'nullable|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 

@@ -6,11 +6,13 @@ use App\Models\JobVacancy;
 use Illuminate\Support\Facades\DB;
 use App\Services\Candidate\CandidateServiceInterface;
 use App\Repositories\JobVacancy\JobVacancyRepositoryInterface;
+use App\Services\EmergencyContactCandidate\EmergencyContactCandidateServiceInterface;
 
 class JobVacancyRepository implements JobVacancyRepositoryInterface
 {
     private $model;
     private $candidateService;
+    private $emergencyContactCandidateService;
 
     public function __construct(JobVacancy $model)
     {
@@ -23,6 +25,14 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             $this->candidateService = app(CandidateServiceInterface::class);
         }
         return $this->candidateService;
+    }
+
+    private function getEmergencyContactCandidateService()
+    {
+        if (!$this->emergencyContactCandidateService) {
+            $this->emergencyContactCandidateService = app(EmergencyContactCandidateServiceInterface::class);
+        }
+        return $this->emergencyContactCandidateService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null, $status = null)
@@ -111,12 +121,21 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function applyJob(array $data)
     {
-        return $data;
         // Candidate
         $candidate = $this->getCandidateService()->store($data);
-        $this->getCandidateService()->uploadCv($candidate->id, $data);
-        $this->getCandidateService()->uploadPhoto($candidate->id, $data);
-
+        $emergencyContact = [
+            'candidate_id' => $candidate->id,
+            'name' => $data['name'],
+            'relationship_id' => $data['relationship_id'],
+            'phone_number' => $data['phone_number'],
+            'sex_id' => $data['sex_id'],
+        ];
+        $this->getEmergencyContactCandidateService()->store($emergencyContact);
+        if ($data['file_cv']) {
+            $this->getCandidateService()->uploadCv($candidate->id, $data);
+        }
+        // $this->getCandidateService()->uploadPhoto($candidate->id, $data['file_photo']);
+        return $candidate;
         // Family Member
     }
 

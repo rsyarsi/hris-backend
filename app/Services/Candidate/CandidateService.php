@@ -54,7 +54,7 @@ class CandidateService implements CandidateServiceInterface
 
     public function uploadCv($id, $data)
     {
-        $file = $data['file'];
+        $file = $data['file_cv'];
         if ($file && $file->isValid()) {
             // Upload the file to AWS S3 storage
             $filePath = $file->store('hrd/candidates/cv', 's3');

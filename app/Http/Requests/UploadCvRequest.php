@@ -25,7 +25,7 @@ class UploadCvRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'file_cv' => 'nullable|mimes:jpeg,png,jpg,gif,pdf|max:2048',
         ];
     }
 
