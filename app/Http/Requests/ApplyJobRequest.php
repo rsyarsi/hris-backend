@@ -60,7 +60,7 @@ class ApplyJobRequest extends FormRequest
             'birth_place_family_information' => 'required|array',
             'birth_place_family_information.*' => 'required|string|max:100',
             'birth_date_family_information' => 'required|array',
-            'birth_date_family_information.*' => 'required|date', 
+            'birth_date_family_information.*' => 'required|date',
             'education_id_family_information' => 'required|array|exists:meducations,id',
             'education_id_family_information.*' => 'required|exists:meducations,id',
             'job_id_family_information' => 'required|array|exists:mjobs,id',
@@ -75,7 +75,7 @@ class ApplyJobRequest extends FormRequest
             'birth_place_family_member' => 'required|array',
             'birth_place_family_member.*' => 'required|string|max:100',
             'birth_date_family_member' => 'required|array',
-            'birth_date_family_member.*' => 'required|date', 
+            'birth_date_family_member.*' => 'required|date',
             'education_id_family_member' => 'required|array|exists:meducations,id',
             'education_id_family_member.*' => 'required|exists:meducations,id',
             'job_id_family_member' => 'required|array|exists:mjobs,id',
@@ -89,15 +89,65 @@ class ApplyJobRequest extends FormRequest
             'final_score_education_background' => 'required',
             'file_ijasah_education_background' => 'required|file|mimes:pdf', // education background end
 
-            'organization_name_organization_experience' => 'required|max:100', // organization experiences start
-            'position_organization_experience' => 'required|max:100',
-            'year_organization_experience' => 'required|date_format:Y',
-            'description_organization_experience' => 'required',// organization experiences end
+            'organization_name' => 'required|array', // organization experiences start
+            'organization_name.*' => 'required|max:100',
+            'position_organization_experience' => 'required|array',
+            'position_organization_experience.*' => 'required|max:100',
+            'year_organization_experience' => 'required|array',
+            'year_organization_experience.*' => 'required|date_format:Y',
+            'description_organization_experience' => 'required|array',
+            'description_organization_experience.*' => 'required', // organization experiences end
 
-            'relationship_id_hospital_connection' => 'required|exists:mrelationships,id', // hospital connection table start
-            'name_hospital_connection' => 'required',
-            'department_id_hospital_connection' => 'required|exists:mdepartments,id',
-            'position_id_hospital_connection' => 'required|exists:mpositions,id', // hospital connection table end
+            'type_of_expertise' => 'required|array', // expertise certification start
+            'type_of_expertise.*' => 'required|max:100',
+            'qualification_type' => 'required|array',
+            'qualification_type.*' => 'required|max:100',
+            'given_by_expertise_certification' => 'required|array',
+            'given_by_expertise_certification.*' => 'required|max:100',
+            'year_expertise_certification' => 'required|array',
+            'year_expertise_certification.*' => 'required|date_format:Y',
+            'description_expertise_certification' => 'required|array',
+            'description_expertise_certification.*' => 'required', // expertise certification end
+
+            'type_of_training' => 'required|array', // courses training start
+            'type_of_training.*' => 'required|max:100',
+            'level_courses_training' => 'required|array',
+            'level_courses_training.*' => 'required|max:100',
+            'organized_by_courses_training' => 'required|array',
+            'organized_by_courses_training.*' => 'required|max:100',
+            'year_courses_training' => 'required|array',
+            'year_courses_training.*' => 'required|date_format:Y',
+            'description_courses_training' => 'required|array',
+            'description_courses_training.*' => 'required', // courses training end
+
+            'company_work_experience' => 'required|array', // work experience start
+            'company_work_experience.*' => 'required|max:100',
+            'position_work_experience' => 'required|array',
+            'position_work_experience.*' => 'required|max:100',
+            'from_date_work_experience' => 'required|array',
+            'from_date_work_experience.*' => 'required|date',
+            'to_date_work_experience' => 'required|array',
+            'to_date_work_experience.*' => 'required|date',
+            'location_work_experience' => 'required|array',
+            'location_work_experience.*' => 'required|max:100',
+            'take_home_pay' => 'required|array',
+            'take_home_pay.*' => 'required|digits_between:1,10',
+            'job_description' => 'required|array',
+            'job_description.*' => 'required',
+            'reason_for_resignation' => 'required|array',
+            'reason_for_resignation.*' => 'required', // work experience end
+
+            'language_foreign_language' => 'required|array', // Foreign languages start
+            'language_foreign_language.*' => 'required|string|max:100',
+            'speaking_ability_level_foreign_language' => 'required|array',
+            'speaking_ability_level_foreign_language.*' => 'required|string|in:Good,Fair,Poor',
+            'writing_ability_level_foreign_language' => 'required|array',
+            'writing_ability_level_foreign_language.*' => 'required|string|in:Good,Fair,Poor', // Foreign languages end
+
+            'relationship_id_hospital_connection' => 'nullable|exists:mrelationships,id', // hospital connection table start
+            'name_hospital_connection' => 'nullable',
+            'department_id_hospital_connection' => 'nullable|exists:mdepartments,id',
+            'position_id_hospital_connection' => 'nullable|exists:mpositions,id', // hospital connection table end
 
             'self_perspective' => 'required', // self perspective table start
             'strengths' => 'required',
@@ -126,13 +176,6 @@ class ApplyJobRequest extends FormRequest
             'handling_complaints' => 'required',
             'salary_expectation' => 'required',
             'benefits_facilities' => 'required', // human resources tests table end
-
-            'language_foreign_language' => 'required|array', // Foreign languages start
-            'language_foreign_language.*' => 'required|string|max:100',
-            'speaking_ability_level_foreign_language' => 'required|array',
-            'speaking_ability_level_foreign_language.*' => 'required|string|in:Good,Fair,Poor',
-            'writing_ability_level_foreign_language' => 'required|array',
-            'writing_ability_level_foreign_language.*' => 'required|string|in:Good,Fair,Poor', // Foreign languages end
         ];
     }
 }

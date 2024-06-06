@@ -33,7 +33,7 @@ class PublicJobVacancyController extends Controller
         try {
             $data = $request->validated();
             $jobVacancys = $this->jobVacancyService->applyJob($data);
-            return $this->success('Job application submitted successfully!', $jobVacancys, 201);
+            return $this->success('Lamaran pekerjaan berhasil dikirim, kami akan melakukan review dan jika anda masuk ke tahap berikutnya, kami akan menghubungi via email atau whatsapp!', $jobVacancys, 201);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

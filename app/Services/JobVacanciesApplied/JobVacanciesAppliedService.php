@@ -15,8 +15,10 @@ class JobVacanciesAppliedService implements JobVacanciesAppliedServiceInterface
     private $repository;
     private $helperService;
 
-    public function __construct(JobVacanciesAppliedRepositoryInterface $repository, HelperServiceInterface $helperService)
-    {
+    public function __construct(
+        JobVacanciesAppliedRepositoryInterface $repository,
+        HelperServiceInterface $helperService
+    ) {
         $this->repository = $repository;
         $this->helperService = $helperService;
     }
@@ -28,7 +30,7 @@ class JobVacanciesAppliedService implements JobVacanciesAppliedServiceInterface
 
     public function store(array $data)
     {
-        $data['status'] = $this->formatTextTitle($data['status']);
+        $data['status'] = $this->formatTextUpper($data['status']);
         return $this->repository->store($data);
     }
 
@@ -39,7 +41,7 @@ class JobVacanciesAppliedService implements JobVacanciesAppliedServiceInterface
 
     public function update($id, $data)
     {
-        $data['status'] = $this->formatTextTitle($data['status']);
+        $data['status'] = $this->formatTextUpper($data['status']);
         return $this->repository->update($id, $data);
     }
 
@@ -82,7 +84,7 @@ class JobVacanciesAppliedService implements JobVacanciesAppliedServiceInterface
         ];
     }
 
-    public function formatTextTitle($data)
+    public function formatTextUpper($data)
     {
         return Str::upper($data);
     }

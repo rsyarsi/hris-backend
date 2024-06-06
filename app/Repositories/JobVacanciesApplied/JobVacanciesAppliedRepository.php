@@ -3,9 +3,8 @@
 namespace App\Repositories\JobVacanciesApplied;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\{JobVacanciesApplied};
+use Illuminate\Support\Facades\{DB, Log};
+use App\Models\JobVacanciesApplied;
 use App\Services\CopyFile\CopyFileServiceInterface;
 use App\Services\Employee\EmployeeServiceInterface;
 use App\Services\EmployeeFamily\EmployeeFamilyServiceInterface;
@@ -129,7 +128,7 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
     }
     // organization end
 
-    // organization start
+    // Expertise Certification start
     private function getExpertiseCertificationCandidateService()
     {
         if (!$this->expertiseCertificationCandidateService) {
@@ -145,7 +144,7 @@ class JobVacanciesAppliedRepository implements JobVacanciesAppliedRepositoryInte
         }
         return $this->employeeCertificateService;
     }
-    // organization end
+    // Expertise Certification end
 
 
     public function index($perPage, $search = null, $status = null)
