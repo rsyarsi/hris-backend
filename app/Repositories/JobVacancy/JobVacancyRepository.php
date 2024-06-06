@@ -7,12 +7,18 @@ use App\Models\JobVacancy;
 use Illuminate\Support\Facades\DB;
 use App\Services\Candidate\CandidateServiceInterface;
 use App\Repositories\JobVacancy\JobVacancyRepositoryInterface;
-use App\Services\EmergencyContactCandidate\EmergencyContactCandidateServiceInterface;
-use App\Services\EducationBackgroundCandidate\EducationBackgroundCandidateServiceInterface;
-use App\Services\ForeignLanguageCandidate\ForeignLanguageCandidateServiceInterface;
-use App\Services\HospitalConnectionCandidate\HospitalConnectionCandidateServiceInterface;
+use App\Services\CoursesTrainingCandidate\CoursesTrainingCandidateServiceInterface;
 use App\Services\HumanResourcesTest\HumanResourcesTestServiceInterface;
+use App\Services\FamilyMemberCandidate\FamilyMemberCandidateServiceInterface;
+use App\Services\ForeignLanguageCandidate\ForeignLanguageCandidateServiceInterface;
 use App\Services\SelfPerspectiveCandidate\SelfPerspectiveCandidateServiceInterface;
+use App\Services\EmergencyContactCandidate\EmergencyContactCandidateServiceInterface;
+use App\Services\FamilyInformationCandidate\FamilyInformationCandidateServiceInterface;
+use App\Services\HospitalConnectionCandidate\HospitalConnectionCandidateServiceInterface;
+use App\Services\EducationBackgroundCandidate\EducationBackgroundCandidateServiceInterface;
+use App\Services\ExpertiseCertificationCandidate\ExpertiseCertificationCandidateServiceInterface;
+use App\Services\OrganizationExperienceCandidate\OrganizationExperienceCandidateServiceInterface;
+use App\Services\WorkExperienceCandidate\WorkExperienceCandidateServiceInterface;
 
 class JobVacancyRepository implements JobVacancyRepositoryInterface
 {
@@ -24,6 +30,12 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
     private $selfPerspectiveService;
     private $humanResourceTestService;
     private $foreignLanguageService;
+    private $familyInformationCandidateService;
+    private $familyMemberCandidateService;
+    private $organizationExperienceCandidateService;
+    private $expertiseCertificationCandidateService;
+    private $coursesTrainingCandidateService;
+    private $workExperienceCandidateService;
 
     public function __construct(JobVacancy $model)
     {
@@ -84,6 +96,54 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             $this->foreignLanguageService = app(ForeignLanguageCandidateServiceInterface::class);
         }
         return $this->foreignLanguageService;
+    }
+
+    private function getFamilyInformationCandidateService()
+    {
+        if (!$this->familyInformationCandidateService) {
+            $this->familyInformationCandidateService = app(FamilyInformationCandidateServiceInterface::class);
+        }
+        return $this->familyInformationCandidateService;
+    }
+
+    private function getFamilyMemberCandidateService()
+    {
+        if (!$this->familyMemberCandidateService) {
+            $this->familyMemberCandidateService = app(FamilyMemberCandidateServiceInterface::class);
+        }
+        return $this->familyMemberCandidateService;
+    }
+
+    private function getOrganizationExperienceCandidateService()
+    {
+        if (!$this->organizationExperienceCandidateService) {
+            $this->organizationExperienceCandidateService = app(OrganizationExperienceCandidateServiceInterface::class);
+        }
+        return $this->organizationExperienceCandidateService;
+    }
+
+    private function getExpertiseCertificationCandidateService()
+    {
+        if (!$this->expertiseCertificationCandidateService) {
+            $this->expertiseCertificationCandidateService = app(ExpertiseCertificationCandidateServiceInterface::class);
+        }
+        return $this->expertiseCertificationCandidateService;
+    }
+
+    private function getCoursesTrainingCandidateService()
+    {
+        if (!$this->coursesTrainingCandidateService) {
+            $this->coursesTrainingCandidateService = app(CoursesTrainingCandidateServiceInterface::class);
+        }
+        return $this->coursesTrainingCandidateService;
+    }
+
+    private function getWorkExperienceCandidateService()
+    {
+        if (!$this->workExperienceCandidateService) {
+            $this->workExperienceCandidateService = app(WorkExperienceCandidateServiceInterface::class);
+        }
+        return $this->workExperienceCandidateService;
     }
 
     public function index($perPage, $search = null, $startDate = null, $endDate = null, $status = null)
@@ -221,6 +281,38 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             $this->getEmergencyContactCandidateService()->store($emergencyContact);
             // Emergency Contact End
 
+            // Family Information Start
+            foreach ($data['relationship_id_family_information'] as $index => $relationshipId) {
+                $familyInformationEntry = [
+                    'candidate_id' => $candidate->id,
+                    'relationship_id' => $relationshipId,
+                    'name' => $data['name_family_information'][$index],
+                    'sex_id' => $data['sex_id_family_information'][$index],
+                    'birth_place' => $data['birth_place_family_information'][$index],
+                    'birth_date' => $data['birth_date_family_information'][$index],
+                    'education_id' => $data['education_id_family_information'][$index],
+                    'job_id' => $data['job_id_family_information'][$index],
+                ];
+                $this->getFamilyInformationCandidateService()->store($familyInformationEntry);
+            }
+            // Family Information End
+
+            // Family Member Start
+            foreach ($data['relationship_id_family_member'] as $index => $relationshipId) {
+                $familyMemberEntry = [
+                    'candidate_id' => $candidate->id,
+                    'relationship_id' => $relationshipId,
+                    'name' => $data['name_family_member'][$index],
+                    'sex_id' => $data['sex_id_family_member'][$index],
+                    'birth_place' => $data['birth_place_family_member'][$index],
+                    'birth_date' => $data['birth_date_family_member'][$index],
+                    'education_id' => $data['education_id_family_member'][$index],
+                    'job_id' => $data['job_id_family_member'][$index],
+                ];
+                $this->getFamilyMemberCandidateService()->store($familyMemberEntry);
+            }
+            // Family Member End
+
             // Education Background Start
             $dataEducationBackground = [
                 'candidate_id' => $candidate->id,
@@ -235,6 +327,64 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             $this->getEducationBackgroundCandidateService()->store($dataEducationBackground);
             // Education Background End
 
+            // Organization Experiences Start
+            foreach ($data['organization_name_organization_experience'] as $index => $organizationName) {
+                $organizationExperienceEntry = [
+                    'candidate_id' => $candidate->id,
+                    'organization_name' => $organizationName,
+                    'position' => $data['position_organization_experience'][$index],
+                    'year' => $data['year_organization_experience'][$index],
+                    'description' => $data['description_organization_experience'][$index],
+                ];
+                $this->getOrganizationExperienceCandidateService()->store($organizationExperienceEntry);
+            }
+            // Organization Experiences End
+
+            // Expertise Certification Start
+            foreach ($data[''] as $index => $type) {
+                $organizationExperienceEntry = [
+                    'candidate_id' => $candidate->id,
+                    'type_of_expertise' => $type,
+                    'qualification_type' => $data['position_organization_experience'][$index],
+                    'given_by' => $data['year_organization_experience'][$index],
+                    'year' => $data['description_organization_experience'][$index],
+                    'description' => $data['description_organization_experience'][$index],
+                ];
+                $this->getExpertiseCertificationCandidateService()->store($organizationExperienceEntry);
+            }
+            // Expertise Certification End
+
+            // Courses Training Start
+            foreach ($data[''] as $index => $type) {
+                $coursesTrainingEntry = [
+                    'candidate_id' => $candidate->id,
+                    'type_of_training' => $type,
+                    'level' => $data['position_organization_experience'][$index],
+                    'organized_by' => $data['year_organization_experience'][$index],
+                    'year' => $data['description_organization_experience'][$index],
+                    'description' => $data['description_organization_experience'][$index],
+                ];
+                $this->getCoursesTrainingCandidateService()->store($coursesTrainingEntry);
+            }
+            // Courses Training End
+
+            // Work Experience Start
+            foreach ($data[''] as $index => $company) {
+                $workExperienceEntry = [
+                    'candidate_id' => $candidate->id,
+                    'company' => $company,
+                    'position' => $data['position'][$index],
+                    'location' => $data['location'][$index],
+                    'from_date' => $data['from_date'][$index],
+                    'to_date' => $data['to_date'][$index],
+                    'job_description' => $data['job_description'][$index],
+                    'reason_for_resignation' => $data['reason_for_resignation'][$index],
+                    'take_home_pay' => $data['take_home_pay'][$index],
+                ];
+                $this->getWorkExperienceCandidateService()->store($workExperienceEntry);
+            }
+            // Work Experience End
+            
             // Hospital Connection Start
             $dataHospitalConnection = [
                 'candidate_id' => $candidate->id,
@@ -284,15 +434,12 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
 
             // Foreign Language Start
             foreach ($data['language_foreign_language'] as $index => $language) {
-                // Create a new array for each language entry
                 $languageEntry = [
                     'candidate_id' => $candidate->id,
                     'language' => $language,
                     'speaking_ability_level' => $data['speaking_ability_level_foreign_language'][$index],
                     'writing_ability_level' => $data['writing_ability_level_foreign_language'][$index],
                 ];
-
-                // Store the individual language entry
                 $this->getForeignLanguageService()->store($languageEntry);
             }
             // Foreign Language End
