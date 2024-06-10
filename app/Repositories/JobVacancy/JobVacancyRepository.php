@@ -3,11 +3,13 @@
 namespace App\Repositories\JobVacancy;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\JobVacancy;
+use App\Mail\SendEmailApplyJob;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use App\Services\Candidate\CandidateServiceInterface;
 use App\Repositories\JobVacancy\JobVacancyRepositoryInterface;
-use App\Services\AdditionalInformationCandidate\AdditionalInformationCandidateServiceInterface;
 use App\Services\HumanResourcesTest\HumanResourcesTestServiceInterface;
 use App\Services\JobVacanciesApplied\JobVacanciesAppliedServiceInterface;
 use App\Services\FamilyMemberCandidate\FamilyMemberCandidateServiceInterface;
@@ -19,6 +21,7 @@ use App\Services\EmergencyContactCandidate\EmergencyContactCandidateServiceInter
 use App\Services\FamilyInformationCandidate\FamilyInformationCandidateServiceInterface;
 use App\Services\HospitalConnectionCandidate\HospitalConnectionCandidateServiceInterface;
 use App\Services\EducationBackgroundCandidate\EducationBackgroundCandidateServiceInterface;
+use App\Services\AdditionalInformationCandidate\AdditionalInformationCandidateServiceInterface;
 use App\Services\ExpertiseCertificationCandidate\ExpertiseCertificationCandidateServiceInterface;
 use App\Services\OrganizationExperienceCandidate\OrganizationExperienceCandidateServiceInterface;
 
@@ -484,7 +487,8 @@ class JobVacancyRepository implements JobVacancyRepositoryInterface
             ];
             $this->getJobVacanciesAppliedService()->store($dataJobVacancyApplied);
             // Job Vacancy Applied End
-
+            $hrd = User::where('hrd', 1)->first();
+            Mail::to($candidate->email)->cc($hrd->email)->send(new SendEmailApplyJob());
             DB::commit(); // Commit transaction if successful
             return $candidate;
         } catch (\Exception $e) {

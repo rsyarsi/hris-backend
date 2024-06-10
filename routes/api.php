@@ -647,7 +647,7 @@ Route::middleware('api')->group(function () {
                 // Route for get data departments for form
                 Route::get('departments',  'department');
             });
-        });
+        })->middleware('checkOriginCareer');
         Route::controller(DeductionOuterController::class)->group(function () {
             // Route for get data departments for form
             Route::post('deductions/outer/store',  'store');
